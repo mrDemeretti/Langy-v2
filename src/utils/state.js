@@ -41,23 +41,26 @@ const LangyState = {
 
     // Streak data
     streakData: {
-        days: 14,
-        totalSessions: 87,
-        totalMinutes: 1240,
-        wordsLearned: 342,
-        accuracy: 78,
+        days: 0,
+        totalSessions: 0,
+        totalMinutes: 0,
+        wordsLearned: 0,
+        accuracy: 0,
+        todayCompleted: false, // Has user done a session today?
+        activeDays: [],        // Array of ISO date strings for streak calendar
+        longestStreak: 0,      // Best streak ever
         timeBreakdown: {
-            vocabulary: 420,
-            grammar: 310,
-            listening: 280,
-            speaking: 150,
-            writing: 80
+            vocabulary: 0,
+            grammar: 0,
+            listening: 0,
+            speaking: 0,
+            writing: 0
         },
         lastSession: {
-            date: 'Today',
-            wordsLearned: 12,
-            accuracy: 85,
-            duration: 18
+            date: null,        // ISO date string (e.g. "2026-04-16") or null
+            wordsLearned: 0,
+            accuracy: 0,
+            duration: 0
         }
     },
 
@@ -93,7 +96,24 @@ const LangyState = {
         skipsRemaining: 2, // Max 2 per unit
         currentUnit: 'Unit 1: Getting Started',
         lessonHistory: [],
-        recentTopics: []
+        recentTopics: [],
+
+        // Mastery Loop: per-unit results
+        // Key = "textbookId:unitId", e.g. "b1_pre_int:3"
+        // Value = { score, passed, attempts, failedIndices, lastAttempt }
+        mastery: {},
+
+        // CEFR Badges: earned level certificates
+        // Key = CEFR code, e.g. "A1"
+        // Value = { earned: bool, date: string|null, badge: string }
+        cefrBadges: {
+            A1: { earned: false, date: null, badge: '🏅' },
+            A2: { earned: false, date: null, badge: '🏅' },
+            B1: { earned: false, date: null, badge: '🏅' },
+            B2: { earned: false, date: null, badge: '🏅' },
+            C1: { earned: false, date: null, badge: '🏅' },
+            C2: { earned: false, date: null, badge: '🏅' }
+        }
     },
 
     // Daily Challenge
@@ -186,6 +206,94 @@ function setState(path, value) {
     const last = keys.pop();
     const target = keys.reduce((obj, key) => obj[key], LangyState);
     target[last] = value;
+}
+
+// ─── STREAK & SESSION RECORDING ───
+// Call this after every completed lesson/exercise session
+function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category = 'grammar' } = {}) {
+    const today = new Date().toISOString().split('T')[0];
+    const sd = LangyState.streakData;
+    
+    // Update session stats
+    sd.totalSessions++;
+    sd.totalMinutes += duration;
+    sd.wordsLearned += wordsLearned;
+    sd.accuracy = sd.totalSessions > 0
+        ? Math.round(((sd.accuracy * (sd.totalSessions - 1)) + accuracy) / sd.totalSessions)
+        : accuracy;
+    
+    // Update time breakdown
+    if (sd.timeBreakdown[category] !== undefined) {
+        sd.timeBreakdown[category] += duration;
+    }
+    
+    // Update last session
+    sd.lastSession = { date: today, wordsLearned, accuracy, duration };
+    
+    // Streak logic: increment only once per day
+    if (!sd.todayCompleted) {
+        sd.todayCompleted = true;
+        
+        // Add today to activeDays
+        if (!sd.activeDays) sd.activeDays = [];
+        if (!sd.activeDays.includes(today)) {
+            sd.activeDays.push(today);
+        }
+        
+        // Increment streak
+        sd.days++;
+        LangyState.user.streak = sd.days;
+        
+        // Update longest streak
+        if (!sd.longestStreak) sd.longestStreak = 0;
+        if (sd.days > sd.longestStreak) {
+            sd.longestStreak = sd.days;
+        }
+        
+        // ─── STREAK REWARDS ───
+        const streakRewards = getStreakReward(sd.days);
+        if (streakRewards) {
+            LangyState.currencies.dangy += streakRewards.dangy;
+            LangyState.currencies.langy += streakRewards.langy;
+            
+            // Show reward toast
+            let rewardMsg = `🔥 ${sd.days} Day Streak!`;
+            if (streakRewards.dangy > 0) rewardMsg += ` +${streakRewards.dangy} Dangy`;
+            if (streakRewards.langy > 0) rewardMsg += ` +${streakRewards.langy} Langy`;
+            if (streakRewards.badge) rewardMsg += ` ${streakRewards.badge}`;
+            
+            setTimeout(() => {
+                if (typeof Anim !== 'undefined') Anim.showToast(rewardMsg);
+            }, 800);
+        }
+    }
+    
+    // Save
+    if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+}
+
+// Streak reward tiers
+function getStreakReward(days) {
+    // Daily rewards
+    const dailyDangy = Math.min(10 + Math.floor(days / 7) * 5, 50); // 10-50 dangy/day, scaling
+    
+    // Milestone rewards (Langy = premium, only at milestones)
+    const milestones = {
+        3:   { dangy: 25,  langy: 0,  badge: '🌟' },
+        7:   { dangy: 50,  langy: 5,  badge: '⭐ Weekly Warrior!' },
+        14:  { dangy: 100, langy: 10, badge: '🌟 Two Week Champion!' },
+        30:  { dangy: 200, langy: 25, badge: '🏆 Monthly Master!' },
+        60:  { dangy: 400, langy: 50, badge: '💎 Diamond Streak!' },
+        90:  { dangy: 600, langy: 100, badge: '👑 Royal Learner!' },
+        180: { dangy: 1000, langy: 200, badge: '🔥 Half-Year Hero!' },
+        365: { dangy: 2000, langy: 500, badge: '🏅 Annual Legend!' }
+    };
+    
+    if (milestones[days]) {
+        return milestones[days];
+    }
+    
+    return { dangy: dailyDangy, langy: 0, badge: null };
 }
 
 // Deep copy of initial state for resets

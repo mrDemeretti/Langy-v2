@@ -2,6 +2,56 @@
    SCREEN: HOME (Core Hub)
    ============================================ */
 
+// Build dynamic week calendar from activeDays
+function buildWeekDays() {
+    const today = new Date();
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const activeDays = LangyState.streakData.activeDays || [];
+    const todayISO = today.toISOString().split('T')[0];
+    
+    // Get Monday of current week
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+    
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        const dayName = dayNames[d.getDay()];
+        const isDone = activeDays.includes(iso);
+        const isToday = iso === todayISO;
+        const isSunday = d.getDay() === 0;
+        
+        let stateClass = '';
+        if (isDone) stateClass = 'streak-day--done';
+        else if (isToday) stateClass = 'streak-day--active';
+        
+        const dot = isSunday && !isDone ? '🎁' : '';
+        
+        html += `<div class="streak-day ${stateClass}"><div class="streak-day__dot">${dot}</div><span>${dayName}</span></div>`;
+    }
+    return html;
+}
+
+function buildWeekProgress() {
+    const today = new Date();
+    const activeDays = LangyState.streakData.activeDays || [];
+    
+    // Get Monday of current week
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+    
+    let completed = 0;
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        if (activeDays.includes(iso)) completed++;
+    }
+    return Math.round((completed / 7) * 100);
+}
+
 function renderHome(container) {
     const { currencies, streakData, user } = LangyState;
 
@@ -68,23 +118,17 @@ function renderHome(container) {
                 <div class="home__streak-top">
                     <div class="home__streak-header">
                         <span class="fire-animated">🔥</span>
-                        <span style="font-size: var(--fs-lg); font-weight: var(--fw-black);">${streakData.days} Day Streak!</span>
+                        <span style="font-size: var(--fs-lg); font-weight: var(--fw-black);">${streakData.days > 0 ? streakData.days + ' Day Streak!' : 'Start your streak!'}</span>
                     </div>
                     <div class="badge badge--accent">Details →</div>
                 </div>
                 
                 <div class="streak-week">
                     <div class="streak-week__track">
-                        <div class="streak-week__fill" style="width: 35%;"></div>
+                        <div class="streak-week__fill" style="width: ${buildWeekProgress()}%;"></div>
                     </div>
                     <div class="streak-week__days">
-                        <div class="streak-day streak-day--done"><div class="streak-day__dot"></div><span>Mon</span></div>
-                        <div class="streak-day streak-day--done"><div class="streak-day__dot"></div><span>Tue</span></div>
-                        <div class="streak-day streak-day--active"><div class="streak-day__dot"></div><span>Wed</span></div>
-                        <div class="streak-day"><div class="streak-day__dot"></div><span>Thu</span></div>
-                        <div class="streak-day"><div class="streak-day__dot"></div><span>Fri</span></div>
-                        <div class="streak-day"><div class="streak-day__dot"></div><span>Sat</span></div>
-                        <div class="streak-day streak-day--reward"><div class="streak-day__dot">🎁</div><span>Sun</span></div>
+                        ${buildWeekDays()}
                     </div>
                 </div>
             </div>

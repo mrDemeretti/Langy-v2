@@ -1564,6 +1564,136 @@
     color: var(--text-secondary);
 }
 
+/* ========== CEFR BADGES ========== */
+.cefr-badges {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-3);
+    padding: var(--sp-2) 0;
+}
+
+.cefr-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-1);
+    padding: var(--sp-3) var(--sp-2);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 2px solid var(--border);
+    text-align: center;
+    transition: all var(--duration-normal) var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
+
+.cefr-badge__level {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    color: var(--badge-color, var(--text-tertiary));
+    letter-spacing: 0.5px;
+}
+
+.cefr-badge__icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.cefr-badge__name {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    color: var(--text-secondary);
+}
+
+.cefr-badge__date {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    margin-top: var(--sp-1);
+}
+
+.cefr-badge__progress {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--primary);
+}
+
+/* Earned state: gold glow */
+.cefr-badge--earned {
+    border-color: var(--reward-gold);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(251, 191, 36, 0.04));
+    box-shadow: var(--shadow-glow-gold);
+}
+
+.cefr-badge--earned .cefr-badge__level {
+    color: var(--reward-gold);
+}
+
+.cefr-badge--earned::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.12), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Active state: pulsing border */
+.cefr-badge--active {
+    border-color: var(--primary);
+    background: var(--primary-bg);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.cefr-badge--active .cefr-badge__level {
+    color: var(--primary);
+}
+
+/* Locked state: greyed out */
+.cefr-badge--locked {
+    opacity: 0.4;
+    filter: grayscale(0.5);
+}
+
+.cefr-badge--locked .cefr-badge__name {
+    color: var(--text-tertiary);
+}
+
+/* ========== QUICK REVIEW HEADER ========== */
+.qr-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-4);
+    flex-wrap: wrap;
+}
+
+.qr-header__badge {
+    padding: var(--sp-1) var(--sp-3);
+    background: linear-gradient(135deg, var(--primary), var(--accent-dark));
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-glow-primary);
+}
+
+.qr-header__topic {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    color: var(--text);
+    flex: 1;
+}
+
+.qr-header__progress {
+    font-size: var(--fs-xs);
+    color: var(--text-tertiary);
+    font-weight: var(--fw-medium);
+}
+
 /* ========== PROFILE ========== */
 .profile {
     padding: 0;

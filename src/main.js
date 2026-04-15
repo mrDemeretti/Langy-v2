@@ -40,27 +40,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 // Initialize Daily Streak Logic
                 const today = new Date().toISOString().split('T')[0];
-                if (LangyState.streakData.lastSession.date !== today) {
-                    const lastDateStr = LangyState.streakData.lastSession.date;
-                    if (lastDateStr && lastDateStr !== 'Today') {
-                        const lastDate = new Date(lastDateStr);
-                        const currDate = new Date(today);
-                        const diffTime = Math.abs(currDate - lastDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                const lastDate = LangyState.streakData.lastSession.date;
+                
+                if (lastDate !== today) {
+                    // New day — check streak continuity
+                    if (lastDate) {
+                        const last = new Date(lastDate);
+                        const curr = new Date(today);
+                        const diffMs = curr.getTime() - last.getTime();
+                        const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
                         
                         if (diffDays === 1) {
-                            LangyState.user.streak += 1;
-                            LangyState.streakData.days = LangyState.user.streak;
+                            // Consecutive day → streak continues
+                            // (don't increment yet — wait for a lesson to be completed)
                         } else if (diffDays > 1) {
-                            LangyState.user.streak = 1;
-                            LangyState.streakData.days = 1;
+                            // Missed day(s) → streak resets
+                            LangyState.streakData.days = 0;
+                            LangyState.user.streak = 0;
                         }
-                    } else if (lastDateStr !== 'Today') {
-                        LangyState.user.streak = 1;
-                        LangyState.streakData.days = 1;
                     }
-                    LangyState.streakData.lastSession.date = today;
-                    LangyState.dailyChallenge.tasks.forEach(t => t.done = false); 
+                    
+                    // Mark today as not yet completed
+                    LangyState.streakData.todayCompleted = false;
+                    LangyState.dailyChallenge.tasks.forEach(t => t.done = false);
                 }
 
                 LangyDB.startAutoSave();

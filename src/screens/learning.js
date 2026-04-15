@@ -62,10 +62,21 @@ function renderLearning(container) {
     let currentStep = mode === 'homework' ? 'homework' : 'intro';
     let currentExerciseIdx = 0;
     let correctAnswers = 0;
+    let failedExerciseIndices = []; // Track which exercises were failed
     let lessonStartTime = Date.now();
     let _destroyed = false;
     let teachSlideIdx = 0;
     const teachSlides = unit.teachSlides || [];
+
+    // Quick Review state
+    let qrWeakUnits = [];       // Units that need review
+    let qrCurrentUnitIdx = 0;   // Which weak unit we're reviewing
+    let qrPhase = 'theory';     // 'theory' | 'practice' | 'result'
+    let qrSlideIdx = 0;
+    let qrExerciseIdx = 0;
+    let qrCorrect = 0;
+    let qrAttempts = 0;         // Attempts without theory (max 2 before forced theory)
+    let qrExercises = [];
 
     // ─── MAIN RENDER ───
     function updateUI() {
@@ -114,6 +125,7 @@ function renderLearning(container) {
             case 'practice': renderPractice(content); break;
             case 'homework': renderHomeworkMode(content); break;
             case 'summary': renderSummary(content); break;
+            case 'quick-review': renderQuickReview(content); break;
         }
     }
 
@@ -357,6 +369,7 @@ function renderLearning(container) {
                 correctAnswers++;
                 if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('happy');
             } else {
+                failedExerciseIndices.push(currentExerciseIdx);
                 if (typeof LangyAI !== 'undefined') {
                     LangyAI.recordMistake(exercise.widgetData?.sentence || exercise.prompt || '', '', exercise.widgetData?.answer || '');
                 }
@@ -491,6 +504,36 @@ function renderLearning(container) {
         const score = totalExercises > 0 ? Math.round((correctAnswers / totalExercises) * 100) : 0;
         const duration = Math.round((Date.now() - lessonStartTime) / 60000);
         const xpEarned = correctAnswers * 25 + 50;
+        const isCheckpoint = unit.unitType === 'review';
+
+        // For checkpoints: analyze which covered units had failures
+        let weakUnits = [];
+        if (isCheckpoint && failedExerciseIndices.length > 0) {
+            const coveredUnits = LangyCurriculum.getCheckpointCoverage(unit.id);
+            // Map failed exercises back to covered units (distribute evenly)
+            const exPerUnit = Math.max(1, Math.floor(totalExercises / Math.max(1, coveredUnits.length)));
+            failedExerciseIndices.forEach(idx => {
+                const unitIdx = Math.min(Math.floor(idx / exPerUnit), coveredUnits.length - 1);
+                if (coveredUnits[unitIdx] && !weakUnits.find(u => u.id === coveredUnits[unitIdx].id)) {
+                    weakUnits.push(coveredUnits[unitIdx]);
+                }
+            });
+        }
+
+        // Build weak topics display for checkpoints
+        const weakTopicsHtml = isCheckpoint && weakUnits.length > 0 ? `
+            <div class="qr-weak-topics" style="margin-top:var(--sp-4); padding:var(--sp-4); background:var(--danger-bg); border-radius:var(--radius-lg);">
+                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-2); color:var(--danger);">📋 Слабые темы / Weak Topics:</div>
+                ${weakUnits.map(u => `<div style="padding:var(--sp-1) 0; color:var(--text-secondary);">• Unit ${u.id}: ${u.title}</div>`).join('')}
+            </div>
+        ` : '';
+
+        // Quick Review button for checkpoints with weak areas
+        const qrButton = isCheckpoint && weakUnits.length > 0 ? `
+            <button class="btn btn--primary btn--xl btn--full" id="start-quick-review" style="margin-top:var(--sp-4); background:linear-gradient(135deg, var(--primary), var(--accent-dark)); border:none;">
+                ⚡ Повторить слабые темы / Quick Review
+            </button>
+        ` : '';
 
         target.innerHTML = `
             <div class="lesson-summary animate-in">
@@ -518,22 +561,45 @@ function renderLearning(container) {
                     </div>
                 </div>
 
-                <button class="btn btn--primary btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-6);">
+                ${weakTopicsHtml}
+                ${qrButton}
+
+                <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
                     🏠 На главную / Home
                 </button>
                 ${score < 70 ? '<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2);">🔄 Повторить / Retry</button>' : ''}
             </div>
         `;
 
-        // ✅ FIX #3: Save progress
+        // Save progress
         saveLessonProgress({ score, grade: score >= 90 ? 'A' : score >= 70 ? 'B' : 'C', feedback: '' });
         LangyState.user.xp += xpEarned;
         LangyState.currencies.dangy += correctAnswers * 10;
 
-        // ✅ FIX #4: Generate homework for next lesson
+        // Record session for streak tracking & rewards
+        if (typeof recordSession === 'function') {
+            recordSession({
+                duration: duration,
+                wordsLearned: Math.max(1, correctAnswers),
+                accuracy: score,
+                category: 'grammar'
+            });
+        }
+
+        // Generate homework for next lesson
         generateHomeworkAfterLesson(unit, score);
 
-        // ✅ FIX #3: SINGLE click goes home, no double-exit bug
+        // Quick Review button handler
+        target.querySelector('#start-quick-review')?.addEventListener('click', () => {
+            qrWeakUnits = weakUnits;
+            qrCurrentUnitIdx = 0;
+            qrPhase = 'theory';
+            qrSlideIdx = 0;
+            qrAttempts = 0;
+            currentStep = 'quick-review';
+            updateUI();
+        });
+
         target.querySelector('#summary-finish').onclick = () => {
             _destroyed = true;
             Router.navigate('home');
@@ -542,11 +608,12 @@ function renderLearning(container) {
         target.querySelector('#summary-retry')?.addEventListener('click', () => {
             currentExerciseIdx = 0;
             correctAnswers = 0;
+            failedExerciseIndices = [];
             currentStep = 'practice';
             updateUI();
         });
 
-        // ✅ FIX #1: AI feedback after lesson
+        // AI feedback after lesson
         if (typeof DeepTutor !== 'undefined') {
             DeepTutor.setEmotion(score >= 70 ? 'happy' : 'encouraging');
             DeepTutor.handleSend(
@@ -554,6 +621,239 @@ function renderLearning(container) {
                 true
             );
         }
+    }
+
+    // ─── QUICK REVIEW ───
+    function renderQuickReview(target) {
+        if (qrCurrentUnitIdx >= qrWeakUnits.length) {
+            // All weak units reviewed!
+            renderQuickReviewComplete(target);
+            return;
+        }
+
+        const weakUnit = qrWeakUnits[qrCurrentUnitIdx];
+        const weakSlides = weakUnit.teachSlides || [];
+        const weakExercises = weakUnit.exercises || [];
+
+        if (qrPhase === 'theory') {
+            renderQRTheory(target, weakUnit, weakSlides);
+        } else if (qrPhase === 'practice') {
+            renderQRPractice(target, weakUnit, weakExercises);
+        } else if (qrPhase === 'result') {
+            renderQRResult(target, weakUnit);
+        }
+    }
+
+    // Quick Review: Theory replay
+    function renderQRTheory(target, weakUnit, slides) {
+        const slide = slides[qrSlideIdx];
+        if (!slide) {
+            // No more slides, go to practice
+            qrPhase = 'practice';
+            qrExerciseIdx = 0;
+            qrCorrect = 0;
+            qrExercises = (weakUnit.exercises || []).slice(0, 5);
+            updateUI();
+            return;
+        }
+
+        const isLast = qrSlideIdx >= slides.length - 1;
+        const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
+        const chosenIdx = LangyState.mascot?.selected || 0;
+        const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
+
+        // Build slide content (reuse from teach)
+        let slideContent = '';
+        if (slide.type === 'examples' && slide.items) {
+            slideContent = `<div class="teach-examples">${slide.items.map(it => `<div class="teach-example-row"><span class="teach-base">${it.base}</span><span class="teach-arrow">→</span><span class="teach-result">${it.past || ''}</span></div>`).join('')}</div>`;
+        } else if (slide.type === 'compare' && slide.left && slide.right) {
+            slideContent = `<div class="teach-compare"><div class="teach-col"><div class="teach-col__label">${slide.left.label}</div>${slide.left.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div><div class="teach-vs">VS</div><div class="teach-col teach-col--accent"><div class="teach-col__label">${slide.right.label}</div>${slide.right.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div></div>`;
+        } else if (slide.type === 'vocab-intro' && slide.words) {
+            slideContent = `<div class="teach-vocab-grid">${slide.words.map(w => `<div class="teach-vocab-card"><div class="teach-vocab-card__en">${w.en}</div><div class="teach-vocab-card__ru">${w.ru}</div></div>`).join('')}</div>`;
+        }
+
+        target.innerHTML = `
+            <div class="teach-slide animate-in">
+                <div class="qr-header">
+                    <div class="qr-header__badge">⚡ Quick Review</div>
+                    <div class="qr-header__topic">📖 ${weakUnit.title}</div>
+                    <div class="qr-header__progress">${qrCurrentUnitIdx + 1}/${qrWeakUnits.length} тем</div>
+                </div>
+                <div class="teach-slide__progress">
+                    ${slides.map((_, i) => `<div class="teach-dot ${i === qrSlideIdx ? 'teach-dot--active' : i < qrSlideIdx ? 'teach-dot--done' : ''}"></div>`).join('')}
+                </div>
+                <div class="teach-mascot">
+                    <img src="${mascotSrc}" alt="Mascot" class="teach-mascot__img mascot--${slide.mascotEmotion || 'thinking'}">
+                </div>
+                <div class="teach-bubble" id="qr-bubble">
+                    <div class="teach-bubble__text" id="qr-text"></div>
+                </div>
+                ${slideContent ? `<div class="teach-content">${slideContent}</div>` : ''}
+                <div class="teach-actions">
+                    <button class="btn btn--primary btn--xl btn--full" id="qr-next" style="display:none;">
+                        ${isLast ? '📝 К упражнениям / Practice →' : 'Далее / Next →'}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Typewriter
+        const textEl = target.querySelector('#qr-text');
+        const nextBtn = target.querySelector('#qr-next');
+        const fullText = slide.mascotText || '';
+        let charIdx = 0;
+        function typeChar() {
+            if (_destroyed || charIdx >= fullText.length) { if (nextBtn) nextBtn.style.display = ''; return; }
+            charIdx++;
+            textEl.textContent = fullText.slice(0, charIdx);
+            setTimeout(typeChar, 20);
+        }
+        typeChar();
+
+        target.querySelector('#qr-bubble').onclick = () => {
+            charIdx = fullText.length;
+            textEl.textContent = fullText;
+            if (nextBtn) nextBtn.style.display = '';
+        };
+
+        nextBtn.onclick = () => {
+            if (isLast) {
+                qrPhase = 'practice';
+                qrExerciseIdx = 0;
+                qrCorrect = 0;
+                qrExercises = (weakUnit.exercises || []).slice(0, 5);
+            } else {
+                qrSlideIdx++;
+            }
+            updateUI();
+        };
+    }
+
+    // Quick Review: Practice exercises
+    function renderQRPractice(target, weakUnit, allExercises) {
+        if (qrExerciseIdx >= qrExercises.length) {
+            qrPhase = 'result';
+            updateUI();
+            return;
+        }
+
+        const exercise = qrExercises[qrExerciseIdx];
+        target.innerHTML = `
+            <div class="lesson-exercise animate-in">
+                <div class="qr-header">
+                    <div class="qr-header__badge">⚡ Quick Review</div>
+                    <div class="qr-header__topic">📝 ${weakUnit.title}</div>
+                </div>
+                <div class="lesson-exercise__counter">
+                    Задание ${qrExerciseIdx + 1} из ${qrExercises.length}
+                </div>
+                <div id="qr-exercise-widget"></div>
+            </div>
+        `;
+
+        const widgetArea = target.querySelector('#qr-exercise-widget');
+        const widgetType = exercise.widgetType || mapExerciseToWidget(exercise);
+        const widgetData = exercise.widgetData || mapExerciseData(exercise);
+
+        LangyWidgets.render(widgetArea, widgetType, widgetData, (isCorrect) => {
+            if (isCorrect) qrCorrect++;
+            qrExerciseIdx++;
+            setTimeout(() => { if (!_destroyed) updateUI(); }, 1400);
+        });
+    }
+
+    // Quick Review: Result for one topic
+    function renderQRResult(target, weakUnit) {
+        const qrScore = qrExercises.length > 0 ? Math.round((qrCorrect / qrExercises.length) * 100) : 0;
+        const passed = qrScore >= 70;
+
+        if (passed) {
+            // Mark this unit as mastered
+            const masteryKey = activeTb.id + ':' + weakUnit.id;
+            LangyState.progress.mastery[masteryKey] = {
+                score: qrScore, passed: true,
+                attempts: (LangyState.progress.mastery[masteryKey]?.attempts || 0) + 1,
+                failedIndices: [], lastAttempt: new Date().toISOString().split('T')[0]
+            };
+        }
+
+        qrAttempts++;
+        const needsTheory = !passed && qrAttempts >= 2;
+
+        target.innerHTML = `
+            <div class="lesson-summary animate-in">
+                <div class="qr-header">
+                    <div class="qr-header__badge">⚡ Quick Review</div>
+                    <div class="qr-header__topic">${weakUnit.title}</div>
+                </div>
+                <div class="lesson-summary__icon">${passed ? '✅' : '📖'}</div>
+                <h2 class="lesson-summary__title">
+                    ${passed ? 'Тема усвоена! / Topic Mastered!' : needsTheory ? 'Давай повторим теорию / Let\'s review theory' : 'Попробуй ещё раз / Try again!'}
+                </h2>
+                <div class="lesson-summary__stats">
+                    <div class="lesson-summary__stat">
+                        <span class="lesson-summary__stat-value">${qrScore}%</span>
+                        <span class="lesson-summary__stat-label">Accuracy</span>
+                    </div>
+                    <div class="lesson-summary__stat">
+                        <span class="lesson-summary__stat-value">${qrCorrect}/${qrExercises.length}</span>
+                        <span class="lesson-summary__stat-label">Correct</span>
+                    </div>
+                </div>
+                <button class="btn btn--primary btn--xl btn--full" id="qr-continue" style="margin-top:var(--sp-6);">
+                    ${passed ? '→ Далее / Next Topic' : needsTheory ? '📖 Повторить теорию / Review Theory' : '🔄 Ещё раз / Retry'}
+                </button>
+            </div>
+        `;
+
+        target.querySelector('#qr-continue').onclick = () => {
+            if (passed) {
+                // Move to next weak unit
+                qrCurrentUnitIdx++;
+                qrPhase = 'theory';
+                qrSlideIdx = 0;
+                qrAttempts = 0;
+            } else if (needsTheory) {
+                // Force theory re-view, reset attempts
+                qrPhase = 'theory';
+                qrSlideIdx = 0;
+                qrAttempts = 0;
+            } else {
+                // Retry practice only (attempt 2)
+                qrPhase = 'practice';
+                qrExerciseIdx = 0;
+                qrCorrect = 0;
+                // Shuffle exercises for variety
+                qrExercises = [...(weakUnit.exercises || [])].sort(() => Math.random() - 0.5).slice(0, 5);
+            }
+            updateUI();
+        };
+    }
+
+    // Quick Review: All topics complete!
+    function renderQuickReviewComplete(target) {
+        // Check if the full level is now complete → award badge
+        checkAndAwardBadge();
+
+        target.innerHTML = `
+            <div class="lesson-summary animate-in">
+                <div class="lesson-summary__icon" style="font-size:72px;">🏆</div>
+                <h2 class="lesson-summary__title">Все темы усвоены!</h2>
+                <h3 style="color:var(--text-secondary); font-weight:var(--fw-medium); margin-top:var(--sp-1);">All topics mastered!</h3>
+                <div style="margin-top:var(--sp-4); padding:var(--sp-4); background:var(--primary-bg); border-radius:var(--radius-lg); text-align:center;">
+                    <div style="font-size:var(--fs-sm); color:var(--text-secondary);">Повторено тем / Topics reviewed</div>
+                    <div style="font-size:var(--fs-2xl); font-weight:var(--fw-black); color:var(--primary);">${qrWeakUnits.length}</div>
+                </div>
+                <button class="btn btn--primary btn--xl btn--full" id="qr-finish" style="margin-top:var(--sp-6);">
+                    🚀 Продолжить курс / Continue Course
+                </button>
+            </div>
+        `;
+
+        target.querySelector('#qr-finish').onclick = () => {
+            _destroyed = true;
+            Router.navigate('home');
+        };
     }
 
     // ─── SAVE PROGRESS ───
@@ -573,24 +873,81 @@ function renderLearning(container) {
 
         LangyState.progress.lessonHistory.push(historyEntry);
 
+        // Save mastery record
+        const masteryKey = activeTb.id + ':' + unit.id;
+        const prev = LangyState.progress.mastery[masteryKey];
+        LangyState.progress.mastery[masteryKey] = {
+            score: Math.max(result.score, prev?.score || 0),
+            passed: result.score >= 70 || (prev?.passed || false),
+            attempts: (prev?.attempts || 0) + 1,
+            failedIndices: failedExerciseIndices,
+            lastAttempt: new Date().toISOString().split('T')[0]
+        };
+
         // Remove from homework queue if completed
         LangyState.homework.current = LangyState.homework.current.filter(h => h.unitId !== unit.id);
 
-        // Advance curriculum
+        // Advance curriculum (with checkpoint gating)
         if (mode === 'lesson' && result.score >= 70 && unit.id === LangyState.progress.currentUnitId) {
             const nextUnit = activeTb.units.find(u => u.id === unit.id + 1);
             if (nextUnit) {
-                LangyState.progress.currentUnitId = nextUnit.id;
-                LangyState.progress.currentLessonIdx = 0;
-                LangyState.progress.currentUnit = `Unit ${nextUnit.id}: ${nextUnit.title}`;
+                // If next unit is past a checkpoint, verify checkpoint is cleared
+                const isGated = isBlockedByCheckpoint(nextUnit.id);
+                if (!isGated) {
+                    LangyState.progress.currentUnitId = nextUnit.id;
+                    LangyState.progress.currentLessonIdx = 0;
+                    LangyState.progress.currentUnit = `Unit ${nextUnit.id}: ${nextUnit.title}`;
+                }
             }
         }
+
+        // Check for CEFR badge
+        checkAndAwardBadge();
 
         // Update overall
         LangyState.progress.topicsCompleted = LangyState.progress.lessonHistory.filter(l => l.status === 'done').length;
         LangyState.progress.overall = Math.min(100, Math.round((LangyState.progress.topicsCompleted / activeTb.units.length) * 100));
 
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
+    }
+
+    // Check if a unit is blocked by an uncompleted checkpoint before it
+    function isBlockedByCheckpoint(targetUnitId) {
+        const targetIdx = activeTb.units.findIndex(u => u.id === targetUnitId);
+        if (targetIdx < 0) return false;
+
+        // Look backwards for any review unit that hasn't been passed
+        for (let i = targetIdx - 1; i >= 0; i--) {
+            const u = activeTb.units[i];
+            if (u.unitType === 'review') {
+                const key = activeTb.id + ':' + u.id;
+                const record = LangyState.progress.mastery[key];
+                if (!record || !record.passed) return true; // Blocked!
+                break; // Found a passed checkpoint, no need to look further
+            }
+        }
+        return false;
+    }
+
+    // Award CEFR badge if level is fully mastered
+    function checkAndAwardBadge() {
+        if (!activeTb || !activeTb.cefr) return;
+        const cefr = activeTb.cefr;
+        const badges = LangyState.progress.cefrBadges;
+        if (!badges[cefr] || badges[cefr].earned) return;
+
+        if (LangyCurriculum.isLevelComplete(activeTb.id)) {
+            badges[cefr] = {
+                earned: true,
+                date: new Date().toISOString().split('T')[0],
+                badge: '🏅'
+            };
+            // Show celebration!
+            setTimeout(() => {
+                Anim.showToast(`🏅 ${cefr} Level Complete! Badge earned!`);
+            }, 500);
+            if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
+        }
     }
 
     // ✅ FIX #4: Generate homework after every lesson

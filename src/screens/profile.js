@@ -2,6 +2,51 @@
    SCREEN: PROFILE & SETTINGS
    ============================================ */
 
+function buildCefrBadges() {
+    const badges = LangyState.progress.cefrBadges || {};
+    const levels = [
+        { code: 'A1', name: 'Beginner', color: '#10B981' },
+        { code: 'A2', name: 'Elementary', color: '#34D399' },
+        { code: 'B1', name: 'Intermediate', color: '#3B82F6' },
+        { code: 'B2', name: 'Upper-Int.', color: '#8B5CF6' },
+        { code: 'C1', name: 'Advanced', color: '#F59E0B' },
+        { code: 'C2', name: 'Proficiency', color: '#EF4444' }
+    ];
+
+    const currentLevel = LangyState.settings.languageLevel || 'A1';
+
+    return levels.map(lv => {
+        const badge = badges[lv.code];
+        const isEarned = badge && badge.earned;
+        const isActive = lv.code === currentLevel && !isEarned;
+        const stateClass = isEarned ? 'cefr-badge--earned' : isActive ? 'cefr-badge--active' : 'cefr-badge--locked';
+
+        // Calculate progress for active level
+        let progressPct = 0;
+        if (isActive && typeof LangyCurriculum !== 'undefined') {
+            const tb = LangyCurriculum.getByLevel(lv.code);
+            if (tb) {
+                const mastery = LangyState.progress.mastery;
+                const passed = tb.units.filter(u => {
+                    const key = tb.id + ':' + u.id;
+                    return mastery[key] && mastery[key].passed;
+                }).length;
+                progressPct = Math.round((passed / tb.units.length) * 100);
+            }
+        }
+
+        return `
+            <div class="cefr-badge ${stateClass}" style="--badge-color: ${lv.color};">
+                <div class="cefr-badge__level">${lv.code}</div>
+                <div class="cefr-badge__icon">${isEarned ? (badge.badge || '🏅') : isActive ? '🔓' : '🔒'}</div>
+                <div class="cefr-badge__name">${lv.name}</div>
+                ${isEarned ? `<div class="cefr-badge__date">${badge.date || ''}</div>` : ''}
+                ${isActive ? `<div class="cefr-badge__progress">${progressPct}%</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
 function renderProfile(container) {
     const { user, settings, streakData, currencies } = LangyState;
 
@@ -38,6 +83,13 @@ function renderProfile(container) {
             <!-- Settings Sections -->
             <div class="profile__sections">
 
+                <!-- CEFR Certificates -->
+                <div class="profile__section">
+                    <div class="profile__section-title">🏆 My Certificates</div>
+                    <div class="cefr-badges">
+                        ${buildCefrBadges()}
+                    </div>
+                </div>
                 <!-- Account -->
                 <div class="profile__section">
                     <div class="profile__section-title">Account</div>
@@ -247,7 +299,17 @@ function showLevelPicker() {
 
     overlay.querySelectorAll('[data-level]').forEach(el => {
         el.addEventListener('click', () => {
-            LangyState.settings.languageLevel = el.dataset.level.split(' ')[0];
+            const cefrCode = el.dataset.level.split(' ')[0]; // e.g. "B2"
+            LangyState.settings.languageLevel = cefrCode;
+
+            // Switch the active textbook to match
+            if (typeof LangyCurriculum !== 'undefined') {
+                LangyCurriculum.selectTextbookByLevel(cefrCode);
+            }
+
+            // Persist
+            if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+
             overlay.remove();
             Anim.showToast(`Level set to ${el.dataset.level}`);
             renderProfile(document.getElementById('screen-container'));
