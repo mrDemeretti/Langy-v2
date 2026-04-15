@@ -64,6 +64,8 @@ function renderLearning(container) {
     let correctAnswers = 0;
     let lessonStartTime = Date.now();
     let _destroyed = false;
+    let teachSlideIdx = 0;
+    const teachSlides = unit.teachSlides || [];
 
     // ─── MAIN RENDER ───
     function updateUI() {
@@ -107,6 +109,7 @@ function renderLearning(container) {
 
         switch (currentStep) {
             case 'intro': renderIntro(content); break;
+            case 'teach': renderTeach(content); break;
             case 'theory': renderTheory(content); break;
             case 'practice': renderPractice(content); break;
             case 'homework': renderHomeworkMode(content); break;
@@ -133,10 +136,11 @@ function renderLearning(container) {
         `;
 
         target.querySelector('#start-lesson').onclick = () => {
-            currentStep = unit.theory ? 'theory' : 'practice';
+            currentStep = teachSlides.length > 0 ? 'teach' : (unit.theory ? 'theory' : 'practice');
+            teachSlideIdx = 0;
             updateUI();
 
-            // ✅ FIX #1: Start AI chat integration
+            // Start AI chat integration
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.resetChat();
@@ -150,7 +154,148 @@ function renderLearning(container) {
         };
     }
 
-    // ─── THEORY ───
+    // ─── MASCOT TEACH ───
+    function renderTeach(target) {
+        const slide = teachSlides[teachSlideIdx];
+        if (!slide) { currentStep = 'practice'; currentExerciseIdx = 0; updateUI(); return; }
+
+        const isLast = teachSlideIdx >= teachSlides.length - 1;
+        const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
+        const chosenIdx = (typeof LangyState !== 'undefined' && LangyState.mascot) ? LangyState.mascot.selected || 0 : 0;
+        const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
+
+        // Build slide content based on type
+        let slideContent = '';
+        if (slide.type === 'examples' && slide.items) {
+            slideContent = `<div class="teach-examples">${slide.items.map(it => {
+                const hl = it.highlight ? `<span class="teach-hl">${it.highlight}</span>` : '';
+                return `<div class="teach-example-row"><span class="teach-base">${it.base}</span><span class="teach-arrow">→</span><span class="teach-result">${it.past}${hl ? '' : ''}</span></div>`;
+            }).join('')}</div>`;
+        } else if (slide.type === 'compare' && slide.left && slide.right) {
+            slideContent = `<div class="teach-compare"><div class="teach-col"><div class="teach-col__label">${slide.left.label}</div>${slide.left.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div><div class="teach-vs">VS</div><div class="teach-col teach-col--accent"><div class="teach-col__label">${slide.right.label}</div>${slide.right.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div></div>`;
+        } else if (slide.type === 'vocab-intro' && slide.words) {
+            slideContent = `<div class="teach-vocab-grid">${slide.words.map(w => `<div class="teach-vocab-card"><div class="teach-vocab-card__en">${w.en}</div><div class="teach-vocab-card__ru">${w.ru}</div></div>`).join('')}</div>`;
+        } else if (slide.type === 'quiz-check') {
+            slideContent = `<div class="teach-quiz" id="teach-quiz">${(slide.options || []).map((o, i) => `<button class="btn btn--secondary teach-quiz__opt" data-idx="${i}">${o}</button>`).join('')}</div>`;
+        } else if (slide.type === 'tip') {
+            slideContent = `<div class="teach-tip"><div class="teach-tip__icon">💡</div><div class="teach-tip__text">${slide.tipText || ''}</div></div>`;
+        }
+
+        target.innerHTML = `
+            <div class="teach-slide animate-in">
+                <div class="teach-slide__progress">
+                    ${teachSlides.map((_, i) => `<div class="teach-dot ${i === teachSlideIdx ? 'teach-dot--active' : i < teachSlideIdx ? 'teach-dot--done' : ''}"></div>`).join('')}
+                </div>
+                <div class="teach-mascot">
+                    <img src="${mascotSrc}" alt="Mascot" class="teach-mascot__img mascot--${slide.mascotEmotion || 'happy'}">
+                </div>
+                <div class="teach-bubble" id="teach-bubble">
+                    <div class="teach-bubble__text" id="teach-text"></div>
+                </div>
+                ${slideContent ? `<div class="teach-content">${slideContent}</div>` : ''}
+                <div class="teach-actions">
+                    <button class="btn btn--primary btn--xl btn--full" id="teach-next" style="display:none;">
+                        ${isLast ? '🚀 К практике! / Start Practice →' : 'Далее / Next →'}
+                    </button>
+                    <button class="btn btn--ghost btn--sm" id="teach-ask" style="margin-top:var(--sp-2);display:none;">
+                        💬 Не понимаю / Ask mascot
+                    </button>
+                    <button class="btn btn--ghost btn--sm" id="teach-speak" style="margin-top:var(--sp-1);display:none;">
+                        🔊 Озвучить / Listen
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Typewriter effect
+        const textEl = target.querySelector('#teach-text');
+        const nextBtn = target.querySelector('#teach-next');
+        const askBtn = target.querySelector('#teach-ask');
+        const speakBtn = target.querySelector('#teach-speak');
+        const fullText = slide.mascotText || '';
+        let charIdx = 0;
+        const speed = 25; // ms per character
+
+        function typeChar() {
+            if (_destroyed || charIdx >= fullText.length) {
+                // Typing done — show buttons
+                if (nextBtn) nextBtn.style.display = '';
+                if (askBtn) askBtn.style.display = '';
+                if (speakBtn) speakBtn.style.display = '';
+                return;
+            }
+            charIdx++;
+            textEl.textContent = fullText.slice(0, charIdx);
+            setTimeout(typeChar, speed);
+        }
+        typeChar();
+
+        // Skip typewriter on tap on the bubble
+        target.querySelector('#teach-bubble').onclick = () => {
+            charIdx = fullText.length;
+            textEl.textContent = fullText;
+            if (nextBtn) nextBtn.style.display = '';
+            if (askBtn) askBtn.style.display = '';
+            if (speakBtn) speakBtn.style.display = '';
+        };
+
+        // Next slide / go to practice
+        nextBtn.onclick = () => {
+            if (isLast) {
+                currentStep = 'practice';
+                currentExerciseIdx = 0;
+            } else {
+                teachSlideIdx++;
+            }
+            updateUI();
+        };
+
+        // Quiz-check handler
+        if (slide.type === 'quiz-check') {
+            target.querySelectorAll('.teach-quiz__opt').forEach(btn => {
+                btn.onclick = () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    const correct = idx === slide.correct;
+                    btn.classList.add(correct ? 'teach-quiz__opt--correct' : 'teach-quiz__opt--wrong');
+                    if (!correct) {
+                        const rightBtn = target.querySelector(`.teach-quiz__opt[data-idx="${slide.correct}"]`);
+                        if (rightBtn) rightBtn.classList.add('teach-quiz__opt--correct');
+                    }
+                    target.querySelectorAll('.teach-quiz__opt').forEach(b => b.disabled = true);
+                    if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion(correct ? 'happy' : 'encouraging');
+                    // Auto-advance after 1.5s
+                    setTimeout(() => { if (!_destroyed) { teachSlideIdx++; updateUI(); } }, 1500);
+                };
+            });
+        }
+
+        // Ask mascot (opens DeepTutor with context)
+        askBtn.onclick = () => {
+            if (typeof DeepTutor !== 'undefined') {
+                DeepTutor.show();
+                DeepTutor.open();
+                DeepTutor.handleSend(`The student doesn't understand this explanation: "${slide.mascotText}". Please explain it more simply, with more examples.`, true);
+            }
+        };
+
+        // TTS — Google built-in Web Speech API
+        speakBtn.onclick = () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(fullText);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+                speakBtn.textContent = '🔊 Playing...';
+                utterance.onend = () => { speakBtn.textContent = '🔊 Озвучить / Listen'; };
+            } else {
+                Anim.showToast('TTS не поддерживается в этом браузере');
+            }
+        };
+    }
+
+    // ─── THEORY (legacy fallback) ───
     function renderTheory(target) {
         target.innerHTML = `
             <div class="lesson-theory animate-in">
@@ -172,7 +317,6 @@ function renderLearning(container) {
             updateUI();
         };
 
-        // ✅ FIX #1: Let user ask AI from theory
         target.querySelector('#theory-ask-ai').onclick = () => {
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();

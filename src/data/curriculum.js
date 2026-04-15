@@ -28,6 +28,50 @@ const LangyCurriculum = {
                 vocab: ['numbers 0-10', 'days of the week', 'greetings', 'goodbye phrases'],
                 pronunciation: ['/h/', '/aɪ/', '/iː/'],
                 homework: { prompt: 'Write 3 sentences introducing yourself: your name, where you are from, and a greeting.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Hey there! Welcome to your first English lesson! Today we'll learn how to introduce yourself. The most important verb in English is 'to be'. Let's start with 'I' and 'you'!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "Look at these examples. With 'I' we always use 'am'. With 'you' we use 'are':",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'I', past: 'I am (I\'m)', highlight: 'am' },
+                            { base: 'You', past: 'You are (You\'re)', highlight: 'are' },
+                            { base: 'I + name', past: 'I am Alex', highlight: 'am' },
+                            { base: 'You + from', past: 'You are from Russia', highlight: 'are' }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Now let's learn some basic greetings! You'll use these every day:",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'Hello', ru: 'Привет' },
+                            { en: 'Goodbye', ru: 'До свидания' },
+                            { en: 'Please', ru: 'Пожалуйста' },
+                            { en: 'Thank you', ru: 'Спасибо' },
+                            { en: 'Yes', ru: 'Да' },
+                            { en: 'No', ru: 'Нет' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "Quick check! Which is correct: 'I __ Alex'?",
+                        mascotEmotion: 'thinking',
+                        options: ['I is Alex', 'I am Alex', 'I are Alex'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Pro tip! In everyday speech, people use short forms: I'm = I am, You're = You are. It sounds more natural!",
+                        mascotEmotion: 'happy',
+                        tipText: "I'm = I am, You're = You are. Short forms are used in 90% of spoken English!"
+                    }
+                ],
                 exercises: [
                     {
                         type: 'listen-type',
@@ -83,6 +127,46 @@ const LangyCurriculum = {
                 vocab: ['countries', 'nationalities', 'he/she/it'],
                 pronunciation: ['/ɪ/', '/əʊ/', '/s/', '/ʃ/'],
                 homework: { prompt: 'Write about 3 famous people: where they are from and what they do.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Great job on Unit 1! Now let's learn about other people. When we talk about 'he', 'she', or 'it', we use 'is'. He is, She is, It is!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "See the difference? 'I' uses 'am', 'You' uses 'are', but 'He/She/It' uses 'is':",
+                        mascotEmotion: 'happy',
+                        left: { label: 'Subject', items: ['I', 'You', 'He', 'She', 'It'] },
+                        right: { label: 'Verb BE', items: ['am', 'are', 'is', 'is', 'is'] }
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Let's learn some countries and nationalities!",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'Japan → Japanese', ru: 'Япония → Японский' },
+                            { en: 'Brazil → Brazilian', ru: 'Бразилия → Бразильский' },
+                            { en: 'France → French', ru: 'Франция → Французский' },
+                            { en: 'Italy → Italian', ru: 'Италия → Итальянский' },
+                            { en: 'Russia → Russian', ru: 'Россия → Русский' },
+                            { en: 'USA → American', ru: 'США → Американский' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "Quick check! 'She ___ from France.' Which word fits?",
+                        mascotEmotion: 'thinking',
+                        options: ['am', 'is', 'are'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Remember: He's = He is, She's = She is, It's = It is. These short forms are super common!",
+                        mascotEmotion: 'happy',
+                        tipText: "He's = He is, She's = She is, It's = It is. Use them to sound more natural!"
+                    }
+                ],
                 exercises: [
                     {
                         type: 'fill-bubble',
