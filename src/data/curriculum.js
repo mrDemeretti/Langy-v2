@@ -1,1362 +1,1172 @@
 /* ============================================
-   LANGY — FULL CURRICULUM DATA
-   Based on Oxford English File 4th Edition
-   Levels: A1 → C2 (6 textbooks)
+   LANGY — FULL CURRICULUM DATA v2
+   Optimized: 89 units across A1-C2
+   Types: 📗 Grammar · 🗣️ Situational · 🎤 Pronunciation · 🔄 Review
    ============================================ */
 
 const LangyCurriculum = {
-    activeTextbookId: null, // Set after placement test
+    activeTextbookId: null,
+    targetLanguage: 'en',
 
     textbooks: [
 
     // ═══════════════════════════════════════════
-    // A1 — BEGINNER (Oxford English File Beginner)
+    // A1 — BEGINNER (18 units)
     // ═══════════════════════════════════════════
     {
-        id: 'oxford_a1_beginner',
-        title: 'English File A1 — Beginner',
-        author: 'Oxford University Press',
+        id: 'a1_beginner',
+        title: 'A1 — Beginner',
         level: 'A1',
         cefr: 'A1',
-        methodology: 'Introduction to English. Basic greetings, simple present tense, everyday vocabulary. Focus on survival English and building confidence.',
+        methodology: 'Introduction to English. Basic greetings, verb BE, Present Simple, Past Simple. Focus on survival English.',
         units: [
+            // ── Unit 1: Verb BE ──
             {
                 id: 1,
-                title: 'Unit 1: A cappuccino, please',
-                desc: 'Learn to introduce yourself, use verb be (I, you), count 0-10, days of the week.',
-                grammar: ['verb be (singular): I and you', 'positive, negative, questions'],
-                vocab: ['numbers 0-10', 'days of the week', 'greetings', 'goodbye phrases'],
-                pronunciation: ['/h/', '/aɪ/', '/iː/'],
-                homework: { prompt: 'Write 3 sentences introducing yourself: your name, where you are from, and a greeting.' },
+                title: 'Verb BE: all forms',
+                desc: 'am / is / are — positive, negative, questions. Greetings, numbers 0-20, countries.',
+                unitType: 'grammar',
+                grammar: ['verb be: am/is/are', 'positive and negative', 'yes/no questions'],
+                vocab: ['greetings', 'numbers 0-20', 'countries', 'nationalities'],
+                homework: { prompt: 'Write 5 sentences about yourself and your friends using am, is, are.' },
                 teachSlides: [
                     {
                         type: 'explain',
-                        mascotText: "Hey there! Welcome to your first English lesson! Today we'll learn how to introduce yourself. The most important verb in English is 'to be'. Let's start with 'I' and 'you'!",
-                        mascotEmotion: 'happy'
-                    },
-                    {
-                        type: 'examples',
-                        mascotText: "Look at these examples. With 'I' we always use 'am'. With 'you' we use 'are':",
-                        mascotEmotion: 'happy',
-                        items: [
-                            { base: 'I', past: 'I am (I\'m)', highlight: 'am' },
-                            { base: 'You', past: 'You are (You\'re)', highlight: 'are' },
-                            { base: 'I + name', past: 'I am Alex', highlight: 'am' },
-                            { base: 'You + from', past: 'You are from Russia', highlight: 'are' }
-                        ]
-                    },
-                    {
-                        type: 'vocab-intro',
-                        mascotText: "Now let's learn some basic greetings! You'll use these every day:",
-                        mascotEmotion: 'happy',
-                        words: [
-                            { en: 'Hello', ru: 'Привет' },
-                            { en: 'Goodbye', ru: 'До свидания' },
-                            { en: 'Please', ru: 'Пожалуйста' },
-                            { en: 'Thank you', ru: 'Спасибо' },
-                            { en: 'Yes', ru: 'Да' },
-                            { en: 'No', ru: 'Нет' }
-                        ]
-                    },
-                    {
-                        type: 'quiz-check',
-                        mascotText: "Quick check! Which is correct: 'I __ Alex'?",
-                        mascotEmotion: 'thinking',
-                        options: ['I is Alex', 'I am Alex', 'I are Alex'],
-                        correct: 1
-                    },
-                    {
-                        type: 'tip',
-                        mascotText: "Pro tip! In everyday speech, people use short forms: I'm = I am, You're = You are. It sounds more natural!",
-                        mascotEmotion: 'happy',
-                        tipText: "I'm = I am, You're = You are. Short forms are used in 90% of spoken English!"
-                    }
-                ],
-                exercises: [
-                    {
-                        type: 'listen-type',
-                        data: {
-                            instruction: 'Listen and type what you hear',
-                            text: 'Hello, my name is Alex.',
-                            hint: 'Start with a capital letter and end with a period.'
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match the words with their translations',
-                            pairs: [
-                                { left: 'Hello', right: 'Привет' },
-                                { left: 'Name', right: 'Имя' },
-                                { left: 'From', right: 'Из' },
-                                { left: 'Please', right: 'Пожалуйста' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct form of the verb "to be"',
-                            sentence: 'I ___ from London.',
-                            options: ['am', 'is', 'are'],
-                            correct: 0
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Put the words in the correct order',
-                            words: ['my', 'is', 'name', 'Anna'],
-                            correct: ['my', 'name', 'is', 'Anna']
-                        }
-                    },
-                    {
-                        type: 'speak-aloud',
-                        data: {
-                            instruction: 'Say this phrase aloud:',
-                            phrase: 'Hello, my name is Alex'
-                        }
-                    }
-                ]
-            },
-            {
-                id: 2,
-                title: 'Unit 2: World music',
-                desc: 'Talk about where people are from. Verb be with he, she, it. Countries.',
-                grammar: ['verb be (singular): he, she, it', 'Where is he/she from?'],
-                vocab: ['countries', 'nationalities', 'he/she/it'],
-                pronunciation: ['/ɪ/', '/əʊ/', '/s/', '/ʃ/'],
-                homework: { prompt: 'Write about 3 famous people: where they are from and what they do.' },
-                teachSlides: [
-                    {
-                        type: 'explain',
-                        mascotText: "Great job on Unit 1! Now let's learn about other people. When we talk about 'he', 'she', or 'it', we use 'is'. He is, She is, It is!",
+                        mascotText: "Welcome to your first English lesson! The most important verb is 'to be'. It has 3 forms: AM, IS, ARE. Let's learn them!",
                         mascotEmotion: 'happy'
                     },
                     {
                         type: 'compare',
-                        mascotText: "See the difference? 'I' uses 'am', 'You' uses 'are', but 'He/She/It' uses 'is':",
+                        mascotText: "Each subject has its own form of BE. Look at this table — it's the most important thing in A1!",
                         mascotEmotion: 'happy',
-                        left: { label: 'Subject', items: ['I', 'You', 'He', 'She', 'It'] },
-                        right: { label: 'Verb BE', items: ['am', 'are', 'is', 'is', 'is'] }
+                        left: { label: 'Subject', items: ['I', 'You / We / They', 'He / She / It'] },
+                        right: { label: 'Verb BE', items: ['am', 'are', 'is'] }
                     },
                     {
-                        type: 'vocab-intro',
-                        mascotText: "Let's learn some countries and nationalities!",
+                        type: 'examples',
+                        mascotText: "Now let's see BE in action with real sentences:",
                         mascotEmotion: 'happy',
-                        words: [
-                            { en: 'Japan → Japanese', ru: 'Япония → Японский' },
-                            { en: 'Brazil → Brazilian', ru: 'Бразилия → Бразильский' },
-                            { en: 'France → French', ru: 'Франция → Французский' },
-                            { en: 'Italy → Italian', ru: 'Италия → Итальянский' },
-                            { en: 'Russia → Russian', ru: 'Россия → Русский' },
-                            { en: 'USA → American', ru: 'США → Американский' }
+                        items: [
+                            { base: 'I + student', past: "I am a student", highlight: 'am' },
+                            { base: 'You + from', past: "You are from Brazil", highlight: 'are' },
+                            { base: 'He + teacher', past: "He is a teacher", highlight: 'is' },
+                            { base: 'They + happy', past: "They are happy", highlight: 'are' }
                         ]
                     },
                     {
                         type: 'quiz-check',
-                        mascotText: "Quick check! 'She ___ from France.' Which word fits?",
+                        mascotText: "Quick check! 'She ___ a doctor.' Which is correct?",
                         mascotEmotion: 'thinking',
                         options: ['am', 'is', 'are'],
                         correct: 1
                     },
                     {
                         type: 'tip',
-                        mascotText: "Remember: He's = He is, She's = She is, It's = It is. These short forms are super common!",
+                        mascotText: "People almost always use short forms in speech: I'm, you're, he's, she's, it's, we're, they're. Learn them!",
                         mascotEmotion: 'happy',
-                        tipText: "He's = He is, She's = She is, It's = It is. Use them to sound more natural!"
+                        tipText: "I'm = I am · You're = You are · He's = He is · She's = She is · We're = We are · They're = They are"
                     }
                 ],
                 exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct form',
-                            sentence: 'She ___ from Brazil.',
-                            options: ['am', 'is', 'are'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match the country with the nationality',
-                            pairs: [
-                                { left: 'Japan', right: 'Japanese' },
-                                { left: 'Brazil', right: 'Brazilian' },
-                                { left: 'France', right: 'French' },
-                                { left: 'Italy', right: 'Italian' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'type-translation',
-                        data: {
-                            instruction: 'Translate to English',
-                            sourceText: 'Он из Японии.',
-                            fromLang: 'RU',
-                            toLang: 'EN',
-                            answer: 'He is from Japan'
-                        }
-                    },
-                    {
-                        type: 'image-choice',
-                        data: {
-                            instruction: 'Which flag represents France?',
-                            word: 'France',
-                            options: [
-                                { emoji: '🇬🇧', label: 'UK' },
-                                { emoji: '🇫🇷', label: 'France' },
-                                { emoji: '🇩🇪', label: 'Germany' },
-                                { emoji: '🇪🇸', label: 'Spain' }
-                            ],
-                            correct: 1
-                        }
-                    }
+                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'I ___ from London.', options: ['am', 'is', 'are'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'They ___ students.', options: ['am', 'is', 'are'], correct: 2 } },
+                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'He ___ a teacher.', options: ['am', 'is', 'are'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Put the words in order', words: ['is', 'she', 'from', 'Japan'], correct: ['she', 'is', 'from', 'Japan'] } },
+                    { type: 'word-shuffle', data: { instruction: 'Put the words in order', words: ['are', 'we', 'happy'], correct: ['we', 'are', 'happy'] } },
+                    { type: 'match-pairs', data: { instruction: 'Match subject with verb BE', pairs: [{ left: 'I', right: 'am' }, { left: 'He', right: 'is' }, { left: 'You', right: 'are' }, { left: 'They', right: 'are' }] } },
+                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Я студент.', fromLang: 'RU', toLang: 'EN', answer: 'I am a student' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'Hello, my name is Alex.', hint: 'Start with a capital letter.' } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative form: She ___ a doctor.', sentence: 'She ___ a doctor. (negative)', options: ["isn't", "aren't", "am not"], correct: 0 } },
+                    { type: 'speak-aloud', data: { instruction: 'Say this aloud:', phrase: "Hi! I'm Alex. I'm from Russia. Nice to meet you!" } }
                 ]
             },
-            {
-                id: 3,
-                title: 'Unit 3: Are you on holiday?',
-                desc: 'Verb be in plural. Nationalities. Phone numbers 11-100.',
-                grammar: ['verb be (plural): we, you, they', 'Wh- and How questions with be'],
-                vocab: ['nationalities (plural)', 'phone numbers 11-100', 'holiday vocabulary'],
-                pronunciation: ['/dʒ/', '/tʃ/', '/ʃ/'],
-                homework: { prompt: 'Write your phone number in words. Ask 3 questions using "Where/What/How".' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct form',
-                            sentence: 'We ___ on holiday.',
-                            options: ['am', 'is', 'are'],
-                            correct: 2
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Make a question',
-                            words: ['are', 'where', 'you', 'from', '?'],
-                            correct: ['where', 'are', 'you', 'from', '?']
-                        }
-                    },
-                    {
-                        type: 'listen-type',
-                        data: {
-                            instruction: 'Listen and type the number you hear',
-                            text: 'forty-seven',
-                            hint: 'Write the number in words.'
-                        }
-                    },
-                    {
-                        type: 'type-translation',
-                        data: {
-                            instruction: 'Translate to English',
-                            sourceText: 'Они из Мексики.',
-                            fromLang: 'RU',
-                            toLang: 'EN',
-                            answer: 'They are from Mexico'
-                        }
-                    }
-                ]
-            },
-            {
-                id: 4,
-                title: 'Unit 4: Where are my keys?',
-                desc: 'Singular and plural nouns. Articles a/an. Small things vocabulary.',
-                grammar: ['singular and plural nouns', 'a / an', 'this / that / these / those'],
-                vocab: ['small things (keys, phone, bag, wallet)', 'souvenirs', 'classroom objects'],
-                pronunciation: ['/z/', '/s/', 'plural endings'],
-                homework: { prompt: 'Look around your room. Write 5 sentences: "There is a..." or "There are..."' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose: a or an?',
-                            sentence: 'She has ___ umbrella.',
-                            options: ['a', 'an'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'image-choice',
-                        data: {
-                            instruction: 'Choose the correct picture',
-                            word: 'Keys',
-                            options: [
-                                { emoji: '🔑', label: 'Keys' },
-                                { emoji: '📱', label: 'Phone' },
-                                { emoji: '👛', label: 'Wallet' },
-                                { emoji: '🎒', label: 'Bag' }
-                            ],
-                            correct: 0
-                        }
-                    },
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct word',
-                            sentence: '___ is my book. (pointing to a book near you)',
-                            options: ['This', 'That', 'These', 'Those'],
-                            correct: 0
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match singular to plural',
-                            pairs: [
-                                { left: 'key', right: 'keys' },
-                                { left: 'bus', right: 'buses' },
-                                { left: 'child', right: 'children' },
-                                { left: 'person', right: 'people' }
-                            ]
-                        }
-                    }
-                ]
-            },
-            {
-                id: 5,
-                title: 'Unit 5: Meet the family',
-                desc: 'Possessive adjectives (my, your, his, her). Family vocabulary.',
-                grammar: ['possessive adjectives (my, your, his, her, its, our, their)', "possessive 's"],
-                vocab: ['people and family (mother, father, sister, brother, son, daughter)', 'adjectives'],
-                pronunciation: ['/ʌ/', '/æ/', '/ə/'],
-                homework: { prompt: 'Describe your family. Use possessive adjectives: "My mother is...", "Her name is..."' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct possessive adjective',
-                            sentence: 'Anna is ___ sister. (= the sister of Tom)',
-                            options: ['my', 'his', 'her', 'their'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match the family words',
-                            pairs: [
-                                { left: 'mother', right: 'мама' },
-                                { left: 'father', right: 'папа' },
-                                { left: 'daughter', right: 'дочь' },
-                                { left: 'brother', right: 'брат' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Put the words in order',
-                            words: ['is', 'my', 'this', 'wife'],
-                            correct: ['this', 'is', 'my', 'wife']
-                        }
-                    },
-                    {
-                        type: 'type-translation',
-                        data: {
-                            instruction: 'Translate to English',
-                            sourceText: 'Её муж — врач.',
-                            fromLang: 'RU',
-                            toLang: 'EN',
-                            answer: 'Her husband is a doctor'
-                        }
-                    }
-                ]
-            },
-            {
-                id: 6,
-                title: 'Unit 6: A big breakfast',
-                desc: 'Present Simple positive and negative (I/you/we/they). Food and drink.',
-                grammar: ['present simple + and – (I, you, we, they)', 'present simple questions (I, you, we, they)'],
-                vocab: ['food and drink (coffee, tea, bread, eggs, juice)', 'common verb phrases'],
-                pronunciation: ['/dʒ/', '/g/'],
-                homework: { prompt: 'Write about your typical breakfast. What do you eat? What do you drink?' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct verb form',
-                            sentence: 'I ___ coffee in the morning.',
-                            options: ['drink', 'drinks', 'drinking'],
-                            correct: 0
-                        }
-                    },
-                    {
-                        type: 'image-choice',
-                        data: {
-                            instruction: 'Choose the correct picture',
-                            word: 'Coffee',
-                            options: [
-                                { emoji: '☕', label: 'Coffee' },
-                                { emoji: '🍵', label: 'Tea' },
-                                { emoji: '🥤', label: 'Juice' },
-                                { emoji: '🥛', label: 'Milk' }
-                            ],
-                            correct: 0
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Make a negative sentence',
-                            words: ["don't", 'we', 'eat', 'meat'],
-                            correct: ['we', "don't", 'eat', 'meat']
-                        }
-                    },
-                    {
-                        type: 'read-answer',
-                        data: {
-                            instruction: 'Read and answer the question',
-                            passage: 'In the UK, a traditional English breakfast includes eggs, bacon, sausages, toast, and tea. Many people also have cereal or fruit juice.',
-                            question: 'What do people drink with a traditional English breakfast?',
-                            options: ['Coffee', 'Tea', 'Water', 'Juice'],
-                            correct: 1
-                        }
-                    }
-                ]
-            },
-            {
-                id: 7,
-                title: 'Unit 7: A school reunion',
-                desc: 'Present Simple with he/she/it. Jobs and places of work. Daily routines.',
-                grammar: ['present simple: he, she, it (+s/-es)', 'adverbs of frequency (always, usually, sometimes, never)'],
-                vocab: ['jobs (doctor, teacher, engineer)', 'places of work', 'daily routine verbs'],
-                pronunciation: ['third person -es', 'sentence rhythm'],
-                homework: { prompt: 'Describe your daily routine. Use adverbs of frequency: always, usually, sometimes, never.' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct form',
-                            sentence: 'She ___ in a hospital.',
-                            options: ['work', 'works', 'working'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match the job with the place',
-                            pairs: [
-                                { left: 'doctor', right: 'hospital' },
-                                { left: 'teacher', right: 'school' },
-                                { left: 'waiter', right: 'restaurant' },
-                                { left: 'pilot', right: 'airport' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Put the words in order',
-                            words: ['usually', 'he', 'at', 'gets up', '7'],
-                            correct: ['he', 'usually', 'gets up', 'at', '7']
-                        }
-                    },
-                    {
-                        type: 'speak-aloud',
-                        data: {
-                            instruction: 'Say this sentence aloud:',
-                            phrase: 'She always has breakfast at eight'
-                        }
-                    }
-                ]
-            },
-            {
-                id: 8,
-                title: 'Unit 8: Have a nice weekend!',
-                desc: 'Word order in questions. Imperatives. Object pronouns. Free time vocabulary.',
-                grammar: ['word order in questions', 'imperatives (sit down, open your book)', 'object pronouns (me, him, her, us, them)'],
-                vocab: ['free time activities', 'films and cinema', 'weekend activities'],
-                pronunciation: ['/w/', '/h/', '/eə/', '/aʊ/'],
-                homework: { prompt: 'Write about your last weekend. What did you do? Use 5 sentences.' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct pronoun',
-                            sentence: 'I like Anna. I see ___ every day.',
-                            options: ['she', 'her', 'him', 'they'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Make a question',
-                            words: ['do', 'what', 'you', 'at', 'do', 'weekends', '?'],
-                            correct: ['what', 'do', 'you', 'do', 'at', 'weekends', '?']
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match subject pronoun to object pronoun',
-                            pairs: [
-                                { left: 'I', right: 'me' },
-                                { left: 'he', right: 'him' },
-                                { left: 'she', right: 'her' },
-                                { left: 'they', right: 'them' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'type-translation',
-                        data: {
-                            instruction: 'Translate to English',
-                            sourceText: 'Откройте ваши книги.',
-                            fromLang: 'RU',
-                            toLang: 'EN',
-                            answer: 'Open your books'
-                        }
-                    }
-                ]
-            },
-            {
-                id: 9,
-                title: 'Unit 9: Can I park here?',
-                desc: 'Can/can\'t for ability and permission. Like + verb-ing.',
-                grammar: ["can / can't", 'like / love / hate + verb + -ing'],
-                vocab: ['more verb phrases', 'activities (swimming, cooking, dancing)', 'permission phrases'],
-                pronunciation: ["can / can't", '/ʊ/', '/uː/'],
-                homework: { prompt: 'Write 5 things you can do and 3 things you can\'t do.' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct answer',
-                            sentence: 'I ___ swim very well.',
-                            options: ['can', "can't", 'do'],
-                            correct: 0
-                        }
-                    },
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct form',
-                            sentence: 'She loves ___.',
-                            options: ['cook', 'cooking', 'to cooking'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match the activity',
-                            pairs: [
-                                { left: '🏊', right: 'swimming' },
-                                { left: '🎸', right: 'playing guitar' },
-                                { left: '🍳', right: 'cooking' },
-                                { left: '💃', right: 'dancing' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'speak-aloud',
-                        data: {
-                            instruction: 'Say this sentence:',
-                            phrase: "I can't speak French but I can speak English"
-                        }
-                    }
-                ]
-            },
-            {
-                id: 10,
-                title: 'Unit 10: Present continuous & clothes',
-                desc: 'Present continuous tense. Describing what people are doing now. Clothes vocabulary.',
-                grammar: ['present continuous (am/is/are + -ing)', 'present continuous or present simple?'],
-                vocab: ['clothes (shirt, trousers, dress, shoes)', 'actions happening now'],
-                pronunciation: ['/ɜː/', 'vowel sounds'],
-                homework: { prompt: 'Describe what your family members are doing right now. Use present continuous.' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct form',
-                            sentence: 'She ___ a red dress today.',
-                            options: ['wears', 'is wearing', 'wear'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'image-choice',
-                        data: {
-                            instruction: 'What is the person doing?',
-                            word: 'Reading',
-                            options: [
-                                { emoji: '📖', label: 'Reading' },
-                                { emoji: '🏃', label: 'Running' },
-                                { emoji: '🍳', label: 'Cooking' },
-                                { emoji: '😴', label: 'Sleeping' }
-                            ],
-                            correct: 0
-                        }
-                    },
-                    {
-                        type: 'type-translation',
-                        data: {
-                            instruction: 'Translate to English',
-                            sourceText: 'Они сейчас играют в футбол.',
-                            fromLang: 'RU',
-                            toLang: 'EN',
-                            answer: 'They are playing football now'
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Put the words in order',
-                            words: ['is', 'he', 'what', 'wearing', '?'],
-                            correct: ['what', 'is', 'he', 'wearing', '?']
-                        }
-                    }
-                ]
-            },
-            {
-                id: 11,
-                title: "Unit 11: There's a... / Where were you?",
-                desc: "There is/there are. Past simple of 'be'. Hotels and prepositions.",
-                grammar: ["there's a… / there are some…", 'past simple: was / were'],
-                vocab: ['hotels (room, bathroom, bed)', 'prepositions (in, on, under, next to)', 'time expressions'],
-                pronunciation: ['/ɪə/', '/eə/'],
-                homework: { prompt: 'Describe your room using there is/there are. Then write where you were yesterday.' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct word',
-                            sentence: 'There ___ two beds in the room.',
-                            options: ['is', 'are', 'was'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct past form',
-                            sentence: 'Where ___ you yesterday?',
-                            options: ['was', 'were', 'are'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match preposition to picture',
-                            pairs: [
-                                { left: '📦⬆️', right: 'on' },
-                                { left: '📦⬇️', right: 'under' },
-                                { left: '📦↔️', right: 'next to' },
-                                { left: '📦🔲', right: 'in' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'type-translation',
-                        data: {
-                            instruction: 'Translate to English',
-                            sourceText: 'Я был дома вчера.',
-                            fromLang: 'RU',
-                            toLang: 'EN',
-                            answer: 'I was at home yesterday'
-                        }
-                    }
-                ]
-            },
-            {
-                id: 12,
-                title: 'Unit 12: Past simple — regular and irregular',
-                desc: 'Past simple with regular and irregular verbs. Telling stories.',
-                grammar: ['past simple: regular verbs (-ed)', 'past simple: irregular verbs (go-went, have-had, do-did)'],
-                vocab: ['regular verbs (worked, played, watched)', 'irregular verbs (went, had, did, got)', 'time expressions (yesterday, last week, ago)'],
-                pronunciation: ['regular past simple endings /d/, /t/, /ɪd/', 'irregular verbs'],
-                homework: { prompt: 'Write about what you did last weekend. Use at least 5 past simple verbs.' },
-                exercises: [
-                    {
-                        type: 'fill-bubble',
-                        data: {
-                            instruction: 'Choose the correct past form of "go"',
-                            sentence: 'We ___ to the cinema last night.',
-                            options: ['go', 'went', 'goed'],
-                            correct: 1
-                        }
-                    },
-                    {
-                        type: 'match-pairs',
-                        data: {
-                            instruction: 'Match present to past',
-                            pairs: [
-                                { left: 'go', right: 'went' },
-                                { left: 'have', right: 'had' },
-                                { left: 'see', right: 'saw' },
-                                { left: 'eat', right: 'ate' }
-                            ]
-                        }
-                    },
-                    {
-                        type: 'word-shuffle',
-                        data: {
-                            instruction: 'Make a sentence',
-                            words: ['yesterday', 'I', 'played', 'football'],
-                            correct: ['I', 'played', 'football', 'yesterday']
-                        }
-                    },
-                    {
-                        type: 'read-answer',
-                        data: {
-                            instruction: 'Read and answer',
-                            passage: "Last summer, Tom went to Italy with his family. They stayed in a small hotel near the beach. They visited Rome and ate a lot of pizza and pasta. Tom's favourite day was when they went to the Colosseum.",
-                            question: "Where did Tom go last summer?",
-                            options: ['France', 'Spain', 'Italy', 'Greece'],
-                            correct: 2
-                        }
-                    }
-                ]
-            }
-        ]
-    },
 
-    // ═══════════════════════════════════════════
-    // A2 — ELEMENTARY (Oxford English File Elementary)
-    // ═══════════════════════════════════════════
-    {
-        id: 'oxford_a2_elementary',
-        title: 'English File A2 — Elementary',
-        author: 'Oxford University Press',
-        level: 'A2',
-        cefr: 'A2',
-        methodology: 'Building on basics. Past tenses, future plans, comparisons. Expanding vocabulary to handle familiar situations with confidence.',
-        units: [
-            {
-                id: 1,
-                title: 'Unit 1: Nice to meet you',
-                desc: 'Revision of verb be. Word order in questions. Everyday objects.',
-                grammar: ['verb be: revision and extension', 'word order in questions', 'possessive adjectives revision'],
-                vocab: ['everyday objects', 'personal information', 'numbers review'],
-                homework: { prompt: 'Write a short paragraph introducing a friend: name, age, job, interests.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Complete the question', sentence: '___ is your phone number?', options: ['What', 'Where', 'Who', 'When'], correct: 0 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['old', 'how', 'are', 'you', '?'], correct: ['how', 'old', 'are', 'you', '?'] } },
-                    { type: 'match-pairs', data: { instruction: 'Match question and answer', pairs: [ { left: 'What do you do?', right: "I'm a student" }, { left: 'Where are you from?', right: "I'm from Russia" }, { left: 'How old are you?', right: "I'm 25" }, { left: "What's your name?", right: "I'm Anna" } ] } },
-                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Сколько тебе лет?', fromLang: 'RU', toLang: 'EN', answer: 'How old are you' } }
-                ]
-            },
+            // ── Unit 2: Questions with BE ──
             {
                 id: 2,
-                title: 'Unit 2: A good time to travel',
-                desc: 'Present simple: daily routines, likes and dislikes. Telling the time.',
-                grammar: ['present simple (all forms)', "adverbs of frequency", 'prepositions of time (at, in, on)'],
-                vocab: ['telling the time', 'daily routine verbs', 'transport'],
-                homework: { prompt: 'Describe a typical day in your life from morning to evening using time expressions.' },
+                title: 'Questions: Wh- and How',
+                desc: 'What, Where, How old + be. Phone numbers, numbers to 100.',
+                unitType: 'grammar',
+                grammar: ['Wh- questions with be', 'How old/How are you'],
+                vocab: ['phone numbers', 'numbers 11-100', 'personal information'],
+                homework: { prompt: 'Write 5 questions using What, Where, How.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Now you know AM, IS, ARE. Let's learn to ASK questions! We use question words: WHAT, WHERE, HOW, WHO.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "In questions, the verb BE comes BEFORE the subject. Look:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'What + name', past: "What is your name?", highlight: 'is' },
+                            { base: 'Where + from', past: "Where are you from?", highlight: 'are' },
+                            { base: 'How old', past: "How old is she?", highlight: 'is' },
+                            { base: 'Who + he', past: "Who is he?", highlight: 'is' }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Let's learn numbers 10-100. You'll need them for phone numbers and age!",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: '10 — ten', ru: '10' },
+                            { en: '20 — twenty', ru: '20' },
+                            { en: '30 — thirty', ru: '30' },
+                            { en: '50 — fifty', ru: '50' },
+                            { en: '100 — one hundred', ru: '100' },
+                            { en: '0 — zero / oh', ru: '0' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'___ is your phone number?' — Which question word?",
+                        mascotEmotion: 'thinking',
+                        options: ['Where', 'What', 'Who'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Yes/No questions are simple: just swap the order! 'You are happy' → 'Are you happy?' Easy!",
+                        mascotEmotion: 'happy',
+                        tipText: "Statement: You are 25. → Question: Are you 25? Just swap subject and verb!"
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct preposition', sentence: 'I wake up ___ 7 o\'clock.', options: ['in', 'on', 'at'], correct: 2 } },
-                    { type: 'fill-bubble', data: { instruction: 'Complete the sentence', sentence: 'She ___ to work by bus.', options: ['go', 'goes', 'going'], correct: 1 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['always', 'she', 'breakfast', 'has', 'at', '8'], correct: ['she', 'always', 'has', 'breakfast', 'at', '8'] } },
-                    { type: 'speak-aloud', data: { instruction: 'Say the time:', phrase: "It's half past nine" } }
+                    { type: 'fill-bubble', data: { instruction: 'Choose the question word', sentence: '___ is your name?', options: ['What', 'Where', 'How'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Choose the question word', sentence: '___ are you from?', options: ['What', 'Where', 'Who'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['old', 'how', 'you', 'are'], correct: ['how', 'old', 'are', 'you'] } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['is', 'where', 'she', 'from'], correct: ['where', 'is', 'she', 'from'] } },
+                    { type: 'fill-bubble', data: { instruction: 'Answer: How old are you?', sentence: 'I ___ 25 years old.', options: ['am', 'is', 'are'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Match questions with answers', pairs: [{ left: 'What is your name?', right: 'Alex' }, { left: 'Where are you from?', right: 'Brazil' }, { left: 'How old are you?', right: '25' }, { left: 'How are you?', right: 'Fine, thanks' }] } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'What is your phone number?', hint: 'Question mark at the end.' } },
+                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Откуда ты?', fromLang: 'RU', toLang: 'EN', answer: 'Where are you from?' } },
+                    { type: 'speak-aloud', data: { instruction: 'Ask these questions aloud:', phrase: "What's your name? Where are you from? How old are you?" } },
+                    { type: 'fill-bubble', data: { instruction: '"___ is he?" — "He is my brother."', sentence: '___ is he?', options: ['What', 'Where', 'Who'], correct: 2 } }
                 ]
             },
+
+            // ── Unit 3: At a café ──
             {
                 id: 3,
-                title: 'Unit 3: Things I love doing',
-                desc: 'Present continuous for now. Describing people. Appearance vocabulary.',
-                grammar: ['present continuous (revision)', 'present simple vs present continuous'],
-                vocab: ['appearance (tall, short, slim, curly hair)', 'describing people', 'personality adjectives'],
-                homework: { prompt: 'Describe two people you know: what they look like and what they are doing right now.' },
+                title: '🗣️ At a café: first order',
+                desc: 'Order food and drinks. Polite phrases. Prices.',
+                unitType: 'situational',
+                grammar: ['Can I have...?', 'How much is...?'],
+                vocab: ['coffee', 'tea', 'water', 'sandwich', 'cake', 'please', 'thank you', 'prices'],
+                homework: { prompt: 'Write a dialogue: ordering coffee and cake at a café.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Time for a real situation! Imagine you're at a café in London. Let's learn how to order food and drinks!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "Here are the key phrases you need at a café:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'Order', past: "Can I have a coffee, please?", highlight: 'Can I have' },
+                            { base: 'Price', past: "How much is it?", highlight: 'How much' },
+                            { base: 'Thanks', past: "Thank you! / Thanks!", highlight: 'Thank you' },
+                            { base: 'Size', past: "A large coffee, please.", highlight: 'large' }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Let's learn café vocabulary!",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'coffee', ru: 'кофе' },
+                            { en: 'tea', ru: 'чай' },
+                            { en: 'water', ru: 'вода' },
+                            { en: 'sandwich', ru: 'сэндвич' },
+                            { en: 'cake', ru: 'торт/пирожное' },
+                            { en: 'the bill', ru: 'счёт' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "You want to order a tea. What do you say?",
+                        mascotEmotion: 'thinking',
+                        options: ['I want tea.', 'Give me tea.', 'Can I have a tea, please?'],
+                        correct: 2
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "'Can I have...' is the magic phrase for ordering ANYTHING in English. It works in cafés, restaurants, shops — everywhere!",
+                        mascotEmotion: 'happy',
+                        tipText: "Can I have a coffee? · Can I have the bill? · Can I have a table for two?"
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Present simple or continuous?', sentence: 'She usually ___ coffee, but today she ___ tea.', options: ['drinks / is drinking', 'is drinking / drinks', 'drink / drink'], correct: 0 } },
-                    { type: 'match-pairs', data: { instruction: 'Match opposites', pairs: [ { left: 'tall', right: 'short' }, { left: 'fat', right: 'thin' }, { left: 'young', right: 'old' }, { left: 'beautiful', right: 'ugly' } ] } },
-                    { type: 'image-choice', data: { instruction: 'Choose the correct description', word: 'She has curly hair', options: [ { emoji: '👩‍🦱', label: 'Curly hair' }, { emoji: '👩‍🦰', label: 'Red hair' }, { emoji: '👩‍🦳', label: 'White hair' }, { emoji: '👱‍♀️', label: 'Blonde hair' } ], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Она высокая и у неё длинные волосы.', fromLang: 'RU', toLang: 'EN', answer: 'She is tall and has long hair' } }
+                    { type: 'fill-bubble', data: { instruction: 'Complete the order', sentence: 'Can I ___ a coffee, please?', options: ['have', 'get', 'want'], correct: 0 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make an order', words: ['have', 'can', 'I', 'a', 'tea', 'please'], correct: ['can', 'I', 'have', 'a', 'tea', 'please'] } },
+                    { type: 'fill-bubble', data: { instruction: 'Ask for the price', sentence: 'How ___ is it?', options: ['many', 'much', 'old'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Match English with translation', pairs: [{ left: 'coffee', right: 'кофе' }, { left: 'the bill', right: 'счёт' }, { left: 'cake', right: 'торт' }, { left: 'water', right: 'вода' }] } },
+                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Можно чай, пожалуйста?', fromLang: 'RU', toLang: 'EN', answer: 'Can I have a tea, please?' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'Can I have a large coffee, please?', hint: 'Polite request' } },
+                    { type: 'fill-bubble', data: { instruction: 'Waiter says: "Anything else?" You say:', sentence: 'You answer...', options: ['No, thank you.', 'No want.', 'Is finished.'], correct: 0 } },
+                    { type: 'speak-aloud', data: { instruction: 'Role-play: Order at a café', phrase: "Hi! Can I have a coffee and a sandwich, please? How much is it? Thank you!" } }
                 ]
             },
+
+            // ── Unit 4: Nouns, a/an, this/that ──
             {
                 id: 4,
-                title: 'Unit 4: How much is it?',
-                desc: 'Countable/uncountable nouns. How much/how many. Shopping vocabulary.',
-                grammar: ['countable and uncountable nouns', 'a/an, some, any', 'how much / how many'],
-                vocab: ['food shopping', 'containers (a bottle of, a packet of)', 'prices and money'],
-                homework: { prompt: 'Write a shopping list for a dinner party (for 4 people). Use some, a, a bottle of, etc.' },
+                title: 'Nouns: singular, plural, a/an',
+                desc: 'Singular/plural nouns. Articles a/an. this/that/these/those.',
+                unitType: 'grammar',
+                grammar: ['plural -s/-es', 'a / an', 'this/that/these/those'],
+                vocab: ['everyday objects', 'classroom items', 'souvenirs'],
+                homework: { prompt: 'Write 10 sentences using a/an and plurals.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Let's learn about NOUNS — words for things! In English, one thing needs 'a' or 'an' before it. More than one? Add '-s'!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "Use 'a' before consonant sounds, 'an' before vowel sounds (a, e, i, o, u):",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'book', past: "a book → books", highlight: 'a' },
+                            { base: 'apple', past: "an apple → apples", highlight: 'an' },
+                            { base: 'university', past: "a university", highlight: 'a (sound: /juː/)' },
+                            { base: 'hour', past: "an hour", highlight: "an (silent h)" }
+                        ]
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "This/that = singular (one). These/those = plural (many). This/these = near. That/those = far.",
+                        mascotEmotion: 'happy',
+                        left: { label: 'Near ☝️', items: ['this book', 'these books'] },
+                        right: { label: 'Far 👉', items: ['that book', 'those books'] }
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'___ is ___ umbrella.' — Choose correctly!",
+                        mascotEmotion: 'thinking',
+                        options: ['It is a umbrella', 'It is an umbrella', 'It is the umbrella'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Irregular plurals exist! man→men, woman→women, child→children, person→people. Memorize these 4!",
+                        mascotEmotion: 'happy',
+                        tipText: "man→men · woman→women · child→children · person→people · tooth→teeth · foot→feet"
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Countable or uncountable?', sentence: 'I need ___ water.', options: ['a', 'some', 'many'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct question', sentence: '___ sugar do you want?', options: ['How much', 'How many'], correct: 0 } },
-                    { type: 'match-pairs', data: { instruction: 'Match the container', pairs: [ { left: 'a bottle of', right: 'water' }, { left: 'a packet of', right: 'crisps' }, { left: 'a cup of', right: 'tea' }, { left: 'a slice of', right: 'bread' } ] } },
-                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Сколько это стоит?', fromLang: 'RU', toLang: 'EN', answer: 'How much is it' } }
+                    { type: 'fill-bubble', data: { instruction: 'a or an?', sentence: 'It is ___ apple.', options: ['a', 'an', 'the'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'a or an?', sentence: 'She is ___ doctor.', options: ['a', 'an', '-'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Choose the plural', sentence: 'one child → two ___', options: ['childs', 'children', 'childes'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Near or far?', sentence: '___ books here are mine. (near)', options: ['This', 'These', 'Those'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Match singular → plural', pairs: [{ left: 'man', right: 'men' }, { left: 'woman', right: 'women' }, { left: 'tooth', right: 'teeth' }, { left: 'child', right: 'children' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['are', 'those', 'my', 'books'], correct: ['those', 'are', 'my', 'books'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Это яблоко.', fromLang: 'RU', toLang: 'EN', answer: 'This is an apple' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'These are my keys.', hint: 'Plural' } },
+                    { type: 'fill-bubble', data: { instruction: 'a or an?', sentence: '___ hour ago', options: ['a', 'an'], correct: 1 } },
+                    { type: 'speak-aloud', data: { instruction: 'Say aloud:', phrase: "This is a book. That is an apple. These are my keys. Those are your bags." } }
                 ]
             },
+
+            // ── Unit 5: Possessives + Adjectives ──
             {
                 id: 5,
-                title: 'Unit 5: Past simple — regular & irregular',
-                desc: 'Past simple: regular and irregular verbs. Telling stories about past events.',
-                grammar: ['past simple: regular (-ed) and irregular verbs', 'past simple: negatives and questions', 'time expressions for the past'],
-                vocab: ['irregular verbs (went, saw, bought, came)', 'weekend activities', 'holiday vocabulary'],
-                homework: { prompt: 'Tell about your last holiday. Where did you go? What did you do? What did you see?' },
+                title: 'My, your, his: possessives + adjectives',
+                desc: "Possessive adjectives (my/your/his/her). Possessive 's. Basic adjectives.",
+                unitType: 'grammar',
+                grammar: ['possessive adjectives', "possessive 's", 'adjective + noun'],
+                vocab: ['family members', 'colors', 'common adjectives'],
+                homework: { prompt: 'Describe your family: names, ages, and one adjective for each person.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Whose is it? In English, we use possessive words: MY, YOUR, HIS, HER, OUR, THEIR. Let's learn them all!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "Each subject pronoun has a possessive form:",
+                        mascotEmotion: 'happy',
+                        left: { label: 'Pronoun', items: ['I', 'You', 'He', 'She', 'We', 'They'] },
+                        right: { label: 'Possessive', items: ['my', 'your', 'his', 'her', 'our', 'their'] }
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "We also use 's to show possession. John's car = the car of John:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'John + car', past: "John's car", highlight: "'s" },
+                            { base: 'My sister + name', past: "My sister's name is Anna", highlight: "'s" },
+                            { base: 'The dog + toy', past: "The dog's toy", highlight: "'s" }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Family vocabulary! You'll need this to talk about the people you love:",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'mother / mom', ru: 'мать / мама' },
+                            { en: 'father / dad', ru: 'отец / папа' },
+                            { en: 'brother', ru: 'брат' },
+                            { en: 'sister', ru: 'сестра' },
+                            { en: 'husband', ru: 'муж' },
+                            { en: 'wife', ru: 'жена' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'___ name is Maria.' — She is a girl. Which word?",
+                        mascotEmotion: 'thinking',
+                        options: ['His', 'Her', 'Your'],
+                        correct: 1
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct past form', sentence: 'We ___ a great time yesterday.', options: ['have', 'had', 'haved'], correct: 1 } },
-                    { type: 'match-pairs', data: { instruction: 'Match present to past', pairs: [ { left: 'buy', right: 'bought' }, { left: 'come', right: 'came' }, { left: 'see', right: 'saw' }, { left: 'take', right: 'took' } ] } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['did', 'where', 'you', 'go', 'yesterday', '?'], correct: ['where', 'did', 'you', 'go', 'yesterday', '?'] } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the negative form', sentence: 'I ___ the film. It was boring.', options: ["didn't like", "don't like", "wasn't like"], correct: 0 } }
+                    { type: 'fill-bubble', data: { instruction: 'Choose the possessive', sentence: 'I love ___ family.', options: ['my', 'me', 'I'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'He is a boy. ___ name is Tom.', sentence: '___ name is Tom.', options: ['Her', 'His', 'He'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: "Possessive 's", sentence: "This is ___.", options: ["Anna book", "Anna's book", "Annas book"], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Match pronoun → possessive', pairs: [{ left: 'I', right: 'my' }, { left: 'she', right: 'her' }, { left: 'we', right: 'our' }, { left: 'they', right: 'their' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['is', 'her', 'name', 'Maria'], correct: ['her', 'name', 'is', 'Maria'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Это машина Джона.', fromLang: 'RU', toLang: 'EN', answer: "This is John's car" } },
+                    { type: 'fill-bubble', data: { instruction: 'Adjective: the car is ___', sentence: 'It is a ___ car.', options: ['red big', 'big red', 'red a big'], correct: 1 } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "My brother's name is Tom.", hint: "Don't forget the apostrophe" } },
+                    { type: 'speak-aloud', data: { instruction: 'Tell about your family:', phrase: "My name is... My mother's name is... My father is..." } }
                 ]
             },
+
+            // ── Unit 6: Checkpoint 1 ──
             {
                 id: 6,
-                title: 'Unit 6: Comparatives',
-                desc: 'Comparative adjectives. Comparing people, places, and things.',
-                grammar: ['comparative adjectives (bigger, more expensive)', 'than', 'as...as'],
-                vocab: ['adjectives for comparison', 'city life vs country life', 'places in a city'],
-                homework: { prompt: 'Compare two cities you know. Which is bigger, more interesting, more expensive?' },
+                title: '🔄 Checkpoint 1: Units 1-5',
+                desc: 'Review all grammar and vocabulary from units 1-5.',
+                unitType: 'review',
+                grammar: ['verb be', 'questions', 'a/an', 'possessives'],
+                vocab: ['all A1 vocabulary so far'],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the comparative form', sentence: 'Moscow is ___ than London.', options: ['big', 'bigger', 'more big'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the comparative', sentence: 'This restaurant is ___ than that one.', options: ['expensiver', 'more expensive', 'most expensive'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Лето теплее, чем весна.', fromLang: 'RU', toLang: 'EN', answer: 'Summer is warmer than spring' } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a comparison', words: ['is', 'English', 'Chinese', 'easier', 'than'], correct: ['English', 'is', 'easier', 'than', 'Chinese'] } }
+                    { type: 'fill-bubble', data: { instruction: 'verb BE', sentence: 'She ___ from Italy.', options: ['am', 'is', 'are'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Question word', sentence: '___ old are you?', options: ['What', 'How', 'Where'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Article', sentence: 'It is ___ orange.', options: ['a', 'an'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Possessive', sentence: '___ is your name?', options: ['What', 'Who', 'How'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Plural', sentence: 'one woman → two ___', options: ['womans', 'women', 'womens'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['is', 'what', 'name', 'your'], correct: ['what', 'is', 'your', 'name'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Откуда она?', fromLang: 'RU', toLang: 'EN', answer: 'Where is she from?' } },
+                    { type: 'match-pairs', data: { instruction: 'Final review match', pairs: [{ left: 'I', right: 'am' }, { left: 'She', right: 'is' }, { left: 'They', right: 'are' }, { left: 'my', right: 'I' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'Order at café', sentence: 'Can I ___ a coffee?', options: ['have', 'has', 'having'], correct: 0 } },
+                    { type: 'speak-aloud', data: { instruction: 'Introduce yourself fully:', phrase: "My name is Alex. I'm 25. I'm from Moscow. I'm a student." } }
                 ]
             },
+
+            // ── Unit 7: Present Simple +/- ──
             {
                 id: 7,
-                title: 'Unit 7: Superlatives',
-                desc: 'Superlative adjectives. The best, the most, the least. Experiences.',
-                grammar: ['superlative adjectives (the biggest, the most beautiful)', 'irregular superlatives (the best, the worst)'],
-                vocab: ['extreme adjectives', 'geography (desert, ocean, mountain)', 'world records'],
-                homework: { prompt: 'Write about records: the tallest, the biggest, the most beautiful place you have visited.' },
+                title: 'Present Simple: I / you / we / they',
+                desc: 'Present Simple positive, negative, questions. Daily habits.',
+                unitType: 'grammar',
+                grammar: ['Present Simple +/-/?', "don't / do you...?"],
+                vocab: ['food and drink', 'daily habits', 'common verbs'],
+                homework: { prompt: 'Write about your typical day: what you eat, drink, do.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "BE describes what you ARE. Now let's learn what you DO! Present Simple = habits, routines, facts. I eat, I drink, I live.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "Positive: just use the verb. Negative: add DON'T. Question: start with DO.",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: '+', past: "I eat breakfast every day.", highlight: 'eat' },
+                            { base: '−', past: "I don't drink coffee.", highlight: "don't" },
+                            { base: '?', past: "Do you speak English?", highlight: 'Do' },
+                            { base: 'Answer', past: "Yes, I do. / No, I don't.", highlight: 'do' }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Key daily verbs — you'll use these every single day:",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'eat', ru: 'есть' },
+                            { en: 'drink', ru: 'пить' },
+                            { en: 'live', ru: 'жить' },
+                            { en: 'work', ru: 'работать' },
+                            { en: 'speak', ru: 'говорить' },
+                            { en: 'like', ru: 'нравиться' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'I ___ like coffee.' — How do we say the negative?",
+                        mascotEmotion: 'thinking',
+                        options: ["not like", "don't like", "doesn't like"],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Present Simple is NOT for right now! 'I eat' = I eat regularly. For right now, we'll learn Present Continuous later!",
+                        mascotEmotion: 'happy',
+                        tipText: "I eat breakfast = everyday habit. I'm eating breakfast = right now (Present Continuous — later!)"
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the superlative', sentence: 'The Nile is ___ river in the world.', options: ['the longer', 'the longest', 'the most long'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'This is ___ film I have ever seen.', options: ['the worst', 'the baddest', 'the most bad'], correct: 0 } },
-                    { type: 'match-pairs', data: { instruction: 'Match adjective to superlative', pairs: [ { left: 'good', right: 'the best' }, { left: 'bad', right: 'the worst' }, { left: 'far', right: 'the farthest' }, { left: 'big', right: 'the biggest' } ] } },
-                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Это лучший ресторан в городе.', fromLang: 'RU', toLang: 'EN', answer: 'This is the best restaurant in the city' } }
+                    { type: 'fill-bubble', data: { instruction: 'Positive', sentence: 'I ___ in Moscow.', options: ['live', 'lives', 'living'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative', sentence: "I ___ like fish.", options: ["don't", "doesn't", "not"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Question', sentence: '___ you speak English?', options: ['Do', 'Does', 'Are'], correct: 0 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['breakfast', 'I', 'eat', 'every', 'day'], correct: ['I', 'eat', 'breakfast', 'every', 'day'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я не пью кофе.', fromLang: 'RU', toLang: 'EN', answer: "I don't drink coffee" } },
+                    { type: 'match-pairs', data: { instruction: 'Match', pairs: [{ left: 'eat', right: 'есть' }, { left: 'drink', right: 'пить' }, { left: 'live', right: 'жить' }, { left: 'work', right: 'работать' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'Answer the question: Do you like pizza?', sentence: 'Yes, I ___.', options: ['like', 'do', 'am'], correct: 1 } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I don't eat meat. I'm vegetarian.", hint: "Contraction: don't" } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['like', 'do', 'you', 'pizza'], correct: ['do', 'you', 'like', 'pizza'] } },
+                    { type: 'speak-aloud', data: { instruction: 'Talk about your habits:', phrase: "I eat breakfast at 8. I drink tea. I don't drink coffee. I work from home." } }
                 ]
             },
+
+            // ── Unit 8: Present Simple he/she/it ──
             {
                 id: 8,
-                title: 'Unit 8: Going to + future plans',
-                desc: 'Be going to for future plans and predictions. Will for instant decisions.',
-                grammar: ['be going to (plans and intentions)', 'will for instant decisions and offers', 'shall for suggestions'],
-                vocab: ['future time expressions (tomorrow, next week)', 'weather', 'travel plans'],
-                homework: { prompt: 'Write about your plans for next weekend and next summer. Use going to and will.' },
+                title: 'Present Simple: he / she / it + frequency',
+                desc: '3rd person -s. Adverbs of frequency. Daily routines.',
+                unitType: 'grammar',
+                grammar: ['3rd person -s/-es', "doesn't / does he...?", 'adverbs of frequency'],
+                vocab: ['jobs', 'daily routine', 'always/usually/sometimes/never'],
+                homework: { prompt: 'Write about a friend: what they do every day.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Important rule! When the subject is HE, SHE, or IT — add -S to the verb! I eat → He eatS. I live → She liveS.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "For negative and questions with he/she/it, we use DOES (not DO). And the verb goes BACK to normal!",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: '+', past: "She works in a bank.", highlight: 'works' },
+                            { base: '−', past: "He doesn't like fish.", highlight: "doesn't" },
+                            { base: '?', past: "Does she speak French?", highlight: 'Does' },
+                            { base: '-es', past: "He watches TV.", highlight: 'watches' }
+                        ]
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "How OFTEN? Put these words before the main verb:",
+                        mascotEmotion: 'happy',
+                        left: { label: 'Frequency', items: ['always', 'usually', 'sometimes', 'never'] },
+                        right: { label: 'Meaning', items: ['100%', '~80%', '~50%', '0%'] }
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'She ___ to work by bus.' — Which is correct?",
+                        mascotEmotion: 'thinking',
+                        options: ['go', 'goes', 'going'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Spelling: most verbs add -s (works, eats). Verbs ending in -ch, -sh, -ss, -x, -o add -ES (watches, goes). Consonant+y → -IES (study → studies).",
+                        mascotEmotion: 'happy',
+                        tipText: "work→works · watch→watches · go→goes · study→studies · have→has (irregular!)"
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct future form', sentence: 'I ___ visit my grandmother next Sunday.', options: ['going to', 'am going to', 'will going to'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Instant decision — use will', sentence: "'It's cold.' — 'I ___ close the window.'", options: ['am going to', 'will', 'going to'], correct: 1 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a sentence about future plans', words: ['going', 'we', 'to', 'are', 'Italy', 'fly', 'to'], correct: ['we', 'are', 'going', 'to', 'fly', 'to', 'Italy'] } },
-                    { type: 'speak-aloud', data: { instruction: 'Say your plan:', phrase: "I'm going to learn English every day" } }
+                    { type: 'fill-bubble', data: { instruction: '3rd person', sentence: 'She ___ in a hospital.', options: ['work', 'works', 'working'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative', sentence: "He ___ like mornings.", options: ["don't", "doesn't", "not"], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Question', sentence: '___ she speak French?', options: ['Do', 'Does', 'Is'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Spelling', sentence: 'He ___ TV every evening.', options: ['watchs', 'watches', 'watch'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Frequency', sentence: 'I ___ eat breakfast. (100%)', options: ['always', 'sometimes', 'never'], correct: 0 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['usually', 'she', 'at', 'gets up', '7'], correct: ['she', 'usually', 'gets up', 'at', '7'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Он работает в банке.', fromLang: 'RU', toLang: 'EN', answer: 'He works in a bank' } },
+                    { type: 'match-pairs', data: { instruction: 'Match verb forms', pairs: [{ left: 'go', right: 'goes' }, { left: 'watch', right: 'watches' }, { left: 'study', right: 'studies' }, { left: 'have', right: 'has' }] } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "She always gets up early.", hint: 'Frequency word position' } },
+                    { type: 'speak-aloud', data: { instruction: 'Describe someone:', phrase: "My friend works in a bank. She usually gets up at 7. She always drinks coffee." } }
                 ]
             },
+
+            // ── Unit 9: 🗣️ Talking about yourself ──
             {
                 id: 9,
-                title: 'Unit 9: Present perfect — experiences',
-                desc: 'Present Perfect for life experiences. Have you ever...? Been vs gone.',
-                grammar: ['present perfect: have/has + past participle', 'ever, never', 'been vs gone'],
-                vocab: ['past participles', 'life experiences', 'travel experiences'],
-                homework: { prompt: 'Write 5 things you have done in your life (use ever/never). Have you ever been to...?' },
+                title: '🗣️ About me: introduction speech',
+                desc: 'Combine BE + Present Simple in a connected self-introduction.',
+                unitType: 'situational',
+                grammar: ['be + Present Simple combined'],
+                vocab: ['hobbies', 'free time', 'work', 'introduction phrases'],
+                homework: { prompt: 'Record yourself: 1-minute introduction in English.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Now you know BE and Present Simple. Let's combine them to tell people about yourself — like a real introduction!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "A good introduction has 4 parts: name, origin, job/study, hobby:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: '1. Name', past: "Hi! My name is Alex.", highlight: 'BE' },
+                            { base: '2. Origin', past: "I'm from Moscow, Russia.", highlight: 'BE' },
+                            { base: '3. Job', past: "I work as a designer.", highlight: 'PS' },
+                            { base: '4. Hobby', past: "I like music and travel.", highlight: 'PS' }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Hobby vocabulary — what do you do in your free time?",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'read books', ru: 'читать книги' },
+                            { en: 'play sports', ru: 'заниматься спортом' },
+                            { en: 'listen to music', ru: 'слушать музыку' },
+                            { en: 'travel', ru: 'путешествовать' },
+                            { en: 'cook', ru: 'готовить' },
+                            { en: 'watch films', ru: 'смотреть фильмы' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "Which sentence uses Present Simple (not BE)?",
+                        mascotEmotion: 'thinking',
+                        options: ["I am 25 years old.", "I like cooking.", "She is from Italy."],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "When talking about hobbies, use: 'I like + -ing' (I like cooking) or 'I like + noun' (I like music). Both are correct!",
+                        mascotEmotion: 'happy',
+                        tipText: "I like reading · I like to read · I enjoy cooking · I love music — all correct!"
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'I have never ___ to Japan.', options: ['be', 'been', 'gone', 'went'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Present perfect or past simple?', sentence: 'She ___ to Paris last year.', options: ['has been', 'went', 'has gone'], correct: 1 } },
-                    { type: 'match-pairs', data: { instruction: 'Match verb to past participle', pairs: [ { left: 'eat', right: 'eaten' }, { left: 'see', right: 'seen' }, { left: 'do', right: 'done' }, { left: 'write', right: 'written' } ] } },
-                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Ты когда-нибудь был в Лондоне?', fromLang: 'RU', toLang: 'EN', answer: 'Have you ever been to London' } }
+                    { type: 'fill-bubble', data: { instruction: 'BE or Present Simple?', sentence: 'I ___ from Brazil.', options: ['am', 'live', 'come'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'BE or Present Simple?', sentence: 'I ___ as a teacher.', options: ['am', 'work', 'be'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Build an introduction', words: ['name', 'my', 'is', 'and', 'Alex', 'I', 'from', 'am', 'Russia'], correct: ['my', 'name', 'is', 'Alex', 'and', 'I', 'am', 'from', 'Russia'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Мне нравится готовить.', fromLang: 'RU', toLang: 'EN', answer: 'I like cooking' } },
+                    { type: 'match-pairs', data: { instruction: 'Match hobbies', pairs: [{ left: 'read', right: 'читать' }, { left: 'cook', right: 'готовить' }, { left: 'travel', right: 'путешествовать' }, { left: 'play sports', right: 'спорт' }] } },
+                    { type: 'speak-aloud', data: { instruction: 'Full introduction — say aloud!', phrase: "Hi! My name is Alex. I'm 25 years old. I'm from Moscow. I work as a designer. I like music, travel, and cooking." } }
                 ]
             },
+
+            // ── Unit 10: 🎤 Pronunciation ──
             {
                 id: 10,
-                title: 'Unit 10: Review & Communication',
-                desc: 'Review all A2 grammar and vocabulary. Practical communication skills.',
-                grammar: ['revision: present simple, past simple, present perfect, going to, will', 'question forms revision'],
-                vocab: ['revision of all A2 vocabulary', 'functional language (apologizing, asking for directions)'],
-                homework: { prompt: 'Write a diary entry about today. Use present simple, past simple, and present perfect.' },
+                title: '🎤 Pronunciation: key English sounds',
+                desc: 'Sounds that are tricky: /θ/, /ð/, /w/, /v/, /h/. Minimal pairs.',
+                unitType: 'pronunciation',
+                grammar: [],
+                vocab: ['minimal pairs: think-sink, three-free, wine-vine'],
+                homework: { prompt: 'Practice saying: think, this, that, the, three, weather, with, worth.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Let's work on sounds! English has some sounds that don't exist in many languages. The famous TH sound, /w/ vs /v/, and the silent /h/!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "TH has TWO sounds: /θ/ (voiceless — like in 'think') and /ð/ (voiced — like in 'this'):",
+                        mascotEmotion: 'thinking',
+                        left: { label: '/θ/ voiceless', items: ['think', 'three', 'thanks', 'birthday'] },
+                        right: { label: '/ð/ voiced', items: ['this', 'that', 'the', 'weather'] }
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "/w/ and /v/ are DIFFERENT sounds. Listen carefully:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: '/w/', past: "wine, west, want, woman", highlight: 'w' },
+                            { base: '/v/', past: "vine, vest, van, very", highlight: 'v' },
+                            { base: '/h/', past: "hello, have, house, happy", highlight: 'h' },
+                            { base: 'silent h', past: "hour, honest, heir", highlight: '(no sound)' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "Which word has a /θ/ sound (like in 'think')?",
+                        mascotEmotion: 'thinking',
+                        options: ['the', 'three', 'this'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "For TH: put your tongue between your teeth and blow air. It feels weird, but that's the correct position! Practice in front of a mirror.",
+                        mascotEmotion: 'happy',
+                        tipText: "👅 Tongue between teeth: think, three, thank you. Practice daily for 2 minutes!"
+                    }
+                ],
                 exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct tense', sentence: 'I ___ English for two years.', options: ['study', 'studied', 'have studied'], correct: 2 } },
-                    { type: 'read-answer', data: { instruction: 'Read the dialogue and answer', passage: "'Excuse me, can you tell me the way to the station?' 'Sure. Go straight, then turn left at the traffic lights. The station is on your right.'", question: 'Where do you turn left?', options: ['At the corner', 'At the traffic lights', 'At the station', 'At the park'], correct: 1 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a polite request', words: ['could', 'me', 'you', 'help', 'please', '?'], correct: ['could', 'you', 'help', 'me', 'please', '?'] } },
-                    { type: 'speak-aloud', data: { instruction: 'Say politely:', phrase: "Excuse me, could you help me please?" } }
+                    { type: 'fill-bubble', data: { instruction: '/θ/ or /ð/?', sentence: '"Think" has the sound:', options: ['/θ/ voiceless', '/ð/ voiced'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: '/θ/ or /ð/?', sentence: '"This" has the sound:', options: ['/θ/ voiceless', '/ð/ voiced'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Which has a silent H?', sentence: 'Silent H:', options: ['hello', 'hour', 'happy'], correct: 1 } },
+                    { type: 'speak-aloud', data: { instruction: 'Practice TH sounds:', phrase: "Think. Three. Thanks. This. That. The. Weather." } },
+                    { type: 'speak-aloud', data: { instruction: 'Practice W vs V:', phrase: "Wine — Vine. West — Vest. Want — Van. Wow — Vow." } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I think the weather is nice.", hint: 'Two different TH sounds!' } }
+                ]
+            },
+
+            // ── Unit 11: Can / Can't + Imperatives ──
+            {
+                id: 11,
+                title: "Can / Can't + imperatives",
+                desc: 'Abilities, permissions. Imperative mood. Object pronouns.',
+                unitType: 'grammar',
+                grammar: ['can/can\'t', 'imperatives', 'object pronouns: me/him/her/us/them'],
+                vocab: ['abilities', 'requests', 'films', 'directions'],
+                homework: { prompt: 'Write 5 things you can do and 5 you can\'t.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "CAN = ability (I can swim) or permission (Can I go?). CAN'T = cannot. Super useful verb! And it NEVER changes — no -s, no -ing!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "CAN is special: same form for everyone, and the next verb stays in base form:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'Ability', past: "I can swim.", highlight: 'can' },
+                            { base: 'Negative', past: "She can't drive.", highlight: "can't" },
+                            { base: 'Question', past: "Can you help me?", highlight: 'Can' },
+                            { base: 'Permission', past: "Can I sit here?", highlight: 'Can I' }
+                        ]
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "Imperatives = commands/instructions. No subject needed! Just the verb:",
+                        mascotEmotion: 'happy',
+                        left: { label: 'Do ✅', items: ['Open the door.', 'Listen!', 'Come here.'] },
+                        right: { label: "Don't ❌", items: ["Don't touch!", "Don't worry.", "Don't be late."] }
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'She ___ speak 3 languages.' — Can or can't?",
+                        mascotEmotion: 'thinking',
+                        options: ['cans', 'can', 'is can'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Object pronouns: I→me, you→you, he→him, she→her, we→us, they→them. 'Call ME', 'Give HIM the book', 'Tell THEM'.",
+                        mascotEmotion: 'happy',
+                        tipText: "I→me · you→you · he→him · she→her · it→it · we→us · they→them"
+                    }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Ability', sentence: 'I ___ play the guitar.', options: ['can', 'cans', 'am can'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative', sentence: "He ___ cook at all.", options: ["can't", "don't can", "not can"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Object pronoun', sentence: 'Call ___ tomorrow. (I)', options: ['I', 'me', 'my'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['speak', 'can', 'you', 'English'], correct: ['can', 'you', 'speak', 'English'] } },
+                    { type: 'fill-bubble', data: { instruction: 'Imperative', sentence: '___ late! (negative)', options: ["Don't be", 'Not be', "No be"], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Pronoun → Object', pairs: [{ left: 'I', right: 'me' }, { left: 'he', right: 'him' }, { left: 'she', right: 'her' }, { left: 'they', right: 'them' }] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я умею плавать.', fromLang: 'RU', toLang: 'EN', answer: 'I can swim' } },
+                    { type: 'speak-aloud', data: { instruction: 'Say aloud:', phrase: "I can swim, but I can't drive. Can you help me, please?" } }
+                ]
+            },
+
+            // ── Unit 12: Like + -ing ──
+            {
+                id: 12,
+                title: 'Like / Love / Hate + -ing',
+                desc: 'Express preferences. Gerund after like/love/hate/enjoy.',
+                unitType: 'grammar',
+                grammar: ['like/love/hate/enjoy + -ing'],
+                vocab: ['hobbies', 'free time activities', 'sports'],
+                homework: { prompt: 'Write about 3 things you like, love, and hate doing.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "What do you LIKE doing? After like, love, hate, enjoy — we add a verb with -ING! I like swimming. She loves reading.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "The formula is: LIKE/LOVE/HATE + verb-ING:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'like', past: "I like cooking.", highlight: 'cooking' },
+                            { base: 'love', past: "She loves dancing.", highlight: 'dancing' },
+                            { base: 'hate', past: "He hates waking up early.", highlight: 'waking' },
+                            { base: 'enjoy', past: "We enjoy travelling.", highlight: 'travelling' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'I enjoy ___' — which form?",
+                        mascotEmotion: 'thinking',
+                        options: ['swim', 'swimming', 'to swim'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "like + -ing = 'I like cooking' (general). like + to-infinitive = 'I like to cook on weekends' (specific). Both OK, but -ing is more common!",
+                        mascotEmotion: 'happy',
+                        tipText: "like cooking = general preference · like to cook = specific choice. Both are grammatically correct!"
+                    }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Complete', sentence: 'I like ___.', options: ['swim', 'swimming', 'swims'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Complete', sentence: 'She enjoys ___ books.', options: ['read', 'reading', 'reads'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Complete', sentence: 'They hate ___ up early.', options: ['wake', 'waking', 'wakes'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['cooking', 'I', 'love', 'Italian', 'food'], correct: ['I', 'love', 'cooking', 'Italian', 'food'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я люблю путешествовать.', fromLang: 'RU', toLang: 'EN', answer: 'I love travelling' } },
+                    { type: 'match-pairs', data: { instruction: 'Match', pairs: [{ left: 'like', right: 'нравится' }, { left: 'love', right: 'обожать' }, { left: 'hate', right: 'ненавидеть' }, { left: 'enjoy', right: 'наслаждаться' }] } },
+                    { type: 'speak-aloud', data: { instruction: 'Tell about your preferences:', phrase: "I like reading books. I love cooking. I hate waking up early. I enjoy travelling." } }
+                ]
+            },
+
+            // ── Unit 13: Checkpoint 2 ──
+            {
+                id: 13,
+                title: '🔄 Checkpoint 2: Units 7-12',
+                desc: 'Review Present Simple, can, like + -ing, pronunciation.',
+                unitType: 'review',
+                grammar: ['Present Simple', 'can/can\'t', 'like + -ing'],
+                vocab: ['daily routine', 'hobbies', 'abilities'],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Present Simple', sentence: 'She ___ in a hospital.', options: ['work', 'works', 'working'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative PS', sentence: "He ___ like fish.", options: ["don't", "doesn't", "not"], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Can', sentence: '___ you swim?', options: ['Do', 'Can', 'Are'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Like + -ing', sentence: 'I enjoy ___.', options: ['cook', 'cooking', 'cooks'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Frequency', sentence: 'She ___ wakes up late. (0%)', options: ['always', 'sometimes', 'never'], correct: 2 } },
+                    { type: 'word-shuffle', data: { instruction: 'Sentence', words: ['love', 'I', 'travelling', 'but', "can't", 'I', 'drive'], correct: ['I', 'love', 'travelling', 'but', 'I', "can't", 'drive'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Она не говорит по-французски.', fromLang: 'RU', toLang: 'EN', answer: "She doesn't speak French" } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Ты умеешь готовить?', fromLang: 'RU', toLang: 'EN', answer: 'Can you cook?' } },
+                    { type: 'speak-aloud', data: { instruction: 'Full monologue:', phrase: "I work as a designer. I usually get up at 8. I can speak two languages. I love cooking and travelling." } }
+                ]
+            },
+
+            // ── Unit 14: Present Continuous ──
+            {
+                id: 14,
+                title: 'Present Continuous: now!',
+                desc: 'Actions happening right now. Present Continuous vs Simple.',
+                unitType: 'grammar',
+                grammar: ['Present Continuous: am/is/are + -ing', 'vs Present Simple'],
+                vocab: ['clothes', 'actions', 'travelling'],
+                homework: { prompt: 'Write what 5 people around you are doing RIGHT NOW.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Present Simple = habits (I eat breakfast every day). Present Continuous = RIGHT NOW (I'm eating breakfast now). Big difference!",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "Formula: AM/IS/ARE + verb-ING. Easy!",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: '+', past: "I am eating lunch now.", highlight: 'am eating' },
+                            { base: '−', past: "She isn't working today.", highlight: "isn't working" },
+                            { base: '?', past: "Are you listening?", highlight: 'Are...listening' },
+                            { base: 'vs PS', past: "I work (habit) vs I'm working (now)", highlight: 'difference' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "Right now, it's 8 PM. 'She ___ TV.' — Which tense?",
+                        mascotEmotion: 'thinking',
+                        options: ['watches', 'is watching', 'watch'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Signal words! NOW, RIGHT NOW, AT THE MOMENT = Present Continuous. EVERY DAY, USUALLY, ALWAYS = Present Simple.",
+                        mascotEmotion: 'happy',
+                        tipText: "now/right now/at the moment → Continuous · every day/usually/always → Simple"
+                    }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Now', sentence: 'I ___ reading a book now.', options: ['am', 'do', 'is'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Now', sentence: 'She ___ sleeping.', options: ['is', 'does', 'are'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'PS or PC?', sentence: 'I ___ coffee every morning. (habit)', options: ['drink', 'am drinking', 'drinks'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'PS or PC?', sentence: 'Look! It ___! (now)', options: ['rains', 'is raining', 'rain'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Sentence', words: ['is', 'she', 'cooking', 'dinner', 'now'], correct: ['she', 'is', 'cooking', 'dinner', 'now'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Что ты делаешь сейчас?', fromLang: 'RU', toLang: 'EN', answer: 'What are you doing now?' } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative PC', sentence: "They ___ working today.", options: ["aren't", "don't", "doesn't"], correct: 0 } },
+                    { type: 'speak-aloud', data: { instruction: 'Describe what is happening:', phrase: "I'm sitting at home. I'm studying English. It's raining outside." } }
+                ]
+            },
+
+            // ── Unit 15: There is / There are ──
+            {
+                id: 15,
+                title: 'There is / There are + prepositions',
+                desc: 'Describe places. Prepositions of place. some/any.',
+                unitType: 'grammar',
+                grammar: ['there is/are', 'some/any', 'prepositions: in/on/under/next to'],
+                vocab: ['furniture', 'rooms', 'hotel vocabulary'],
+                homework: { prompt: 'Describe your room: what is in it and where things are.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "To describe WHAT EXISTS in a place, use: THERE IS (singular) / THERE ARE (plural). There is a table. There are two chairs.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "With some/any: SOME in positive, ANY in negatives and questions:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'Singular', past: "There is a lamp on the desk.", highlight: 'There is' },
+                            { base: 'Plural', past: "There are some books.", highlight: 'There are' },
+                            { base: 'Negative', past: "There aren't any windows.", highlight: "any" },
+                            { base: 'Question', past: "Is there a TV?", highlight: 'Is there' }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Prepositions of place — WHERE is something?",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'in', ru: 'в' },
+                            { en: 'on', ru: 'на' },
+                            { en: 'under', ru: 'под' },
+                            { en: 'next to', ru: 'рядом с' },
+                            { en: 'between', ru: 'между' },
+                            { en: 'behind', ru: 'за/позади' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'There ___ three cats in the garden.'",
+                        mascotEmotion: 'thinking',
+                        options: ['is', 'are', 'be'],
+                        correct: 1
+                    }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'is or are?', sentence: 'There ___ a book on the table.', options: ['is', 'are'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'is or are?', sentence: 'There ___ five people in the room.', options: ['is', 'are'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'some or any?', sentence: 'There aren\'t ___ shops here.', options: ['some', 'any'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Preposition', sentence: 'The cat is ___ the table.', options: ['on', 'in', 'at'], correct: 0 } },
+                    { type: 'word-shuffle', data: { instruction: 'Sentence', words: ['is', 'a', 'there', 'park', 'near', 'here'], correct: ['there', 'is', 'a', 'park', 'near', 'here'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'На столе есть книга.', fromLang: 'RU', toLang: 'EN', answer: 'There is a book on the table' } },
+                    { type: 'speak-aloud', data: { instruction: 'Describe your room:', phrase: "There is a bed and a desk. There are two windows. There is a lamp on the desk." } }
+                ]
+            },
+
+            // ── Unit 16: 🗣️ At a hotel ──
+            {
+                id: 16,
+                title: "🗣️ At a hotel / asking directions",
+                desc: 'Check into a hotel. Ask and give directions.',
+                unitType: 'situational',
+                grammar: ['Is there...?', 'Turn left/right, go straight'],
+                vocab: ['hotel rooms', 'directions', 'places in a city'],
+                homework: { prompt: 'Write a dialogue: checking into a hotel and asking for directions to a restaurant.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "You're travelling! Let's learn how to check into a hotel and find your way around the city.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "At the hotel reception:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'Check in', past: "I have a reservation. My name is...", highlight: 'reservation' },
+                            { base: 'Ask', past: "Is there a restaurant nearby?", highlight: 'Is there' },
+                            { base: 'WiFi', past: "What's the WiFi password?", highlight: 'WiFi' },
+                            { base: 'Help', past: "Can you help me, please?", highlight: 'Can you' }
+                        ]
+                    },
+                    {
+                        type: 'vocab-intro',
+                        mascotText: "Direction vocabulary:",
+                        mascotEmotion: 'happy',
+                        words: [
+                            { en: 'turn left', ru: 'поверните налево' },
+                            { en: 'turn right', ru: 'поверните направо' },
+                            { en: 'go straight', ru: 'идите прямо' },
+                            { en: 'next to', ru: 'рядом с' },
+                            { en: 'opposite', ru: 'напротив' },
+                            { en: 'on the corner', ru: 'на углу' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "You want to find a pharmacy. What do you ask?",
+                        mascotEmotion: 'thinking',
+                        options: ['Where is pharmacy?', 'Is there a pharmacy near here?', 'I want pharmacy.'],
+                        correct: 1
+                    }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'At the hotel', sentence: 'I have a ___ for tonight.', options: ['reservation', 'reserve', 'book'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Directions', sentence: '___ left at the traffic lights.', options: ['Turn', 'Go', 'Walk'], correct: 0 } },
+                    { type: 'word-shuffle', data: { instruction: 'Ask for directions', words: ['there', 'is', 'a', 'near', 'here', 'supermarket'], correct: ['is', 'there', 'a', 'supermarket', 'near', 'here'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Есть ли ресторан рядом?', fromLang: 'RU', toLang: 'EN', answer: 'Is there a restaurant nearby?' } },
+                    { type: 'match-pairs', data: { instruction: 'Match directions', pairs: [{ left: 'turn left', right: 'налево' }, { left: 'go straight', right: 'прямо' }, { left: 'opposite', right: 'напротив' }, { left: 'on the corner', right: 'на углу' }] } },
+                    { type: 'speak-aloud', data: { instruction: 'Hotel check-in:', phrase: "Hello! I have a reservation. My name is Alex. Is there a restaurant nearby? Can you tell me the WiFi password?" } }
+                ]
+            },
+
+            // ── Unit 17: Past Simple: was/were + regular ──
+            {
+                id: 17,
+                title: 'Past Simple: was/were + regular verbs',
+                desc: 'Talk about the past. was/were. Regular verbs: -ed.',
+                unitType: 'grammar',
+                grammar: ['was/were', 'regular verbs -ed', 'past time expressions'],
+                vocab: ['yesterday', 'last week', 'ago', 'regular verbs'],
+                homework: { prompt: 'Write about what you did yesterday.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Now let's talk about the PAST! First: 'was' and 'were' — the past of BE. I was, you were, he/she/it was, we/they were.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "BE in present vs past:",
+                        mascotEmotion: 'happy',
+                        left: { label: 'Present', items: ['I am', 'You are', 'He/She is', 'They are'] },
+                        right: { label: 'Past', items: ['I was', 'You were', 'He/She was', 'They were'] }
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "Regular verbs: just add -ED! Simple!",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'work', past: "I worked yesterday.", highlight: '-ed' },
+                            { base: 'play', past: "She played tennis.", highlight: '-ed' },
+                            { base: 'live', past: "We lived in London.", highlight: '-d' },
+                            { base: 'study', past: "He studied English.", highlight: '-ied' }
+                        ]
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'I ___ at home yesterday.'",
+                        mascotEmotion: 'thinking',
+                        options: ['am', 'was', 'were'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "Three pronunciations of -ED! /t/ after voiceless (worked, walked). /d/ after voiced (played, lived). /ɪd/ after t/d (wanted, needed).",
+                        mascotEmotion: 'happy',
+                        tipText: "worked /t/ · played /d/ · wanted /ɪd/ — Listen for the difference!"
+                    }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'was or were?', sentence: 'I ___ tired yesterday.', options: ['was', 'were'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'was or were?', sentence: 'They ___ at school.', options: ['was', 'were'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Regular past', sentence: 'She ___ tennis yesterday.', options: ['play', 'played', 'plays'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative', sentence: "I ___ at work yesterday.", options: ["wasn't", "weren't", "didn't"], correct: 0 } },
+                    { type: 'word-shuffle', data: { instruction: 'Past sentence', words: ['worked', 'I', 'yesterday', 'home', 'from'], correct: ['I', 'worked', 'from', 'home', 'yesterday'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Вчера я был дома.', fromLang: 'RU', toLang: 'EN', answer: 'Yesterday I was at home' } },
+                    { type: 'match-pairs', data: { instruction: 'Present → Past', pairs: [{ left: 'work', right: 'worked' }, { left: 'play', right: 'played' }, { left: 'study', right: 'studied' }, { left: 'live', right: 'lived' }] } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'I worked from home last week.', hint: 'Past tense' } },
+                    { type: 'speak-aloud', data: { instruction: 'Tell about yesterday:', phrase: "Yesterday I was at home. I worked from 9 to 6. I cooked dinner. I watched TV." } }
+                ]
+            },
+
+            // ── Unit 18: Past Simple: irregular + questions ──
+            {
+                id: 18,
+                title: 'Past Simple: irregular verbs + questions',
+                desc: 'Common irregular verbs. Did you...? Telling stories.',
+                unitType: 'grammar',
+                grammar: ['irregular verbs', 'did/didn\'t', 'Past Simple questions'],
+                vocab: ['go/went', 'eat/ate', 'see/saw', 'buy/bought', 'come/came', 'make/made'],
+                homework: { prompt: 'Write a story about your last weekend using at least 8 irregular verbs.' },
+                teachSlides: [
+                    {
+                        type: 'explain',
+                        mascotText: "Bad news: many common verbs are IRREGULAR — they don't follow the -ed rule. Good news: there are only about 50 important ones! go→went, eat→ate, see→saw.",
+                        mascotEmotion: 'happy'
+                    },
+                    {
+                        type: 'examples',
+                        mascotText: "Top irregular verbs you MUST know:",
+                        mascotEmotion: 'happy',
+                        items: [
+                            { base: 'go', past: "I went to the cinema.", highlight: 'went' },
+                            { base: 'eat', past: "We ate pizza.", highlight: 'ate' },
+                            { base: 'see', past: "She saw a movie.", highlight: 'saw' },
+                            { base: 'buy', past: "He bought a car.", highlight: 'bought' }
+                        ]
+                    },
+                    {
+                        type: 'compare',
+                        mascotText: "For questions and negatives, use DID. The main verb goes BACK to base form!",
+                        mascotEmotion: 'happy',
+                        left: { label: 'Statement', items: ['I went.', 'She ate.', 'He saw.'] },
+                        right: { label: 'Question', items: ['Did you go?', 'Did she eat?', 'Did he see?'] }
+                    },
+                    {
+                        type: 'quiz-check',
+                        mascotText: "'Did you ___ the movie?' — Which form after DID?",
+                        mascotEmotion: 'thinking',
+                        options: ['saw', 'see', 'seen'],
+                        correct: 1
+                    },
+                    {
+                        type: 'tip',
+                        mascotText: "After DID / DIDN'T the verb is always BASE form! Did you GO (not went). I didn't EAT (not ate). DID already shows it's past!",
+                        mascotEmotion: 'happy',
+                        tipText: "❌ Did you went? → ✅ Did you go? · ❌ I didn't ate → ✅ I didn't eat"
+                    }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Irregular', sentence: 'I ___ to school yesterday.', options: ['go', 'went', 'goed'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Irregular', sentence: 'She ___ a new dress.', options: ['buyed', 'bought', 'buy'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Question', sentence: '___ you go to the party?', options: ['Do', 'Did', 'Were'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'After DID', sentence: "Did she ___ the film?", options: ['saw', 'see', 'seen'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative', sentence: "I ___ go to work yesterday.", options: ["didn't", "don't", "wasn't"], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Present → Past', pairs: [{ left: 'go', right: 'went' }, { left: 'eat', right: 'ate' }, { left: 'see', right: 'saw' }, { left: 'buy', right: 'bought' }, { left: 'come', right: 'came' }, { left: 'make', right: 'made' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['did', 'you', 'eat', 'what', 'yesterday'], correct: ['what', 'did', 'you', 'eat', 'yesterday'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я пошёл в кино вчера.', fromLang: 'RU', toLang: 'EN', answer: 'I went to the cinema yesterday' } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Ты видел этот фильм?', fromLang: 'RU', toLang: 'EN', answer: 'Did you see this movie?' } },
+                    { type: 'speak-aloud', data: { instruction: 'Tell about last weekend:', phrase: "Last weekend I went to a restaurant. I ate sushi. I saw my friends. We had a great time!" } }
                 ]
             }
         ]
     },
 
     // ═══════════════════════════════════════════
-    // B1 — PRE-INTERMEDIATE/INTERMEDIATE
+    // A2 — ELEMENTARY (16 units)
     // ═══════════════════════════════════════════
     {
-        id: 'oxford_b1_intermediate',
-        title: 'English File B1 — Pre-Intermediate',
-        author: 'Oxford University Press',
+        id: 'a2_elementary',
+        title: 'A2 — Elementary',
+        level: 'A2',
+        cefr: 'A2',
+        methodology: 'Consolidation of basics. Comparatives, future tenses, Present Perfect introduction.',
+        units: [
+            { id: 1, title: 'BE + Present Simple: review', desc: 'Full review of be and Present Simple.', unitType: 'grammar', grammar: ['be review', 'Present Simple review'], vocab: ['personal information', 'daily routine'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'She ___ a teacher.', options: ['am', 'is', 'are'], correct: 1 } }] },
+            { id: 2, title: 'Possessives + object pronouns', desc: 'my/your/his + me/him/her.', unitType: 'grammar', grammar: ['possessives', 'object pronouns'], vocab: ['family', 'relationships'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Object pronoun', sentence: 'Give ___ the book. (she)', options: ['she', 'her', 'hers'], correct: 1 } }] },
+            { id: 3, title: 'Past Simple: full review', desc: 'Regular + irregular + negatives + questions.', unitType: 'grammar', grammar: ['Past Simple all forms'], vocab: ['holidays', 'transport', 'past events'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Past', sentence: 'I ___ to Paris last summer.', options: ['go', 'went', 'gone'], correct: 1 } }] },
+            { id: 4, title: '🗣️ Shopping for clothes', desc: 'At a shop: sizes, colors, prices.', unitType: 'situational', grammar: ['How much', 'I\'d like'], vocab: ['clothes', 'sizes', 'colors', 'shopping'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Shopping', sentence: 'How ___ is this shirt?', options: ['many', 'much', 'old'], correct: 1 } }] },
+            { id: 5, title: '🔄 Checkpoint 1', desc: 'Review units 1-4.', unitType: 'review', grammar: ['A2 review 1-4'], vocab: ['all A2 so far'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'She ___ to school yesterday.', options: ['go', 'went', 'goes'], correct: 1 } }] },
+            { id: 6, title: 'Comparatives & superlatives', desc: '-er, more, the most, the -est.', unitType: 'grammar', grammar: ['comparative -er/more', 'superlative -est/most'], vocab: ['describing people', 'personality', 'weather'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Comparative', sentence: 'London is ___ than Paris.', options: ['big', 'bigger', 'biggest'], correct: 1 } }] },
+            { id: 7, title: 'There is/are + much / many', desc: 'Countable/uncountable. How much/how many.', unitType: 'grammar', grammar: ['countable/uncountable', 'much/many/some/any'], vocab: ['food containers', 'quantities', 'cooking'], exercises: [{ type: 'fill-bubble', data: { instruction: 'much or many?', sentence: 'How ___ sugar do you want?', options: ['many', 'much'], correct: 1 } }] },
+            { id: 8, title: '🎤 Word stress & sentence rhythm', desc: 'Stress patterns. Schwa /ə/. Linking.', unitType: 'pronunciation', grammar: [], vocab: ['stress in long words'], exercises: [{ type: 'speak-aloud', data: { instruction: 'Practice stress:', phrase: "PHOtograph, phoTOGrapher, photoGRAphic. BEAUtiful, imPORtant, INteresting." } }] },
+            { id: 9, title: 'Be going to: plans', desc: 'Future plans and intentions.', unitType: 'grammar', grammar: ['be going to (+/−/?)'], vocab: ['travel', 'airport', 'future plans'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Plans', sentence: 'I ___ going to travel to Japan.', options: ['am', 'is', 'are'], correct: 0 } }] },
+            { id: 10, title: 'Will vs Be going to', desc: 'Predictions vs plans.', unitType: 'grammar', grammar: ['will vs going to'], vocab: ['weather', 'future events'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Prediction', sentence: 'I think it ___ rain tomorrow.', options: ['will', 'is going to', 'goes to'], correct: 0 } }] },
+            { id: 11, title: '🔄 Checkpoint 2', desc: 'Review units 6-10.', unitType: 'review', grammar: ['comparatives', 'future tenses'], vocab: ['A2 review'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'She is ___ than me.', options: ['tall', 'taller', 'tallest'], correct: 1 } }] },
+            { id: 12, title: 'Present Perfect: experience', desc: 'Have you ever...? + ever/never.', unitType: 'grammar', grammar: ['Present Perfect', 'ever/never'], vocab: ['life experiences', 'travel'], exercises: [{ type: 'fill-bubble', data: { instruction: 'PP', sentence: 'Have you ever ___ to Japan?', options: ['go', 'went', 'been'], correct: 2 } }] },
+            { id: 13, title: 'Should / Shouldn\'t: advice', desc: 'Giving advice and recommendations.', unitType: 'grammar', grammar: ['should/shouldn\'t'], vocab: ['health', 'body parts', 'advice'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Advice', sentence: 'You ___ see a doctor.', options: ['should', 'must', 'can'], correct: 0 } }] },
+            { id: 14, title: "🗣️ At the doctor's", desc: 'Describe symptoms. Get advice.', unitType: 'situational', grammar: ['I\'ve got...', 'You should...'], vocab: ['symptoms', 'medicine', 'body parts'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Symptom', sentence: "I've got a ___ .", options: ['headache', 'headaching', 'head ache'], correct: 0 } }] },
+            { id: 15, title: 'Would like: polite requests', desc: 'I would like... / Would you like...?', unitType: 'grammar', grammar: ['would like + noun/infinitive'], vocab: ['restaurant', 'menu', 'polite phrases'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Polite', sentence: 'I ___ like a coffee, please.', options: ['will', 'would', 'could'], correct: 1 } }] },
+            { id: 16, title: '🔄 Final Checkpoint A2', desc: 'Full A2 review.', unitType: 'review', grammar: ['all A2 grammar'], vocab: ['all A2 vocab'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Final review', sentence: 'Have you ever ___ sushi?', options: ['eat', 'ate', 'eaten'], correct: 2 } }] }
+        ]
+    },
+
+    // ═══════════════════════════════════════════
+    // B1 — PRE-INTERMEDIATE (16 units)
+    // ═══════════════════════════════════════════
+    {
+        id: 'b1_preintermediate',
+        title: 'B1 — Pre-Intermediate',
         level: 'B1',
         cefr: 'B1',
-        methodology: 'Developing fluency. Complex tenses, conditionals, passive voice. Expanding ability to discuss opinions, experiences, and plans in detail.',
+        methodology: 'Present Perfect mastery. Conditionals. Passive voice. Connected speech.',
         units: [
-            {
-                id: 1, title: 'Unit 1: Who knows you better?',
-                desc: 'Present tenses review. Questions and auxiliaries. Food and restaurants.',
-                grammar: ['present simple and continuous review', 'question formation', 'auxiliary verbs'],
-                vocab: ['food and cooking', 'restaurants', 'personality adjectives'],
-                homework: { prompt: 'Write about your best friend. Describe their personality and what they usually do vs what they\'re doing now.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Simple or continuous?', sentence: 'I usually ___ tea, but right now I ___ coffee.', options: ['drink / am drinking', 'am drinking / drink', 'drinks / drinking'], correct: 0 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['often', 'how', 'do', 'exercise', 'you', '?'], correct: ['how', 'often', 'do', 'you', 'exercise', '?'] } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Что ты обычно делаешь по вечерам?', fromLang: 'RU', toLang: 'EN', answer: 'What do you usually do in the evenings' } },
-                    { type: 'speak-aloud', data: { instruction: 'Answer the question aloud:', phrase: 'I usually watch TV in the evenings' } }
-                ]
-            },
-            {
-                id: 2, title: 'Unit 2: Right place, wrong person',
-                desc: 'Past tenses. Past simple vs past continuous. Prepositions of time and place.',
-                grammar: ['past simple review', 'past continuous (was/were + -ing)', 'past simple vs past continuous'],
-                vocab: ['holidays', 'prepositions of time and place', 'adjectives for feelings'],
-                homework: { prompt: 'Tell a story about something that happened during a holiday. What were you doing when it happened?' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Past simple or continuous?', sentence: 'I ___ when the phone ___.', options: ['was sleeping / rang', 'slept / was ringing', 'was sleeping / was ringing'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'While we ___ dinner, the lights went out.', options: ['had', 'were having', 'have had'], correct: 1 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['reading', 'was', 'she', 'when', 'arrived', 'I'], correct: ['she', 'was', 'reading', 'when', 'I', 'arrived'] } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Когда я шёл домой, начался дождь.', fromLang: 'RU', toLang: 'EN', answer: 'When I was walking home, it started to rain' } }
-                ]
-            },
-            {
-                id: 3, title: 'Unit 3: Plans and dreams',
-                desc: 'Future forms. Going to, will, present continuous for arrangements.',
-                grammar: ['going to (plans)', 'will (predictions, promises, offers)', 'present continuous for arrangements'],
-                vocab: ['life events', 'making arrangements', 'weather and nature'],
-                homework: { prompt: 'Write about your plans for this year and predictions for the next 10 years.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the best future form', sentence: 'I ___ a doctor. I\'ve already applied to university.', options: ['will be', 'am going to be', 'am being'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Promise or plan?', sentence: "'I forgot my wallet.' — 'Don't worry, I ___ pay.'", options: ['am going to', 'will', 'am'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Мы встречаемся с друзьями завтра в 7.', fromLang: 'RU', toLang: 'EN', answer: "We are meeting friends tomorrow at 7" } },
-                    { type: 'match-pairs', data: { instruction: 'Match the situation to the future form', pairs: [ { left: 'Fixed plan', right: 'going to' }, { left: 'Promise', right: 'will' }, { left: 'Arrangement', right: 'present continuous' }, { left: 'Prediction with evidence', right: 'going to' } ] } }
-                ]
-            },
-            {
-                id: 4, title: 'Unit 4: Let\'s go out',
-                desc: 'Present perfect and past simple. For/since. Describing experiences.',
-                grammar: ['present perfect vs past simple', 'for and since', 'present perfect continuous (introduction)'],
-                vocab: ['entertainment (theatre, concert, exhibition)', 'time expressions', 'communication verbs'],
-                homework: { prompt: 'Write about your experiences: things you have done, how long you have done them, and when you did them for the last time.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'For or since?', sentence: 'I have lived here ___ 2015.', options: ['for', 'since'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Present perfect or past simple?', sentence: 'She ___ three books this year.', options: ['read', 'has read', 'was reading'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я живу здесь уже 5 лет.', fromLang: 'RU', toLang: 'EN', answer: 'I have lived here for 5 years' } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a question', words: ['have', 'how long', 'English', 'you', 'studied', '?'], correct: ['how long', 'have', 'you', 'studied', 'English', '?'] } }
-                ]
-            },
-            {
-                id: 5, title: 'Unit 5: Faster, bolder, stronger',
-                desc: 'Comparatives and superlatives review. Modifiers (a bit, much, far).',
-                grammar: ['comparatives and superlatives (review)', 'modifiers (a bit, much, far, slightly)', 'as...as'],
-                vocab: ['sports and competition', 'health and fitness', 'extreme adjectives (exhausted, fascinating)'],
-                homework: { prompt: 'Compare three sports you know. Which is the most exciting? The most difficult? Use modifiers.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the modifier', sentence: 'Tokyo is ___ more expensive than Bangkok.', options: ['much', 'more', 'the'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Complete the comparison', sentence: 'This book isn\'t ___ interesting ___ the movie.', options: ['as / as', 'so / than', 'more / as'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Она намного умнее своего брата.', fromLang: 'RU', toLang: 'EN', answer: 'She is much smarter than her brother' } },
-                    { type: 'speak-aloud', data: { instruction: 'Compare:', phrase: 'English is not as difficult as Chinese' } }
-                ]
-            },
-            {
-                id: 6, title: 'Unit 6: If something can go wrong...',
-                desc: 'First conditional. When, if, unless. Making predictions and warnings.',
-                grammar: ['first conditional (if + present, will + infinitive)', 'when, as soon as, unless', 'may/might for possibility'],
-                vocab: ['machines and technology', 'phrasal verbs (turn on, switch off)', 'problems and solutions'],
-                homework: { prompt: 'Write 5 first conditional sentences about technology. If my phone breaks, I will...' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Complete the first conditional', sentence: 'If it ___ tomorrow, we\'ll stay home.', options: ['will rain', 'rains', 'rained'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct word', sentence: 'I\'ll call you ___ I arrive.', options: ['if', 'when', 'unless'], correct: 1 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a conditional sentence', words: ['won\'t', 'you', 'hurry', 'if', 'don\'t', 'be', 'you', 'late'], correct: ['if', 'you', 'don\'t', 'hurry', 'you', 'won\'t', 'be', 'late'] } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если ты будешь практиковаться каждый день, ты выучишь английский.', fromLang: 'RU', toLang: 'EN', answer: 'If you practice every day, you will learn English' } }
-                ]
-            },
-            {
-                id: 7, title: 'Unit 7: What should I do?',
-                desc: 'Modal verbs: should, must, have to. Giving advice. Health problems.',
-                grammar: ['should / shouldn\'t', 'must / mustn\'t', 'have to / don\'t have to'],
-                vocab: ['health and body (headache, stomachache)', 'at the doctor', 'advice phrases'],
-                homework: { prompt: 'A friend is stressed about exams. Write advice using should, must, have to.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct modal', sentence: 'You ___ eat more vegetables. It\'s good for you.', options: ['should', 'must', 'have to'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Obligation or advice?', sentence: 'You ___ wear a seatbelt. It\'s the law.', options: ['should', 'must', 'could'], correct: 1 } },
-                    { type: 'match-pairs', data: { instruction: 'Match modal to meaning', pairs: [ { left: 'should', right: 'advice' }, { left: 'must', right: 'obligation' }, { left: "don't have to", right: 'not necessary' }, { left: "mustn't", right: 'prohibition' } ] } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Тебе не нужно приходить завтра.', fromLang: 'RU', toLang: 'EN', answer: "You don't have to come tomorrow" } }
-                ]
-            },
-            {
-                id: 8, title: 'Unit 8: Passions and obsessions',
-                desc: 'Passive voice (present and past). Used to. Describing habits in the past.',
-                grammar: ['passive voice: present simple and past simple', 'used to + infinitive', 'used to vs past simple'],
-                vocab: ['music and art', 'inventions', 'historical events'],
-                homework: { prompt: 'Write about what you used to do as a child. What has changed? Use passive voice for 2 sentences.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Active or passive?', sentence: 'The Mona Lisa ___ by Leonardo da Vinci.', options: ['painted', 'was painted', 'is painted'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Complete with used to', sentence: 'I ___ live in Moscow, but now I live in London.', options: ['use to', 'used to', 'was used to'], correct: 1 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a passive sentence', words: ['is', 'English', 'spoken', 'many', 'in', 'countries'], correct: ['English', 'is', 'spoken', 'in', 'many', 'countries'] } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Эта книга была написана в 1960 году.', fromLang: 'RU', toLang: 'EN', answer: 'This book was written in 1960' } }
-                ]
-            },
-            {
-                id: 9, title: 'Unit 9: Crime doesn\'t pay',
-                desc: 'Second conditional. Making hypothetical statements.',
-                grammar: ['second conditional (if + past, would + infinitive)', 'would / wouldn\'t'],
-                vocab: ['crime (steal, rob, arrest)', 'law and order', 'money and finance'],
-                homework: { prompt: 'Answer: If you won a million dollars, what would you do? Write 5 sentences.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Complete the second conditional', sentence: 'If I ___ a car, I would drive to work.', options: ['have', 'had', 'would have'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'First or second conditional?', sentence: 'If I ___ you, I would apologize.', options: ['am', 'was', 'were'], correct: 2 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я знал ответ, я бы тебе сказал.', fromLang: 'RU', toLang: 'EN', answer: 'If I knew the answer, I would tell you' } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a second conditional', words: ['would', 'what', 'you', 'do', 'if', 'you', 'could', 'fly', '?'], correct: ['what', 'would', 'you', 'do', 'if', 'you', 'could', 'fly', '?'] } }
-                ]
-            },
-            {
-                id: 10, title: 'Unit 10: Revision & Communication mastery',
-                desc: 'Review all B1 grammar. Functional language for travel, shopping, complaints.',
-                grammar: ['all B1 tenses revision', 'question tags', 'reported speech introduction'],
-                vocab: ['functional language', 'phrasal verbs review', 'word formation'],
-                homework: { prompt: 'Write a story using at least 4 different tenses. Describe what happened, what was happening, and what will happen.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Add the question tag', sentence: "You're a student, ___?", options: ["aren't you", "are you", "isn't it"], correct: 0 } },
-                    { type: 'read-answer', data: { instruction: 'Read and answer', passage: "The English language has about 170,000 words in current use. A typical native speaker uses about 20,000-35,000 words. However, you only need about 3,000 words to understand 95% of everyday English.", question: 'How many words do you need to understand 95% of everyday English?', options: ['170,000', '35,000', '3,000', '20,000'], correct: 2 } },
-                    { type: 'speak-aloud', data: { instruction: 'Describe your English level:', phrase: 'I have been learning English for two years and I can understand most conversations' } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Он сказал, что придёт завтра.', fromLang: 'RU', toLang: 'EN', answer: 'He said he would come tomorrow' } }
-                ]
-            }
+            { id: 1, title: 'Present Perfect: yet / already / just', desc: 'Recent events and completion.', unitType: 'grammar', grammar: ['PP + yet/already/just'], vocab: ['housework', 'make vs do'], exercises: [{ type: 'fill-bubble', data: { instruction: 'PP', sentence: "I've ___ finished my homework.", options: ['yet', 'already', 'just'], correct: 2 } }] },
+            { id: 2, title: 'Present Perfect vs Past Simple', desc: 'When to use which tense.', unitType: 'grammar', grammar: ['PP vs PS'], vocab: ['verbs + prepositions'], exercises: [{ type: 'fill-bubble', data: { instruction: 'PP or PS?', sentence: "I ___ to London in 2020.", options: ['have been', 'went', 'have gone'], correct: 1 } }] },
+            { id: 3, title: 'Present Perfect + for / since', desc: 'Duration: how long have you...?', unitType: 'grammar', grammar: ['PP + for/since'], vocab: ['relationships', 'biography'], exercises: [{ type: 'fill-bubble', data: { instruction: 'for or since?', sentence: "I've lived here ___ 2015.", options: ['for', 'since'], correct: 1 } }] },
+            { id: 4, title: '🗣️ Job interview: about yourself', desc: 'PP + PS in a job interview context.', unitType: 'situational', grammar: ['PP + PS combined'], vocab: ['work experience', 'skills', 'education'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Interview', sentence: "I've ___ in marketing for 5 years.", options: ['work', 'worked', 'working'], correct: 1 } }] },
+            { id: 5, title: '🔄 Checkpoint 1', desc: 'Review Present Perfect.', unitType: 'review', grammar: ['PP all forms'], vocab: ['B1 review 1-4'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: "She's lived here ___ 10 years.", options: ['for', 'since', 'during'], correct: 0 } }] },
+            { id: 6, title: 'Infinitive vs Gerund', desc: 'to + verb vs verb + -ing.', unitType: 'grammar', grammar: ['infinitive vs gerund'], vocab: ['want/enjoy/decide/avoid'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Inf or Ger?', sentence: 'I want ___ English.', options: ['learn', 'to learn', 'learning'], correct: 1 } }] },
+            { id: 7, title: 'Past Continuous + Past Simple', desc: 'was doing... when... happened.', unitType: 'grammar', grammar: ['Past Continuous'], vocab: ['storytelling', 'feelings'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Past Cont.', sentence: 'I ___ sleeping when the phone rang.', options: ['am', 'was', 'were'], correct: 1 } }] },
+            { id: 8, title: 'First Conditional: if... will...', desc: 'Real future possibilities.', unitType: 'grammar', grammar: ['First Conditional'], vocab: ['possibilities', 'plans', 'warnings'], exercises: [{ type: 'fill-bubble', data: { instruction: '1st Conditional', sentence: 'If it rains, I ___ stay home.', options: ['will', 'would', 'am'], correct: 0 } }] },
+            { id: 9, title: 'Second Conditional: dreams', desc: 'Unreal/imaginary situations.', unitType: 'grammar', grammar: ['Second Conditional'], vocab: ['dreams', 'hypotheticals'], exercises: [{ type: 'fill-bubble', data: { instruction: '2nd Conditional', sentence: 'If I had a million, I ___ travel.', options: ['will', 'would', 'can'], correct: 1 } }] },
+            { id: 10, title: '🔄 Checkpoint 2', desc: 'Review Conditionals, Past Continuous.', unitType: 'review', grammar: ['1st & 2nd Conditionals', 'Past Continuous'], vocab: ['B1 review 6-9'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'If she ___ here, she would help us.', options: ['is', 'was', 'were'], correct: 2 } }] },
+            { id: 11, title: 'Passive Voice: present & past', desc: 'is made / was built.', unitType: 'grammar', grammar: ['Passive present and past'], vocab: ['news', 'production', 'facts'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Passive', sentence: 'English ___ spoken worldwide.', options: ['is', 'was', 'are'], correct: 0 } }] },
+            { id: 12, title: 'Past Perfect: before that', desc: 'had + V3 for earlier past events.', unitType: 'grammar', grammar: ['Past Perfect'], vocab: ['books', 'films', 'stories'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Past Perfect', sentence: 'When I arrived, they ___ left.', options: ['have', 'had', 'has'], correct: 1 } }] },
+            { id: 13, title: 'Reported Speech', desc: 'He said... She told me...', unitType: 'grammar', grammar: ['Reported Speech'], vocab: ['say vs tell', 'retelling'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Reported', sentence: 'She said she ___ tired.', options: ['is', 'was', 'were'], correct: 1 } }] },
+            { id: 14, title: '🗣️ Retelling news & gossip', desc: 'PP + Reported Speech in context.', unitType: 'situational', grammar: ['PP + Reported Speech'], vocab: ['news phrases', 'conversational'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Report', sentence: 'He told me he ___ the movie.', options: ['liked', 'likes', 'like'], correct: 0 } }] },
+            { id: 15, title: 'Modals: must / have to / don\'t have to', desc: 'Obligation, no obligation, prohibition.', unitType: 'grammar', grammar: ['must/have to/don\'t have to'], vocab: ['rules', 'laws', 'work'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Modals', sentence: 'You ___ wear a uniform at school.', options: ['must', 'can', 'should'], correct: 0 } }] },
+            { id: 16, title: '🔄 Final Checkpoint B1', desc: 'Full B1 review.', unitType: 'review', grammar: ['all B1 grammar'], vocab: ['all B1 vocab'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Final', sentence: 'If I were rich, I ___ buy a yacht.', options: ['will', 'would', 'can'], correct: 1 } }] }
         ]
     },
 
     // ═══════════════════════════════════════════
-    // B2 — UPPER-INTERMEDIATE
+    // B2 — UPPER-INTERMEDIATE (14 units)
     // ═══════════════════════════════════════════
     {
-        id: 'oxford_b2_upper_intermediate',
-        title: 'English File B2 — Upper-Intermediate',
-        author: 'Oxford University Press',
+        id: 'b2_upper',
+        title: 'B2 — Upper-Intermediate',
         level: 'B2',
         cefr: 'B2',
-        methodology: 'Achieving independence. Complex grammar structures, nuance, formal/informal register. Building academic and professional language skills.',
+        methodology: 'Advanced tenses, conditionals, articles, wish. Business English.',
         units: [
-            {
-                id: 1, title: 'Unit 1: Questions and answers',
-                desc: 'Complex question forms. Subject/object questions. Indirect questions.',
-                grammar: ['question formation (review)', 'subject and object questions', 'indirect questions (Could you tell me...?)'],
-                vocab: ['personality and appearance', 'compound adjectives (well-known, good-looking)', 'relationships'],
-                homework: { prompt: 'Write 10 indirect questions you would ask a celebrity in an interview.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Subject or object question?', sentence: 'Who ___ you to the party?', options: ['invited', 'did invite', 'did invited'], correct: 0 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make an indirect question', words: ['tell', 'you', 'could', 'me', 'where', 'station', 'the', 'is', '?'], correct: ['could', 'you', 'tell', 'me', 'where', 'the', 'station', 'is', '?'] } },
-                    { type: 'type-translation', data: { instruction: 'Translate to English', sourceText: 'Не могли бы вы сказать мне, сколько это стоит?', fromLang: 'RU', toLang: 'EN', answer: 'Could you tell me how much this costs' } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'I wonder ___ he lives.', options: ['where', 'where does', 'does where'], correct: 0 } }
-                ]
-            },
-            {
-                id: 2, title: 'Unit 2: Present perfect simple & continuous',
-                desc: 'Present perfect simple vs continuous. How long...? Duration and result.',
-                grammar: ['present perfect simple vs continuous', 'for, since, how long', 'still, yet, already, just'],
-                vocab: ['work and employment', 'job interviews', 'achievement verbs'],
-                homework: { prompt: 'Write about your achievements and ongoing activities. What have you done? What have you been doing?' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Simple or continuous?', sentence: 'I ___ this book for three hours. (still reading)', options: ['have read', 'have been reading', 'read'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'She ___ five emails today. (finished)', options: ['has written', 'has been writing', 'wrote'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я работаю здесь уже 3 года.', fromLang: 'RU', toLang: 'EN', answer: 'I have been working here for 3 years' } },
-                    { type: 'match-pairs', data: { instruction: 'Match with the correct tense', pairs: [ { left: 'Result (how many)', right: 'present perfect simple' }, { left: 'Duration (how long)', right: 'present perfect continuous' }, { left: 'Just finished', right: 'present perfect simple' }, { left: 'Still in progress', right: 'present perfect continuous' } ] } }
-                ]
-            },
-            {
-                id: 3, title: 'Unit 3: Narrative tenses',
-                desc: 'Past simple, past continuous, past perfect. Storytelling.',
-                grammar: ['past perfect (had + past participle)', 'narrative tenses (simple, continuous, perfect)', 'time linkers (when, while, as soon as, by the time)'],
-                vocab: ['storytelling', 'adverbs (suddenly, immediately, eventually)', 'news and media'],
-                homework: { prompt: 'Write a short story (150 words) using all three past tenses. Start with: "It was a dark and stormy night..."' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct tense', sentence: 'When I arrived, she ___ already ___.',  options: ['had / left', 'has / left', 'was / leaving'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Past perfect or past simple?', sentence: 'I ___ dinner before he ___.', options: ['had cooked / arrived', 'cooked / had arrived', 'was cooking / arrived'], correct: 0 } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a sentence with past perfect', words: ['had', 'by the time', 'arrived', 'we', 'the film', 'started', ','], correct: ['by the time', 'we', 'arrived', ',', 'the film', 'had', 'started'] } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я никогда раньше не видел такого красивого заката.', fromLang: 'RU', toLang: 'EN', answer: 'I had never seen such a beautiful sunset before' } }
-                ]
-            },
-            {
-                id: 4, title: 'Unit 4: Future perfect & continuous',
-                desc: 'Future perfect and continuous. Making predictions about the future.',
-                grammar: ['future perfect (will have + past participle)', 'future continuous (will be + -ing)', 'future time clauses'],
-                vocab: ['technology and future', 'environment', 'predictions'],
-                homework: { prompt: 'Write predictions: By 2050, what will have changed? What will people be doing differently?' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Future perfect or continuous?', sentence: 'By next year, I ___ here for 10 years.', options: ['will work', 'will have worked', 'will be working'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct form', sentence: 'This time tomorrow, I ___ on the beach.', options: ['will lie', 'will be lying', 'will have lain'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'К тому времени, как ты придёшь, я уже закончу работу.', fromLang: 'RU', toLang: 'EN', answer: 'By the time you come, I will have finished work' } },
-                    { type: 'speak-aloud', data: { instruction: 'Make a prediction:', phrase: 'In ten years, people will be using AI for everything' } }
-                ]
-            },
-            {
-                id: 5, title: 'Unit 5: Conditionals — all types',
-                desc: 'Zero, first, second, third conditionals reviewed and contrasted.',
-                grammar: ['third conditional (if + past perfect, would have + pp)', 'mixed conditionals', 'unless, provided that, as long as'],
-                vocab: ['regrets and wishes', 'decision-making', 'consequences'],
-                homework: { prompt: 'Write about 3 regrets using third conditional. If I had..., I would have...' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Third conditional', sentence: 'If I ___ harder, I would have passed the exam.', options: ['studied', 'had studied', 'would study'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Which conditional?', sentence: 'If I had known about the party, I ___ there.', options: ['would go', 'would have gone', 'will go'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я выучил английский раньше, я бы получил эту работу.', fromLang: 'RU', toLang: 'EN', answer: 'If I had learned English earlier, I would have got that job' } },
-                    { type: 'match-pairs', data: { instruction: 'Match conditional to time', pairs: [ { left: 'Zero', right: 'general truth' }, { left: 'First', right: 'likely future' }, { left: 'Second', right: 'unlikely present' }, { left: 'Third', right: 'impossible past' } ] } }
-                ]
-            },
-            {
-                id: 6, title: 'Unit 6: Reported speech',
-                desc: 'Reported statements, questions, commands. Reporting verbs.',
-                grammar: ['reported speech: statements', 'reported questions', 'reporting verbs (suggest, advise, promise, refuse)'],
-                vocab: ['media and journalism', 'saying and telling verbs', 'speech acts'],
-                homework: { prompt: 'Watch a news report and write what the reporter said using reported speech.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Change to reported speech', sentence: '"I am tired." → She said she ___ tired.', options: ['is', 'was', 'were'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Reported question', sentence: '"Where do you live?" → He asked me where I ___.', options: ['live', 'lived', 'do live'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate to reported speech', sourceText: 'Он сказал, что никогда не был в России.', fromLang: 'RU', toLang: 'EN', answer: 'He said he had never been to Russia' } },
-                    { type: 'word-shuffle', data: { instruction: 'Change to reported speech', words: ['she', 'said', 'that', 'would', 'she', 'call', 'later', 'me'], correct: ['she', 'said', 'that', 'she', 'would', 'call', 'me', 'later'] } }
-                ]
-            },
-            {
-                id: 7, title: 'Unit 7: Passives — all tenses',
-                desc: 'Passive in all tenses. Formal writing. Impersonal structures.',
-                grammar: ['passive voice: all tenses', 'it is said that.../ he is thought to...', 'have something done (causative)'],
-                vocab: ['science and discoveries', 'formal/academic language', 'processes'],
-                homework: { prompt: 'Describe a process (how something is made) using passive voice throughout.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Change to passive', sentence: 'Someone broke the window. → The window ___.', options: ['was broken', 'is broken', 'has been broken'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Causative have', sentence: 'I ___ my car washed yesterday.', options: ['have', 'had', 'was'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Считается, что он лучший студент.', fromLang: 'RU', toLang: 'EN', answer: 'He is considered to be the best student' } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a passive sentence', words: ['been', 'the', 'has', 'email', 'sent', 'already'], correct: ['the', 'email', 'has', 'already', 'been', 'sent'] } }
-                ]
-            },
-            {
-                id: 8, title: 'Unit 8: Relative clauses',
-                desc: 'Defining and non-defining relative clauses. Relative pronouns.',
-                grammar: ['defining relative clauses (who, which, that, where)', 'non-defining relative clauses (commas)', 'reduced relative clauses'],
-                vocab: ['describing places and things', 'adjective + preposition combinations', 'compound nouns'],
-                homework: { prompt: 'Describe 5 things/people/places using relative clauses. Add extra information with non-defining clauses.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the relative pronoun', sentence: 'That\'s the woman ___ won the competition.', options: ['who', 'which', 'where'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Defining or non-defining?', sentence: 'London, ___ is the capital of the UK, is very expensive.', options: ['that', 'which', 'where'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Это ресторан, где мы впервые встретились.', fromLang: 'RU', toLang: 'EN', answer: 'This is the restaurant where we first met' } },
-                    { type: 'word-shuffle', data: { instruction: 'Combine into one sentence with a relative clause', words: ['the', 'who', 'works', 'man', 'here', 'is', 'my', 'brother'], correct: ['the', 'man', 'who', 'works', 'here', 'is', 'my', 'brother'] } }
-                ]
-            },
-            {
-                id: 9, title: 'Unit 9: Wish & If only',
-                desc: 'Wish + past simple/past perfect. Expressing regrets and desires.',
-                grammar: ['wish + past simple (present wishes)', 'wish + past perfect (past regrets)', 'wish + would (complaints about others)', 'if only'],
-                vocab: ['emotions and feelings', 'regret phrases', 'social issues'],
-                homework: { prompt: 'Write 3 wishes about the present, 3 regrets about the past, and 3 complaints using wish + would.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Present wish', sentence: 'I wish I ___ taller.', options: ['am', 'was/were', 'will be'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Past regret', sentence: 'I wish I ___ harder at university.', options: ['studied', 'had studied', 'would study'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Жаль, что я не говорю по-французски.', fromLang: 'RU', toLang: 'EN', answer: "I wish I spoke French" } },
-                    { type: 'speak-aloud', data: { instruction: 'Express a wish:', phrase: 'I wish I had more free time' } }
-                ]
-            },
-            {
-                id: 10, title: 'Unit 10: B2 Review & Communication mastery',
-                desc: 'Full review of all B2 grammar. Academic and professional communication.',
-                grammar: ['all B2 grammar revision', 'cleft sentences (It was... that/who)', 'emphasis and inversion'],
-                vocab: ['academic vocabulary', 'idioms and collocations', 'formal vs informal register'],
-                homework: { prompt: 'Write a formal email and an informal message about the same topic. Notice the differences in register.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Identify the correct register', sentence: 'Which is more formal?', options: ["I'm writing to inquire about...", "Hey, I wanna know about...", "So like, what's up with..."], correct: 0 } },
-                    { type: 'read-answer', data: { instruction: 'Read and answer', passage: "The phenomenon known as 'code-switching' refers to the practice of alternating between two or more languages or varieties of language in conversation. Research suggests that code-switching is not a sign of confusion but rather of linguistic competence.", question: "According to the text, what does code-switching indicate?", options: ['Confusion', 'Linguistic competence', 'Poor education', 'Nervousness'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate formally', sourceText: 'Был бы рад получить от вас ответ.', fromLang: 'RU', toLang: 'EN', answer: 'I would be grateful to hear from you' } },
-                    { type: 'speak-aloud', data: { instruction: 'Summarize in English:', phrase: 'In my opinion, learning a second language is one of the most valuable skills you can develop' } }
-                ]
-            }
+            { id: 1, title: 'All question types', desc: 'Complex question formation.', unitType: 'grammar', grammar: ['all question types'], vocab: ['compound adjectives', 'work'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Question', sentence: "You're coming tomorrow, ___ you?", options: ["aren't", "don't", "won't"], correct: 0 } }] },
+            { id: 2, title: 'Narrative Tenses', desc: 'Past Simple / Continuous / Perfect combined.', unitType: 'grammar', grammar: ['narrative tenses combo'], vocab: ['air travel', 'adventures'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Narrative', sentence: 'While I ___ walking, it started to rain.', options: ['am', 'was', 'had'], correct: 1 } }] },
+            { id: 3, title: 'Future forms: all', desc: 'will / going to / Present Continuous / Future Perfect.', unitType: 'grammar', grammar: ['all future forms'], vocab: ['plans', 'predictions', 'schedules'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Future', sentence: 'By 2030 I ___ finished university.', options: ['will', 'will have', 'am going to'], correct: 1 } }] },
+            { id: 4, title: '🗣️ Business email & formal writing', desc: 'Formal vs informal register.', unitType: 'situational', grammar: ['register', 'formal structures'], vocab: ['I am writing to...', 'Best regards', 'Furthermore'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Formal', sentence: 'I am writing ___ enquire about...', options: ['for', 'to', 'about'], correct: 1 } }] },
+            { id: 5, title: '🔄 Checkpoint 1', desc: 'Review B2 units 1-4.', unitType: 'review', grammar: ['narrative', 'future', 'formal'], vocab: ['B2 review'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'By next year I ___ here for 5 years.', options: ['will live', 'will have lived', 'am living'], correct: 1 } }] },
+            { id: 6, title: 'Conditionals: 2nd & 3rd', desc: 'Unreal present and past.', unitType: 'grammar', grammar: ['2nd + 3rd Conditionals'], vocab: ['feelings', 'regrets'], exercises: [{ type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: 'If I had studied, I ___ passed.', options: ['will have', 'would have', 'had'], correct: 1 } }] },
+            { id: 7, title: 'Wish + Past / Past Perfect', desc: 'I wish I had... If only...', unitType: 'grammar', grammar: ['wish + past', 'wish + past perfect'], vocab: ['regrets', 'decision making'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Wish', sentence: 'I wish I ___ taller.', options: ['am', 'was', 'were'], correct: 2 } }] },
+            { id: 8, title: 'Gerund vs Infinitive: advanced', desc: 'stop doing vs stop to do.', unitType: 'grammar', grammar: ['gerund vs infinitive advanced'], vocab: ['cinema', 'reviews'], exercises: [{ type: 'fill-bubble', data: { instruction: 'G vs I', sentence: 'I stopped ___ (to take a photo).', options: ['taking', 'to take'], correct: 1 } }] },
+            { id: 9, title: 'Used to / Be used to / Get used to', desc: 'Past habits vs current adaptation.', unitType: 'grammar', grammar: ['used to/be used to/get used to'], vocab: ['lifestyle changes'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Used to', sentence: 'I ___ smoke, but I quit.', options: ['used to', 'am used to', 'get used to'], correct: 0 } }] },
+            { id: 10, title: '🔄 Checkpoint 2', desc: 'Review conditionals, wish, gerund/inf.', unitType: 'review', grammar: ['conditionals', 'wish', 'gerund/inf'], vocab: ['B2 review'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'If only I ___ listened to you.', options: ['have', 'had', 'would'], correct: 1 } }] },
+            { id: 11, title: 'Reported Speech: all forms', desc: 'Statements, questions, commands.', unitType: 'grammar', grammar: ['Reported Speech all types'], vocab: ['politics', 'global issues'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Reported Q', sentence: 'She asked me ___ I was from.', options: ['what', 'where', 'that'], correct: 1 } }] },
+            { id: 12, title: 'Articles: a / the / zero', desc: 'All article rules.', unitType: 'grammar', grammar: ['articles all rules'], vocab: ['cities', 'geography'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Articles', sentence: '___ sun is very hot today.', options: ['A', 'The', '-'], correct: 1 } }] },
+            { id: 13, title: 'Relative Clauses + Tag Questions', desc: 'who/which/that. Defining vs non-defining.', unitType: 'grammar', grammar: ['relative clauses', 'tag questions'], vocab: ['technology', 'science'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Relative', sentence: 'The woman ___ lives next door is a doctor.', options: ['who', 'which', 'what'], correct: 0 } }] },
+            { id: 14, title: '🗣️ Job interview (advanced)', desc: 'All B2 structures in free speech.', unitType: 'situational', grammar: ['all B2'], vocab: ['STAR method', 'strengths/weaknesses'], exercises: [{ type: 'speak-aloud', data: { instruction: 'Interview answer:', phrase: "I would say my main strength is... I used to struggle with... but I\'ve improved by..." } }] }
         ]
     },
 
     // ═══════════════════════════════════════════
-    // C1 — ADVANCED
+    // C1 — ADVANCED (13 units)
     // ═══════════════════════════════════════════
     {
-        id: 'oxford_c1_advanced',
-        title: 'English File C1 — Advanced',
-        author: 'Oxford University Press',
+        id: 'c1_advanced',
+        title: 'C1 — Advanced',
         level: 'C1',
         cefr: 'C1',
-        methodology: 'Achieving proficiency. Subtle grammar distinctions, advanced vocabulary, nuanced argumentation. Focus on academic, professional, and sophisticated social language.',
+        methodology: 'Discourse markers, modals for speculation, emphasis, advanced passives.',
         units: [
-            {
-                id: 1, title: 'Unit 1: The interview',
-                desc: 'Discourse markers. Complex question forms. Work and career vocabulary.',
-                grammar: ['discourse markers (well, I mean, actually, basically)', 'complex question forms (negative questions, echo questions)', 'comment adverbs (apparently, obviously, presumably)'],
-                vocab: ['work and business collocations', 'interview skills', 'professional communication'],
-                homework: { prompt: 'Write a detailed analysis of your career path using discourse markers and comment adverbs.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the correct discourse marker', sentence: '___, I think the meeting went well, although there were some issues.', options: ['On the whole', 'By the way', 'Actually'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Negative question', sentence: '___ you supposed to be at work?', options: ["Aren't", "Don't", "Weren't"], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'По-видимому, собеседование прошло успешно.', fromLang: 'RU', toLang: 'EN', answer: 'Apparently, the interview went well' } },
-                    { type: 'speak-aloud', data: { instruction: 'Use discourse markers:', phrase: "Well, to be honest, I think we need to reconsider our approach" } }
-                ]
-            },
-            {
-                id: 2, title: 'Unit 2: Speculation and deduction',
-                desc: 'Must/might/can\'t + perfect infinitive. Speculating about past events.',
-                grammar: ['must/might/may/can\'t + infinitive (present deduction)', 'must/might/may/can\'t + have + past participle (past deduction)', 'so/such...that'],
-                vocab: ['crime and mystery', 'evidence and deduction', 'adjectives of certainty'],
-                homework: { prompt: 'Look at an old photo and speculate about what was happening. Use modal verbs of deduction.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Past deduction', sentence: 'She ___ home early. Her car is here.', options: ['must have come', 'might come', 'can come'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Impossibility', sentence: 'He ___ the thief. He was with me all evening.', options: ["can't have been", "mustn't be", "shouldn't have been"], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Возможно, они уже уехали.', fromLang: 'RU', toLang: 'EN', answer: 'They might have already left' } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a deduction', words: ['the', 'train', 'must', 'been', 'delayed', 'have'], correct: ['the', 'train', 'must', 'have', 'been', 'delayed'] } }
-                ]
-            },
-            {
-                id: 3, title: 'Unit 3: Distancing',
-                desc: 'Unreal past. Distancing techniques. Tentative language.',
-                grammar: ['unreal past (wish, if only, would rather, it\'s time)', 'distancing (tend to, appear to, seem to)', 'formal subjunctive (I suggest he go...)'],
-                vocab: ['social issues and politics', 'tentative language', 'academic hedging'],
-                homework: { prompt: 'Write a balanced argument about a controversial topic using distancing language.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the distancing form', sentence: 'It ___ that the economy is recovering.', options: ['appears', 'is appearing', 'appeared'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Would rather', sentence: "I'd rather you ___ smoke in here.", options: ["don't", "didn't", "won't"], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Пора бы тебе начать заниматься.', fromLang: 'RU', toLang: 'EN', answer: "It's time you started studying" } },
-                    { type: 'speak-aloud', data: { instruction: 'Use tentative language:', phrase: "It would seem that the situation tends to improve over time" } }
-                ]
-            },
-            {
-                id: 4, title: 'Unit 4: Inversion & emphasis',
-                desc: 'Inverted conditionals. Emphatic structures. Cleft sentences.',
-                grammar: ['inversion after negative adverbials (never, seldom, hardly)', 'cleft sentences (What I need is... / It was X that...)', 'inverted conditionals (Had I known..., Were he to...)'],
-                vocab: ['formal writing', 'emphasis phrases', 'literary language'],
-                homework: { prompt: 'Rewrite 5 sentences using inversion for emphasis: Never have I..., Seldom do we..., etc.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: 'Never ___ such a beautiful sunset.', options: ['I have seen', 'have I seen', 'I saw'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Cleft sentence', sentence: '___ really annoys me is people being late.', options: ['What', 'That', 'It'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate with inversion', sourceText: 'Только когда он ушёл, я осознал свою ошибку.', fromLang: 'RU', toLang: 'EN', answer: 'Only when he left did I realize my mistake' } },
-                    { type: 'word-shuffle', data: { instruction: 'Make an inverted conditional', words: ['had', 'I', 'known', ',', 'I', 'have', 'come', 'would'], correct: ['had', 'I', 'known', ',', 'I', 'would', 'have', 'come'] } }
-                ]
-            },
-            {
-                id: 5, title: 'Unit 5: Noun clauses & advanced connectors',
-                desc: 'Noun clauses. Advanced connectors and linking devices. Formal writing.',
-                grammar: ['noun clauses (The fact that..., Whether or not...)', 'advanced connectors (nevertheless, furthermore, notwithstanding)', 'participle clauses (Having done..., Being a...)'],
-                vocab: ['academic vocabulary', 'formal connectors', 'abstract nouns'],
-                homework: { prompt: 'Write a formal essay (200 words) using advanced connectors and participle clauses.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the connector', sentence: 'The proposal was rejected; ___, they decided to try again.', options: ['nevertheless', 'moreover', 'therefore'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Participle clause', sentence: '___ all options, we decided to postpone the meeting.', options: ['Having considered', 'Considered', 'To consider'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate formally', sourceText: 'Несмотря на трудности, проект был завершён вовремя.', fromLang: 'RU', toLang: 'EN', answer: 'Notwithstanding the difficulties, the project was completed on time' } },
-                    { type: 'read-answer', data: { instruction: 'Read and answer', passage: "The phenomenon of language attrition — the gradual loss of a language — has been extensively studied in recent years. Research suggests that the critical period for language retention is the first decade of exposure. Furthermore, emotional connections to a language appear to significantly influence its retention.", question: "What factor significantly influences language retention?", options: ['Grammar study', 'Emotional connections', 'Age at learning', 'Translation practice'], correct: 1 } }
-                ]
-            },
-            {
-                id: 6, title: 'Unit 6: Advanced modals & perfect forms',
-                desc: 'Perfect modals in depth. Needn\'t have vs didn\'t need to. Advanced uses.',
-                grammar: ["needn't have done vs didn't need to do", 'could have / should have / would have', "was to / was supposed to", 'advanced modal patterns'],
-                vocab: ['regret and criticism', 'professional mistakes', 'formal complaints'],
-                homework: { prompt: 'Write about mistakes or missed opportunities. Use needn\'t have, should have, could have.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Needn\'t have vs didn\'t need to', sentence: 'I ___ buy milk — there was plenty at home. (I bought it unnecessarily)', options: ["needn't have bought", "didn't need to buy", "shouldn't buy"], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Choose correct modal', sentence: 'You ___ told me earlier! Now it\'s too late.', options: ['should have', 'must have', 'could'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Тебе не нужно было приходить так рано — встреча начинается в 10.', fromLang: 'RU', toLang: 'EN', answer: "You needn't have come so early — the meeting starts at 10" } },
-                    { type: 'speak-aloud', data: { instruction: 'Express regret:', phrase: "I should have studied harder when I was younger" } }
-                ]
-            },
-            {
-                id: 7, title: 'Unit 7: Mixed conditionals & hypothetical past',
-                desc: 'Mixed conditionals. Hypothetical situations across time. Complex wishes.',
-                grammar: ['mixed conditionals (past condition → present result and vice versa)', 'wish + would for habits', 'suppose / what if / imagine'],
-                vocab: ['life choices', 'alternative outcomes', 'philosophical vocabulary'],
-                homework: { prompt: 'Write about how your life would be different now if you had made different choices in the past.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Mixed conditional', sentence: 'If I had studied medicine, I ___ a doctor now.', options: ['would be', 'would have been', 'will be'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Mixed conditional (reverse)', sentence: 'If she weren\'t so lazy, she ___ the exam last week.', options: ['would pass', 'would have passed', 'passed'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я родился в другой стране, моя жизнь была бы совсем другой.', fromLang: 'RU', toLang: 'EN', answer: 'If I had been born in a different country, my life would be completely different' } },
-                    { type: 'word-shuffle', data: { instruction: 'Make a mixed conditional', words: ['if', 'spoken', 'had', 'I', 'English', 'I', 'would', 'abroad', 'be', 'living'], correct: ['if', 'I', 'had', 'spoken', 'English', 'I', 'would', 'be', 'living', 'abroad'] } }
-                ]
-            },
-            {
-                id: 8, title: 'Unit 8: C1 Review & Mastery',
-                desc: 'Full C1 review. Academic writing. Idiomatic English.',
-                grammar: ['all C1 structures revision', 'ellipsis and substitution', 'fronting for emphasis'],
-                vocab: ['idioms and proverbs', 'academic writing conventions', 'collocations bank'],
-                homework: { prompt: 'Write an academic-style essay (250 words) on a topic of your choice, using advanced grammar throughout.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Identify the idiom meaning', sentence: '"It\'s not my cup of tea" means:', options: ["I don't like it", 'I want tea', "It's not mine"], correct: 0 } },
-                    { type: 'read-answer', data: { instruction: 'Read and answer', passage: "Noam Chomsky's theory of Universal Grammar posits that the ability to acquire language is innate to the human species. According to this view, children are born with an inherent understanding of the basic grammatical structure that underlies all human languages. This 'language acquisition device,' as Chomsky termed it, enables children to rapidly acquire the complex rules of their native language despite the relatively limited linguistic input they receive.", question: "According to Chomsky, what enables children to acquire language so quickly?", options: ['Extensive teaching', 'An innate language acquisition device', 'Memorization', 'Imitation of parents'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate idiomatically', sourceText: 'Давай не будем ходить вокруг да около.', fromLang: 'RU', toLang: 'EN', answer: "Let's not beat around the bush" } },
-                    { type: 'speak-aloud', data: { instruction: 'Deliver a mini-speech:', phrase: "In conclusion, I would argue that language learning is not merely an academic pursuit, but rather a gateway to understanding different cultures and perspectives" } }
-                ]
-            }
+            { id: 1, title: 'Discourse Markers', desc: 'however, moreover, although, whereas.', unitType: 'grammar', grammar: ['discourse markers', 'linkers'], vocab: ['argumentation', 'essays'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Linker', sentence: 'The food was good; ___, the service was poor.', options: ['however', 'moreover', 'therefore'], correct: 0 } }] },
+            { id: 2, title: 'Causative: have/get sth done', desc: 'I had my car repaired.', unitType: 'grammar', grammar: ['causative have/get'], vocab: ['services', 'complaints'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Causative', sentence: 'I had my hair ___.', options: ['cut', 'cutted', 'cutting'], correct: 0 } }] },
+            { id: 3, title: 'Deduction: must/can\'t/might + have', desc: 'She must have left already.', unitType: 'grammar', grammar: ['modals of deduction'], vocab: ['investigation', 'conclusions'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Deduction', sentence: 'He ___ have forgotten. He always remembers.', options: ["can't", "must", "might"], correct: 0 } }] },
+            { id: 4, title: 'Advanced modals: permission & obligation', desc: "needn't have, could have, was supposed to.", unitType: 'grammar', grammar: ['advanced modals'], vocab: ['work', 'expectations'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Modal', sentence: "You ___ have told me earlier!", options: ['should', 'would', 'can'], correct: 0 } }] },
+            { id: 5, title: '🔄 Checkpoint 1', desc: 'Review units 1-4.', unitType: 'review', grammar: ['discourse', 'causative', 'modals'], vocab: ['C1 review'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'She ___ have been tired after the flight.', options: ['must', "can't", 'should'], correct: 0 } }] },
+            { id: 6, title: 'Emphasis: cleft + inversion', desc: "It was John who... Never have I...", unitType: 'grammar', grammar: ['cleft sentences', 'inversion'], vocab: ['persuasion', 'presentations'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Cleft', sentence: 'It ___ the weather that ruined the trip.', options: ['was', 'is', 'were'], correct: 0 } }] },
+            { id: 7, title: 'Hedging & distancing', desc: 'seem, appear, tend, passive reporting.', unitType: 'grammar', grammar: ['hedging', 'distancing'], vocab: ['academic style', 'diplomacy'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Hedging', sentence: 'It ___ that the economy is recovering.', options: ['seems', 'looks', 'shows'], correct: 0 } }] },
+            { id: 8, title: 'Noun clauses + ellipsis', desc: 'that-clauses, I think so, I hope not.', unitType: 'grammar', grammar: ['noun clauses', 'ellipsis'], vocab: ['discussions', 'opinions'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Ellipsis', sentence: '"Will it rain?" — "I hope ___."', options: ['not', 'no', "don't"], correct: 0 } }] },
+            { id: 9, title: '🗣️ Public speaking', desc: 'Discourse markers + emphasis in practice.', unitType: 'situational', grammar: ['all C1 so far'], vocab: ['speech structure', 'Q&A'], exercises: [{ type: 'speak-aloud', data: { instruction: 'Give a 30-second speech:', phrase: "I firmly believe that language learning should be accessible to everyone. Furthermore, technology has made this possible on an unprecedented scale." } }] },
+            { id: 10, title: '🔄 Checkpoint 2', desc: 'Review units 6-9.', unitType: 'review', grammar: ['emphasis', 'hedging', 'noun clauses'], vocab: ['C1 review'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'Never ___ I seen such a beautiful sunset.', options: ['have', 'had', 'did'], correct: 0 } }] },
+            { id: 11, title: 'Mixed Conditionals', desc: 'If I had studied → I would be...', unitType: 'grammar', grammar: ['mixed conditionals'], vocab: ['career', 'life choices'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Mixed', sentence: 'If I had studied medicine, I ___ a doctor now.', options: ['will be', 'would be', 'am'], correct: 1 } }] },
+            { id: 12, title: 'Advanced Passives + Continuous Aspect', desc: 'get-passive, all continuous tenses.', unitType: 'grammar', grammar: ['advanced passives', 'continuous aspect'], vocab: ['media', 'technology'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Get-passive', sentence: 'He got ___ in the accident.', options: ['hurt', 'hurted', 'hurting'], correct: 0 } }] },
+            { id: 13, title: '🗣️ Debate: arguing for & against', desc: 'All C1 structures in a debate.', unitType: 'situational', grammar: ['all C1'], vocab: ['ethics', 'society', 'AI', 'ecology'], exercises: [{ type: 'speak-aloud', data: { instruction: 'Argue both sides:', phrase: "On one hand, AI can revolutionize education. On the other hand, it raises concerns about dependency." } }] }
         ]
     },
 
     // ═══════════════════════════════════════════
-    // C2 — PROFICIENCY (Oxford Masterclass)
+    // C2 — PROFICIENCY (12 units)
     // ═══════════════════════════════════════════
     {
-        id: 'oxford_c2_proficiency',
-        title: 'English File C2 — Proficiency (Masterclass)',
-        author: 'Oxford University Press',
+        id: 'c2_proficiency',
+        title: 'C2 — Proficiency',
         level: 'C2',
         cefr: 'C2',
-        methodology: 'Near-native mastery. Subtle stylistic choices, advanced rhetoric, literary language. Focus on nuance, ambiguity, register shifts, and sophisticated written/spoken expression.',
+        methodology: 'Near-native fluency. Rhetoric, pragmatics, register shifting, academic writing.',
         units: [
-            {
-                id: 1, title: 'Unit 1: The power of words',
-                desc: 'Advanced word formation. Connotation vs denotation. Stylistic choices.',
-                grammar: ['advanced word formation (prefixes, suffixes, conversion)', 'nominalisation', 'advanced punctuation and its effect on meaning'],
-                vocab: ['connotation and register', 'word families', 'literary devices (metaphor, simile, irony)'],
-                homework: { prompt: 'Take a paragraph from a news article and rewrite it in 3 different registers: formal, informal, and literary.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Choose the word with the most positive connotation', sentence: 'She is very ___:', options: ['skinny', 'thin', 'slender', 'scrawny'], correct: 2 } },
-                    { type: 'fill-bubble', data: { instruction: 'Word formation', sentence: 'The ___ of the project took three years. (develop)', options: ['development', 'developation', 'developing'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate preserving the register', sourceText: 'Данное исследование ставит под сомнение общепринятую точку зрения.', fromLang: 'RU', toLang: 'EN', answer: 'This study calls into question the commonly held view' } },
-                    { type: 'read-answer', data: { instruction: 'Identify the literary device', passage: '"The fog crept silently through the streets, wrapping the city in a cold, grey blanket."', question: 'What literary device is used?', options: ['Simile', 'Personification', 'Alliteration', 'Hyperbole'], correct: 1 } }
-                ]
-            },
-            {
-                id: 2, title: 'Unit 2: Advanced narrative techniques',
-                desc: 'Literary narrative. Point of view. Advanced use of tenses for effect.',
-                grammar: ['historic present for vivid narrative', 'would for past habits (literary)', 'free indirect speech', 'ellipsis in narrative'],
-                vocab: ['narrative voice', 'atmosphere and mood', 'sensory vocabulary'],
-                homework: { prompt: 'Write a short story (200 words) using the historic present, free indirect speech, and at least 3 sensory details.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Identify the narrative technique', sentence: 'She walks into the room. The lights are dim. She notices the letter on the table.', options: ['Historic present', 'Past narrative', 'Stream of consciousness'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: '"Would" for past habits', sentence: 'As a child, he ___ spend hours reading by the fire.', options: ['would', 'will', 'used'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate literarily', sourceText: 'Она задумалась. Неужели всё это было напрасно? Нет, она не могла в это поверить.', fromLang: 'RU', toLang: 'EN', answer: "She paused to think. Had it all been for nothing? No, she couldn't believe that" } },
-                    { type: 'speak-aloud', data: { instruction: 'Read this passage with expression:', phrase: "The old house stood silent at the end of the lane, its windows dark, its garden overgrown, as if time itself had forgotten it" } }
-                ]
-            },
-            {
-                id: 3, title: 'Unit 3: Argument and persuasion',
-                desc: 'Rhetorical devices. Building complex arguments. Debating skills.',
-                grammar: ['subjunctive mood (If it be necessary...)', 'concessive clauses (much as, however much)', 'advanced correlative conjunctions (not only...but also, whether...or)'],
-                vocab: ['rhetorical devices (anaphora, tricolon, antithesis)', 'debating language', 'logical connectors'],
-                homework: { prompt: 'Write a persuasive speech (250 words) arguing for or against AI in education. Use at least 3 rhetorical devices.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Concessive clause', sentence: '___ hard she tried, she couldn\'t solve the problem.', options: ['However', 'Although', 'Despite'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Identify the rhetorical device', sentence: '"We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields."', options: ['Anaphora', 'Antithesis', 'Hyperbole'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Как бы ни были убедительны аргументы, они не учитывают ключевой фактор.', fromLang: 'RU', toLang: 'EN', answer: 'However compelling the arguments may be, they fail to account for a key factor' } },
-                    { type: 'speak-aloud', data: { instruction: 'Deliver a persuasive statement:', phrase: "Not only does language learning enhance cognitive ability, but it also fosters empathy, broadens perspectives, and ultimately makes us better global citizens" } }
-                ]
-            },
-            {
-                id: 4, title: 'Unit 4: Nuance and ambiguity',
-                desc: 'Pragmatics. Implied meaning. Irony and understatement.',
-                grammar: ['pragmatic inference', 'hedging and vagueness (sort of, kind of, -ish)', 'understatement and litotes (not bad = quite good)'],
-                vocab: ['euphemisms', 'irony and sarcasm markers', 'cultural pragmatics'],
-                homework: { prompt: 'Find 5 examples of understatement, euphemism, or irony in English media. Explain the implied meaning.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'What does the understatement mean?', sentence: '"The weather isn\'t exactly tropical today." (said during a snowstorm)', options: ['The weather is terrible', 'The weather is warm', 'The weather is normal'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Identify the euphemism', sentence: 'He passed away last Tuesday.', options: ['He died', 'He left', 'He fainted'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate the understatement', sourceText: 'Он не самый пунктуальный человек в мире.', fromLang: 'RU', toLang: 'EN', answer: "He's not exactly the most punctual person in the world" } },
-                    { type: 'read-answer', data: { instruction: 'Interpret the implied meaning', passage: "'How was the exam?' asked Sarah. Tom shrugged. 'Well, I won't be writing home about it.'", question: 'How did the exam go?', options: ['Brilliantly', 'Poorly', "He didn't take it", 'He forgot'], correct: 1 } }
-                ]
-            },
-            {
-                id: 5, title: 'Unit 5: C2 Mastery — Language as art',
-                desc: 'Full mastery review. Translation. Idiomatic fluency. Register switching.',
-                grammar: ['all structures at native-like command', 'stylistic grammar choices', 'prescriptive vs descriptive grammar awareness'],
-                vocab: ['collocations mastery', 'proverbs and sayings', 'domain-specific vocabulary'],
-                homework: { prompt: 'Choose a topic and write about it in 3 paragraphs: one academic, one journalistic, one conversational. Then explain your choices.' },
-                exercises: [
-                    { type: 'fill-bubble', data: { instruction: 'Complete the proverb', sentence: 'A bird in the hand is worth ___', options: ['two in the bush', 'a gold mine', 'nothing at all'], correct: 0 } },
-                    { type: 'read-answer', data: { instruction: 'Analyze register and style', passage: "The ramifications of the proposed legislation extend far beyond the immediate fiscal implications, encompassing a fundamental recalibration of the relationship between the state and the individual citizen. One might argue, not without justification, that such sweeping reforms necessitate a more robust democratic mandate than has hitherto been secured.", question: 'What register is this text written in?', options: ['Casual conversation', 'Academic/legal formal', 'Journalistic', 'Literary fiction'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate idiomatically', sourceText: 'Не считай цыплят, пока не вылупились.', fromLang: 'RU', toLang: 'EN', answer: "Don't count your chickens before they hatch" } },
-                    { type: 'speak-aloud', data: { instruction: 'Improvise a 30-second speech on:', phrase: "If I could change one thing about the way languages are taught in schools, it would be to prioritize authentic communication over rote memorization" } }
-                ]
-            }
+            { id: 1, title: 'Full tense system review', desc: 'All tenses in narrative context.', unitType: 'grammar', grammar: ['all tenses'], vocab: ['identity', 'idioms of character'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Tense', sentence: 'By the time she arrived, we ___ waiting for two hours.', options: ['were', 'had been', 'have been'], correct: 1 } }] },
+            { id: 2, title: 'Complex verb patterns', desc: 'Complementation, complex structures.', unitType: 'grammar', grammar: ['complex verb patterns'], vocab: ['movement', 'migration'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Pattern', sentence: "I can't bear ___ late.", options: ['be', 'being', 'to being'], correct: 1 } }] },
+            { id: 3, title: 'Subjunctive + inversion', desc: 'Formal subjunctive, advanced inversion.', unitType: 'grammar', grammar: ['subjunctive', 'inversion'], vocab: ['formal style', 'rhetoric'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Subjunctive', sentence: 'I suggest that he ___ on time.', options: ['is', 'be', 'will be'], correct: 1 } }] },
+            { id: 4, title: 'Concessive clauses', desc: 'although/despite/however/nevertheless.', unitType: 'grammar', grammar: ['concessive clauses'], vocab: ['psychology', 'cognition'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Concessive', sentence: '___ being tired, she finished the race.', options: ['Despite', 'Although', 'However'], correct: 0 } }] },
+            { id: 5, title: '🔄 Checkpoint 1', desc: 'Review C2 units 1-4.', unitType: 'review', grammar: ['C2 review 1-4'], vocab: ['C2 review'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'Hardly ___ I left when it started raining.', options: ['have', 'had', 'did'], correct: 1 } }] },
+            { id: 6, title: 'Nominalization + complex passives', desc: 'Academic writing style.', unitType: 'grammar', grammar: ['nominalization', 'complex passives'], vocab: ['science', 'innovation'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Nominalization', sentence: 'The ___ of the data took three months.', options: ['analyze', 'analysis', 'analyzing'], correct: 1 } }] },
+            { id: 7, title: 'Participle clauses', desc: 'Present & past participle clauses.', unitType: 'grammar', grammar: ['participle clauses'], vocab: ['conflict', 'diplomacy'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Participle', sentence: '___ in 1990, she grew up during the internet boom.', options: ['Born', 'Being born', 'Having born'], correct: 0 } }] },
+            { id: 8, title: 'Pragmatics: implied meaning', desc: 'Speech acts, hedging, sarcasm.', unitType: 'grammar', grammar: ['pragmatics', 'implied meaning'], vocab: ['nuance', 'communication'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Implied', sentence: '"Nice weather we\'re having" (during a storm) is an example of:', options: ['Sarcasm', 'Metaphor', 'Simile'], correct: 0 } }] },
+            { id: 9, title: '🗣️ Negotiation: difficult conversations', desc: 'All C2 structures in real context.', unitType: 'situational', grammar: ['all C2'], vocab: ['business negotiation', 'compromise'], exercises: [{ type: 'speak-aloud', data: { instruction: 'Negotiate:', phrase: "While I appreciate your position, I believe we could reach a more equitable arrangement if we were to consider..." } }] },
+            { id: 10, title: '🔄 Checkpoint 2', desc: 'Review C2 units 6-9.', unitType: 'review', grammar: ['C2 review 6-9'], vocab: ['C2 review'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Review', sentence: 'Having ___ the report, she submitted it immediately.', options: ['completed', 'completing', 'complete'], correct: 0 } }] },
+            { id: 11, title: 'Fixed phrases & collocations', desc: 'Binomials, idioms, collocations.', unitType: 'grammar', grammar: ['collocations', 'binomials'], vocab: ['culture', 'traditions'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Collocation', sentence: 'She made a strong ___ on the audience.', options: ['impression', 'feeling', 'effect'], correct: 0 } }] },
+            { id: 12, title: 'Register & academic writing', desc: 'Formal vs informal, register shift.', unitType: 'grammar', grammar: ['register', 'formal writing'], vocab: ['essays', 'legacy', 'archives'], exercises: [{ type: 'fill-bubble', data: { instruction: 'Register', sentence: 'The formal version of "get" is:', options: ['obtain', 'grab', 'take'], correct: 0 } }] }
         ]
     }
+
     ],
 
     // ─── HELPER METHODS ───
@@ -1378,7 +1188,6 @@ const LangyCurriculum = {
             }
             return tb;
         }
-        // Default to A1 if not found
         this.activeTextbookId = this.textbooks[0].id;
         if (typeof LangyState !== 'undefined') {
             LangyState.progress.currentUnitId = 1;
@@ -1387,7 +1196,6 @@ const LangyCurriculum = {
         return this.textbooks[0];
     },
 
-    // Restore active textbook from saved state (called on app load)
     restoreFromState() {
         if (typeof LangyState !== 'undefined' && LangyState.aiMemory.currentTextbookId) {
             this.activeTextbookId = LangyState.aiMemory.currentTextbookId;
