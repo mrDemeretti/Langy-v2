@@ -89,6 +89,13 @@ function renderHome(container) {
                 </div>
             </div>
 
+            <!-- Main CTA -->
+            <div class="home__main-cta" style="padding: 0 var(--sp-5) var(--sp-2);">
+                <button id="nav-learning" class="btn btn--primary btn--xl btn--full" style="box-shadow: 0 4px 0 var(--primary-dark), 0 8px 16px rgba(16, 185, 129, 0.2); font-size: var(--fs-lg); display: flex; align-items: center; justify-content: center; gap: var(--sp-2);">
+                    ${!user.hasCompletedPlacement ? 'Take Placement Test 📝' : '<span style="font-size: 24px;">🚀</span> Continue Course'}
+                </button>
+            </div>
+
             <!-- Action Buttons -->
             <div class="home__actions ${!user.hasCompletedPlacement ? 'home__actions--locked' : ''}">
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
@@ -127,6 +134,19 @@ function renderHome(container) {
         'nav-shop': 'shop',
         'home-profile': 'profile',
     };
+
+    // Main CTA button
+    container.querySelector('#nav-learning')?.addEventListener('click', (e) => {
+        Anim.ripple(e);
+        if (!user.hasCompletedPlacement) {
+            Router.navigate('placement-test');
+        } else {
+            const sideIcons = container.querySelectorAll('.circle-btn');
+            const actionCards = container.querySelectorAll('.action-card, .home__main-cta');
+            Anim.flyOut([...sideIcons, ...actionCards]);
+            setTimeout(() => Router.navigate('learning'), 500);
+        }
+    });
 
     Object.entries(navMap).forEach(([id, route]) => {
         const el = container.querySelector(`#${id}`);
