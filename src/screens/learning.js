@@ -34,7 +34,30 @@ function renderLearning(container) {
         return;
     }
 
-    const exercises = unit.exercises || [];
+    // Build exercises: combine static unit exercises with dynamic generation
+    const EXERCISES_PER_SESSION = 10;
+    let exercises = [];
+
+    if (typeof ExerciseGenerator !== 'undefined' && activeTb.cefr) {
+        // Mix: take 2-3 static unit exercises (if available) + generate the rest dynamically
+        const staticExercises = unit.exercises || [];
+        const staticCount = Math.min(3, staticExercises.length);
+        const dynamicCount = EXERCISES_PER_SESSION - staticCount;
+
+        // Pick random static exercises from the unit
+        const shuffledStatic = [...staticExercises].sort(() => Math.random() - 0.5).slice(0, staticCount);
+        exercises = shuffledStatic;
+
+        // Generate dynamic exercises for the rest
+        const dynamicExercises = ExerciseGenerator.generateBatch(activeTb.cefr, dynamicCount, { noRepeatTypes: true });
+        exercises = exercises.concat(dynamicExercises);
+
+        // Shuffle all exercises together
+        exercises = exercises.sort(() => Math.random() - 0.5);
+    } else {
+        exercises = unit.exercises || [];
+    }
+
     const totalExercises = exercises.length;
     let currentStep = mode === 'homework' ? 'homework' : 'intro';
     let currentExerciseIdx = 0;

@@ -64,6 +64,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 LangyDB.startAutoSave();
+
+                // Restore active textbook from saved state
+                if (typeof LangyCurriculum !== 'undefined') {
+                    LangyCurriculum.restoreFromState();
+                }
+
                 startRoute = 'home';
             }
         } catch (e) {
