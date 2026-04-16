@@ -58,7 +58,7 @@ function renderLearning(container) {
         exercises = unit.exercises || [];
     }
 
-    const totalExercises = exercises.length;
+    let totalExercises = exercises.length;
     let currentStep = mode === 'homework' ? 'homework' : 'intro';
     let currentExerciseIdx = 0;
     let correctAnswers = 0;
@@ -365,7 +365,10 @@ function renderLearning(container) {
         const widgetData = exercise.widgetData || mapExerciseData(exercise);
 
         LangyWidgets.render(widgetArea, widgetType, widgetData, (isCorrect) => {
-            if (isCorrect) {
+            if (isCorrect === 'skipped') {
+                totalExercises--; // Do not count skipped exercises towards total score calculation
+                if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('encouraging');
+            } else if (isCorrect === true) {
                 correctAnswers++;
                 if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('happy');
             } else {

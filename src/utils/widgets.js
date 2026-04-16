@@ -337,7 +337,7 @@ const LangyWidgets = {
         recordBtn.onclick = () => {
             if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
                 status.textContent = 'Speech recognition не поддерживается в этом браузере';
-                setTimeout(() => onComplete(true), 1500); // Pass anyway
+                setTimeout(() => onComplete('skipped'), 1500); // Pass without penalty
                 return;
             }
 
@@ -383,11 +383,12 @@ const LangyWidgets = {
             recognition.start();
         };
 
-        // Skip button (for browsers without speech rec)
+        // Skip button (for browsers without speech rec or user choice)
         skipBtn.onclick = () => {
-            onComplete(true); // Allow skip
+            onComplete('skipped'); // Mark as skipped
         };
     },
+
 
     // ─── READ AND ANSWER: Прочитать текст и ответить ───
     renderReadAndAnswer(container, data, onComplete) {

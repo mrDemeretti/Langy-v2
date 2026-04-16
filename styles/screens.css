@@ -2757,21 +2757,21 @@
 }
 
 .match-card--active {
-    border-color: var(--primary) !important;
-    background: var(--primary-bg) !important;
-    box-shadow: 0 0 0 3px rgba(124, 108, 246, 0.2);
+    border-color: var(--accent) !important;
+    background: var(--accent-bg, rgba(251, 191, 36, 0.1)) !important;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
 }
 
 .match-card--done {
-    border-color: var(--accent) !important;
-    background: var(--accent-bg) !important;
-    color: var(--accent-dark) !important;
+    border-color: var(--primary) !important;
+    background: var(--primary-bg, rgba(16, 185, 129, 0.1)) !important;
+    color: var(--primary-dark) !important;
     cursor: default;
 }
 
 .match-card--correct {
-    border-color: var(--accent) !important;
-    background: var(--accent-bg) !important;
+    border-color: var(--primary) !important;
+    background: var(--primary-bg, rgba(16, 185, 129, 0.1)) !important;
 }
 
 .match-card--wrong {
