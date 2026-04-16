@@ -79,8 +79,8 @@ function buildStreakCalendar() {
 function buildRewardsRoadmap(currentDays) {
     const milestones = [
         { days: 3,   emoji: LangyIcons.star, reward: '25 Dangy', label: '3 Days' },
-        { days: 7,   emoji: '⭐', reward: '50 Dangy + 5 Langy', label: 'Week' },
-        { days: 14,  emoji: LangyIcons.star, reward: '100 Dangy + 10 Langy', label: '2 Weeks' },
+        { days: 7,   emoji: LangyIcons.star, reward: '50 Dangy + 5 Langy', label: 'Week' },
+        { days: 14,  emoji: LangyIcons.award, reward: '100 Dangy + 10 Langy', label: '2 Weeks' },
         { days: 30,  emoji: LangyIcons.trophy, reward: '200 Dangy + 25 Langy', label: 'Month' },
         { days: 60,  emoji: LangyIcons.diamond, reward: '400 Dangy + 50 Langy', label: '2 Months' },
         { days: 90,  emoji: LangyIcons.crown, reward: '600 Dangy + 100 Langy', label: '3 Months' },

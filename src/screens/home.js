@@ -71,8 +71,8 @@ function renderHome(container) {
                         <span style="color:var(--primary); font-weight:var(--fw-bold); margin-left:var(--sp-1);">+</span>
                     </div>
                 </div>
-                <div class="header-stat" id="home-profile" title="Profile" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:white;cursor:pointer;">
-                ${LangyIcons.user}
+                <div class="header-stat" id="home-profile" title="Profile" style="width:40px;height:40px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:white;cursor:pointer;font-weight:var(--fw-black);font-size:var(--fs-lg);">
+                ${(user.name || 'U')[0].toUpperCase()}
             </div>
             </div>
 

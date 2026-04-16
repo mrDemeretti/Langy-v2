@@ -64,7 +64,7 @@ function renderDonation(container) {
                         </div>
 
                         <div class="donation__method ${selectedMethod === 'paypal' ? 'donation__method--selected' : ''}" data-method="paypal">
-                            <div class="donation__method-icon" style="background:rgba(245,158,11,0.1);">🅿️</div>
+                            <div class="donation__method-icon" style="background:rgba(245,158,11,0.1);">${LangyIcons.globe}</div>
                             <div>
                                 <div class="donation__method-name">PayPal</div>
                                 <div class="donation__method-desc">Global payments</div>

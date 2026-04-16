@@ -11,7 +11,7 @@ const LangyState = {
         xp: 2450,
         streak: 14,
         joinDate: '2025-12-01',
-        avatar: '<span style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; background:var(--accent-bg); color:var(--surface); border-radius:12px;">' + (typeof LangyIcons !== 'undefined' ? LangyIcons.user : '') + '</span>',
+        avatar: null,
         hasCompletedPlacement: true,
         interests: []
     },
@@ -116,12 +116,12 @@ const LangyState = {
         // Key = CEFR code, e.g. "A1"
         // Value = { earned: bool, date: string|null, badge: string }
         cefrBadges: {
-            A1: { earned: false, date: null, badge: '🏅' },
-            A2: { earned: false, date: null, badge: '🏅' },
-            B1: { earned: false, date: null, badge: '🏅' },
+            A1: { earned: false, date: null, badge: '🥉' },
+            A2: { earned: false, date: null, badge: '🥈' },
+            B1: { earned: false, date: null, badge: '🥇' },
             B2: { earned: false, date: null, badge: '🏅' },
-            C1: { earned: false, date: null, badge: '🏅' },
-            C2: { earned: false, date: null, badge: '🏅' }
+            C1: { earned: false, date: null, badge: '🎖️' },
+            C2: { earned: false, date: null, badge: '👑' }
         }
     },
 
@@ -133,21 +133,21 @@ const LangyState = {
             { id: 1, title: 'Speak for 3 minutes', desc: 'Practice speaking on any topic', done: true, icon: '🎤' },
             { id: 2, title: 'No mistakes challenge', desc: 'Complete 10 questions without errors', done: false, icon: '🎯' },
             { id: 3, title: 'Listen & repeat', desc: 'Listen to 5 sentences and repeat', done: false, icon: '🎧' },
-            { id: 4, title: 'Learn 5 new words', desc: 'Vocabulary expansion', done: false, icon: '📖' },
+            { id: 4, title: 'Learn 5 new words', desc: 'Vocabulary expansion', done: false, icon: '📚' },
         ]
     },
 
     // Shop
     shop: {
         items: [
-            { id: 1, name: 'Cool Shades', emoji: LangyIcons.sun, price: 50, currency: 'dangy', category: 'accessory' },
-            { id: 2, name: 'Top Hat', emoji: LangyIcons.user, price: 80, currency: 'dangy', category: 'hat' },
-            { id: 3, name: 'Crown', emoji: LangyIcons.crown, price: 200, currency: 'langy', category: 'hat', premium: true },
-            { id: 4, name: 'Star Badge', emoji: LangyIcons.star, price: 30, currency: 'dangy', category: 'accessory' },
-            { id: 5, name: 'Rocket', emoji: LangyIcons.rocket, price: 150, currency: 'langy', category: 'sticker', premium: true },
-            { id: 6, name: 'Fire Skin', emoji: LangyIcons.flame, price: 300, currency: 'langy', category: 'skin', premium: true },
-            { id: 7, name: 'Bow Tie', emoji: LangyIcons.gift, price: 40, currency: 'dangy', category: 'accessory' },
-            { id: 8, name: 'Party Hat', emoji: LangyIcons.award, price: 60, currency: 'dangy', category: 'hat' },
+            { id: 1, name: 'Cool Shades', emoji: '😎', price: 50, currency: 'dangy', category: 'accessory' },
+            { id: 2, name: 'Top Hat', emoji: '🎩', price: 80, currency: 'dangy', category: 'hat' },
+            { id: 3, name: 'Crown', emoji: '👑', price: 200, currency: 'langy', category: 'hat', premium: true },
+            { id: 4, name: 'Star Badge', emoji: '⭐', price: 30, currency: 'dangy', category: 'accessory' },
+            { id: 5, name: 'Rocket', emoji: '🚀', price: 150, currency: 'langy', category: 'sticker', premium: true },
+            { id: 6, name: 'Fire Skin', emoji: '🔥', price: 300, currency: 'langy', category: 'skin', premium: true },
+            { id: 7, name: 'Bow Tie', emoji: '🎀', price: 40, currency: 'dangy', category: 'accessory' },
+            { id: 8, name: 'Party Hat', emoji: '🥳', price: 60, currency: 'dangy', category: 'hat' },
         ],
         owned: [1, 4, 8]
     },
@@ -155,18 +155,18 @@ const LangyState = {
     // Inventory
     inventory: {
         items: [
-            { id: 1, name: 'Cool Shades', emoji: LangyIcons.sun, slot: 'accessory', equipped: false },
-            { id: 4, name: 'Star Badge', emoji: LangyIcons.star, slot: 'accessory', equipped: true },
-            { id: 8, name: 'Party Hat', emoji: LangyIcons.award, slot: 'hat', equipped: false },
+            { id: 1, name: 'Cool Shades', emoji: '😎', slot: 'accessory', equipped: false },
+            { id: 4, name: 'Star Badge', emoji: '⭐', slot: 'accessory', equipped: true },
+            { id: 8, name: 'Party Hat', emoji: '🥳', slot: 'hat', equipped: false },
         ]
     },
 
     // Duels
     duels: {
         modes: [
-            { id: 'quick', name: 'Quick Match', desc: 'Fast 5-question duel', icon: '⚡', bg: 'var(--reward-gold-bg)' },
-            { id: 'ranked', name: 'Ranked Battle', desc: 'Compete for league points', icon: '🏆', bg: 'var(--primary-bg)' },
-            { id: 'practice', name: 'Practice Duel', desc: 'No pressure, just practice', icon: '🎯', bg: 'var(--accent-bg)' },
+            { id: 'quick', name: 'Quick Match', desc: 'Fast 5-question duel', icon: LangyIcons.zap, bg: 'var(--reward-gold-bg)' },
+            { id: 'ranked', name: 'Ranked Battle', desc: 'Compete for league points', icon: LangyIcons.trophy, bg: 'var(--primary-bg)' },
+            { id: 'practice', name: 'Practice Duel', desc: 'No pressure, just practice', icon: LangyIcons.target, bg: 'var(--accent-bg)' },
         ],
         questions: [
             { q: 'Choose the correct form:', text: '"She ___ to the store yesterday."', options: ['goed', 'went', 'go', 'gone'], correct: 1 },
@@ -179,9 +179,9 @@ const LangyState = {
 
     // Events
     events: [
-        { id: 1, title: 'Weekend Grammar Sprint', desc: 'Complete 20 grammar tasks', timeLeft: '2d 5h', reward: '100 Dangy', bg: 'linear-gradient(135deg, #7C6CF6, #9D90F9)', emoji: LangyIcons.fileText },
-        { id: 2, title: 'Listening Marathon', desc: 'Listen to 30 minutes of content', timeLeft: '1d 12h', reward: '75 Dangy + Sticker', bg: 'linear-gradient(135deg, #4ADE80, #22C55E)', emoji: LangyIcons.headphones },
-        { id: 3, title: 'Vocabulary Master', desc: 'Learn 50 new words this week', timeLeft: '5d', reward: '200 Dangy', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', emoji: LangyIcons.book },
+        { id: 1, title: 'Weekend Grammar Sprint', desc: 'Complete 20 grammar tasks', timeLeft: '2d 5h', reward: '100 Dangy', bg: 'linear-gradient(135deg, #7C6CF6, #9D90F9)', emoji: '📝' },
+        { id: 2, title: 'Listening Marathon', desc: 'Listen to 30 minutes of content', timeLeft: '1d 12h', reward: '75 Dangy + Sticker', bg: 'linear-gradient(135deg, #4ADE80, #22C55E)', emoji: '🎧' },
+        { id: 3, title: 'Vocabulary Master', desc: 'Learn 50 new words this week', timeLeft: '5d', reward: '200 Dangy', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', emoji: '📚' },
     ],
 
     // Settings
