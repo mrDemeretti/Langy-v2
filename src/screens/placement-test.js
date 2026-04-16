@@ -436,6 +436,9 @@ function renderPlacementTest(container) {
             LangyCurriculum.selectTextbookByLevel(cefr);
         }
 
+        // Sync settings.languageLevel with placement result
+        LangyState.settings.languageLevel = cefr;
+
         renderResults(cefr, levelNames[cefr], overall, skillPcts);
     }
 

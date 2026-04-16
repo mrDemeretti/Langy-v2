@@ -163,6 +163,7 @@ const LangyState = {
 
     // Duels
     duels: {
+        stats: { wins: 0, losses: 0, ties: 0 },
         modes: [
             { id: 'quick', name: 'Quick Match', desc: 'Fast 5-question duel', icon: LangyIcons.zap, bg: 'var(--reward-gold-bg)' },
             { id: 'ranked', name: 'Ranked Battle', desc: 'Compete for league points', icon: LangyIcons.trophy, bg: 'var(--primary-bg)' },

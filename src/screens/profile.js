@@ -96,9 +96,9 @@ function renderProfile(container) {
                 
                 <!-- XP Progress Bar -->
                 <div class="profile__xp-container">
-                    <div class="profile__xp-fill" style="width: ${(user.xp / 500) * 100}%;"></div>
+                    <div class="profile__xp-fill" style="width: ${((user.xp % 500) / 500) * 100}%;"></div>
                 </div>
-                <div style="font-size:10px; opacity:0.8; margin-bottom:var(--sp-2);">${user.xp} / 500 XP</div>
+                <div style="font-size:10px; opacity:0.8; margin-bottom:var(--sp-2);">Level ${Math.floor(user.xp / 500) + 1} · ${user.xp % 500} / 500 XP</div>
 
                 <div class="profile__stats-row">
                     <div class="profile__stat">
@@ -296,8 +296,12 @@ function renderProfile(container) {
             settings[key] = !settings[key];
             if (key === 'darkMode') {
                 toggleDarkMode(settings.darkMode);
+                Anim.showToast(`Theme changed to ${settings.darkMode ? 'Dark' : 'White'} Mode`);
+            } else {
+                const labels = { notifications: 'Notifications', sound: 'Sound Effects', haptics: 'Haptic Feedback' };
+                Anim.showToast(`${labels[key] || key} ${settings[key] ? 'enabled' : 'disabled'}`);
             }
-            Anim.showToast(`Theme changed to ${settings.darkMode ? 'Dark' : 'White'} Mode`);
+            if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
             renderProfile(container);
         });
     }

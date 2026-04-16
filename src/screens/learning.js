@@ -172,7 +172,7 @@ function renderLearning(container) {
         if (!slide) { currentStep = 'practice'; currentExerciseIdx = 0; updateUI(); return; }
 
         const isLast = teachSlideIdx >= teachSlides.length - 1;
-        const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
+        const mascotNames = ['zendaya', 'travis', 'matthew', 'omar'];
         const chosenIdx = (typeof LangyState !== 'undefined' && LangyState.mascot) ? LangyState.mascot.selected || 0 : 0;
         const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
 
@@ -688,7 +688,7 @@ function renderLearning(container) {
         }
 
         const isLast = qrSlideIdx >= slides.length - 1;
-        const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
+        const mascotNames = ['zendaya', 'travis', 'matthew', 'omar'];
         const chosenIdx = LangyState.mascot?.selected || 0;
         const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
 

@@ -21,7 +21,7 @@ function renderEvents(container) {
                 ${events.map(event => `
                     <div class="event-card" data-id="${event.id}">
                         <div class="event-card__banner" style="background:${event.bg};">
-                            <span style="font-size:48px; color:white; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${event.emoji}</span>
+                            <span style="display:flex; align-items:center; justify-content:center; width:48px; height:48px; color:white; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${event.emoji}</span>
                         </div>
                         <div class="event-card__content">
                             <div class="event-card__title">${event.title}</div>

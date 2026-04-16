@@ -45,15 +45,15 @@ function renderDuelModes(container) {
                 <div class="card card--flat" style="padding:var(--sp-4);">
                     <div style="display:flex; justify-content:space-around;">
                         <div class="stat">
-                            <div class="stat__value" style="color:var(--accent-dark);">12</div>
+                            <div class="stat__value" style="color:var(--accent-dark);">${duels.stats?.wins || 0}</div>
                             <div class="stat__label">Wins</div>
                         </div>
                         <div class="stat">
-                            <div class="stat__value" style="color:var(--danger);">5</div>
+                            <div class="stat__value" style="color:var(--danger);">${duels.stats?.losses || 0}</div>
                             <div class="stat__label">Losses</div>
                         </div>
                         <div class="stat">
-                            <div class="stat__value" style="color:var(--reward-gold);">71%</div>
+                            <div class="stat__value" style="color:var(--reward-gold);">${(duels.stats?.wins || 0) + (duels.stats?.losses || 0) > 0 ? Math.round(((duels.stats?.wins || 0) / ((duels.stats?.wins || 0) + (duels.stats?.losses || 0))) * 100) : 0}%</div>
                             <div class="stat__label">Win Rate</div>
                         </div>
                     </div>
@@ -278,7 +278,16 @@ function renderDuelResults(container, state) {
 
     if (won) {
         LangyState.currencies.dangy += 25;
+        if (!LangyState.duels.stats) LangyState.duels.stats = { wins: 0, losses: 0, ties: 0 };
+        LangyState.duels.stats.wins++;
+    } else if (tied) {
+        if (!LangyState.duels.stats) LangyState.duels.stats = { wins: 0, losses: 0, ties: 0 };
+        LangyState.duels.stats.ties++;
+    } else {
+        if (!LangyState.duels.stats) LangyState.duels.stats = { wins: 0, losses: 0, ties: 0 };
+        LangyState.duels.stats.losses++;
     }
+    if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
 
     container.querySelector('#duel-home')?.addEventListener('click', () => {
         window._duelView = 'modes';

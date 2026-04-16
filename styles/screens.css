@@ -4655,3 +4655,80 @@
 .cefr-level--locked .cefr-level__header {
     cursor: default;
 }
+
+/* ── Checkpoint/Review Units ── */
+.cefr-unit--checkpoint {
+    background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06));
+    border: 1px dashed rgba(99,102,241,0.25);
+    border-radius: var(--radius-lg);
+    margin: var(--sp-1) 0;
+}
+
+.cefr-unit--checkpoint:hover {
+    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
+}
+
+.cefr-unit__checkpoint-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 9px;
+    font-weight: var(--fw-black);
+    letter-spacing: 0.8px;
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background: rgba(99,102,241,0.12);
+    color: #6366F1;
+}
+
+/* ── Dark Mode: CEFR Roadmap ── */
+.dark .cefr-level__header:hover {
+    background: rgba(255,255,255,0.04);
+}
+
+.dark .cefr-unit:hover {
+    background: rgba(255,255,255,0.04);
+}
+
+.dark .cefr-unit--current {
+    background: rgba(16,185,129,0.1);
+    border-color: rgba(16,185,129,0.2);
+}
+
+.dark .cefr-unit--mastered:hover {
+    background: rgba(245,158,11,0.1);
+}
+
+.dark .cefr-unit--checkpoint {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.12));
+    border-color: rgba(99,102,241,0.3);
+}
+
+.dark .cefr-unit--checkpoint:hover {
+    background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.18));
+}
+
+.dark .cefr-unit__checkpoint-badge {
+    background: rgba(99,102,241,0.2);
+    color: #a5b4fc;
+}
+
+.dark .cefr-level__dot {
+    background: var(--bg-card);
+    border-color: var(--border);
+}
+
+.dark .cefr-level__line {
+    background: var(--border);
+}
+
+.dark .cefr-level__units {
+    border-color: var(--border);
+}
+
+.dark .cefr-unit__check {
+    background: rgba(245,158,11,0.15);
+}
+
+.dark .cefr-unit__check:hover {
+    background: rgba(245,158,11,0.25);
+}

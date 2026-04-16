@@ -258,17 +258,18 @@ function loadLevelUnits(textbookId, container) {
         const typeIcon = unitTypeIcons[u.unitType] || LangyIcons.book;
         const canQuickCheck = u.status === 'mastered';
         const cleanTitle = u.title.replace(/^[🗣️🎤🔄📗]+\s*/, '');
+        const isCheckpoint = u.unitType === 'review';
 
         return `
-            <div class="cefr-unit cefr-unit--${u.status}" data-unit-id="${u.id}" data-tb-id="${textbookId}" ${canQuickCheck ? 'data-quick-check="true"' : ''}>
-                <div class="cefr-unit__status" style="color:${st.color};">${st.icon}</div>
+            <div class="cefr-unit cefr-unit--${u.status} ${isCheckpoint ? 'cefr-unit--checkpoint' : ''}" data-unit-id="${u.id}" data-tb-id="${textbookId}" ${canQuickCheck ? 'data-quick-check="true"' : ''}>
+                <div class="cefr-unit__status" style="color:${isCheckpoint ? 'var(--info)' : st.color};">${isCheckpoint ? LangyIcons.clipboard : st.icon}</div>
                 <div class="cefr-unit__info">
                     <div class="cefr-unit__title" style="${u.status === 'locked' ? 'opacity:0.5;' : ''}">
-                        <span style="color:var(--text-tertiary); font-size:var(--fs-xs);">${u.id}.</span>
+                        ${isCheckpoint ? `<span class="cefr-unit__checkpoint-badge">CHECKPOINT</span>` : `<span style="color:var(--text-tertiary); font-size:var(--fs-xs);">${u.id}.</span>`}
                         ${cleanTitle}
                     </div>
                     <div class="cefr-unit__type">
-                        <span style="display:flex;align-items:center;gap:4px;">${typeIcon} ${u.unitType}</span>
+                        <span style="display:flex;align-items:center;gap:4px;">${typeIcon} ${isCheckpoint ? 'Review Test' : u.unitType}</span>
                         ${u.score !== null ? `<span class="badge ${u.score >= 70 ? 'badge--accent' : 'badge--danger'}" style="font-size:10px; padding:1px 6px;">${u.score}%</span>` : ''}
                     </div>
                 </div>
