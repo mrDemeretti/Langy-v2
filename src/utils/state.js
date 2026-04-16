@@ -67,7 +67,10 @@ const LangyState = {
             wordsLearned: 0,
             accuracy: 0,
             duration: 0
-        }
+        },
+        // Per-day stats for calendar view
+        // Key = ISO date string, Value = { sessions, minutes, words, accuracy, categories }
+        dailyStats: {}
     },
 
     // Homework
@@ -235,6 +238,21 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
     
     // Update last session
     sd.lastSession = { date: today, wordsLearned, accuracy, duration };
+    
+    // Update daily stats for calendar
+    if (!sd.dailyStats) sd.dailyStats = {};
+    if (!sd.dailyStats[today]) {
+        sd.dailyStats[today] = { sessions: 0, minutes: 0, words: 0, accuracy: 0, categories: {} };
+    }
+    const ds = sd.dailyStats[today];
+    ds.sessions++;
+    ds.minutes += duration;
+    ds.words += wordsLearned;
+    ds.accuracy = ds.sessions > 0
+        ? Math.round(((ds.accuracy * (ds.sessions - 1)) + accuracy) / ds.sessions)
+        : accuracy;
+    if (!ds.categories[category]) ds.categories[category] = 0;
+    ds.categories[category] += duration;
     
     // Streak logic: increment only once per day
     if (!sd.todayCompleted) {

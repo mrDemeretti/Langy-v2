@@ -202,6 +202,9 @@ function renderStreak(container) {
                         <span>🛡️ Freeze</span>
                         <span class="streak-cal__legend-missed">Missed</span>
                     </div>
+                    <button class="btn btn--ghost btn--full" id="open-full-calendar" style="margin-top:var(--sp-3); font-size:var(--fs-sm);">
+                        📊 Full Calendar & Stats →
+                    </button>
                 </div>
 
                 <!-- Time breakdown chart -->
@@ -264,6 +267,7 @@ function renderStreak(container) {
     // Event listeners
     container.querySelector('#streak-back')?.addEventListener('click', () => Router.navigate('home'));
     container.querySelector('#streak-start-lesson')?.addEventListener('click', () => Router.navigate('learning'));
+    container.querySelector('#open-full-calendar')?.addEventListener('click', () => Router.navigate('calendar'));
     
     container.querySelector('#buy-freeze')?.addEventListener('click', (e) => {
         if (buyStreakFreeze()) {
