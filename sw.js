@@ -1,4 +1,4 @@
-const CACHE_NAME = 'langy-ai-v1.1';
+const CACHE_NAME = 'langy-ai-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -18,51 +18,54 @@ const urlsToCache = [
   './src/data/curriculum.js'
 ];
 
+// Install: pre-cache critical assets & skip waiting
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Activate new SW immediately
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request).then(fetchRes => {
-          return caches.open(CACHE_NAME).then(cache => {
-            // Cache new responses (except API calls)
-            if (!event.request.url.includes('openrouter.ai')) {
-               cache.put(event.request, fetchRes.clone());
-            }
-            return fetchRes;
-          });
-        });
-      }).catch(() => {
-        // If offline and not in cache, fallback to index
-        if (event.request.headers.get('accept').includes('text/html')) {
-          return caches.match('./index.html');
-        }
-      })
-  );
-});
-
+// Activate: purge ALL old caches & claim clients immediately
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
+        cacheNames
+          .filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
       );
-    })
+    }).then(() => self.clients.claim()) // Take over all tabs immediately
+  );
+});
+
+// Fetch: NETWORK FIRST strategy
+// Always try the network; fall back to cache only if offline
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  // Skip API calls entirely
+  if (event.request.url.includes('openrouter.ai')) return;
+
+  event.respondWith(
+    fetch(event.request)
+      .then(networkRes => {
+        // Got a fresh response — update the cache
+        const clone = networkRes.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, clone);
+        });
+        return networkRes;
+      })
+      .catch(() => {
+        // Offline — serve from cache
+        return caches.match(event.request).then(cachedRes => {
+          if (cachedRes) return cachedRes;
+          // If HTML request, fallback to index
+          if (event.request.headers.get('accept')?.includes('text/html')) {
+            return caches.match('./index.html');
+          }
+        });
+      })
   );
 });
