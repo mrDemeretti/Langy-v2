@@ -2259,6 +2259,11 @@ const LangyCurriculum = {
             if (typeof LangyState !== 'undefined') {
                 LangyState.progress.currentUnitId = 1;
                 LangyState.aiMemory.currentTextbookId = tb.id;
+                // Fix: set correct currentUnit name from actual textbook
+                const firstUnit = tb.units[0];
+                if (firstUnit) {
+                    LangyState.progress.currentUnit = 'Unit ' + firstUnit.id + ': ' + firstUnit.title;
+                }
             }
             return tb;
         }
@@ -2266,6 +2271,10 @@ const LangyCurriculum = {
         if (typeof LangyState !== 'undefined') {
             LangyState.progress.currentUnitId = 1;
             LangyState.aiMemory.currentTextbookId = this.textbooks[0].id;
+            const firstUnit = this.textbooks[0].units[0];
+            if (firstUnit) {
+                LangyState.progress.currentUnit = 'Unit ' + firstUnit.id + ': ' + firstUnit.title;
+            }
         }
         return this.textbooks[0];
     },
@@ -2320,6 +2329,94 @@ const LangyCurriculum = {
         return tb.units.every(u => {
             const key = textbookId + ':' + u.id;
             return mastery[key] && mastery[key].passed;
+        });
+    },
+
+    // CEFR order for comparisons
+    _cefrOrder: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+
+    // Get status for each CEFR level relative to the user's placement level
+    getLevelStatus(userCefrLevel) {
+        const order = this._cefrOrder;
+        const userIdx = order.indexOf(userCefrLevel);
+        if (userIdx < 0) return [];
+
+        return this.textbooks.map(tb => {
+            const tbIdx = order.indexOf(tb.cefr);
+            const mastery = typeof LangyState !== 'undefined' ? LangyState.progress.mastery : {};
+            const currentTbId = typeof LangyState !== 'undefined' ? LangyState.aiMemory.currentTextbookId : null;
+            const currentUnitId = typeof LangyState !== 'undefined' ? LangyState.progress.currentUnitId : 1;
+
+            // Count completed units
+            let completedUnits = 0;
+            tb.units.forEach(u => {
+                const key = tb.id + ':' + u.id;
+                if (mastery[key] && mastery[key].passed) completedUnits++;
+            });
+
+            let status = 'locked';
+            if (tb.id === currentTbId) {
+                status = completedUnits === tb.units.length ? 'completed' : 'active';
+            } else if (tbIdx < userIdx) {
+                status = completedUnits > 0 && completedUnits === tb.units.length ? 'completed' : 'mastered';
+            } else if (tbIdx === userIdx) {
+                status = completedUnits === tb.units.length ? 'completed' : 'active';
+            } else {
+                status = 'locked';
+            }
+
+            return {
+                id: tb.id,
+                cefr: tb.cefr,
+                title: tb.title,
+                status: status,
+                unitCount: tb.units.length,
+                completedUnits: completedUnits,
+                progress: tb.units.length > 0 ? Math.round((completedUnits / tb.units.length) * 100) : 0
+            };
+        });
+    },
+
+    // Get per-unit status map for a specific textbook
+    getUnitStatusMap(textbookId) {
+        const tb = this.textbooks.find(t => t.id === textbookId);
+        if (!tb) return [];
+
+        const mastery = typeof LangyState !== 'undefined' ? LangyState.progress.mastery : {};
+        const currentTbId = typeof LangyState !== 'undefined' ? LangyState.aiMemory.currentTextbookId : null;
+        const currentUnitId = typeof LangyState !== 'undefined' ? LangyState.progress.currentUnitId : 1;
+        const isActiveTb = tb.id === currentTbId;
+        const userCefr = typeof LangyState !== 'undefined' ? (LangyState.user.level || '').substring(0, 2) : '';
+        const order = this._cefrOrder;
+        const tbIdx = order.indexOf(tb.cefr);
+        const userIdx = order.indexOf(userCefr);
+        const isBelowUser = tbIdx < userIdx;
+
+        return tb.units.map(u => {
+            const key = textbookId + ':' + u.id;
+            const m = mastery[key];
+
+            let status = 'locked';
+            if (m && m.passed) {
+                status = 'completed';
+            } else if (isActiveTb && u.id === currentUnitId) {
+                status = 'current';
+            } else if (isActiveTb && u.id < currentUnitId) {
+                status = 'completed';
+            } else if (isBelowUser) {
+                status = 'mastered'; // below placement level — auto mastered
+            } else {
+                status = 'locked';
+            }
+
+            return {
+                id: u.id,
+                title: u.title,
+                unitType: u.unitType,
+                status: status,
+                score: m ? m.score : null,
+                desc: u.desc
+            };
         });
     }
 };

@@ -4442,3 +4442,216 @@
 
 /* Streak fire active state */
 .home__streak .fire-animated { font-size: 28px; }
+
+/* ============================================
+   CEFR LEARNING PATH — Roadmap Styles
+   ============================================ */
+
+.cefr-path {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.cefr-level {
+    position: relative;
+}
+
+.cefr-level__header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-2);
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    transition: background 0.2s;
+}
+
+.cefr-level__header:hover {
+    background: var(--bg-card);
+}
+
+/* Connector: dot + vertical line */
+.cefr-level__connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 24px;
+    padding-top: 2px;
+}
+
+.cefr-level__dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid var(--border-light);
+    background: var(--bg-base);
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.cefr-level--active .cefr-level__dot {
+    box-shadow: 0 0 0 4px rgba(16,185,129,0.2);
+    animation: cefrPulse 2s ease-in-out infinite;
+}
+
+@keyframes cefrPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(16,185,129,0.2); }
+    50% { box-shadow: 0 0 0 8px rgba(16,185,129,0.1); }
+}
+
+.cefr-level__line {
+    width: 2px;
+    flex: 1;
+    min-height: 16px;
+    background: var(--border-light);
+    margin-top: 4px;
+}
+
+.cefr-level--completed .cefr-level__line,
+.cefr-level--mastered .cefr-level__line,
+.cefr-level--active .cefr-level__line {
+    background: var(--primary-light);
+}
+
+/* Level info */
+.cefr-level__info {
+    flex: 1;
+}
+
+.cefr-level__title {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-base);
+}
+
+.cefr-level__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: var(--fw-black);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.5px;
+    min-width: 28px;
+}
+
+.cefr-level__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--fs-xs);
+    color: var(--text-tertiary);
+    margin-top: 4px;
+}
+
+.cefr-level__arrow {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    transition: transform 0.3s;
+    margin-top: 4px;
+}
+
+.cefr-level--expanded .cefr-level__arrow {
+    transform: rotate(180deg);
+}
+
+/* Units list */
+.cefr-level__units {
+    margin-left: 36px;
+    padding: 0 0 var(--sp-3) var(--sp-3);
+    border-left: 2px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    animation: fadeSlideUp 0.3s ease;
+}
+
+/* Individual unit row */
+.cefr-unit {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--radius-md);
+    transition: background 0.2s;
+    font-size: var(--fs-sm);
+}
+
+.cefr-unit:hover {
+    background: var(--bg-card);
+}
+
+.cefr-unit--mastered {
+    cursor: pointer;
+}
+
+.cefr-unit--mastered:hover {
+    background: rgba(245,158,11,0.06);
+}
+
+.cefr-unit--current {
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.15);
+}
+
+.cefr-unit__status {
+    font-size: 16px;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.cefr-unit__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cefr-unit__title {
+    font-weight: var(--fw-medium);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cefr-unit__type {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-2);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+}
+
+.cefr-unit__check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(245,158,11,0.1);
+    color: var(--reward-gold);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.cefr-unit__check:hover {
+    background: rgba(245,158,11,0.2);
+    transform: scale(1.1);
+}
+
+/* Locked level dimming */
+.cefr-level--locked .cefr-level__title {
+    opacity: 0.5;
+}
+
+.cefr-level--locked .cefr-level__header {
+    cursor: default;
+}
