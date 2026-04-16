@@ -1,0 +1,21 @@
+{
+  "name": "Langy AI English",
+  "short_name": "Langy",
+  "description": "Smart AI English Tutor",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#F4F1ED",
+  "theme_color": "#2A4B82",
+  "icons": [
+    {
+      "src": "./assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

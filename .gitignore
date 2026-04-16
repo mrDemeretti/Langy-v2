@@ -1,0 +1,16 @@
+node_modules/
+deploy/
+dist/
+*.cjs
+test_js.cjs
+fix_quotes.cjs
+.DS_Store
+Eng books/
+brandkit_final/
+Langy ава/
+LangyLending/
+*.py
+*.ttf
+temp_out.png
+toc_*.txt
+fix_state.js
