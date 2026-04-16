@@ -1926,6 +1926,172 @@
     text-align: right;
 }
 
+/* Streak Freeze Card */
+.streak-freeze-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+}
+.streak-freeze__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sp-4);
+}
+.streak-freeze__count {
+    display: flex;
+    gap: var(--sp-2);
+    font-size: 20px;
+}
+.freeze-shield {
+    opacity: 0.3;
+    transition: all 0.3s ease;
+}
+.freeze-shield--active {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.5));
+}
+
+/* 28-Day Activity Calendar */
+.streak-calendar {
+    margin-bottom: var(--sp-3);
+}
+.streak-cal__header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--text-muted);
+    margin-bottom: var(--sp-2);
+}
+.streak-cal__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+.streak-cal__day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+.streak-cal__day--active {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1.5px solid var(--primary);
+}
+.streak-cal__day--freeze {
+    background: rgba(99, 102, 241, 0.12);
+    border: 1.5px solid rgba(99, 102, 241, 0.4);
+}
+.streak-cal__day--today {
+    background: var(--primary-bg);
+    border: 2px solid var(--primary);
+    font-weight: var(--fw-bold);
+    color: var(--primary);
+}
+.streak-cal__day--missed {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+}
+.streak-cal__day--missed::after {
+    content: '·';
+    color: var(--text-muted);
+    font-size: 18px;
+}
+.streak-cal__day--future {
+    background: var(--bg-alt);
+    opacity: 0.3;
+}
+.streak-cal__legend {
+    display: flex;
+    gap: var(--sp-4);
+    justify-content: center;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin-top: var(--sp-2);
+}
+.streak-cal__legend-missed {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+}
+.streak-cal__legend-missed::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Rewards Roadmap */
+.rewards-roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+}
+.reward-milestone {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-3);
+    border-radius: var(--radius-lg);
+    background: var(--bg-alt);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+.reward-milestone--earned {
+    opacity: 1;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.reward-milestone--next {
+    opacity: 1;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
+}
+.reward-milestone__icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+}
+.reward-milestone__info {
+    flex: 1;
+    min-width: 0;
+}
+.reward-milestone__label {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-sm);
+}
+.reward-milestone__reward {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.reward-milestone__bar {
+    height: 6px;
+    background: var(--bg-alt);
+    border-radius: var(--radius-full);
+    margin-top: var(--sp-2);
+    overflow: hidden;
+}
+.reward-milestone__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--reward-gold));
+    border-radius: var(--radius-full);
+    transition: width 1s var(--ease-out);
+}
+.reward-milestone__check {
+    font-size: var(--fs-xs);
+    color: var(--primary);
+    font-weight: var(--fw-semibold);
+}
+
 /* ========== DONATION ========== */
 .donation {
     padding: 0;

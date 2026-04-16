@@ -147,7 +147,10 @@ function renderDaily(container) {
                 LangyState.dailyChallenge._rewardClaimed = true;
                 const reward = LangyState.dailyChallenge.reward || 50;
                 LangyState.currencies.dangy += reward;
-                LangyState.streakData.days++;
+                // Record session through central streak system
+                if (typeof recordSession === 'function') {
+                    recordSession({ duration: 5, wordsLearned: 3, accuracy: 90, category: 'grammar' });
+                }
                 if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
                 setTimeout(() => Anim.showToast(`🎁 Reward: +${reward} Dangy!`), 800);
             }

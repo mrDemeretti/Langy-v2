@@ -38,30 +38,81 @@ document.addEventListener('DOMContentLoaded', async () => {
                     toggleDarkMode(LangyState.settings.darkMode);
                 }
                 
-                // Initialize Daily Streak Logic
+                // ─── STREAK MIGRATION ───
+                // Detect old users with fake hardcoded data
+                const sd = LangyState.streakData;
+                if (!sd._migrated) {
+                    // Old user — reset fake streak data
+                    sd._migrated = true;
+                    sd.days = 0;
+                    sd.totalSessions = 0;
+                    sd.totalMinutes = 0;
+                    sd.wordsLearned = 0;
+                    sd.accuracy = 0;
+                    sd.todayCompleted = false;
+                    sd.activeDays = [];
+                    sd.longestStreak = 0;
+                    sd.streakFreezes = 0;
+                    sd.freezeUsedDates = [];
+                    sd.freezePrice = 200;
+                    sd.maxFreezes = 3;
+                    sd.timeBreakdown = { vocabulary: 0, grammar: 0, listening: 0, speaking: 0, writing: 0 };
+                    sd.lastSession = { date: null, wordsLearned: 0, accuracy: 0, duration: 0 };
+                    LangyState.user.streak = 0;
+                    console.log('[Langy] Migrated old user — streak reset to 0');
+                }
+
+                // ─── DAILY STREAK CHECK ───
                 const today = new Date().toISOString().split('T')[0];
-                const lastDate = LangyState.streakData.lastSession.date;
+                const lastDate = sd.lastSession.date;
                 
-                if (lastDate !== today) {
-                    // New day — check streak continuity
-                    if (lastDate) {
-                        const last = new Date(lastDate);
-                        const curr = new Date(today);
-                        const diffMs = curr.getTime() - last.getTime();
-                        const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+                if (lastDate && lastDate !== today) {
+                    const last = new Date(lastDate);
+                    const curr = new Date(today);
+                    const diffMs = curr.getTime() - last.getTime();
+                    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays === 1) {
+                        // Consecutive day → streak continues (increment on lesson completion)
+                    } else if (diffDays > 1) {
+                        // Missed day(s) — try to use Streak Freeze
+                        const missedDays = diffDays - 1;
+                        const availableFreezes = sd.streakFreezes || 0;
                         
-                        if (diffDays === 1) {
-                            // Consecutive day → streak continues
-                            // (don't increment yet — wait for a lesson to be completed)
-                        } else if (diffDays > 1) {
-                            // Missed day(s) → streak resets
-                            LangyState.streakData.days = 0;
+                        if (availableFreezes >= missedDays) {
+                            // Freeze covers the gap!
+                            sd.streakFreezes -= missedDays;
+                            if (!sd.freezeUsedDates) sd.freezeUsedDates = [];
+                            // Record freeze dates
+                            for (let i = 1; i <= missedDays; i++) {
+                                const freezeDate = new Date(last);
+                                freezeDate.setDate(freezeDate.getDate() + i);
+                                sd.freezeUsedDates.push(freezeDate.toISOString().split('T')[0]);
+                            }
+                            setTimeout(() => {
+                                if (typeof Anim !== 'undefined') {
+                                    Anim.showToast(`🛡️ Streak Freeze used! ${sd.streakFreezes} left`);
+                                }
+                            }, 1500);
+                        } else {
+                            // No freezes — streak lost
+                            const lostDays = sd.days;
+                            sd.days = 0;
                             LangyState.user.streak = 0;
+                            if (lostDays > 0) {
+                                setTimeout(() => {
+                                    if (typeof Anim !== 'undefined') {
+                                        Anim.showToast(`💔 ${lostDays}-day streak lost! Start a new one today!`);
+                                    }
+                                }, 1500);
+                            }
                         }
                     }
-                    
-                    // Mark today as not yet completed
-                    LangyState.streakData.todayCompleted = false;
+                }
+                
+                // Mark today as not yet completed
+                if (lastDate !== today) {
+                    sd.todayCompleted = false;
                     LangyState.dailyChallenge.tasks.forEach(t => t.done = false);
                 }
 

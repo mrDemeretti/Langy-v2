@@ -41,6 +41,7 @@ const LangyState = {
 
     // Streak data
     streakData: {
+        _migrated: true,       // Flag: false/missing = old user, needs reset
         days: 0,
         totalSessions: 0,
         totalMinutes: 0,
@@ -49,6 +50,11 @@ const LangyState = {
         todayCompleted: false, // Has user done a session today?
         activeDays: [],        // Array of ISO date strings for streak calendar
         longestStreak: 0,      // Best streak ever
+        // Streak Freeze: protects streak when you miss a day
+        streakFreezes: 0,      // Number of freeze shields owned
+        freezeUsedDates: [],   // ISO dates when a freeze was auto-used
+        freezePrice: 200,      // Dangy cost per freeze
+        maxFreezes: 3,         // Max freezes you can hold
         timeBreakdown: {
             vocabulary: 0,
             grammar: 0,
