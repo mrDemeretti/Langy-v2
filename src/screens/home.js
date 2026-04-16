@@ -80,10 +80,10 @@ function renderHome(container) {
             <div class="home__center">
                 <!-- Left Side Icons -->
                 <div class="home__side-icons home__side-icons--left">
-                    <div class="circle-btn" id="nav-inventory" title="Inventory">
+                    <div class="circle-btn" id="nav-inventory" title="Inventory" style="color:#F59E0B;">
                         ${LangyIcons.briefcase}
                     </div>
-                    <div class="circle-btn" id="nav-events" title="Events">
+                    <div class="circle-btn" id="nav-events" title="Events" style="color:#8B5CF6;">
                         ${LangyIcons.sparkles}
                     </div>
                 </div>
@@ -106,10 +106,10 @@ function renderHome(container) {
 
                 <!-- Right Side Icons -->
                 <div class="home__side-icons home__side-icons--right">
-                    <div class="circle-btn" id="nav-duels" title="Duels">
+                    <div class="circle-btn" id="nav-duels" title="Duels" style="color:#EF4444;">
                         ${LangyIcons.swords}
                     </div>
-                    <div class="circle-btn" id="nav-shop" title="Shop">
+                    <div class="circle-btn" id="nav-shop" title="Shop" style="color:#3B82F6;">
                         ${LangyIcons.shoppingBag}
                     </div>
                 </div>

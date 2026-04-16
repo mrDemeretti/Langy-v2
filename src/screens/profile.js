@@ -90,7 +90,7 @@ function renderProfile(container) {
             <div class="profile__header">
                 <div class="nav-header__back" id="profile-back" style="position:absolute; top:var(--sp-4); left:var(--sp-4); background:rgba(255,255,255,0.15); border:none; color:white;">←</div>
 
-                <div class="profile__avatar-large" id="prof-avatar">${user.avatar}</div>
+                <div class="profile__avatar-large" id="prof-avatar" title="Tap to change">${user.avatar}</div>
                 <div class="profile__name">${user.name}</div>
                 <div class="profile__level" style="margin-bottom:var(--sp-1);">${user.level}</div>
                 
@@ -153,7 +153,7 @@ function renderProfile(container) {
                 <div class="profile__section">
                     <div class="profile__section-title">Account</div>
                     <div class="profile__option" id="prof-edit">
-                        <div class="profile__option-icon" style="background:var(--primary-bg);">${LangyIcons.user}</div>
+                        <div class="profile__option-icon" style="background:var(--primary-bg); color:var(--primary);">${LangyIcons.user}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Edit Profile</div>
                             <div class="profile__option-desc">Name, avatar, email</div>
@@ -161,7 +161,7 @@ function renderProfile(container) {
                         <div class="profile__option-arrow">→</div>
                     </div>
                     <div class="profile__option" id="prof-level">
-                        <div class="profile__option-icon" style="background:var(--accent-bg);">${LangyIcons.barChart}</div>
+                        <div class="profile__option-icon" style="background:var(--accent-bg); color:var(--accent-dark);">${LangyIcons.barChart}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Language Level</div>
                             <div class="profile__option-desc">${settings.languageLevel}</div>
@@ -175,7 +175,7 @@ function renderProfile(container) {
                     <div class="profile__section-title">Preferences</div>
 
                     <div class="profile__option" id="prof-theme">
-                        <div class="profile__option-icon" style="background:rgba(99,102,241,0.1);">${settings.darkMode ? LangyIcons.moon : LangyIcons.sun}</div>
+                        <div class="profile__option-icon" style="background:rgba(99,102,241,0.1); color:#6366F1;">${settings.darkMode ? LangyIcons.moon : LangyIcons.sun}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">${settings.darkMode ? 'Dark Mode' : 'White Mode'}</div>
                             <div class="profile__option-desc">Current theme</div>
@@ -184,7 +184,7 @@ function renderProfile(container) {
                     </div>
 
                     <div class="profile__option" id="prof-notif">
-                        <div class="profile__option-icon" style="background:rgba(239,68,68,0.1);">${LangyIcons.bell}</div>
+                        <div class="profile__option-icon" style="background:rgba(239,68,68,0.1); color:#EF4444;">${LangyIcons.bell}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Notifications</div>
                             <div class="profile__option-desc">Daily reminders</div>
@@ -193,7 +193,7 @@ function renderProfile(container) {
                     </div>
 
                     <div class="profile__option" id="prof-sound">
-                        <div class="profile__option-icon" style="background:rgba(245,158,11,0.1);">${LangyIcons.volume}</div>
+                        <div class="profile__option-icon" style="background:rgba(245,158,11,0.1); color:#F59E0B;">${LangyIcons.volume}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Sound Effects</div>
                             <div class="profile__option-desc">In-app sounds</div>
@@ -202,7 +202,7 @@ function renderProfile(container) {
                     </div>
 
                     <div class="profile__option" id="prof-haptics">
-                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1);">${LangyIcons.vibrate}</div>
+                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1); color:#22C55E;">${LangyIcons.vibrate}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Haptic Feedback</div>
                             <div class="profile__option-desc">Vibration on interactions</div>
@@ -215,7 +215,7 @@ function renderProfile(container) {
                 <div class="profile__section">
                     <div class="profile__section-title">Learning</div>
                     <div class="profile__option" id="prof-goals">
-                        <div class="profile__option-icon" style="background:var(--primary-bg);">${LangyIcons.target}</div>
+                        <div class="profile__option-icon" style="background:var(--primary-bg); color:var(--primary);">${LangyIcons.target}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Daily Goal</div>
                             <div class="profile__option-desc">15 minutes per day</div>
@@ -223,7 +223,7 @@ function renderProfile(container) {
                         <div class="profile__option-arrow">→</div>
                     </div>
                     <div class="profile__option" id="prof-reminder">
-                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1);">${LangyIcons.clock}</div>
+                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;">${LangyIcons.clock}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Reminder Time</div>
                             <div class="profile__option-desc">${settings.dailyReminder}</div>
@@ -236,24 +236,24 @@ function renderProfile(container) {
                 <div class="profile__section">
                     <div class="profile__section-title">Support</div>
                     <div class="profile__option" id="prof-help">
-                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1);">${LangyIcons.helpCircle}</div>
+                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;">${LangyIcons.helpCircle}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Help & FAQ</div>
                         </div>
                         <div class="profile__option-arrow">→</div>
                     </div>
                     <div class="profile__option" id="prof-feedback">
-                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1);">${LangyIcons.messageCircle}</div>
+                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1); color:#22C55E;">${LangyIcons.messageCircle}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Send Feedback</div>
                         </div>
                         <div class="profile__option-arrow">→</div>
                     </div>
                     <div class="profile__option" id="prof-about">
-                        <div class="profile__option-icon" style="background:rgba(156,163,175,0.1);">${LangyIcons.info}</div>
+                        <div class="profile__option-icon" style="background:rgba(156,163,175,0.1); color:#6B7280;">${LangyIcons.info}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">About Langy</div>
-                            <div class="profile__option-desc">Version 1.0.0</div>
+                            <div class="profile__option-desc">Version 2.1.0</div>
                         </div>
                         <div class="profile__option-arrow">→</div>
                     </div>
@@ -263,7 +263,7 @@ function renderProfile(container) {
                 <div class="profile__section">
                     <div class="profile__section-title">Community</div>
                     <div class="profile__option" id="prof-invite">
-                        <div class="profile__option-icon" style="background:rgba(236,72,153,0.1);">${LangyIcons.gift}</div>
+                        <div class="profile__option-icon" style="background:rgba(236,72,153,0.1); color:#EC4899;">${LangyIcons.gift}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Invite Friends</div>
                             <div class="profile__option-desc">Get 500 Dangy</div>
@@ -275,7 +275,7 @@ function renderProfile(container) {
                 <!-- Danger Zone -->
                 <div class="profile__section">
                     <div class="profile__option" id="prof-logout">
-                        <div class="profile__option-icon" style="background:var(--danger-bg);">${LangyIcons.logout}</div>
+                        <div class="profile__option-icon" style="background:var(--danger-bg); color:var(--danger);">${LangyIcons.logout}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label" style="color:var(--danger);">Log Out</div>
                         </div>
@@ -320,14 +320,11 @@ function renderProfile(container) {
         }
     });
 
-    // Avatar interaction
+    // Avatar interaction → open avatar picker
     const avatarEl = container.querySelector('#prof-avatar');
     if (avatarEl) {
         avatarEl.addEventListener('click', () => {
-            avatarEl.classList.remove('bounce');
-            void avatarEl.offsetWidth; // trigger reflow
-            avatarEl.classList.add('bounce');
-            if (typeof LangyState.settings.haptics && navigator.vibrate) navigator.vibrate(50);
+            showAvatarPicker();
         });
     }
 
@@ -413,6 +410,114 @@ function showLevelPicker() {
     });
 }
 
+function showAvatarPicker() {
+    const avatars = ['🦊', '🐱', '🐶', '🦁', '🐼', '🐸', '🦄', '🐙', '🦋', '🐝', '🐳', '🦖', '🦉', '🐺', '🐨', '🦈', '👑', '🌸', '🔥', '⭐', '💎', '🎯', '🎨', '🎸', '🚀', '⚡', '🌙', '🪐', '🧠', '💜'];
+    const colors = [
+        { bg: 'linear-gradient(135deg, #10B981, #059669)', label: 'Emerald' },
+        { bg: 'linear-gradient(135deg, #6366F1, #4F46E5)', label: 'Indigo' },
+        { bg: 'linear-gradient(135deg, #EC4899, #DB2777)', label: 'Pink' },
+        { bg: 'linear-gradient(135deg, #F59E0B, #D97706)', label: 'Amber' },
+        { bg: 'linear-gradient(135deg, #3B82F6, #2563EB)', label: 'Blue' },
+        { bg: 'linear-gradient(135deg, #8B5CF6, #7C3AED)', label: 'Violet' },
+        { bg: 'linear-gradient(135deg, #EF4444, #DC2626)', label: 'Red' },
+        { bg: 'linear-gradient(135deg, #14B8A6, #0D9488)', label: 'Teal' },
+    ];
+
+    const currentAvatar = LangyState.user.avatar || '🦊';
+    let selectedEmoji = currentAvatar;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.innerHTML = `
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6); max-height: 85vh; overflow-y: auto;">
+            <div class="overlay__handle"></div>
+            <h3 style="margin-bottom:var(--sp-4);">Choose Avatar</h3>
+
+            <!-- Preview -->
+            <div style="display:flex; justify-content:center; margin-bottom:var(--sp-4);">
+                <div id="avatar-preview" style="width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:40px; background:var(--primary); box-shadow: 0 6px 20px rgba(16,185,129,0.3); transition: all 0.3s;">${currentAvatar}</div>
+            </div>
+
+            <!-- Emoji Grid -->
+            <p style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-2);">SELECT EMOJI</p>
+            <div style="display:grid; grid-template-columns:repeat(6, 1fr); gap:var(--sp-2); margin-bottom:var(--sp-4);">
+                ${avatars.map(e => `
+                    <div class="avatar-emoji-pick" data-emoji="${e}" style="
+                        width:44px; height:44px; border-radius:var(--radius-lg);
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:24px; cursor:pointer; transition: all 0.2s;
+                        background:${e === currentAvatar ? 'var(--primary-bg)' : 'var(--bg-card)'};
+                        border: 2px solid ${e === currentAvatar ? 'var(--primary)' : 'transparent'};
+                    ">${e}</div>
+                `).join('')}
+            </div>
+
+            <!-- Or use initial letter -->
+            <p style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-2);">OR USE YOUR INITIAL</p>
+            <div style="display:flex; gap:var(--sp-2); flex-wrap:wrap; margin-bottom:var(--sp-4);">
+                ${colors.map(c => `
+                    <div class="avatar-letter-pick" data-letter="${(LangyState.user.name || 'U')[0].toUpperCase()}" data-bg="${c.bg}" style="
+                        width:44px; height:44px; border-radius:50%;
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:18px; font-weight:900; cursor:pointer; transition: all 0.2s;
+                        background:${c.bg}; color:white;
+                        border: 2px solid transparent;
+                    ">${(LangyState.user.name || 'U')[0].toUpperCase()}</div>
+                `).join('')}
+            </div>
+
+            <button class="btn btn--primary btn--full" id="save-avatar">Save Avatar</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+    // Emoji selection
+    overlay.querySelectorAll('.avatar-emoji-pick').forEach(el => {
+        el.addEventListener('click', () => {
+            selectedEmoji = el.dataset.emoji;
+            overlay.querySelector('#avatar-preview').textContent = selectedEmoji;
+            overlay.querySelector('#avatar-preview').style.fontSize = '40px';
+            overlay.querySelectorAll('.avatar-emoji-pick').forEach(e => {
+                e.style.background = 'var(--bg-card)';
+                e.style.borderColor = 'transparent';
+            });
+            el.style.background = 'var(--primary-bg)';
+            el.style.borderColor = 'var(--primary)';
+            // Reset letter selections
+            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => e.style.borderColor = 'transparent');
+        });
+    });
+
+    // Letter selection
+    overlay.querySelectorAll('.avatar-letter-pick').forEach(el => {
+        el.addEventListener('click', () => {
+            selectedEmoji = el.dataset.letter;
+            const preview = overlay.querySelector('#avatar-preview');
+            preview.textContent = selectedEmoji;
+            preview.style.background = el.dataset.bg;
+            preview.style.fontSize = '32px';
+            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => e.style.borderColor = 'transparent');
+            el.style.borderColor = 'white';
+            // Reset emoji selections
+            overlay.querySelectorAll('.avatar-emoji-pick').forEach(e => {
+                e.style.background = 'var(--bg-card)';
+                e.style.borderColor = 'transparent';
+            });
+        });
+    });
+
+    overlay.querySelector('#save-avatar')?.addEventListener('click', () => {
+        LangyState.user.avatar = selectedEmoji;
+        overlay.remove();
+        Anim.showToast('Avatar updated!');
+        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+        const container = document.getElementById('screen-container');
+        if (container) renderProfile(container);
+    });
+}
+
 function showEditProfile() {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -421,6 +526,14 @@ function showEditProfile() {
             <div class="overlay__handle"></div>
             <h3 style="margin-bottom:var(--sp-4);">Edit Profile</h3>
             <div style="display:flex; flex-direction:column; gap:var(--sp-4);">
+                <!-- Avatar quick-change -->
+                <div style="display:flex; align-items:center; gap:var(--sp-4);">
+                    <div id="edit-avatar-btn" style="width:56px; height:56px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px; cursor:pointer; flex-shrink:0; box-shadow:0 4px 12px rgba(16,185,129,0.2);">${LangyState.user.avatar}</div>
+                    <div>
+                        <div style="font-weight:var(--fw-bold);">Profile Photo</div>
+                        <div style="font-size:var(--fs-xs); color:var(--primary); cursor:pointer;" id="change-avatar-link">Change avatar →</div>
+                    </div>
+                </div>
                 <div class="input-group">
                     <label>Nickname</label>
                     <input type="text" id="edit-name" class="input" value="${LangyState.user.name}">
@@ -436,6 +549,15 @@ function showEditProfile() {
     
     document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+    // Open avatar picker from edit profile
+    const avatarTriggers = [overlay.querySelector('#edit-avatar-btn'), overlay.querySelector('#change-avatar-link')];
+    avatarTriggers.forEach(el => {
+        el?.addEventListener('click', () => {
+            overlay.remove();
+            showAvatarPicker();
+        });
+    });
     
     overlay.querySelector('#save-profile').addEventListener('click', async () => {
         const newName = overlay.querySelector('#edit-name').value;
