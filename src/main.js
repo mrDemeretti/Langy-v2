@@ -83,28 +83,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                             // Freeze covers the gap!
                             sd.streakFreezes -= missedDays;
                             if (!sd.freezeUsedDates) sd.freezeUsedDates = [];
-                            // Record freeze dates
                             for (let i = 1; i <= missedDays; i++) {
                                 const freezeDate = new Date(last);
                                 freezeDate.setDate(freezeDate.getDate() + i);
                                 sd.freezeUsedDates.push(freezeDate.toISOString().split('T')[0]);
                             }
-                            setTimeout(() => {
-                                if (typeof Anim !== 'undefined') {
-                                    Anim.showToast(`🛡️ Streak Freeze used! ${sd.streakFreezes} left`);
-                                }
-                            }, 1500);
+                            setTimeout(() => showStreakOverlay('freeze', missedDays, sd.streakFreezes), 1500);
                         } else {
                             // No freezes — streak lost
                             const lostDays = sd.days;
                             sd.days = 0;
                             LangyState.user.streak = 0;
                             if (lostDays > 0) {
-                                setTimeout(() => {
-                                    if (typeof Anim !== 'undefined') {
-                                        Anim.showToast(`💔 ${lostDays}-day streak lost! Start a new one today!`);
-                                    }
-                                }, 1500);
+                                setTimeout(() => showStreakOverlay('lost', lostDays), 1500);
                             }
                         }
                     }
@@ -152,3 +143,94 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
+
+// ─── STREAK OVERLAY ANIMATION ───
+function showStreakOverlay(type, days, freezesLeft) {
+    const overlay = document.createElement('div');
+    overlay.id = 'streak-overlay';
+
+    const isFreeze = type === 'freeze';
+    const bg = isFreeze
+        ? 'linear-gradient(135deg, rgba(99,102,241,0.95), rgba(59,130,246,0.95))'
+        : 'linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95))';
+    const icon = isFreeze ? '🛡️' : '💔';
+    const title = isFreeze ? 'Streak Protected!' : 'Streak Lost';
+    const subtitle = isFreeze
+        ? `Freeze shield saved your ${LangyState.streakData.days}-day streak!`
+        : `Your ${days}-day streak was lost.`;
+    const detail = isFreeze
+        ? `${days} freeze${days > 1 ? 's' : ''} used · ${freezesLeft} remaining`
+        : 'Start a new streak today — every day counts!';
+
+    overlay.innerHTML = `
+        <div style="
+            position:fixed; inset:0; z-index:9999;
+            background:${bg};
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            animation: overlayFadeIn 0.4s ease;
+            backdrop-filter: blur(8px);
+            padding: 32px;
+            text-align: center;
+        ">
+            <div style="
+                font-size:80px; 
+                animation: streakIconPulse 1s ease infinite alternate;
+                filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+            ">${icon}</div>
+            
+            <h2 style="
+                color:#fff; font-size:28px; font-weight:900;
+                margin:20px 0 8px; text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">${title}</h2>
+            
+            <p style="
+                color:rgba(255,255,255,0.9); font-size:16px;
+                margin:0 0 8px; max-width:300px;
+            ">${subtitle}</p>
+            
+            <p style="
+                color:rgba(255,255,255,0.7); font-size:13px;
+                margin:0 0 32px;
+            ">${detail}</p>
+
+            <button onclick="this.closest('#streak-overlay').remove()" style="
+                background:rgba(255,255,255,0.2); color:#fff;
+                border:2px solid rgba(255,255,255,0.4);
+                border-radius:50px; padding:12px 40px;
+                font-size:16px; font-weight:700; cursor:pointer;
+                backdrop-filter:blur(4px);
+                transition: all 0.2s ease;
+                font-family: inherit;
+            ">Got it</button>
+        </div>
+    `;
+
+    // Add keyframes if not already present
+    if (!document.querySelector('#streak-overlay-styles')) {
+        const style = document.createElement('style');
+        style.id = 'streak-overlay-styles';
+        style.textContent = `
+            @keyframes overlayFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes streakIconPulse {
+                from { transform: scale(1); }
+                to { transform: scale(1.15); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(overlay);
+
+    // Auto-dismiss after 6 seconds
+    setTimeout(() => {
+        if (overlay.parentNode) {
+            overlay.style.transition = 'opacity 0.5s ease';
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 500);
+        }
+    }, 6000);
+}
