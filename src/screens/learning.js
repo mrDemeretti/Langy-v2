@@ -576,13 +576,36 @@ function renderLearning(container) {
         LangyState.user.xp += xpEarned;
         LangyState.currencies.dangy += correctAnswers * 10;
 
+        // Dynamically determine the dominant category and vocab words
+        let categoryCounts = { vocabulary: 0, grammar: 0, listening: 0, speaking: 0, writing: 0 };
+        let vocabWordsCount = 0;
+        
+        exercises.forEach(ex => {
+            const t = ex.type;
+            if (t === 'match-pairs' || t === 'image-choice') {
+                categoryCounts.vocabulary++;
+                vocabWordsCount += (ex.data && ex.data.pairs) ? ex.data.pairs.length : 1;
+            } else if (t === 'listen-type') {
+                categoryCounts.listening++;
+            } else if (t === 'speak-aloud') {
+                categoryCounts.speaking++;
+            } else if (t === 'type-translation' || t === 'read-answer') {
+                categoryCounts.writing++;
+            } else {
+                categoryCounts.grammar++;
+            }
+        });
+
+        const dominantCategory = Object.keys(categoryCounts).reduce((a, b) => categoryCounts[a] > categoryCounts[b] ? a : b);
+        const actualWordsLearned = Math.min(vocabWordsCount, Math.floor(correctAnswers)); // Ensure it doesn't exceed total correct
+
         // Record session for streak tracking & rewards
         if (typeof recordSession === 'function') {
             recordSession({
                 duration: duration,
-                wordsLearned: Math.max(1, correctAnswers),
+                wordsLearned: actualWordsLearned,
                 accuracy: score,
-                category: 'grammar'
+                category: dominantCategory
             });
         }
 
