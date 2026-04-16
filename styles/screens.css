@@ -4412,3 +4412,33 @@
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ============================================
+   ICON COLOR SYSTEM — Brand-colored SVG icons
+   ============================================ */
+
+/* Home: Circle navigation buttons */
+#nav-inventory { color: #7C6CF6; border-color: rgba(124,108,246,0.3); background: rgba(124,108,246,0.08); }
+#nav-events { color: #F59E0B; border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); }
+#nav-duels { color: #EF4444; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.08); }
+#nav-shop { color: #3B82F6; border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.08); }
+
+#nav-inventory:hover { background: rgba(124,108,246,0.15); border-color: #7C6CF6; }
+#nav-events:hover { background: rgba(245,158,11,0.15); border-color: #F59E0B; }
+#nav-duels:hover { background: rgba(239,68,68,0.15); border-color: #EF4444; }
+#nav-shop:hover { background: rgba(59,130,246,0.15); border-color: #3B82F6; }
+
+/* Duel Mode Icons — white on colored backgrounds */
+.duel-mode__icon { color: white; font-size: 24px; }
+.duel-mode__icon .langy-icon { fill: currentColor; stroke: currentColor; stroke-width: 1.5px; }
+
+/* Shop Item Preview — colored SVG icons */
+.shop-item__preview { color: var(--primary); }
+.shop-item--premium .shop-item__preview { color: #F59E0B; }
+.shop-item__preview .langy-icon { fill: currentColor; stroke: currentColor; stroke-width: 1px; }
+
+/* Daily Task Icons — brand colored */
+.daily-task__title .langy-icon { color: var(--primary); }
+
+/* Streak fire active state */
+.home__streak .fire-animated { font-size: 28px; }

@@ -38,7 +38,7 @@ function renderShop(container) {
                     const owned = shop.owned.includes(item.id);
                     return `
                         <div class="shop-item ${item.premium ? 'shop-item--premium' : ''}" data-id="${item.id}">
-                            <div class="shop-item__preview">${item.emoji}</div>
+                            <div class="shop-item__preview" style="color:${item.premium ? '#F59E0B' : 'var(--primary)'}">${item.emoji}</div>
                             <div class="shop-item__name">${item.name}</div>
                             ${owned
                                 ? '<div class="badge badge--accent">Owned</div>'
@@ -96,7 +96,7 @@ function showBuyDialog(item) {
     overlay.innerHTML = `
         <div class="overlay__sheet" style="text-align:center;">
             <div class="overlay__handle"></div>
-            <div style="font-size:64px; margin:var(--sp-4) 0;">${item.emoji}</div>
+            <div style="font-size:64px; margin:var(--sp-4) 0; color:${item.premium ? '#F59E0B' : 'var(--primary)'}">${item.emoji}</div>
             <h3>${item.name}</h3>
             <p class="text-secondary text-sm" style="margin:var(--sp-2) 0;">Category: ${item.category}</p>
             <div style="font-size:var(--fs-xl); font-weight:var(--fw-black); margin:var(--sp-4) 0; display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">

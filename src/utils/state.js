@@ -116,12 +116,12 @@ const LangyState = {
         // Key = CEFR code, e.g. "A1"
         // Value = { earned: bool, date: string|null, badge: string }
         cefrBadges: {
-            A1: { earned: false, date: null, badge: '🥉' },
-            A2: { earned: false, date: null, badge: '🥈' },
-            B1: { earned: false, date: null, badge: '🥇' },
-            B2: { earned: false, date: null, badge: '🏅' },
-            C1: { earned: false, date: null, badge: '🎖️' },
-            C2: { earned: false, date: null, badge: '👑' }
+            A1: { earned: false, date: null, badge: LangyIcons.star },
+            A2: { earned: false, date: null, badge: LangyIcons.star },
+            B1: { earned: false, date: null, badge: LangyIcons.award },
+            B2: { earned: false, date: null, badge: LangyIcons.trophy },
+            C1: { earned: false, date: null, badge: LangyIcons.crown },
+            C2: { earned: false, date: null, badge: LangyIcons.medal }
         }
     },
 
@@ -130,24 +130,24 @@ const LangyState = {
         reward: 50, // Dangy
         timeLeft: 14400, // seconds
         tasks: [
-            { id: 1, title: 'Speak for 3 minutes', desc: 'Practice speaking on any topic', done: true, icon: '🎤' },
-            { id: 2, title: 'No mistakes challenge', desc: 'Complete 10 questions without errors', done: false, icon: '🎯' },
-            { id: 3, title: 'Listen & repeat', desc: 'Listen to 5 sentences and repeat', done: false, icon: '🎧' },
-            { id: 4, title: 'Learn 5 new words', desc: 'Vocabulary expansion', done: false, icon: '📚' },
+            { id: 1, title: 'Speak for 3 minutes', desc: 'Practice speaking on any topic', done: true, icon: LangyIcons.mic },
+            { id: 2, title: 'No mistakes challenge', desc: 'Complete 10 questions without errors', done: false, icon: LangyIcons.target },
+            { id: 3, title: 'Listen & repeat', desc: 'Listen to 5 sentences and repeat', done: false, icon: LangyIcons.headphones },
+            { id: 4, title: 'Learn 5 new words', desc: 'Vocabulary expansion', done: false, icon: LangyIcons.bookOpen },
         ]
     },
 
     // Shop
     shop: {
         items: [
-            { id: 1, name: 'Cool Shades', emoji: '😎', price: 50, currency: 'dangy', category: 'accessory' },
-            { id: 2, name: 'Top Hat', emoji: '🎩', price: 80, currency: 'dangy', category: 'hat' },
-            { id: 3, name: 'Crown', emoji: '👑', price: 200, currency: 'langy', category: 'hat', premium: true },
-            { id: 4, name: 'Star Badge', emoji: '⭐', price: 30, currency: 'dangy', category: 'accessory' },
-            { id: 5, name: 'Rocket', emoji: '🚀', price: 150, currency: 'langy', category: 'sticker', premium: true },
-            { id: 6, name: 'Fire Skin', emoji: '🔥', price: 300, currency: 'langy', category: 'skin', premium: true },
-            { id: 7, name: 'Bow Tie', emoji: '🎀', price: 40, currency: 'dangy', category: 'accessory' },
-            { id: 8, name: 'Party Hat', emoji: '🥳', price: 60, currency: 'dangy', category: 'hat' },
+            { id: 1, name: 'Cool Shades', emoji: LangyIcons.sun, price: 50, currency: 'dangy', category: 'accessory' },
+            { id: 2, name: 'Top Hat', emoji: LangyIcons.graduationCap, price: 80, currency: 'dangy', category: 'hat' },
+            { id: 3, name: 'Crown', emoji: LangyIcons.crown, price: 200, currency: 'langy', category: 'hat', premium: true },
+            { id: 4, name: 'Star Badge', emoji: LangyIcons.star, price: 30, currency: 'dangy', category: 'accessory' },
+            { id: 5, name: 'Rocket', emoji: LangyIcons.rocket, price: 150, currency: 'langy', category: 'sticker', premium: true },
+            { id: 6, name: 'Fire Skin', emoji: LangyIcons.flame, price: 300, currency: 'langy', category: 'skin', premium: true },
+            { id: 7, name: 'Bow Tie', emoji: LangyIcons.gift, price: 40, currency: 'dangy', category: 'accessory' },
+            { id: 8, name: 'Party Hat', emoji: LangyIcons.sparkles, price: 60, currency: 'dangy', category: 'hat' },
         ],
         owned: [1, 4, 8]
     },
@@ -155,9 +155,9 @@ const LangyState = {
     // Inventory
     inventory: {
         items: [
-            { id: 1, name: 'Cool Shades', emoji: '😎', slot: 'accessory', equipped: false },
-            { id: 4, name: 'Star Badge', emoji: '⭐', slot: 'accessory', equipped: true },
-            { id: 8, name: 'Party Hat', emoji: '🥳', slot: 'hat', equipped: false },
+            { id: 1, name: 'Cool Shades', emoji: LangyIcons.sun, slot: 'accessory', equipped: false },
+            { id: 4, name: 'Star Badge', emoji: LangyIcons.star, slot: 'accessory', equipped: true },
+            { id: 8, name: 'Party Hat', emoji: LangyIcons.sparkles, slot: 'hat', equipped: false },
         ]
     },
 
@@ -179,9 +179,9 @@ const LangyState = {
 
     // Events
     events: [
-        { id: 1, title: 'Weekend Grammar Sprint', desc: 'Complete 20 grammar tasks', timeLeft: '2d 5h', reward: '100 Dangy', bg: 'linear-gradient(135deg, #7C6CF6, #9D90F9)', emoji: '📝' },
-        { id: 2, title: 'Listening Marathon', desc: 'Listen to 30 minutes of content', timeLeft: '1d 12h', reward: '75 Dangy + Sticker', bg: 'linear-gradient(135deg, #4ADE80, #22C55E)', emoji: '🎧' },
-        { id: 3, title: 'Vocabulary Master', desc: 'Learn 50 new words this week', timeLeft: '5d', reward: '200 Dangy', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', emoji: '📚' },
+        { id: 1, title: 'Weekend Grammar Sprint', desc: 'Complete 20 grammar tasks', timeLeft: '2d 5h', reward: '100 Dangy', bg: 'linear-gradient(135deg, #7C6CF6, #9D90F9)', emoji: LangyIcons.pencil },
+        { id: 2, title: 'Listening Marathon', desc: 'Listen to 30 minutes of content', timeLeft: '1d 12h', reward: '75 Dangy + Sticker', bg: 'linear-gradient(135deg, #4ADE80, #22C55E)', emoji: LangyIcons.headphones },
+        { id: 3, title: 'Vocabulary Master', desc: 'Learn 50 new words this week', timeLeft: '5d', reward: '200 Dangy', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', emoji: LangyIcons.bookOpen },
     ],
 
     // Settings
@@ -287,7 +287,7 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
             LangyState.currencies.langy += streakRewards.langy;
             
             // Show reward toast
-            let rewardMsg = `🔥 ${sd.days} Day Streak!`;
+            let rewardMsg = `${LangyIcons.flame} ${sd.days} Day Streak!`;
             if (streakRewards.dangy > 0) rewardMsg += ` +${streakRewards.dangy} Dangy`;
             if (streakRewards.langy > 0) rewardMsg += ` +${streakRewards.langy} Langy`;
             if (streakRewards.badge) rewardMsg += ` ${streakRewards.badge}`;
@@ -309,14 +309,14 @@ function getStreakReward(days) {
     
     // Milestone rewards (Langy = premium, only at milestones)
     const milestones = {
-        3:   { dangy: 25,  langy: 0,  badge: '🌟' },
-        7:   { dangy: 50,  langy: 5,  badge: '⭐ Weekly Warrior!' },
-        14:  { dangy: 100, langy: 10, badge: '🌟 Two Week Champion!' },
-        30:  { dangy: 200, langy: 25, badge: '🏆 Monthly Master!' },
-        60:  { dangy: 400, langy: 50, badge: '💎 Diamond Streak!' },
-        90:  { dangy: 600, langy: 100, badge: '👑 Royal Learner!' },
-        180: { dangy: 1000, langy: 200, badge: '🔥 Half-Year Hero!' },
-        365: { dangy: 2000, langy: 500, badge: '🏅 Annual Legend!' }
+        3:   { dangy: 25,  langy: 0,  badge: LangyIcons.star + ' Nice Start!' },
+        7:   { dangy: 50,  langy: 5,  badge: LangyIcons.star + ' Weekly Warrior!' },
+        14:  { dangy: 100, langy: 10, badge: LangyIcons.award + ' Two Week Champion!' },
+        30:  { dangy: 200, langy: 25, badge: LangyIcons.trophy + ' Monthly Master!' },
+        60:  { dangy: 400, langy: 50, badge: LangyIcons.diamond + ' Diamond Streak!' },
+        90:  { dangy: 600, langy: 100, badge: LangyIcons.crown + ' Royal Learner!' },
+        180: { dangy: 1000, langy: 200, badge: LangyIcons.flame + ' Half-Year Hero!' },
+        365: { dangy: 2000, langy: 500, badge: LangyIcons.medal + ' Annual Legend!' }
     };
     
     if (milestones[days]) {
@@ -349,6 +349,28 @@ function loadFromSnapshot(data) {
         }
     }
     deepMerge(LangyState, data);
+
+    // Always keep template content from code (prevents stale cached emojis)
+    const fresh = getDefaultState();
+    LangyState.shop.items = fresh.shop.items;
+    LangyState.events = fresh.events;
+    LangyState.duels.modes = fresh.duels.modes;
+    LangyState.duels.questions = fresh.duels.questions;
+    // Sync inventory icons with current shop catalog
+    if (LangyState.inventory && LangyState.inventory.items) {
+        LangyState.inventory.items.forEach(inv => {
+            const si = LangyState.shop.items.find(s => s.id === inv.id);
+            if (si) inv.emoji = si.emoji;
+        });
+    }
+    // Refresh CEFR badge icons (keep earned status)
+    if (fresh.progress && fresh.progress.cefrBadges && LangyState.progress && LangyState.progress.cefrBadges) {
+        for (const level of Object.keys(fresh.progress.cefrBadges)) {
+            if (LangyState.progress.cefrBadges[level]) {
+                LangyState.progress.cefrBadges[level].badge = fresh.progress.cefrBadges[level].badge;
+            }
+        }
+    }
 }
 
 function resetState() {
