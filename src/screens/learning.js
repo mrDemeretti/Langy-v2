@@ -398,6 +398,8 @@ function renderLearning(container) {
     // ─── MAP OLD EXERCISE FORMAT TO WIDGETS ───
     function mapExerciseToWidget(ex) {
         if (ex.widgetType) return ex.widgetType;
+        // ExerciseGenerator exercises already use widget type names
+        if (ex.data) return ex.type;
         switch (ex.type) {
             case 'choice': return 'fill-bubble';
             case 'fill-blank': return 'fill-bubble';
@@ -413,6 +415,8 @@ function renderLearning(container) {
 
     function mapExerciseData(ex) {
         if (ex.widgetData) return ex.widgetData;
+        // ExerciseGenerator exercises have data property with all fields ready
+        if (ex.data) return ex.data;
         switch (ex.type) {
             case 'choice':
                 return { sentence: ex.prompt, options: ex.options, correct: ex.correct };
