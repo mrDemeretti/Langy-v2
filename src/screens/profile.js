@@ -47,6 +47,40 @@ function buildCefrBadges() {
     }).join('');
 }
 
+function buildAchievements() {
+    const { streakData, dailyChallenge } = LangyState;
+    const days = streakData?.days || 0;
+    const words = streakData?.wordsLearned || 0;
+    const perfectDate = dailyChallenge?._perfectLessonDate;
+    
+    const achievements = [
+        {
+            id: 'early_bird', title: 'Early Bird', desc: 'Study before 8 AM',
+            icon: '🌅', unlocked: true // Just a placeholder for now to show an unlocked one
+        },
+        {
+            id: 'unstoppable', title: 'Unstoppable', desc: '7 Day Streak',
+            icon: '🔥', unlocked: days >= 7
+        },
+        {
+            id: 'vocab_master', title: 'Vocab Master', desc: '50 Words',
+            icon: '🧠', unlocked: words >= 50
+        },
+        {
+            id: 'perfectionist', title: 'Perfectionist', desc: '100% Lesson',
+            icon: '🎯', unlocked: perfectDate !== null && perfectDate !== undefined
+        }
+    ];
+
+    return achievements.map(ach => `
+        <div class="achievement-card ${!ach.unlocked ? 'achievement-card--locked' : ''}">
+            <div class="achievement-card__icon">${ach.icon}</div>
+            <div class="achievement-card__title">${ach.title}</div>
+            <div class="achievement-card__desc">${ach.desc}</div>
+        </div>
+    `).join('');
+}
+
 function renderProfile(container) {
     const { user, settings, streakData, currencies } = LangyState;
 
@@ -56,9 +90,15 @@ function renderProfile(container) {
             <div class="profile__header">
                 <div class="nav-header__back" id="profile-back" style="position:absolute; top:var(--sp-4); left:var(--sp-4); background:rgba(255,255,255,0.15); border:none; color:white;">←</div>
 
-                <div class="profile__avatar-large">${user.avatar}</div>
+                <div class="profile__avatar-large" id="prof-avatar">${user.avatar}</div>
                 <div class="profile__name">${user.name}</div>
-                <div class="profile__level">${user.level} • ${user.xp} XP</div>
+                <div class="profile__level" style="margin-bottom:var(--sp-1);">${user.level}</div>
+                
+                <!-- XP Progress Bar -->
+                <div class="profile__xp-container">
+                    <div class="profile__xp-fill" style="width: ${(user.xp / 500) * 100}%;"></div>
+                </div>
+                <div style="font-size:10px; opacity:0.8; margin-bottom:var(--sp-2);">${user.xp} / 500 XP</div>
 
                 <div class="profile__stats-row">
                     <div class="profile__stat">
@@ -80,8 +120,27 @@ function renderProfile(container) {
                 </div>
             </div>
 
+            <!-- Premium Banner -->
+            ${LangyState.subscription.plan !== 'premium' ? `
+            <div class="profile__premium-banner" id="prof-premium-banner">
+                <div>
+                    <h3 style="margin:0; font-size:var(--fs-lg);">Langy Pro 👑</h3>
+                    <p style="margin:0; font-size:var(--fs-xs); opacity:0.9;">Unlock all premium features</p>
+                </div>
+                <button class="btn" style="background:white; color:#b45309; padding:4px 12px; font-weight:var(--fw-bold); border-radius:var(--radius-full);">GET</button>
+            </div>
+            ` : ''}
+
             <!-- Settings Sections -->
             <div class="profile__sections">
+
+                <!-- Mini Achievements -->
+                <div class="profile__section">
+                    <div class="profile__section-title">✨ Achievements</div>
+                    <div class="achievements-row">
+                        ${buildAchievements()}
+                    </div>
+                </div>
 
                 <!-- CEFR Certificates -->
                 <div class="profile__section">
@@ -98,14 +157,6 @@ function renderProfile(container) {
                         <div class="profile__option-text">
                             <div class="profile__option-label">Edit Profile</div>
                             <div class="profile__option-desc">Name, avatar, email</div>
-                        </div>
-                        <div class="profile__option-arrow">→</div>
-                    </div>
-                    <div class="profile__option" id="prof-subscription">
-                        <div class="profile__option-icon" style="background:var(--reward-gold-bg);">⭐</div>
-                        <div class="profile__option-text">
-                            <div class="profile__option-label">Subscription</div>
-                            <div class="profile__option-desc">${LangyState.subscription.plan ? LangyState.subscription.plan.charAt(0).toUpperCase() + LangyState.subscription.plan.slice(1) + ' Plan' : 'Free Plan'}</div>
                         </div>
                         <div class="profile__option-arrow">→</div>
                     </div>
@@ -208,6 +259,19 @@ function renderProfile(container) {
                     </div>
                 </div>
 
+                <!-- Community -->
+                <div class="profile__section">
+                    <div class="profile__section-title">Community</div>
+                    <div class="profile__option" id="prof-invite">
+                        <div class="profile__option-icon" style="background:rgba(236,72,153,0.1);">🎁</div>
+                        <div class="profile__option-text">
+                            <div class="profile__option-label">Invite Friends</div>
+                            <div class="profile__option-desc">Get 500 Dangy</div>
+                        </div>
+                        <div class="profile__option-arrow">→</div>
+                    </div>
+                </div>
+
                 <!-- Danger Zone -->
                 <div class="profile__section">
                     <div class="profile__option" id="prof-logout">
@@ -244,13 +308,35 @@ function renderProfile(container) {
     setupToggle('prof-haptics', 'haptics');
 
     // Navigation / Modals
-    container.querySelector('#prof-subscription')?.addEventListener('click', () => showSubscription());
+    container.querySelector('#prof-premium-banner')?.addEventListener('click', () => {
+        if (typeof showSubscription === 'function') {
+            showSubscription();
+        } else {
+            Anim.showToast('Premium Plans coming soon!');
+        }
+    });
+
+    // Avatar interaction
+    const avatarEl = container.querySelector('#prof-avatar');
+    if (avatarEl) {
+        avatarEl.addEventListener('click', () => {
+            avatarEl.classList.remove('bounce');
+            void avatarEl.offsetWidth; // trigger reflow
+            avatarEl.classList.add('bounce');
+            if (typeof LangyState.settings.haptics && navigator.vibrate) navigator.vibrate(50);
+        });
+    }
+
     container.querySelector('#prof-logout')?.addEventListener('click', async () => {
         if (typeof LangyDB !== 'undefined') {
             try { await LangyDB.logout(); } catch(e) {}
         }
         Anim.showToast('Logged out. See you soon! 👋');
         setTimeout(() => Router.navigate('auth'), 800);
+    });
+
+    container.querySelector('#prof-invite')?.addEventListener('click', () => {
+        Anim.showToast('Invite link copied to clipboard! 📋');
     });
 
     container.querySelector('#prof-level')?.addEventListener('click', () => showLevelPicker());
