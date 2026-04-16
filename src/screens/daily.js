@@ -6,19 +6,33 @@
 function renderDaily(container) {
     const { progress, streakData } = LangyState;
 
-    // Generate daily tasks based on real progress
+    // Generate daily tasks dynamically based on real progress
     const today = new Date().toISOString().split('T')[0];
-    if (!LangyState.dailyChallenge._generatedDate || LangyState.dailyChallenge._generatedDate !== today) {
+    if (!LangyState.dailyChallenge) LangyState.dailyChallenge = {};
+    if (LangyState.dailyChallenge._generatedDate !== today) {
         LangyState.dailyChallenge._generatedDate = today;
-        LangyState.dailyChallenge.tasks = generateDailyTasks();
-        LangyState.dailyChallenge.timeLeft = getSecondsUntilMidnight();
+        LangyState.dailyChallenge._rewardClaimed = false;
     }
+
+    LangyState.dailyChallenge.tasks = generateDailyTasks();
+    LangyState.dailyChallenge.timeLeft = getSecondsUntilMidnight();
 
     let timeLeft = LangyState.dailyChallenge.timeLeft;
     const tasks = LangyState.dailyChallenge.tasks;
     const completedCount = tasks.filter(t => t.done).length;
     const totalTasks = tasks.length;
     const allDone = completedCount === totalTasks;
+
+    // Award bonus automatically if all done
+    if (allDone && !LangyState.dailyChallenge._rewardClaimed) {
+        LangyState.dailyChallenge._rewardClaimed = true;
+        const reward = LangyState.dailyChallenge.reward || 50;
+        LangyState.currencies.dangy += reward;
+        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
+        setTimeout(() => {
+            if (typeof Anim !== 'undefined') Anim.showToast(`🎁 Challenge Complete! +${reward} Dangy!`);
+        }, 800);
+    }
 
     function formatTime(seconds) {
         const h = Math.floor(seconds / 3600);
@@ -108,51 +122,15 @@ function renderDaily(container) {
     container.querySelectorAll('.daily-task-start').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const taskEl = btn.closest('.daily-task');
-            const index = parseInt(taskEl.dataset.index);
-            const task = tasks[index];
             const action = btn.dataset.action;
-
-            switch (action) {
-                case 'lesson':
-                    Router.navigate('learning');
-                    break;
-                case 'homework':
-                    Router.navigate('homework');
-                    break;
-                case 'speak':
-                    // Mark as complete since they're going to practice
-                    task.done = true;
-                    if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
-                    Anim.showToast('Speaking task completed! ⭐');
-                    renderDaily(container);
-                    break;
-                case 'vocab':
-                    // Start a quick vocab exercise
-                    task.done = true;
-                    if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
-                    Anim.showToast('Vocabulary review done! ⭐');
-                    renderDaily(container);
-                    break;
-                default:
-                    task.done = true;
-                    if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
-                    Anim.showToast('Task completed! ⭐');
-                    renderDaily(container);
-            }
-
-            // Check if all done → award bonus
-            const allNowDone = tasks.every(t => t.done);
-            if (allNowDone && !LangyState.dailyChallenge._rewardClaimed) {
-                LangyState.dailyChallenge._rewardClaimed = true;
-                const reward = LangyState.dailyChallenge.reward || 50;
-                LangyState.currencies.dangy += reward;
-                // Record session through central streak system
-                if (typeof recordSession === 'function') {
-                    recordSession({ duration: 5, wordsLearned: 3, accuracy: 90, category: 'grammar' });
-                }
-                if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
-                setTimeout(() => Anim.showToast(`🎁 Reward: +${reward} Dangy!`), 800);
+            clearInterval(timerInterval);
+            
+            if (action === 'lesson') {
+                Router.navigate('learning');
+            } else if (action === 'homework') {
+                Router.navigate('homework');
+            } else {
+                Router.navigate('home');
             }
         });
     });
@@ -167,44 +145,45 @@ function renderDaily(container) {
 
 // ─── Generate daily tasks based on actual progress ───
 function generateDailyTasks() {
-    const progress = LangyState.progress;
-    const lessonsToday = progress.lessonHistory.filter(l => l.date === new Date().toISOString().split('T')[0]).length;
-    const hwPending = LangyState.homework.current.length;
+    const today = new Date().toISOString().split('T')[0];
+    const ds = LangyState.streakData?.dailyStats?.[today] || { sessions: 0, words: 0, minutes: 0 };
+    const perfectLessonDate = LangyState.dailyChallenge?._perfectLessonDate;
+
+    const sessions = ds.sessions || 0;
+    const words = ds.words || 0;
+    const minutes = ds.minutes || 0;
+    const perfectDone = perfectLessonDate === today;
 
     const tasks = [
         {
-            id: 1, title: 'Complete a Lesson', 
-            desc: `Finish 1 lesson (${lessonsToday} done today)`,
-            done: lessonsToday >= 1,
+            id: 1, title: 'Focus: Complete Lessons', 
+            desc: 'Finish 2 language lessons',
+            done: sessions >= 2,
             icon: '📘', action: 'lesson', actionLabel: 'Study',
-            progressText: `${lessonsToday}/1 lessons`
+            progressText: `${Math.min(sessions, 2)}/2 lessons`
         },
         {
-            id: 2, title: 'Practice Vocabulary',
-            desc: 'Review 5 vocabulary words',
-            done: false, icon: '📚', action: 'vocab', actionLabel: 'Review'
+            id: 2, title: 'Vocabulary Expansion',
+            desc: 'Learn 10 new words',
+            done: words >= 10, 
+            icon: '📚', action: 'lesson', actionLabel: 'Learn',
+            progressText: `${Math.min(words, 10)}/10 words`
         },
         {
-            id: 3, title: 'Speaking Practice',
-            desc: 'Read 3 phrases aloud',
-            done: false, icon: '🎤', action: 'speak', actionLabel: 'Speak'
+            id: 3, title: 'Commitment',
+            desc: 'Study for 15 minutes today',
+            done: minutes >= 15, 
+            icon: '⏳', action: 'lesson', actionLabel: 'Practice',
+            progressText: `${Math.min(minutes, 15)}/15 mins`
         },
+        {
+            id: 4, title: 'Mastery: Perfect Lesson',
+            desc: 'Complete a lesson with 100% accuracy',
+            done: perfectDone,
+            icon: '🎯', action: 'lesson', actionLabel: 'Try',
+            progressText: perfectDone ? '1/1 perfect' : '0/1 perfect'
+        }
     ];
-
-    if (hwPending > 0) {
-        tasks.push({
-            id: 4, title: 'Submit Homework',
-            desc: `You have ${hwPending} pending assignment${hwPending > 1 ? 's' : ''}`,
-            done: false, icon: '📝', action: 'homework', actionLabel: 'Open'
-        });
-    } else {
-        tasks.push({
-            id: 4, title: 'No-Mistake Streak',
-            desc: 'Answer 5 questions correctly in a row',
-            done: (progress.skills.grammar || 0) > 60,
-            icon: '🎯', action: 'lesson', actionLabel: 'Try'
-        });
-    }
 
     return tasks;
 }

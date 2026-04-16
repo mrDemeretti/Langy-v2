@@ -254,6 +254,12 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
     if (!ds.categories[category]) ds.categories[category] = 0;
     ds.categories[category] += duration;
     
+    // Daily Challenge: Track Perfect Lesson
+    if (accuracy === 100) {
+        if (!LangyState.dailyChallenge) LangyState.dailyChallenge = {};
+        LangyState.dailyChallenge._perfectLessonDate = today;
+    }
+    
     // Streak logic: increment only once per day
     if (!sd.todayCompleted) {
         sd.todayCompleted = true;
