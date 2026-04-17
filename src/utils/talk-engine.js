@@ -17,10 +17,12 @@ const TalkEngine = (function() {
         0: {
             name: 'Zendaya',
             voice: 'female',
-            pitch: 1.1,
-            rate: 0.95,
+            pitch: 1.25,
+            rate: 1.0,
             accent: 'en-US',
             style: 'cheerful',
+            // Preferred voice names (browser-specific, tried in order)
+            voicePrefs: ['samantha', 'google us english female', 'microsoft zira', 'female', 'fiona', 'karen', 'moira'],
             systemPrompt: `You are Zendaya — a cheerful, warm, and encouraging English conversation partner.
 You are the student's best friend who happens to be a native English speaker.
 PERSONALITY: Bubbly, enthusiastic, always positive. You celebrate every correct phrase.
@@ -32,10 +34,11 @@ If the student makes a mistake, gently rephrase it correctly in your response wi
         1: {
             name: 'Travis',
             voice: 'male',
-            pitch: 0.95,
-            rate: 1.05,
+            pitch: 1.05,
+            rate: 1.15,
             accent: 'en-US',
             style: 'creative',
+            voicePrefs: ['google us english male', 'microsoft david', 'alex', 'tom', 'reed', 'male'],
             systemPrompt: `You are Travis — a creative, playful, and spontaneous English conversation partner.
 You are a young artist, musician, and gamer who makes learning fun.
 PERSONALITY: Energetic, creative, surprising. You use humor and unexpected topics.
@@ -48,10 +51,11 @@ You sometimes suggest fun word games or challenges mid-conversation.`
         2: {
             name: 'Matthew',
             voice: 'male',
-            pitch: 0.9,
-            rate: 0.9,
-            accent: 'en-US',
+            pitch: 0.75,
+            rate: 0.85,
+            accent: 'en-GB',
             style: 'structured',
+            voicePrefs: ['google uk english male', 'daniel', 'microsoft george', 'james', 'oliver', 'rishi'],
             systemPrompt: `You are Matthew — a smart, structured, and patient English conversation partner.
 You are a calm professional who loves precision in language and meaningful conversations.
 PERSONALITY: Calm, intellectual, methodical. You appreciate proper grammar.
@@ -63,10 +67,11 @@ You naturally use idioms and explain them when relevant.`
         3: {
             name: 'Omar',
             voice: 'male',
-            pitch: 1.0,
-            rate: 0.85,
+            pitch: 0.88,
+            rate: 0.78,
             accent: 'en-US',
             style: 'supportive',
+            voicePrefs: ['microsoft mark', 'google us english', 'fred', 'aaron', 'ralph', 'lee'],
             systemPrompt: `You are Omar — a wise, multilingual, and supportive English conversation partner.
 You are a well-traveled polyglot who understands the challenges of learning a new language.
 PERSONALITY: Patient, understanding, encouraging. You've been through language learning yourself.
@@ -160,6 +165,51 @@ You occasionally share useful phrases and explain when/why to use them.`
     }
 
     // ─── TTS: Text-to-Speech (Browser) ───
+    // Voice cache — avoid re-scanning every call
+    const _voiceCache = {};
+
+    function findVoiceForPersona(persona) {
+        const cacheKey = persona.name;
+        if (_voiceCache[cacheKey]) return _voiceCache[cacheKey];
+
+        const voices = window.speechSynthesis.getVoices();
+        if (!voices.length) return null;
+
+        const prefs = persona.voicePrefs || [];
+        const accentLang = persona.accent || 'en-US';
+        const langPrefix = accentLang.substring(0, 2); // 'en'
+
+        // Filter to English voices only
+        const englishVoices = voices.filter(v => v.lang.startsWith(langPrefix));
+        const allEnglish = voices.filter(v => v.lang.startsWith('en'));
+
+        // 1) Try exact preference match (case-insensitive substring in voice name)
+        for (const pref of prefs) {
+            const found = englishVoices.find(v => v.name.toLowerCase().includes(pref));
+            if (found) { _voiceCache[cacheKey] = found; return found; }
+        }
+        // Also search all English voices if accent-specific didn't work
+        for (const pref of prefs) {
+            const found = allEnglish.find(v => v.name.toLowerCase().includes(pref));
+            if (found) { _voiceCache[cacheKey] = found; return found; }
+        }
+
+        // 2) Gender-based fallback: pick different voice index per mascot
+        const isFemale = persona.voice === 'female';
+        const genderVoices = allEnglish.filter(v => {
+            const n = v.name.toLowerCase();
+            if (isFemale) return n.includes('female') || n.includes('woman') || n.includes('zira') || n.includes('samantha') || n.includes('fiona') || n.includes('karen');
+            return !n.includes('female') && !n.includes('woman');
+        });
+
+        // Distribute mascots across available voices to avoid duplicates
+        const mascotIndex = Object.keys(personas).findIndex(k => personas[k].name === persona.name);
+        const pool = genderVoices.length > 0 ? genderVoices : allEnglish;
+        const pick = pool[mascotIndex % pool.length] || voices[0];
+        _voiceCache[cacheKey] = pick;
+        return pick;
+    }
+
     function speak(text, persona, onStart, onEnd) {
         if (!('speechSynthesis' in window)) {
             if (onEnd) onEnd();
@@ -174,24 +224,12 @@ You occasionally share useful phrases and explain when/why to use them.`
         utterance.pitch = persona.pitch || 1.0;
         utterance.rate = persona.rate || 0.9;
 
-        // Try to find the best voice
-        const voices = window.speechSynthesis.getVoices();
-        const preferFemale = persona.voice === 'female';
-        
-        // Priority: find a voice matching accent
-        let bestVoice = null;
-        for (const v of voices) {
-            if (v.lang.startsWith(persona.accent?.substring(0, 2) || 'en')) {
-                if (preferFemale && v.name.toLowerCase().includes('female')) { bestVoice = v; break; }
-                if (!preferFemale && v.name.toLowerCase().includes('male')) { bestVoice = v; break; }
-                if (!bestVoice) bestVoice = v;
-            }
+        // Smart voice selection — unique per mascot
+        const voice = findVoiceForPersona(persona);
+        if (voice) {
+            utterance.voice = voice;
+            console.log(`[Talk] ${persona.name} → voice: ${voice.name} (${voice.lang}), pitch: ${utterance.pitch}, rate: ${utterance.rate}`);
         }
-        // Fallback: any English voice
-        if (!bestVoice) {
-            bestVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
-        }
-        if (bestVoice) utterance.voice = bestVoice;
 
         utterance.onstart = () => { if (onStart) onStart(); };
         utterance.onend = () => { if (onEnd) onEnd(); };
