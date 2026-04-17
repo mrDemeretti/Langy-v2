@@ -14,10 +14,10 @@ function renderDuels(container) {
 }
 
 function getPlayerLeague(wins) {
-    if (wins >= 50) return '💎 Diamond';
-    if (wins >= 25) return '🥇 Gold';
-    if (wins >= 10) return '🥈 Silver';
-    return '🥉 Bronze';
+    if (wins >= 50) return `${LangyIcons.diamond} Diamond`;
+    if (wins >= 25) return `${LangyIcons.trophy} Gold`;
+    if (wins >= 10) return `${LangyIcons.medal} Silver`;
+    return `${LangyIcons.award} Bronze`;
 }
 
 function buildLeaderboard(playerWins) {
@@ -56,7 +56,7 @@ function buildLeaderboard(playerWins) {
     return rows.slice(0, 10).map((r, i) => `
         <div class="leaderboard__row ${r.isPlayer ? 'leaderboard__row--you' : ''}" style="animation-delay:${i * 50}ms;">
             <div class="leaderboard__rank" style="color:${i === 0 ? '#F59E0B' : i === 1 ? '#9CA3AF' : i === 2 ? '#CD7F32' : 'var(--text-secondary)'};">
-                ${i < 3 ? ['🥇','🥈','🥉'][i] : '#' + (i + 1)}
+                ${i < 3 ? [`<span style="color:#F59E0B">${LangyIcons.trophy}</span>`,`<span style="color:#9CA3AF">${LangyIcons.medal}</span>`,`<span style="color:#CD7F32">${LangyIcons.award}</span>`][i] : '#' + (i + 1)}
             </div>
             <div class="leaderboard__avatar" style="background:${r.color};">${r.initial}</div>
             <div class="leaderboard__info">
@@ -74,7 +74,7 @@ function renderDuelModes(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="duels-back">←</div>
+                <div class="nav-header__back" id="duels-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Language Duels</div>
                 <div style="width:36px;"></div>
             </div>
@@ -147,7 +147,7 @@ function renderDuelSearch(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="search-back">←</div>
+                <div class="nav-header__back" id="search-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Finding Opponent</div>
                 <div style="width:36px;"></div>
             </div>

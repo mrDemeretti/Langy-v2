@@ -130,7 +130,7 @@ function renderStreak(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="streak-back">←</div>
+                <div class="nav-header__back" id="streak-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Streak & Stats</div>
                 <div style="width:36px;"></div>
             </div>

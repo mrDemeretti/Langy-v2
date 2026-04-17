@@ -15,7 +15,7 @@ function renderTests(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="tests-back">←</div>
+                <div class="nav-header__back" id="tests-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Tests & Scores</div>
                 <div style="width:36px;"></div>
             </div>
@@ -84,7 +84,7 @@ function renderTests(container) {
                                 <div class="profile__option-label">${c.name} Test</div>
                                 <div class="profile__option-desc">10 questions · ${LangyState.settings.languageLevel || 'B1'} level</div>
                             </div>
-                            <div class="profile__option-arrow">→</div>
+                            <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -192,7 +192,7 @@ function runSkillTest(catKey, container) {
         container.innerHTML = `
             <div class="screen screen--no-pad">
                 <div class="nav-header">
-                    <div class="nav-header__back" id="test-abort">←</div>
+                    <div class="nav-header__back" id="test-abort">${LangyIcons.back}</div>
                     <div class="nav-header__title">${catKey.charAt(0).toUpperCase() + catKey.slice(1)} Test</div>
                     <div class="badge badge--primary">${idx + 1}/${exercises.length}</div>
                 </div>

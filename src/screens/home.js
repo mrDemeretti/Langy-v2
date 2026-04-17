@@ -122,7 +122,7 @@ function renderHome(container) {
                         <span class="fire-animated ${streakData.days > 0 ? 'fire-animated--active' : 'fire-animated--inactive'}">${LangyIcons.flame}</span>
                         <span style="font-size: var(--fs-lg); font-weight: var(--fw-black);">${streakData.days > 0 ? streakData.days + ' Day Streak!' : 'Start your streak!'}</span>
                     </div>
-                    <div class="badge badge--accent">Details →</div>
+                    <div class="badge badge--accent">Details ${LangyIcons.arrow}</div>
                 </div>
                 
                 <div class="streak-week">

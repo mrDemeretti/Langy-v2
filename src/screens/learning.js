@@ -89,7 +89,7 @@ function renderLearning(container) {
         container.innerHTML = `
             <div class="screen screen--no-pad learning-screen">
                 <header class="learning-header">
-                    <div class="circle-btn" id="learning-back">←</div>
+                    <div class="circle-btn" id="learning-back">${LangyIcons.back}</div>
                     <div class="learning-header__info">
                         <div class="learning-header__unit">${mode === 'homework' ? LangyIcons.home + ' Homework' : LangyIcons.book + ` Unit ${unit.id}`}</div>
                         <div class="learning-header__title">${unit.title}</div>

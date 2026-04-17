@@ -88,7 +88,7 @@ function renderProfile(container) {
         <div class="screen screen--no-pad profile">
             <!-- Header -->
             <div class="profile__header">
-                <div class="nav-header__back" id="profile-back" style="position:absolute; top:var(--sp-4); left:var(--sp-4); background:rgba(255,255,255,0.15); border:none; color:white;">←</div>
+                <div class="nav-header__back" id="profile-back" style="position:absolute; top:var(--sp-4); left:var(--sp-4); background:rgba(255,255,255,0.15); border:none; color:white;">${LangyIcons.back}</div>
 
                 <div class="profile__avatar-large" id="prof-avatar" title="Tap to change">${user.avatar}</div>
                 <div class="profile__name">${user.name}</div>
@@ -158,7 +158,7 @@ function renderProfile(container) {
                             <div class="profile__option-label">Edit Profile</div>
                             <div class="profile__option-desc">Name, avatar, email</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-level">
                         <div class="profile__option-icon" style="background:var(--accent-bg); color:var(--accent-dark);">${LangyIcons.barChart}</div>
@@ -166,7 +166,7 @@ function renderProfile(container) {
                             <div class="profile__option-label">Language Level</div>
                             <div class="profile__option-desc">${settings.languageLevel}</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
@@ -220,7 +220,7 @@ function renderProfile(container) {
                             <div class="profile__option-label">Daily Goal</div>
                             <div class="profile__option-desc">15 minutes per day</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-reminder">
                         <div class="profile__option-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;">${LangyIcons.clock}</div>
@@ -228,7 +228,7 @@ function renderProfile(container) {
                             <div class="profile__option-label">Reminder Time</div>
                             <div class="profile__option-desc">${settings.dailyReminder}</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
@@ -240,14 +240,14 @@ function renderProfile(container) {
                         <div class="profile__option-text">
                             <div class="profile__option-label">Help & FAQ</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-feedback">
                         <div class="profile__option-icon" style="background:rgba(74,222,128,0.1); color:#22C55E;">${LangyIcons.messageCircle}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Send Feedback</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-about">
                         <div class="profile__option-icon" style="background:rgba(156,163,175,0.1); color:#6B7280;">${LangyIcons.info}</div>
@@ -255,7 +255,7 @@ function renderProfile(container) {
                             <div class="profile__option-label">About Langy</div>
                             <div class="profile__option-desc">Version 2.2.0</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
@@ -268,7 +268,7 @@ function renderProfile(container) {
                             <div class="profile__option-label">Invite Friends</div>
                             <div class="profile__option-desc">Get 500 Dangy</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
@@ -547,7 +547,7 @@ function showEditProfile() {
                     <div id="edit-avatar-btn" style="width:56px; height:56px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px; cursor:pointer; flex-shrink:0; box-shadow:0 4px 12px rgba(16,185,129,0.2);">${LangyState.user.avatar}</div>
                     <div>
                         <div style="font-weight:var(--fw-bold);">Profile Photo</div>
-                        <div style="font-size:var(--fs-xs); color:var(--primary); cursor:pointer;" id="change-avatar-link">Change avatar →</div>
+                        <div style="font-size:var(--fs-xs); color:var(--primary); cursor:pointer;" id="change-avatar-link">Change avatar ${LangyIcons.arrow}</div>
                     </div>
                 </div>
                 <div class="input-group">
@@ -821,7 +821,7 @@ function showCertificate(code, name, color, date) {
 
     // Copy certificate text
     overlay.querySelector('#cert-copy')?.addEventListener('click', () => {
-        const text = `🎓 Certificate of Achievement\n\n${userName} has completed ${code} — ${name}\n\nIssued by Langy AI\n${date ? 'Date: ' + date : ''}\n\n#LangyAI #LanguageLearning #CEFR`;
+        const text = `Certificate of Achievement\n\n${userName} has completed ${code} — ${name}\n\nIssued by Langy AI\n${date ? 'Date: ' + date : ''}\n\n#LangyAI #LanguageLearning #CEFR`;
         navigator.clipboard.writeText(text).then(() => {
             Anim.showToast(`${LangyIcons.check} Certificate copied to clipboard!`);
         }).catch(() => {
@@ -833,7 +833,7 @@ function showCertificate(code, name, color, date) {
     overlay.querySelector('#cert-share')?.addEventListener('click', () => {
         const shareData = {
             title: `${code} Certificate — Langy AI`,
-            text: `I just earned my ${code} (${name}) certificate on Langy AI! 🎓🔥`,
+            text: `I just earned my ${code} (${name}) certificate on Langy AI!`,
             url: 'https://mrdemeretti.github.io/Langy-v2'
         };
         if (navigator.share) {

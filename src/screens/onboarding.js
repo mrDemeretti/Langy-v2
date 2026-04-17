@@ -130,7 +130,7 @@ function renderOnboarding(container) {
                 <div class="onboarding__bottom">
                     <div class="onboarding__counter">${selected.length} выбрано</div>
                     <button class="btn btn--primary btn--lg btn--full onboarding__btn ${selected.length === 0 ? 'btn--disabled' : ''}" id="onboarding-next" ${selected.length === 0 ? 'disabled' : ''}>
-                        Далее →
+                        Далее ${LangyIcons.arrowRight}
                     </button>
                 </div>
             </div>

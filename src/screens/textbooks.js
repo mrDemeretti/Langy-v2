@@ -10,7 +10,7 @@ function renderTextbooks(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="textbooks-back">←</div>
+                <div class="nav-header__back" id="textbooks-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Textbooks</div>
                 <div class="nav-header__action" id="textbook-add-btn"
                      style="width:36px; height:36px; border-radius:50%; background:var(--primary);

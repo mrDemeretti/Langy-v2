@@ -44,7 +44,7 @@ function renderDaily(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad daily">
             <div class="nav-header">
-                <div class="nav-header__back" id="daily-back">←</div>
+                <div class="nav-header__back" id="daily-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Daily Challenge</div>
                 <div style="width:36px;"></div>
             </div>

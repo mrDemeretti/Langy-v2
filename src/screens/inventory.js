@@ -14,7 +14,7 @@ function renderInventory(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="inventory-back">←</div>
+                <div class="nav-header__back" id="inventory-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Inventory</div>
                 <div style="width:36px;"></div>
             </div>

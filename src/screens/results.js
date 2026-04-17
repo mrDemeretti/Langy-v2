@@ -41,7 +41,7 @@ function renderResults(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="results-back">←</div>
+                <div class="nav-header__back" id="results-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">My Progress</div>
                 <div style="width:36px;"></div>
             </div>
@@ -419,7 +419,7 @@ function startQuickCheck(textbookId, unitId) {
                     ${correctCount}/${shuffled.length} correct
                 </div>
                 <div style="font-size:var(--fs-sm); margin-top:var(--sp-3); font-weight:var(--fw-semibold); color:${passed ? 'var(--accent-dark)' : 'var(--warning)'};">
-                    ${passed ? 'Mastery confirmed! ✅' : 'Needs review — consider revisiting this unit'}
+                    ${passed ? `Mastery confirmed! ${LangyIcons.checkCircle}` : 'Needs review — consider revisiting this unit'}
                 </div>
                 ${!passed ? `
                     <div style="margin-top:var(--sp-4);">

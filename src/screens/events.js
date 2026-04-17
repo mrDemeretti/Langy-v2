@@ -11,7 +11,7 @@ function renderEvents(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="events-back">←</div>
+                <div class="nav-header__back" id="events-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Events</div>
                 <div style="width:36px;"></div>
             </div>
@@ -32,7 +32,7 @@ function renderEvents(container) {
                             <span style="display:flex; align-items:center; justify-content:center; width:48px; height:48px; color:white; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${event.emoji}</span>
                         </div>
                         <div class="event-card__content">
-                            <div class="event-card__title">${event.title} ${isDone ? '<span style="color:var(--accent-dark); font-size:var(--fs-xs);">✓ Completed</span>' : ''}</div>
+                            <div class="event-card__title">${event.title} ${isDone ? `<span style="color:var(--accent-dark); font-size:var(--fs-xs);">${LangyIcons.check} Completed</span>` : ''}</div>
                             <p class="text-sm text-secondary" style="margin-top:var(--sp-1);">${event.desc}</p>
                             <!-- Progress bar -->
                             <div class="progress" style="margin-top:var(--sp-2); height:6px;">

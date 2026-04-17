@@ -22,7 +22,7 @@ function renderDonation(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad donation">
             <div class="nav-header">
-                <div class="nav-header__back" id="donation-back">←</div>
+                <div class="nav-header__back" id="donation-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Payment</div>
                 <div style="width:36px;"></div>
             </div>

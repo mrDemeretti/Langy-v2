@@ -87,11 +87,11 @@ You occasionally share useful phrases and explain when/why to use them.`
     // ─── SCENARIOS (icon = LangyIcons key, color = display color) ───
     const scenarios = [
         { id: 'free', title: 'Free Talk', icon: 'messageCircle', color: '#7C6CF6', desc: 'Chat about anything!', opener: 'Hey! What\'s on your mind today? Let\'s just talk about whatever you want.' },
-        { id: 'coffee', title: 'Coffee Shop', icon: 'sun', color: '#F59E0B', desc: 'Order at a café', opener: 'Hi there! Welcome to the café. What can I get for you today?' },
-        { id: 'airport', title: 'At the Airport', icon: 'globe', color: '#3B82F6', desc: 'Check-in & navigate', opener: 'Good morning! Welcome to the check-in counter. Can I see your passport and booking confirmation, please?' },
+        { id: 'coffee', title: 'Coffee Shop', icon: 'coffee', color: '#F59E0B', desc: 'Order at a café', opener: 'Hi there! Welcome to the café. What can I get for you today?' },
+        { id: 'airport', title: 'At the Airport', icon: 'plane', color: '#3B82F6', desc: 'Check-in & navigate', opener: 'Good morning! Welcome to the check-in counter. Can I see your passport and booking confirmation, please?' },
         { id: 'interview', title: 'Job Interview', icon: 'briefcase', color: '#6366F1', desc: 'Practice interview skills', opener: 'Hello, please have a seat. Thank you for coming in today. So, tell me a little about yourself.' },
         { id: 'roommate', title: 'New Roommate', icon: 'home', color: '#10B981', desc: 'Meet your roommate', opener: 'Hey! You must be my new roommate! Nice to meet you. How was your trip here?' },
-        { id: 'restaurant', title: 'Restaurant', icon: 'star', color: '#EF4444', desc: 'Dine out & order food', opener: 'Good evening! Welcome to our restaurant. Would you like to see the menu, or do you already know what you\'d like?' },
+        { id: 'restaurant', title: 'Restaurant', icon: 'utensils', color: '#EF4444', desc: 'Dine out & order food', opener: 'Good evening! Welcome to our restaurant. Would you like to see the menu, or do you already know what you\'d like?' },
         { id: 'doctor', title: 'At the Doctor', icon: 'heart', color: '#EC4899', desc: 'Describe symptoms', opener: 'Hello, please come in and have a seat. What seems to be the problem today?' },
         { id: 'shopping', title: 'Shopping', icon: 'shoppingBag', color: '#8B5CF6', desc: 'Buy clothes & ask for help', opener: 'Hi, welcome to the store! Are you looking for anything in particular today?' },
     ];

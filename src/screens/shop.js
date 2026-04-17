@@ -16,7 +16,7 @@ function renderShop(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="shop-back">←</div>
+                <div class="nav-header__back" id="shop-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Shop</div>
                 <div style="display:flex; gap:var(--sp-2);">
                     <div class="coin" style="font-size:var(--fs-xs);">
