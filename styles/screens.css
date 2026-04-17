@@ -4580,6 +4580,263 @@
     color: var(--text-secondary);
     font-weight: var(--fw-bold);
 }
+
+/* ============================================
+   LANGY TALK — Voice Conversation UI
+   ============================================ */
+
+/* ─── Mascot Selection Grid ─── */
+.talk-mascots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-2);
+}
+.talk-mascot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--sp-3) var(--sp-2);
+    border-radius: var(--radius-xl);
+    background: var(--bg-card);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+.talk-mascot:active { transform: scale(0.95); }
+.talk-mascot--active {
+    border-color: var(--mascot-color);
+    background: color-mix(in srgb, var(--mascot-color) 6%, var(--bg-card));
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--mascot-color) 20%, transparent);
+}
+.talk-mascot__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: var(--sp-2);
+    background: var(--bg-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.talk-mascot__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.talk-mascot__name {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-sm);
+}
+.talk-mascot__style {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: capitalize;
+}
+.talk-mascot__check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--mascot-color);
+    color: white;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--fw-bold);
+}
+
+/* ─── Scenario List ─── */
+.talk-scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+}
+.talk-scenario {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.talk-scenario:active { transform: scale(0.98); }
+.talk-scenario--active {
+    border-color: var(--primary);
+    background: rgba(16, 185, 129, 0.04);
+}
+.talk-scenario__icon { font-size: 24px; flex-shrink: 0; }
+.talk-scenario__info { flex: 1; }
+.talk-scenario__title {
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+}
+.talk-scenario__desc {
+    font-size: var(--fs-xs);
+    color: var(--text-tertiary);
+}
+
+/* ─── Live Call UI ─── */
+.talk-call__avatar-ring {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+.talk-call__avatar-ring::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 3px solid var(--ring-color, var(--primary));
+    opacity: 0.2;
+    transition: all 0.3s ease;
+}
+.talk-call__avatar-ring--active::before {
+    opacity: 1;
+    animation: talkPulse 1.5s ease-in-out infinite;
+}
+.talk-call__avatar-ring--thinking::before {
+    opacity: 0.6;
+    animation: talkThink 0.8s ease-in-out infinite;
+    border-style: dashed;
+}
+
+@keyframes talkPulse {
+    0%, 100% { inset: -6px; opacity: 0.6; }
+    50% { inset: -16px; opacity: 0.2; }
+}
+@keyframes talkThink {
+    0%, 100% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.talk-call__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.talk-call__status {
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    margin-top: var(--sp-1);
+    transition: all 0.3s ease;
+}
+
+/* ─── Subtitles ─── */
+.talk-call__subtitles {
+    width: 100%;
+    max-width: 320px;
+    margin-top: var(--sp-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-height: 80px;
+}
+.talk-call__subtitle {
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--radius-xl);
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    animation: subtitleIn 0.3s var(--ease-spring);
+}
+.talk-call__subtitle--mascot {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    align-self: flex-start;
+    border-bottom-left-radius: var(--radius-sm);
+}
+.talk-call__subtitle--user {
+    background: var(--primary);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+@keyframes subtitleIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.talk-call__correction {
+    margin-top: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--radius-lg);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    animation: subtitleIn 0.3s ease;
+}
+
+/* ─── Call Controls ─── */
+.talk-call__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-6);
+    padding: var(--sp-5) var(--sp-4) var(--sp-8);
+}
+.talk-call__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    background: none;
+    transition: all 0.2s ease;
+    gap: 4px;
+    color: var(--text-secondary);
+}
+.talk-call__btn:active { transform: scale(0.9); }
+
+.talk-call__btn--mic {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--btn-color, var(--primary));
+    color: white;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--btn-color, var(--primary)) 40%, transparent);
+    flex-direction: row;
+    gap: 0;
+}
+.talk-call__btn--mic-active {
+    animation: micPulse 1.2s ease-in-out infinite;
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--btn-color, var(--primary)) 20%, transparent);
+}
+.talk-call__btn--mic-pulse {
+    animation: micReady 2s ease-in-out infinite;
+}
+
+@keyframes micPulse {
+    0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--btn-color, var(--primary)) 30%, transparent); }
+    50% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--btn-color, var(--primary)) 10%, transparent); }
+}
+@keyframes micReady {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.talk-call__btn--end {
+    color: var(--danger);
+}
+.talk-call__btn--mute {
+    color: var(--text-tertiary);
+}
+
 /* ============================================
    CEFR LEARNING PATH — Roadmap Styles
    ============================================ */

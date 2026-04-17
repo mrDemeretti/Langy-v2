@@ -101,7 +101,7 @@ function renderHome(container) {
                         <span id="mascot-bubble-text"></span>
                     </div>
                     <!-- Transparent overlay to safely capture clicks -->
-                    <div style="position:absolute; inset:0; z-index:10; cursor:pointer;" title="Tap to Learn!" id="mascot-tap-zone"></div>
+                    <div style="position:absolute; inset:0; z-index:10; cursor:pointer;" title="Tap to Talk!" id="mascot-tap-zone"></div>
                 </div>
 
                 <!-- Right Side Icons -->
@@ -234,10 +234,10 @@ function renderHome(container) {
         0: ["You look amazing today!", "Let's serve some English!", "Slay this lesson!"],
     };
     const genericPhrases = [
-        "Let's learn something new!",
-        "Ready for a lesson?",
-        "Tap again to start!",
-        "You're doing great!",
+        "Wanna chat?",
+        "Tap again to talk!",
+        "Let's have a conversation!",
+        "Practice speaking with me!",
     ];
     // First tap = always signature, then mix
     let usedSignature = false;
@@ -284,13 +284,15 @@ function renderHome(container) {
             }, 2000);
         }
 
-        // On second tap → go to learning
+        // On second tap → go to Langy Talk
         if (mascotTapCount >= 2) {
             mascotTapCount = 0;
+            window._talkMascot = mascotId;  // Pre-select current mascot
+            window._talkView = null;  // Start at selection screen
             const sideIcons = container.querySelectorAll('.circle-btn');
             const actionCards = container.querySelectorAll('.action-card');
             Anim.flyOut([...sideIcons, ...actionCards]);
-            setTimeout(() => Router.navigate('learning'), 500);
+            setTimeout(() => Router.navigate('talk'), 500);
         }
     });
 
