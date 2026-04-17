@@ -74,14 +74,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
                     
                     if (diffDays === 1) {
-                        // Consecutive day → streak continues (increment on lesson completion)
+                        // Consecutive day → streak continues
                     } else if (diffDays > 1) {
                         // Missed day(s) — try to use Streak Freeze
                         const missedDays = diffDays - 1;
                         const availableFreezes = sd.streakFreezes || 0;
                         
                         if (availableFreezes >= missedDays) {
-                            // Freeze covers the gap!
+                            // Freezes fully cover the gap!
                             sd.streakFreezes -= missedDays;
                             if (!sd.freezeUsedDates) sd.freezeUsedDates = [];
                             for (let i = 1; i <= missedDays; i++) {
@@ -90,6 +90,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 sd.freezeUsedDates.push(freezeDate.toISOString().split('T')[0]);
                             }
                             setTimeout(() => showStreakOverlay('freeze', missedDays, sd.streakFreezes), 1500);
+                        } else if (availableFreezes > 0) {
+                            // PARTIAL protection: use what we have, reduce damage
+                            const protectedDays = availableFreezes;
+                            sd.streakFreezes = 0;
+                            if (!sd.freezeUsedDates) sd.freezeUsedDates = [];
+                            for (let i = 1; i <= protectedDays; i++) {
+                                const freezeDate = new Date(last);
+                                freezeDate.setDate(freezeDate.getDate() + i);
+                                sd.freezeUsedDates.push(freezeDate.toISOString().split('T')[0]);
+                            }
+                            // Streak partially lost
+                            const lostDays = missedDays - protectedDays;
+                            sd.days = Math.max(0, sd.days - lostDays);
+                            LangyState.user.streak = sd.days;
+                            setTimeout(() => showStreakOverlay('partial', lostDays, 0), 1500);
                         } else {
                             // No freezes — streak lost
                             const lostDays = sd.days;
@@ -151,16 +166,23 @@ function showStreakOverlay(type, days, freezesLeft) {
     overlay.id = 'streak-overlay';
 
     const isFreeze = type === 'freeze';
+    const isPartial = type === 'partial';
     const bg = isFreeze
         ? 'linear-gradient(135deg, rgba(99,102,241,0.95), rgba(59,130,246,0.95))'
+        : isPartial
+        ? 'linear-gradient(135deg, rgba(245,158,11,0.95), rgba(217,119,6,0.95))'
         : 'linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95))';
-    const icon = isFreeze ? LangyIcons.shield : LangyIcons.flame;
-    const title = isFreeze ? 'Streak Protected!' : 'Streak Lost';
+    const icon = isFreeze ? LangyIcons.shield : isPartial ? LangyIcons.shield : LangyIcons.flame;
+    const title = isFreeze ? 'Streak Protected!' : isPartial ? 'Streak Partially Saved' : 'Streak Lost';
     const subtitle = isFreeze
         ? `Freeze shield saved your ${LangyState.streakData.days}-day streak!`
+        : isPartial
+        ? `Freezes saved some days, but your streak was reduced by ${days}.`
         : `Your ${days}-day streak was lost.`;
     const detail = isFreeze
         ? `${days} freeze${days > 1 ? 's' : ''} used · ${freezesLeft} remaining`
+        : isPartial
+        ? `Current streak: ${LangyState.streakData.days} days · Buy more freezes in the Shop!`
         : 'Start a new streak today — every day counts!';
 
     overlay.innerHTML = `

@@ -580,8 +580,10 @@ function renderLearning(container) {
 
         // Save progress
         saveLessonProgress({ score, grade: score >= 90 ? 'A' : score >= 70 ? 'B' : 'C', feedback: '' });
+        const oldXp = LangyState.user.xp;
         LangyState.user.xp += xpEarned;
         LangyState.currencies.dangy += correctAnswers * 10;
+        if (typeof checkLevelUp === 'function') checkLevelUp(oldXp, LangyState.user.xp);
 
         // Dynamically determine the dominant category and vocab words
         let categoryCounts = { vocabulary: 0, grammar: 0, listening: 0, speaking: 0, writing: 0 };

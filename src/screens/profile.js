@@ -582,7 +582,11 @@ function showEditProfile() {
         if(newEmail) LangyState.user.email = newEmail;
         overlay.remove();
         Anim.showToast('Profile updated!');
-        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+        if (typeof LangyDB !== 'undefined') {
+            LangyDB.saveProgress().catch(() => {});
+            // Also update the users store so changes persist across logins
+            LangyDB.updateUserRecord({ name: newName, email: newEmail }).catch(() => {});
+        }
         if(typeof renderProfile === 'function') {
             const container = document.getElementById('screen-container');
             if(container) renderProfile(container);

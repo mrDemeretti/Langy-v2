@@ -179,12 +179,10 @@ const LangyState = {
         ]
     },
 
-    // Events
-    events: [
-        { id: 1, title: 'Weekend Grammar Sprint', desc: 'Complete 20 grammar tasks', timeLeft: '2d 5h', reward: '100 Dangy', bg: 'linear-gradient(135deg, #7C6CF6, #9D90F9)', emoji: LangyIcons.pencil },
-        { id: 2, title: 'Listening Marathon', desc: 'Listen to 30 minutes of content', timeLeft: '1d 12h', reward: '75 Dangy + Sticker', bg: 'linear-gradient(135deg, #4ADE80, #22C55E)', emoji: LangyIcons.headphones },
-        { id: 3, title: 'Vocabulary Master', desc: 'Learn 50 new words this week', timeLeft: '5d', reward: '200 Dangy', bg: 'linear-gradient(135deg, #F59E0B, #D97706)', emoji: LangyIcons.bookOpen },
-    ],
+    // Events (dynamic — see events.js)
+    events: [],
+    eventsClaimed: {},
+    eventProgress: {},
 
     // Settings
     settings: {
@@ -225,6 +223,11 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
     const today = new Date().toISOString().split('T')[0];
     const sd = LangyState.streakData;
     
+    // ── FIX: Reset todayCompleted if the date changed (app left open overnight) ──
+    if (sd.lastSession.date && sd.lastSession.date !== today && sd.todayCompleted) {
+        sd.todayCompleted = false;
+    }
+    
     // Update session stats
     sd.totalSessions++;
     sd.totalMinutes += duration;
@@ -262,6 +265,9 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
         LangyState.dailyChallenge._perfectLessonDate = today;
     }
     
+    // ── EVENT PROGRESS: update active event tracking ──
+    updateEventProgress({ duration, wordsLearned, accuracy, category });
+    
     // Streak logic: increment only once per day
     if (!sd.todayCompleted) {
         sd.todayCompleted = true;
@@ -288,7 +294,6 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
             LangyState.currencies.dangy += streakRewards.dangy;
             LangyState.currencies.langy += streakRewards.langy;
             
-            // Show reward toast
             let rewardMsg = `${LangyIcons.flame} ${sd.days} Day Streak!`;
             if (streakRewards.dangy > 0) rewardMsg += ` +${streakRewards.dangy} Dangy`;
             if (streakRewards.langy > 0) rewardMsg += ` +${streakRewards.langy} Langy`;
@@ -331,6 +336,107 @@ function getStreakReward(days) {
 // Deep copy of initial state for resets
 const DEFAULT_STATE = JSON.parse(JSON.stringify(LangyState));
 
+// ─── LEVEL UP CHECK ───
+// Call after any XP change to detect level boundaries
+function checkLevelUp(oldXp, newXp) {
+    const oldLevel = Math.floor(oldXp / 500) + 1;
+    const newLevel = Math.floor(newXp / 500) + 1;
+    
+    if (newLevel > oldLevel) {
+        // Level up!
+        const dangyReward = newLevel * 25;
+        const langyReward = newLevel >= 5 ? 10 : 0;
+        LangyState.currencies.dangy += dangyReward;
+        LangyState.currencies.langy += langyReward;
+        
+        setTimeout(() => {
+            if (typeof Anim !== 'undefined') {
+                // Show level-up celebration overlay
+                showLevelUpOverlay(newLevel, dangyReward, langyReward);
+            }
+        }, 600);
+        
+        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+    }
+}
+
+// Level up celebration overlay
+function showLevelUpOverlay(level, dangy, langy) {
+    const overlay = document.createElement('div');
+    overlay.id = 'levelup-overlay';
+    overlay.innerHTML = `
+        <div style="
+            position:fixed; inset:0; z-index:9999;
+            background:linear-gradient(135deg, rgba(16,185,129,0.95), rgba(5,150,105,0.95));
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            animation: overlayFadeIn 0.4s ease;
+            backdrop-filter: blur(8px);
+            padding: 32px; text-align: center;
+        ">
+            <div style="font-size:80px; animation: streakIconPulse 1s ease infinite alternate; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));">${LangyIcons.rocket}</div>
+            <h2 style="color:#fff; font-size:28px; font-weight:900; margin:20px 0 8px; text-shadow: 0 2px 8px rgba(0,0,0,0.3);">Level ${level}!</h2>
+            <p style="color:rgba(255,255,255,0.9); font-size:16px; margin:0 0 16px;">You've reached a new level!</p>
+            <div style="display:flex; gap:16px; margin-bottom:24px;">
+                <div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px 20px; text-align:center;">
+                    <div style="color:#F59E0B; font-size:20px; font-weight:900;">+${dangy}</div>
+                    <div style="color:rgba(255,255,255,0.7); font-size:11px;">Dangy</div>
+                </div>
+                ${langy > 0 ? `<div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px 20px; text-align:center;">
+                    <div style="color:#818CF8; font-size:20px; font-weight:900;">+${langy}</div>
+                    <div style="color:rgba(255,255,255,0.7); font-size:11px;">Langy</div>
+                </div>` : ''}
+            </div>
+            <button onclick="this.closest('#levelup-overlay').remove()" style="
+                background:rgba(255,255,255,0.2); color:#fff;
+                border:2px solid rgba(255,255,255,0.4);
+                border-radius:50px; padding:12px 40px;
+                font-size:16px; font-weight:700; cursor:pointer;
+                font-family: inherit;
+            ">Awesome!</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 8000);
+}
+
+// ─── EVENT PROGRESS ───
+// Tracks real progress toward active events
+function updateEventProgress({ duration = 0, wordsLearned = 0, accuracy = 0, category = 'grammar' } = {}) {
+    if (!LangyState.eventProgress) LangyState.eventProgress = {};
+    const today = new Date().toISOString().split('T')[0];
+    const ep = LangyState.eventProgress;
+    
+    // Initialize daily counters
+    if (!ep._date || ep._date !== today) {
+        ep._date = today;
+        ep._todayLessons = 0;
+        ep._todayWords = 0;
+        ep._todayMinutes = 0;
+        ep._todayPerfect = 0;
+        ep._todayGrammar = 0;
+        ep._todaySpeaking = 0;
+        ep._todayListening = 0;
+    }
+    
+    ep._todayLessons++;
+    ep._todayWords += wordsLearned;
+    ep._todayMinutes += duration;
+    if (accuracy === 100) ep._todayPerfect++;
+    if (category === 'grammar') ep._todayGrammar++;
+    if (category === 'speaking') ep._todaySpeaking++;
+    if (category === 'listening') ep._todayListening++;
+    
+    // Cumulative
+    ep.totalLessons = (ep.totalLessons || 0) + 1;
+    ep.totalWords = (ep.totalWords || 0) + wordsLearned;
+    ep.totalMinutes = (ep.totalMinutes || 0) + duration;
+    ep.totalPerfect = (ep.totalPerfect || 0) + (accuracy === 100 ? 1 : 0);
+    ep.totalGrammar = (ep.totalGrammar || 0) + (category === 'grammar' ? 1 : 0);
+    ep.totalSpeaking = (ep.totalSpeaking || 0) + (category === 'speaking' ? 1 : 0);
+    ep.totalListening = (ep.totalListening || 0) + (category === 'listening' ? 1 : 0);
+}
+
 function getDefaultState() {
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
 }
@@ -355,7 +461,6 @@ function loadFromSnapshot(data) {
     // Always keep template content from code (prevents stale cached emojis)
     const fresh = getDefaultState();
     LangyState.shop.items = fresh.shop.items;
-    LangyState.events = fresh.events;
     LangyState.duels.modes = fresh.duels.modes;
     LangyState.duels.questions = fresh.duels.questions;
     // Sync inventory icons with current shop catalog
