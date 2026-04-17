@@ -4,6 +4,11 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
 
+    // Initialize i18n
+    if (typeof LangyI18n !== 'undefined') {
+        LangyI18n.loadSavedLang();
+    }
+
     // Apply saved theme preference
     if (typeof localStorage !== 'undefined') {
         const savedTheme = localStorage.getItem('langy_theme');
@@ -37,6 +42,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Re-apply theme from loaded state
                 if (typeof toggleDarkMode === 'function') {
                     toggleDarkMode(LangyState.settings.darkMode);
+                }
+                // Re-apply language from loaded state
+                if (typeof LangyI18n !== 'undefined' && LangyState.settings.interfaceLang) {
+                    LangyI18n.currentLang = LangyState.settings.interfaceLang;
                 }
                 
                 // ─── STREAK MIGRATION ───

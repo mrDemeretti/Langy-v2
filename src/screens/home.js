@@ -5,7 +5,13 @@
 // Build dynamic week calendar from activeDays
 function buildWeekDays() {
     const today = new Date();
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayNames_i18n = {
+        en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+        es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+    };
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const dayNames = dayNames_i18n[lang] || dayNames_i18n.en;
     const activeDays = LangyState.streakData.activeDays || [];
     const todayISO = today.toISOString().split('T')[0];
     
@@ -120,9 +126,9 @@ function renderHome(container) {
                 <div class="home__streak-top">
                     <div class="home__streak-header">
                         <span class="fire-animated ${streakData.days > 0 ? 'fire-animated--active' : 'fire-animated--inactive'}">${LangyIcons.flame}</span>
-                        <span style="font-size: var(--fs-lg); font-weight: var(--fw-black);">${streakData.days > 0 ? streakData.days + ' Day Streak!' : 'Start your streak!'}</span>
+                        <span style="font-size: var(--fs-lg); font-weight: var(--fw-black);">${streakData.days > 0 ? streakData.days + ' ' + i18n('home.streak') : i18n('general.start') + '!'}</span>
                     </div>
-                    <div class="badge badge--accent">Details ${LangyIcons.arrow}</div>
+                    <div class="badge badge--accent">${i18n('general.details')} ${LangyIcons.arrow}</div>
                 </div>
                 
                 <div class="streak-week">
@@ -138,7 +144,7 @@ function renderHome(container) {
             <!-- Main CTA -->
             <div class="home__main-cta" style="padding: 0 var(--sp-5) var(--sp-2);">
                 <button id="nav-learning" class="btn btn--primary btn--xl btn--full" style="box-shadow: 0 4px 0 var(--primary-dark), 0 8px 16px rgba(16, 185, 129, 0.2); font-size: var(--fs-lg); display: flex; align-items: center; justify-content: center; gap: var(--sp-2); flex-direction: ${user.hasCompletedPlacement ? 'column' : 'row'}; padding: ${user.hasCompletedPlacement ? '12px 24px' : ''};">
-                    ${!user.hasCompletedPlacement ? 'Take Placement Test ' + LangyIcons.fileText : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 24px; display:flex;">${LangyIcons.rocket}</span> Continue Course</div><div style="font-size:var(--fs-xs); opacity:0.85; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || 'Next Lesson'}</div>`}
+                    ${!user.hasCompletedPlacement ? i18n('learn.title') + ' ' + LangyIcons.fileText : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 24px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.85; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`}
                 </button>
             </div>
 
@@ -146,23 +152,23 @@ function renderHome(container) {
             <div class="home__actions ${!user.hasCompletedPlacement ? 'home__actions--locked' : ''}">
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
                     <div class="action-card__icon action-card__icon--purple">${LangyIcons.book}</div>
-                    <div class="action-card__title">Homework ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? 'Complete test to unlock' : 'Tasks & practice'}</div>
+                    <div class="action-card__title">${i18n('home.homework')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : i18n('home.homework_desc')}</div>
                 </div>
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-tests">
                     <div class="action-card__icon action-card__icon--green">${LangyIcons.fileText}</div>
-                    <div class="action-card__title">Tests ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? 'Complete test to unlock' : 'Scores & progress'}</div>
+                    <div class="action-card__title">${i18n('home.tests')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : i18n('home.tests_desc')}</div>
                 </div>
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-results">
                     <div class="action-card__icon action-card__icon--blue">${LangyIcons.barChart}</div>
                     <div class="action-card__title">Results ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? 'Complete test to unlock' : 'Course progress'}</div>
+                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : 'Course progress'}</div>
                 </div>
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-daily">
                     <div class="action-card__icon action-card__icon--gold">${LangyIcons.target}</div>
-                    <div class="action-card__title">Daily Challenge ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? 'Complete test to unlock' : 'Earn rewards'}</div>
+                    <div class="action-card__title">${i18n('home.daily')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : i18n('home.events_desc')}</div>
                 </div>
             </div>
         </div>

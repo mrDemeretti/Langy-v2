@@ -11,6 +11,132 @@ const LangyCurriculum = {
     textbooks: [
 
     // ═══════════════════════════════════════════
+    // PRE-A1 — STARTER (6 units for absolute beginners)
+    // ═══════════════════════════════════════════
+    {
+        id: 'pre_a1_starter',
+        title: 'Pre-A1 — Starter',
+        level: 'Pre-A1',
+        cefr: 'Pre-A1',
+        methodology: 'For absolute beginners. The alphabet, basic words, colors, numbers 1-10. Visual learning with native language support.',
+        units: [
+            {
+                id: 1, title: 'The English Alphabet', desc: 'Learn the 26 letters, their sounds, and how to spell your name.',
+                unitType: 'grammar', grammar: ['alphabet A-Z'], vocab: ['letters', 'basic sounds'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "Welcome! Let's start from the very beginning — the English alphabet. It has 26 letters. Don't worry, we'll go slow!", mascotEmotion: 'happy' },
+                    { type: 'compare', mascotText: "English has 5 vowels (A, E, I, O, U) and 21 consonants:", mascotEmotion: 'happy',
+                      left: { label: 'Vowels', items: ['A /eɪ/', 'E /iː/', 'I /aɪ/', 'O /oʊ/', 'U /juː/'] },
+                      right: { label: 'Consonants', items: ['B, C, D, F, G...', 'H, J, K, L, M...', 'N, P, Q, R, S...', 'T, V, W, X, Y, Z'] }
+                    },
+                    { type: 'tip', mascotText: "To spell your name, say each letter: A-L-E-X. Practice spelling your own name!", mascotEmotion: 'happy', tipText: "A-L-E-X · M-A-R-I-A · Practice letter by letter!" }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'How many letters in English?', sentence: 'The English alphabet has ___ letters.', options: ['24', '26', '33'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Which is a vowel?', sentence: 'Which is a vowel?', options: ['B', 'A', 'D'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'A', right: '/eɪ/' }, { left: 'E', right: '/iː/' }, { left: 'I', right: '/aɪ/' }, { left: 'O', right: '/oʊ/' }] } },
+                    { type: 'speak-aloud', data: { instruction: 'Say the alphabet:', phrase: 'A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'Hello', hint: 'A simple greeting' } }
+                ]
+            },
+            {
+                id: 2, title: 'Hello & Goodbye', desc: 'Basic greetings. Hi, hello, goodbye, please, thank you, sorry.',
+                unitType: 'situational', grammar: [], vocab: ['hello', 'hi', 'goodbye', 'bye', 'please', 'thank you', 'sorry', 'yes', 'no'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "The first words you need! Hello = Hi. Goodbye = Bye. These are the most important words in any language!", mascotEmotion: 'happy' },
+                    { type: 'vocab-intro', mascotText: "Learn these 10 magic words:", mascotEmotion: 'happy',
+                      words: [{ en: 'Hello / Hi', ru: 'Привет' }, { en: 'Goodbye / Bye', ru: 'Пока' }, { en: 'Please', ru: 'Пожалуйста' }, { en: 'Thank you / Thanks', ru: 'Спасибо' }, { en: 'Sorry', ru: 'Извините' }, { en: 'Yes', ru: 'Да' }, { en: 'No', ru: 'Нет' }] },
+                    { type: 'tip', mascotText: "'Thank you' is formal. 'Thanks' is casual. Both are polite!", mascotEmotion: 'happy', tipText: "Thank you = formal · Thanks = casual · Both = polite!" }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match English to translation', pairs: [{ left: 'Hello', right: 'Привет' }, { left: 'Goodbye', right: 'Пока' }, { left: 'Please', right: 'Пожалуйста' }, { left: 'Thank you', right: 'Спасибо' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'Someone gives you a gift. You say:', sentence: 'You say: ___', options: ['Sorry', 'Thank you', 'Goodbye'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'You leave. You say:', sentence: 'You say: ___', options: ['Hello', 'Please', 'Goodbye'], correct: 2 } },
+                    { type: 'speak-aloud', data: { instruction: 'Practice greetings:', phrase: 'Hello! How are you? I am fine, thank you. Goodbye!' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'Thank you', hint: 'Two words' } }
+                ]
+            },
+            {
+                id: 3, title: 'Numbers 1-10', desc: 'Count from 1 to 10. Your age. Phone basics.',
+                unitType: 'grammar', grammar: ['numbers 1-10'], vocab: ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "Numbers! You need them every day. Let's count: 1, 2, 3... up to 10!", mascotEmotion: 'happy' },
+                    { type: 'vocab-intro', mascotText: "The first 10 numbers:", mascotEmotion: 'happy',
+                      words: [{ en: '1 — one', ru: 'один' }, { en: '2 — two', ru: 'два' }, { en: '3 — three', ru: 'три' }, { en: '4 — four', ru: 'четыре' }, { en: '5 — five', ru: 'пять' }, { en: '6 — six', ru: 'шесть' }, { en: '7 — seven', ru: 'семь' }, { en: '8 — eight', ru: 'восемь' }, { en: '9 — nine', ru: 'девять' }, { en: '10 — ten', ru: 'десять' }] },
+                    { type: 'tip', mascotText: "To say your age: 'I am + number.' Example: I am five. I am ten.", mascotEmotion: 'happy', tipText: "I am 5 = I am five · I am 10 = I am ten" }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match number to word', pairs: [{ left: '1', right: 'one' }, { left: '3', right: 'three' }, { left: '5', right: 'five' }, { left: '7', right: 'seven' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'What comes after 4?', sentence: '4, ___', options: ['three', 'five', 'six'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: '2 + 3 = ?', sentence: 'Two + three = ___', options: ['four', 'five', 'six'], correct: 1 } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type the number word', text: 'seven', hint: 'A number between 6 and 8' } },
+                    { type: 'speak-aloud', data: { instruction: 'Count aloud:', phrase: 'One, two, three, four, five, six, seven, eight, nine, ten!' } }
+                ]
+            },
+            {
+                id: 4, title: 'Colors', desc: 'Red, blue, green... Learn basic colors and say what color things are.',
+                unitType: 'grammar', grammar: ['It is + color'], vocab: ['red', 'blue', 'green', 'yellow', 'black', 'white', 'orange', 'pink'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "Colors make the world beautiful! In English, the color comes BEFORE the thing: a RED car, a BLUE sky.", mascotEmotion: 'happy' },
+                    { type: 'vocab-intro', mascotText: "Basic colors:", mascotEmotion: 'happy',
+                      words: [{ en: 'red', ru: 'красный' }, { en: 'blue', ru: 'синий' }, { en: 'green', ru: 'зелёный' }, { en: 'yellow', ru: 'жёлтый' }, { en: 'black', ru: 'чёрный' }, { en: 'white', ru: 'белый' }, { en: 'orange', ru: 'оранжевый' }, { en: 'pink', ru: 'розовый' }] },
+                    { type: 'tip', mascotText: "Color + thing: a red car, a blue pen, a green tree. Simple!", mascotEmotion: 'happy', tipText: "red car · blue sky · green tree · yellow sun" }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match colors', pairs: [{ left: 'red', right: 'красный' }, { left: 'blue', right: 'синий' }, { left: 'green', right: 'зелёный' }, { left: 'yellow', right: 'жёлтый' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'The sky is ___', sentence: 'The sky is ___', options: ['red', 'blue', 'green'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'The sun is ___', sentence: 'The sun is ___', options: ['blue', 'black', 'yellow'], correct: 2 } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'red', hint: 'A color' } },
+                    { type: 'speak-aloud', data: { instruction: 'Say the colors:', phrase: 'Red, blue, green, yellow, black, white, orange, pink' } }
+                ]
+            },
+            {
+                id: 5, title: 'My First Words', desc: 'Cat, dog, house, book, water, food — the most basic nouns.',
+                unitType: 'grammar', grammar: ['basic nouns'], vocab: ['cat', 'dog', 'house', 'book', 'water', 'food', 'car', 'phone', 'man', 'woman'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "Let's learn the most common English words! These are things you see every day.", mascotEmotion: 'happy' },
+                    { type: 'vocab-intro', mascotText: "Your first 10 nouns:", mascotEmotion: 'happy',
+                      words: [{ en: 'cat', ru: 'кот' }, { en: 'dog', ru: 'собака' }, { en: 'house', ru: 'дом' }, { en: 'book', ru: 'книга' }, { en: 'water', ru: 'вода' }, { en: 'food', ru: 'еда' }, { en: 'car', ru: 'машина' }, { en: 'phone', ru: 'телефон' }, { en: 'man', ru: 'мужчина' }, { en: 'woman', ru: 'женщина' }] },
+                    { type: 'tip', mascotText: "Point at things around you and say the English word. This is the fastest way to learn!", mascotEmotion: 'happy', tipText: "Look → Say → Remember! cat, dog, book, phone..." }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match word to translation', pairs: [{ left: 'cat', right: 'кот' }, { left: 'dog', right: 'собака' }, { left: 'house', right: 'дом' }, { left: 'book', right: 'книга' }] } },
+                    { type: 'match-pairs', data: { instruction: 'Match more words', pairs: [{ left: 'water', right: 'вода' }, { left: 'food', right: 'еда' }, { left: 'car', right: 'машина' }, { left: 'phone', right: 'телефон' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'A ___ says "meow"', sentence: 'A ___ says meow', options: ['dog', 'cat', 'car'], correct: 1 } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'book', hint: 'You read this' } },
+                    { type: 'speak-aloud', data: { instruction: 'Say these words:', phrase: 'Cat, dog, house, book, water, food, car, phone' } }
+                ]
+            },
+            {
+                id: 6, title: 'I am... You are...', desc: 'Your very first sentences. I am happy. You are good. It is big.',
+                unitType: 'grammar', grammar: ['I am / You are / It is + adjective'], vocab: ['happy', 'good', 'big', 'small', 'hot', 'cold', 'new', 'old'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "Now let's make real sentences! The formula: I AM + word. You ARE + word. It IS + word. That's it!", mascotEmotion: 'happy' },
+                    { type: 'examples', mascotText: "Your first sentences:", mascotEmotion: 'happy',
+                      items: [
+                        { base: 'I + happy', past: 'I am happy.', highlight: 'am' },
+                        { base: 'You + good', past: 'You are good.', highlight: 'are' },
+                        { base: 'It + big', past: 'It is big.', highlight: 'is' },
+                        { base: 'The cat + small', past: 'The cat is small.', highlight: 'is' }
+                      ]
+                    },
+                    { type: 'vocab-intro', mascotText: "Simple adjectives:", mascotEmotion: 'happy',
+                      words: [{ en: 'happy', ru: 'счастливый' }, { en: 'good', ru: 'хороший' }, { en: 'big', ru: 'большой' }, { en: 'small', ru: 'маленький' }, { en: 'hot', ru: 'горячий' }, { en: 'cold', ru: 'холодный' }] },
+                    { type: 'tip', mascotText: "Congratulations! After this lesson you move to A1! You already know letters, numbers, colors, words, and sentences!", mascotEmotion: 'happy', tipText: "You're ready for A1! 🎉" }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Complete', sentence: 'I ___ happy.', options: ['am', 'is', 'are'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Complete', sentence: 'You ___ good.', options: ['am', 'is', 'are'], correct: 2 } },
+                    { type: 'fill-bubble', data: { instruction: 'Complete', sentence: 'It ___ big.', options: ['am', 'is', 'are'], correct: 1 } },
+                    { type: 'word-shuffle', data: { instruction: 'Make a sentence', words: ['am', 'I', 'happy'], correct: ['I', 'am', 'happy'] } },
+                    { type: 'match-pairs', data: { instruction: 'Match', pairs: [{ left: 'big', right: 'большой' }, { left: 'small', right: 'маленький' }, { left: 'hot', right: 'горячий' }, { left: 'cold', right: 'холодный' }] } },
+                    { type: 'speak-aloud', data: { instruction: 'Say your first sentences!', phrase: 'I am happy. You are good. The cat is small. The dog is big.' } }
+                ]
+            }
+        ]
+    },
+
+    // ═══════════════════════════════════════════
     // A1 — BEGINNER (18 units)
     // ═══════════════════════════════════════════
     {
@@ -2333,7 +2459,7 @@ const LangyCurriculum = {
     },
 
     // CEFR order for comparisons
-    _cefrOrder: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+    _cefrOrder: ['Pre-A1', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
 
     // Get status for each CEFR level relative to the user's placement level
     getLevelStatus(userCefrLevel) {

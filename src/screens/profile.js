@@ -209,6 +209,15 @@ function renderProfile(container) {
                         </div>
                         <div class="toggle ${settings.haptics ? 'toggle--active' : ''}" id="toggle-haptics"></div>
                     </div>
+
+                    <div class="profile__option" id="prof-lang">
+                        <div class="profile__option-icon" style="background:rgba(6,182,212,0.1); color:#06B6D4;">${LangyIcons.globe}</div>
+                        <div class="profile__option-text">
+                            <div class="profile__option-label">${i18n('profile.language')}</div>
+                            <div class="profile__option-desc">${(typeof LangyI18n !== 'undefined' ? LangyI18n.languages.find(l => l.code === LangyI18n.currentLang)?.name : 'English') || 'English'}</div>
+                        </div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
+                    </div>
                 </div>
 
                 <!-- Learning -->
@@ -350,6 +359,7 @@ function renderProfile(container) {
     container.querySelector('#prof-reminder')?.addEventListener('click', () => showReminderPicker());
     
     container.querySelector('#prof-goals')?.addEventListener('click', () => showGoalsPicker());
+    container.querySelector('#prof-lang')?.addEventListener('click', () => showLanguagePicker(container));
     container.querySelector('#prof-help')?.addEventListener('click', () => showHelp());
     container.querySelector('#prof-feedback')?.addEventListener('click', () => showFeedback());
     container.querySelector('#prof-about')?.addEventListener('click', () => showAbout());
@@ -903,6 +913,47 @@ function showSubscription() {
         
         overlay.querySelector('.overlay__sheet').style.transform = 'translateY(100%)';
         setTimeout(() => overlay.remove(), 300);
+    });
+}
+
+function showLanguagePicker(profileContainer) {
+    if (typeof LangyI18n === 'undefined') return;
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    const currentLang = LangyI18n.currentLang;
+    
+    overlay.innerHTML = `
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6);">
+            <div class="overlay__handle"></div>
+            <h3 style="margin-bottom:var(--sp-4);">${i18n('profile.language')}</h3>
+            <div style="display:flex; flex-direction:column; gap:var(--sp-3);">
+                ${LangyI18n.languages.map(lang => `
+                    <div class="profile__option lang-option ${lang.code === currentLang ? 'profile__option--active' : ''}" data-lang="${lang.code}" style="cursor:pointer; ${lang.code === currentLang ? 'border: 2px solid var(--primary); background: var(--primary-bg);' : ''}">
+                        <div class="profile__option-icon" style="font-size:24px; background:transparent;">${lang.flag}</div>
+                        <div class="profile__option-text">
+                            <div class="profile__option-label">${lang.name}</div>
+                        </div>
+                        ${lang.code === currentLang ? `<span style="color:var(--primary);">${LangyIcons.check}</span>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    
+    overlay.querySelectorAll('.lang-option').forEach(el => {
+        el.addEventListener('click', () => {
+            const lang = el.dataset.lang;
+            LangyI18n.setLang(lang);
+            overlay.remove();
+            Anim.showToast(`Language: ${LangyI18n.languages.find(l => l.code === lang)?.name}`);
+            // Re-render profile with new language
+            if (profileContainer && typeof renderProfile === 'function') {
+                renderProfile(profileContainer);
+            }
+        });
     });
 }
 

@@ -191,6 +191,7 @@ const LangyState = {
         sound: true,
         haptics: true,
         dailyReminder: '09:00',
+        interfaceLang: 'en',
         languageLevel: 'B1'
     },
 

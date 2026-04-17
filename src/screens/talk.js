@@ -241,16 +241,22 @@ function renderTalkCall(container) {
     const hintTextEl = container.querySelector('#hint-text');
 
     function setStatus(text) { if (statusEl) statusEl.textContent = text; }
+    // Escape user text to prevent XSS when using innerHTML
+    function escapeHtml(str) { 
+        const d = document.createElement('div'); 
+        d.textContent = str; 
+        return d.innerHTML; 
+    }
     function setMascotSub(text) {
         if (mascotSub) {
             mascotSub.textContent = text;
             mascotSub.style.display = showSubs && text ? 'block' : 'none';
         }
     }
-    function setUserSub(text) {
+    function setUserSub(html) {
         if (userSub) {
-            userSub.textContent = text;
-            userSub.style.display = text ? 'block' : 'none';
+            userSub.innerHTML = html;
+            userSub.style.display = html ? 'block' : 'none';
         }
     }
 
@@ -334,7 +340,7 @@ function renderTalkCall(container) {
 
         turnCount++;
         updateProgress();
-        setUserSub(`"${text}"`);
+        setUserSub(`"${escapeHtml(text)}"`);
         state = 'thinking';
         setStatus(`${persona.name} is thinking...`);
         hideHint();
@@ -403,7 +409,7 @@ function renderTalkCall(container) {
                 }
             },
             (interim) => {
-                setUserSub(`${LangyIcons.mic} ${interim}...`);
+                setUserSub(`${LangyIcons.mic} ${escapeHtml(interim)}...`);
             }
         );
 
