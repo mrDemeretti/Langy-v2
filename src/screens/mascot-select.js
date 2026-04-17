@@ -4,9 +4,9 @@
 
 function renderMascotSelect(container) {
     const mascots = [
-        { id: 0, name: 'Luna', personality: 'Cheerful & Encouraging. Always sees the bright side and celebrates your wins!', color: '#7C6CF6' },
-        { id: 1, name: 'Rex', personality: 'Smart & Structured. Loves grammar rules and systematic learning!', color: '#4ADE80' },
-        { id: 2, name: 'Pixel', personality: 'Creative & Playful. Teaches through stories, games and surprises!', color: '#F59E0B' },
+        { id: 0, name: 'Zendaya', personality: 'Cheerful & Encouraging. Always sees the bright side and celebrates your wins!', color: '#7C6CF6' },
+        { id: 1, name: 'Travis', personality: 'Creative & Playful. Teaches through stories, games and surprises!', color: '#4ADE80' },
+        { id: 2, name: 'Matthew', personality: 'Smart & Structured. Loves grammar rules and systematic learning!', color: '#F59E0B' },
         { id: 3, name: 'Omar', personality: 'Wise & Multilingual. Your supportive guide connecting your native language to English!', color: '#06B6D4' },
     ];
 

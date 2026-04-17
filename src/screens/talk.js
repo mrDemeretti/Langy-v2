@@ -46,7 +46,7 @@ function renderTalkSelect(container) {
                 <div class="talk-mascots" id="talk-mascots">
                     ${mascots.map(([id, m]) => {
                         const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
-                        const imgs = { 0: 'luna', 1: 'rex', 2: 'pixel', 3: 'omar' };
+                        const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
                         const isSelected = parseInt(id) === (window._talkMascot ?? mascotId);
                         return `
                             <div class="talk-mascot ${isSelected ? 'talk-mascot--active' : ''}" 
@@ -138,7 +138,7 @@ function renderTalkCall(container) {
     const persona = session.persona;
     const scenario = session.scenario;
     const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
-    const imgs = { 0: 'luna', 1: 'rex', 2: 'pixel', 3: 'omar' };
+    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
     const color = colors[mascotId] || '#10B981';
 
     container.innerHTML = `
