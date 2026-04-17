@@ -189,12 +189,54 @@ function renderResults(container) {
                         `).join('')}
                     </div>
                 </div>` : ''}
+
+                <!-- Weekly Activity Chart -->
+                <div>
+                    <h4 style="margin-bottom:var(--sp-3); padding-left:var(--sp-1); display:flex; align-items:center; gap:8px;">${LangyIcons.barChart2} Weekly Activity</h4>
+                    <div class="card" style="padding:var(--sp-4);">
+                        <div class="weekly-chart" id="weekly-chart">
+                            ${buildWeeklyChart()}
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
+                            <span>${LangyState.streakData.totalSessions || 0} total sessions</span>
+                            <span>${Math.round((LangyState.streakData.totalMinutes || 0))} min studied</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Weak Units -->
+                ${failedLessons.length > 0 ? `
+                <div>
+                    <div class="card" style="padding:var(--sp-4); background:linear-gradient(135deg, rgba(239,68,68,0.04), rgba(245,158,11,0.04)); border: 1px dashed rgba(239,68,68,0.2);">
+                        <div style="display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-3);">
+                            <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #EF4444, #F59E0B); display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0;">${LangyIcons.refreshCw}</div>
+                            <div>
+                                <div style="font-weight:var(--fw-bold);">Review Weak Units</div>
+                                <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${failedLessons.length} unit${failedLessons.length > 1 ? 's' : ''} need${failedLessons.length === 1 ? 's' : ''} practice</div>
+                            </div>
+                        </div>
+                        <button class="btn btn--primary btn--full" id="review-weak" style="background:linear-gradient(135deg, #EF4444, #F59E0B); box-shadow: 0 4px 0 #B91C1C;">
+                            ${LangyIcons.rocket} Start Review Session
+                        </button>
+                    </div>
+                </div>
+                ` : ''}
             </div>
         </div>
     `;
 
     // ── Back button ──
     container.querySelector('#results-back')?.addEventListener('click', () => Router.navigate('home'));
+
+    // ── Review Weak Units ──
+    container.querySelector('#review-weak')?.addEventListener('click', () => {
+        const weakUnits = LangyState.progress.lessonHistory.filter(l => l.status === 'error');
+        if (weakUnits.length > 0) {
+            const randomWeak = weakUnits[Math.floor(Math.random() * weakUnits.length)];
+            Anim.showToast(`${LangyIcons.rocket} Starting review of weak areas...`);
+            setTimeout(() => Router.navigate('learning', { mode: 'review', unitId: randomWeak.unitId }), 500);
+        }
+    });
 
     // ── CEFR Accordion ──
     container.querySelectorAll('.cefr-level__header').forEach(header => {
@@ -416,6 +458,44 @@ function startQuickCheck(textbookId, unitId) {
     }
 
     renderQuestion();
+}
+
+// ─── Weekly Activity Chart Builder ───
+function buildWeeklyChart() {
+    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const today = new Date();
+    const todayDay = today.getDay(); // 0=Sun
+    const activeDays = LangyState.streakData.activeDays || [];
+
+    // Get Monday of this week
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+
+    const weekData = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        // Count sessions for this day (each activeDays entry = 1 session)
+        const count = activeDays.filter(a => a === iso).length;
+        // Simulate minutes (10-30 min per session)
+        const mins = count > 0 ? Math.floor(Math.random() * 20 + 10) * count : 0;
+        const isToday = d.toISOString().split('T')[0] === today.toISOString().split('T')[0];
+        weekData.push({ day: dayNames[i], mins, count, isToday, active: count > 0 });
+    }
+
+    const maxMins = Math.max(...weekData.map(d => d.mins), 1);
+
+    return weekData.map(d => {
+        const heightPct = d.mins > 0 ? Math.max(10, Math.round((d.mins / maxMins) * 100)) : 5;
+        return `
+            <div class="weekly-chart__bar-wrap">
+                ${d.mins > 0 ? `<div class="weekly-chart__value">${d.mins}m</div>` : ''}
+                <div class="weekly-chart__bar ${d.isToday ? 'weekly-chart__bar--today' : ''} ${!d.active ? 'weekly-chart__bar--empty' : ''}" style="height:${heightPct}%;"></div>
+                <div class="weekly-chart__label" style="${d.isToday ? 'color:var(--primary); font-weight:var(--fw-bold);' : ''}">${d.day}</div>
+            </div>
+        `;
+    }).join('');
 }
 
 Router.register('results', renderResults);

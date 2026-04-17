@@ -4441,8 +4441,145 @@
 .daily-task__title .langy-icon { color: var(--primary); }
 
 /* Streak fire active state */
-.home__streak .fire-animated { font-size: 28px; }
+.fire-animated {
+    display: inline-flex;
+    font-size: 28px;
+    transition: all 0.3s ease;
+}
 
+/* Active streak — fire burns bright */
+.fire-animated--active {
+    color: #F59E0B;
+    animation: fireGlow 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(245,158,11,0.5));
+}
+
+@keyframes fireGlow {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+        filter: drop-shadow(0 0 6px rgba(245,158,11,0.4));
+    }
+    25% {
+        transform: scale(1.1) translateY(-2px);
+        filter: drop-shadow(0 0 10px rgba(239,68,68,0.6));
+    }
+    50% {
+        transform: scale(1.05) translateY(-1px);
+        filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));
+    }
+    75% {
+        transform: scale(1.12) translateY(-3px);
+        filter: drop-shadow(0 0 12px rgba(239,68,68,0.5));
+    }
+}
+
+/* Inactive streak — fire is cold */
+.fire-animated--inactive {
+    color: var(--text-tertiary);
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+/* Shop freeze item */
+.shop-item--freeze {
+    border: 1px dashed rgba(59,130,246,0.3);
+    background: linear-gradient(135deg, rgba(59,130,246,0.03), rgba(99,102,241,0.03));
+}
+
+/* Leaderboard styles */
+.leaderboard__row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--radius-lg);
+    transition: background 0.2s;
+}
+.leaderboard__row:hover { background: var(--bg-alt); }
+.leaderboard__row--you {
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.15);
+}
+.leaderboard__rank {
+    width: 28px;
+    font-weight: var(--fw-black);
+    font-size: var(--fs-sm);
+    text-align: center;
+    flex-shrink: 0;
+}
+.leaderboard__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: var(--fw-bold);
+    color: white;
+    flex-shrink: 0;
+}
+.leaderboard__info { flex: 1; min-width: 0; }
+.leaderboard__name {
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.leaderboard__league {
+    font-size: 10px;
+    color: var(--text-tertiary);
+}
+.leaderboard__xp {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-sm);
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+/* Weekly Activity Chart */
+.weekly-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--sp-2);
+    height: 120px;
+    padding: var(--sp-3) 0;
+}
+.weekly-chart__bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-1);
+    height: 100%;
+}
+.weekly-chart__bar {
+    width: 100%;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+    transition: height 0.6s var(--ease-spring);
+    min-height: 4px;
+    position: relative;
+    margin-top: auto;
+}
+.weekly-chart__bar--today {
+    background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+    box-shadow: 0 0 8px rgba(245,158,11,0.3);
+}
+.weekly-chart__bar--empty {
+    background: var(--bg-alt);
+}
+.weekly-chart__label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    font-weight: var(--fw-medium);
+}
+.weekly-chart__value {
+    font-size: 9px;
+    color: var(--text-secondary);
+    font-weight: var(--fw-bold);
+}
 /* ============================================
    CEFR LEARNING PATH — Roadmap Styles
    ============================================ */

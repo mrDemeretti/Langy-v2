@@ -140,6 +140,7 @@ const LangyState = {
     // Shop
     shop: {
         items: [
+            { id: 10, name: 'Streak Freeze', emoji: LangyIcons.shield, price: 200, currency: 'dangy', category: 'consumable', desc: 'Protects your streak for 1 missed day' },
             { id: 1, name: 'Cool Shades', emoji: LangyIcons.sun, price: 50, currency: 'dangy', category: 'accessory' },
             { id: 2, name: 'Top Hat', emoji: LangyIcons.graduationCap, price: 80, currency: 'dangy', category: 'hat' },
             { id: 3, name: 'Crown', emoji: LangyIcons.crown, price: 200, currency: 'langy', category: 'hat', premium: true },

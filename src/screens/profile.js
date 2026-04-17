@@ -36,7 +36,7 @@ function buildCefrBadges() {
         }
 
         return `
-            <div class="cefr-badge ${stateClass}" style="--badge-color: ${lv.color};">
+            <div class="cefr-badge ${stateClass}" style="--badge-color: ${lv.color}; ${isEarned ? 'cursor:pointer;' : ''}" data-code="${lv.code}" data-earned="${isEarned}" data-name="${lv.name}" data-color="${lv.color}" data-date="${(badge && badge.date) || ''}">
                 <div class="cefr-badge__level">${lv.code}</div>
                 <div class="cefr-badge__icon">${isEarned ? LangyIcons.medal : isActive ? LangyIcons.unlock : LangyIcons.lock}</div>
                 <div class="cefr-badge__name">${lv.name}</div>
@@ -253,7 +253,7 @@ function renderProfile(container) {
                         <div class="profile__option-icon" style="background:rgba(156,163,175,0.1); color:#6B7280;">${LangyIcons.info}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">About Langy</div>
-                            <div class="profile__option-desc">Version 2.1.0</div>
+                            <div class="profile__option-desc">Version 2.2.0</div>
                         </div>
                         <div class="profile__option-arrow">→</div>
                     </div>
@@ -353,6 +353,22 @@ function renderProfile(container) {
     container.querySelector('#prof-help')?.addEventListener('click', () => showHelp());
     container.querySelector('#prof-feedback')?.addEventListener('click', () => showFeedback());
     container.querySelector('#prof-about')?.addEventListener('click', () => showAbout());
+
+    // ── CEFR Badge Click → Certificate ──
+    container.querySelectorAll('.cefr-badge').forEach(badge => {
+        badge.addEventListener('click', () => {
+            const earned = badge.dataset.earned === 'true';
+            const code = badge.dataset.code;
+            const name = badge.dataset.name;
+            const color = badge.dataset.color;
+            const date = badge.dataset.date;
+            if (earned) {
+                showCertificate(code, name, color, date);
+            } else {
+                Anim.showToast(`${LangyIcons.lock} Complete ${code} to unlock this certificate!`);
+            }
+        });
+    });
 
     setTimeout(() => Anim.staggerChildren(container, '.profile__option'), 40);
 }
@@ -686,18 +702,148 @@ function showAbout() {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     overlay.innerHTML = `
-        <div class="overlay__sheet" style="padding-bottom:var(--sp-6); text-align:center;">
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6);">
             <div class="overlay__handle"></div>
-            <h1 style="color:var(--primary); font-size: 42px; margin-bottom:var(--sp-2);">Langy</h1>
-            <p style="color:var(--text-secondary); font-weight:var(--fw-bold); margin-bottom:var(--sp-4);">Version 1.0.0 (Beta)</p>
-            <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-bottom:var(--sp-6); padding: 0 var(--sp-4);">
-                A premium gameified language learning app designed to make your journey immersive, fun, and unstoppable. 
-            </p>
-            <button class="btn btn--primary" onclick="this.closest('.overlay').remove();">Close</button>
+            
+            <!-- Logo & Version -->
+            <div style="text-align:center; margin-bottom:var(--sp-4);">
+                <div style="width:80px; height:80px; border-radius:24px; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); display:flex; align-items:center; justify-content:center; margin:0 auto var(--sp-3); box-shadow: 0 8px 24px rgba(16,185,129,0.3);">
+                    <span style="color:white; font-size:36px; font-weight:var(--fw-black);">L</span>
+                </div>
+                <h2 style="color:var(--primary);">Langy AI</h2>
+                <div style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2); margin-top:var(--sp-1);">
+                    <span class="badge badge--primary">v2.2.0</span>
+                    <span class="badge badge--accent">Stable</span>
+                </div>
+                <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-2); padding:0 var(--sp-4);">
+                    AI-powered gameified English learning app. Immersive, fun, and unstoppable.
+                </p>
+            </div>
+
+            <!-- Changelog -->
+            <div style="margin-bottom:var(--sp-4);">
+                <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">${LangyIcons.sparkles} What's New</h4>
+                <div style="display:flex; flex-direction:column; gap:var(--sp-2); max-height:200px; overflow-y:auto;">
+                    <div class="card card--flat" style="padding:var(--sp-3);">
+                        <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--primary);">v2.2.0 — Feature Sprint</div>
+                        <ul style="font-size:var(--fs-xs); color:var(--text-secondary); margin-top:var(--sp-1); padding-left:var(--sp-4); line-height:1.6;">
+                            <li>Streak Freeze — protect your streak in Shop</li>
+                            <li>Animated fire icon — burns when active</li>
+                            <li>Sound effects — correct/wrong/level up</li>
+                            <li>Weekly Leaderboard in Duels</li>
+                            <li>Weekly Activity chart in Results</li>
+                            <li>Review Weak Units mode</li>
+                            <li>CEFR Certificate sharing</li>
+                        </ul>
+                    </div>
+                    <div class="card card--flat" style="padding:var(--sp-3);">
+                        <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm);">v2.1.0 — Bug Fixes</div>
+                        <ul style="font-size:var(--fs-xs); color:var(--text-secondary); margin-top:var(--sp-1); padding-left:var(--sp-4); line-height:1.6;">
+                            <li>Colorized all icons — no more black</li>
+                            <li>Avatar picker system</li>
+                            <li>Events progress tracking</li>
+                            <li>Fixed placement sync bug</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <div style="display:flex; gap:var(--sp-2); margin-bottom:var(--sp-4);">
+                <button class="btn btn--secondary btn--full" onclick="window.open('https://github.com/mrDemeretti/Langy-v2','_blank');" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.github} GitHub
+                </button>
+                <button class="btn btn--secondary btn--full" onclick="window.open('https://t.me/langyai','_blank');" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.messageCircle} Telegram
+                </button>
+            </div>
+
+            <!-- Credits -->
+            <div style="text-align:center; font-size:var(--fs-xs); color:var(--text-tertiary); margin-bottom:var(--sp-3);">
+                Made with ${LangyIcons.heart} by DeepTutor Team<br>
+                © 2026 Langy AI. All rights reserved.
+            </div>
+
+            <button class="btn btn--ghost btn--full" onclick="this.closest('.overlay').remove();">Close</button>
         </div>
     `;
     document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+}
+
+function showCertificate(code, name, color, date) {
+    const userName = LangyState.user?.name || 'Learner';
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.innerHTML = `
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6);">
+            <div class="overlay__handle"></div>
+            
+            <!-- Certificate Card -->
+            <div id="cert-card" style="background:linear-gradient(135deg, ${color}08, ${color}15); border:2px solid ${color}30; border-radius:var(--radius-xl); padding:var(--sp-6); text-align:center; margin-bottom:var(--sp-4); position:relative; overflow:hidden;">
+                <!-- Decorative corners -->
+                <div style="position:absolute; top:8px; left:8px; width:24px; height:24px; border-top:3px solid ${color}; border-left:3px solid ${color}; border-radius:4px 0 0 0; opacity:0.5;"></div>
+                <div style="position:absolute; top:8px; right:8px; width:24px; height:24px; border-top:3px solid ${color}; border-right:3px solid ${color}; border-radius:0 4px 0 0; opacity:0.5;"></div>
+                <div style="position:absolute; bottom:8px; left:8px; width:24px; height:24px; border-bottom:3px solid ${color}; border-left:3px solid ${color}; border-radius:0 0 0 4px; opacity:0.5;"></div>
+                <div style="position:absolute; bottom:8px; right:8px; width:24px; height:24px; border-bottom:3px solid ${color}; border-right:3px solid ${color}; border-radius:0 0 4px 0; opacity:0.5;"></div>
+                
+                <div style="font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:2px; color:${color}; font-weight:var(--fw-bold); margin-bottom:var(--sp-2);">Certificate of Achievement</div>
+                
+                <div style="width:64px; height:64px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; margin:0 auto var(--sp-3); box-shadow:0 4px 16px ${color}40;">
+                    <span style="color:white; font-size:24px; font-weight:var(--fw-black);">${code}</span>
+                </div>
+                
+                <div style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-1);">This certifies that</div>
+                <div style="font-size:var(--fs-xl); font-weight:var(--fw-black); color:var(--text); margin-bottom:var(--sp-2);">${userName}</div>
+                <div style="font-size:var(--fs-sm); color:var(--text-secondary); margin-bottom:var(--sp-3);">has successfully completed</div>
+                <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:${color};">${code} — ${name}</div>
+                <div style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-3);">
+                    ${date ? 'Earned: ' + date : 'Langy AI English Course'}<br>
+                    Issued by Langy AI
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display:flex; gap:var(--sp-2);">
+                <button class="btn btn--secondary btn--full" id="cert-copy" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.clipboard} Copy Text
+                </button>
+                <button class="btn btn--primary btn--full" id="cert-share" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.share2} Share
+                </button>
+            </div>
+            <button class="btn btn--ghost btn--full" style="margin-top:var(--sp-2);" onclick="this.closest('.overlay').remove();">Close</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+    // Copy certificate text
+    overlay.querySelector('#cert-copy')?.addEventListener('click', () => {
+        const text = `🎓 Certificate of Achievement\n\n${userName} has completed ${code} — ${name}\n\nIssued by Langy AI\n${date ? 'Date: ' + date : ''}\n\n#LangyAI #LanguageLearning #CEFR`;
+        navigator.clipboard.writeText(text).then(() => {
+            Anim.showToast(`${LangyIcons.check} Certificate copied to clipboard!`);
+        }).catch(() => {
+            Anim.showToast(`${LangyIcons.clipboard} Copy: ${text.substring(0, 50)}...`);
+        });
+    });
+
+    // Share (Web Share API or fallback)
+    overlay.querySelector('#cert-share')?.addEventListener('click', () => {
+        const shareData = {
+            title: `${code} Certificate — Langy AI`,
+            text: `I just earned my ${code} (${name}) certificate on Langy AI! 🎓🔥`,
+            url: 'https://mrdemeretti.github.io/Langy-v2'
+        };
+        if (navigator.share) {
+            navigator.share(shareData).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`).then(() => {
+                Anim.showToast(`${LangyIcons.check} Share text copied!`);
+            }).catch(() => {});
+        }
+    });
 }
 
 function showSubscription() {

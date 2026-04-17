@@ -13,6 +13,61 @@ function renderDuels(container) {
     }
 }
 
+function getPlayerLeague(wins) {
+    if (wins >= 50) return '💎 Diamond';
+    if (wins >= 25) return '🥇 Gold';
+    if (wins >= 10) return '🥈 Silver';
+    return '🥉 Bronze';
+}
+
+function buildLeaderboard(playerWins) {
+    const names = ['Sophia M.', 'James K.', 'Yuki T.', 'Marco P.', 'Elena V.', 'Omar A.', 'Lily C.', 'Noah R.', 'Ava S.', 'Liam G.', 'Zara H.', 'Kai N.'];
+    const colors = ['#EF4444','#3B82F6','#8B5CF6','#F59E0B','#EC4899','#10B981','#6366F1','#14B8A6','#F97316','#06B6D4'];
+
+    // Generate bots with realistic XP ranges
+    const bots = names.slice(0, 10).map((name, i) => ({
+        name,
+        xp: Math.floor(Math.random() * 400 + 100 - i * 15),
+        color: colors[i % colors.length],
+        initial: name[0]
+    }));
+
+    // Ensure sorted descending
+    bots.sort((a, b) => b.xp - a.xp);
+
+    // Insert player by XP (wins * 30)
+    const playerXP = playerWins * 30;
+    const playerName = LangyState.user?.name || 'You';
+    let playerInserted = false;
+    const rows = [];
+
+    bots.forEach((bot, i) => {
+        if (!playerInserted && playerXP >= bot.xp) {
+            rows.push({ name: playerName, xp: playerXP, color: '#10B981', initial: (playerName[0] || 'Y').toUpperCase(), isPlayer: true });
+            playerInserted = true;
+        }
+        rows.push(bot);
+    });
+    if (!playerInserted) {
+        rows.push({ name: playerName, xp: playerXP, color: '#10B981', initial: (playerName[0] || 'Y').toUpperCase(), isPlayer: true });
+    }
+
+    // Only show top 10
+    return rows.slice(0, 10).map((r, i) => `
+        <div class="leaderboard__row ${r.isPlayer ? 'leaderboard__row--you' : ''}" style="animation-delay:${i * 50}ms;">
+            <div class="leaderboard__rank" style="color:${i === 0 ? '#F59E0B' : i === 1 ? '#9CA3AF' : i === 2 ? '#CD7F32' : 'var(--text-secondary)'};">
+                ${i < 3 ? ['🥇','🥈','🥉'][i] : '#' + (i + 1)}
+            </div>
+            <div class="leaderboard__avatar" style="background:${r.color};">${r.initial}</div>
+            <div class="leaderboard__info">
+                <div class="leaderboard__name">${r.name} ${r.isPlayer ? '<span style="font-size:10px;color:var(--primary);">(You)</span>' : ''}</div>
+                <div class="leaderboard__league">${getPlayerLeague(Math.floor(r.xp / 30))}</div>
+            </div>
+            <div class="leaderboard__xp">${r.xp} XP</div>
+        </div>
+    `).join('');
+}
+
 function renderDuelModes(container) {
     const { duels } = LangyState;
 
@@ -56,7 +111,17 @@ function renderDuelModes(container) {
                             <div class="stat__value" style="color:var(--reward-gold);">${(duels.stats?.wins || 0) + (duels.stats?.losses || 0) > 0 ? Math.round(((duels.stats?.wins || 0) / ((duels.stats?.wins || 0) + (duels.stats?.losses || 0))) * 100) : 0}%</div>
                             <div class="stat__label">Win Rate</div>
                         </div>
-                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Leaderboard -->
+            <div style="padding: 0 var(--sp-6) var(--sp-6);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--sp-3);">
+                    <h3 style="display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.users} Weekly Leaderboard</h3>
+                    <div class="badge badge--primary">${getPlayerLeague(duels.stats?.wins || 0)}</div>
+                </div>
+                <div class="card card--flat" style="padding:var(--sp-2);">
+                    ${buildLeaderboard(duels.stats?.wins || 0)}
                 </div>
             </div>
         </div>

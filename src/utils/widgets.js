@@ -481,7 +481,11 @@ const LangyWidgets = {
 
         // Sound feedback
         if (typeof AudioUtils !== 'undefined') {
-            if (isCorrect) AudioUtils.playPop();
+            if (isCorrect) {
+                AudioUtils.playCorrect();
+            } else {
+                AudioUtils.playWrong();
+            }
         }
     },
 

@@ -119,7 +119,7 @@ function renderHome(container) {
             <div class="home__streak" id="home-streak">
                 <div class="home__streak-top">
                     <div class="home__streak-header">
-                        <span class="fire-animated">${LangyIcons.flame}</span>
+                        <span class="fire-animated ${streakData.days > 0 ? 'fire-animated--active' : 'fire-animated--inactive'}">${LangyIcons.flame}</span>
                         <span style="font-size: var(--fs-lg); font-weight: var(--fw-black);">${streakData.days > 0 ? streakData.days + ' Day Streak!' : 'Start your streak!'}</span>
                     </div>
                     <div class="badge badge--accent">Details →</div>
