@@ -84,17 +84,33 @@ You occasionally share useful phrases and explain when/why to use them.`
         }
     };
 
-    // ─── SCENARIOS ───
+    // ─── SCENARIOS (icon = LangyIcons key, color = display color) ───
     const scenarios = [
-        { id: 'free', title: 'Free Talk', icon: '💬', desc: 'Chat about anything!', opener: 'Hey! What\'s on your mind today? Let\'s just talk about whatever you want.' },
-        { id: 'coffee', title: 'Coffee Shop', icon: '☕', desc: 'Order at a café', opener: 'Hi there! Welcome to the café. What can I get for you today?' },
-        { id: 'airport', title: 'At the Airport', icon: '✈️', desc: 'Check-in & navigate', opener: 'Good morning! Welcome to the check-in counter. Can I see your passport and booking confirmation, please?' },
-        { id: 'interview', title: 'Job Interview', icon: '💼', desc: 'Practice interview skills', opener: 'Hello, please have a seat. Thank you for coming in today. So, tell me a little about yourself.' },
-        { id: 'roommate', title: 'New Roommate', icon: '🏠', desc: 'Meet your roommate', opener: 'Hey! You must be my new roommate! Nice to meet you. How was your trip here?' },
-        { id: 'restaurant', title: 'Restaurant', icon: '🍽️', desc: 'Dine out & order food', opener: 'Good evening! Welcome to our restaurant. Would you like to see the menu, or do you already know what you\'d like?' },
-        { id: 'doctor', title: 'At the Doctor', icon: '🏥', desc: 'Describe symptoms', opener: 'Hello, please come in and have a seat. What seems to be the problem today?' },
-        { id: 'shopping', title: 'Shopping', icon: '🛍️', desc: 'Buy clothes & ask for help', opener: 'Hi, welcome to the store! Are you looking for anything in particular today?' },
+        { id: 'free', title: 'Free Talk', icon: 'messageCircle', color: '#7C6CF6', desc: 'Chat about anything!', opener: 'Hey! What\'s on your mind today? Let\'s just talk about whatever you want.' },
+        { id: 'coffee', title: 'Coffee Shop', icon: 'sun', color: '#F59E0B', desc: 'Order at a café', opener: 'Hi there! Welcome to the café. What can I get for you today?' },
+        { id: 'airport', title: 'At the Airport', icon: 'globe', color: '#3B82F6', desc: 'Check-in & navigate', opener: 'Good morning! Welcome to the check-in counter. Can I see your passport and booking confirmation, please?' },
+        { id: 'interview', title: 'Job Interview', icon: 'briefcase', color: '#6366F1', desc: 'Practice interview skills', opener: 'Hello, please have a seat. Thank you for coming in today. So, tell me a little about yourself.' },
+        { id: 'roommate', title: 'New Roommate', icon: 'home', color: '#10B981', desc: 'Meet your roommate', opener: 'Hey! You must be my new roommate! Nice to meet you. How was your trip here?' },
+        { id: 'restaurant', title: 'Restaurant', icon: 'star', color: '#EF4444', desc: 'Dine out & order food', opener: 'Good evening! Welcome to our restaurant. Would you like to see the menu, or do you already know what you\'d like?' },
+        { id: 'doctor', title: 'At the Doctor', icon: 'heart', color: '#EC4899', desc: 'Describe symptoms', opener: 'Hello, please come in and have a seat. What seems to be the problem today?' },
+        { id: 'shopping', title: 'Shopping', icon: 'shoppingBag', color: '#8B5CF6', desc: 'Buy clothes & ask for help', opener: 'Hi, welcome to the store! Are you looking for anything in particular today?' },
     ];
+
+    // ─── SCENARIO HINTS (shown after 30s silence) ───
+    const scenarioHints = {
+        free: ["I like...", "What do you think about...", "Tell me about your day", "Have you ever been to...", "What kind of music do you like?"],
+        coffee: ["Can I have a latte, please?", "How much is a cappuccino?", "Is there wifi here?", "Do you have oat milk?", "I'll have a medium, please"],
+        airport: ["Where is gate 12?", "I have a connecting flight", "Can I check this bag?", "When does boarding start?", "Is this flight on time?"],
+        interview: ["I worked at...", "My strengths are...", "I'm very passionate about...", "I have experience in...", "I'm looking for a role in..."],
+        roommate: ["I usually wake up at...", "Do you like cooking?", "What's your schedule like?", "I like to keep things clean", "Do you have any pets?"],
+        restaurant: ["I'd like the pasta, please", "What do you recommend?", "Can I have the check?", "Is this dish spicy?", "Do you have vegetarian options?"],
+        doctor: ["I've been feeling dizzy", "It started three days ago", "I'm allergic to penicillin", "I have a headache", "My throat is sore"],
+        shopping: ["Do you have this in blue?", "Can I try this on?", "How much is this?", "Where are the fitting rooms?", "Do you accept credit cards?"],
+    };
+
+    // ─── REWARD THRESHOLDS ───
+    const REWARD_MIN_TURNS = 3;
+    const REWARD_MIN_DURATION = 60; // seconds
 
     // ─── STATE ───
     let currentSession = null;
@@ -122,13 +138,16 @@ You occasionally share useful phrases and explain when/why to use them.`
         if (!recognition && !initSTT()) return false;
         isListening = true;
         let finalTranscript = '';
+        let bestConfidence = 0;
 
         recognition.onresult = (event) => {
             let interim = '';
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 const transcript = event.results[i][0].transcript;
+                const confidence = event.results[i][0].confidence || 0;
                 if (event.results[i].isFinal) {
                     finalTranscript += transcript;
+                    bestConfidence = Math.max(bestConfidence, confidence);
                 } else {
                     interim += transcript;
                 }
@@ -139,13 +158,21 @@ You occasionally share useful phrases and explain when/why to use them.`
 
         recognition.onend = () => {
             isListening = false;
-            if (onEnd) onEnd(finalTranscript);
+            // Track pronunciation confidence
+            if (currentSession && finalTranscript && bestConfidence > 0) {
+                currentSession.pronunciationScores.push({
+                    text: finalTranscript,
+                    confidence: bestConfidence,
+                    time: Date.now()
+                });
+            }
+            if (onEnd) onEnd(finalTranscript, bestConfidence);
         };
 
         recognition.onerror = (event) => {
             isListening = false;
             console.warn('STT Error:', event.error);
-            if (onEnd) onEnd('');
+            if (onEnd) onEnd('', 0);
         };
 
         try {
@@ -177,24 +204,20 @@ You occasionally share useful phrases and explain when/why to use them.`
 
         const prefs = persona.voicePrefs || [];
         const accentLang = persona.accent || 'en-US';
-        const langPrefix = accentLang.substring(0, 2); // 'en'
+        const langPrefix = accentLang.substring(0, 2);
 
-        // Filter to English voices only
         const englishVoices = voices.filter(v => v.lang.startsWith(langPrefix));
         const allEnglish = voices.filter(v => v.lang.startsWith('en'));
 
-        // 1) Try exact preference match (case-insensitive substring in voice name)
         for (const pref of prefs) {
             const found = englishVoices.find(v => v.name.toLowerCase().includes(pref));
             if (found) { _voiceCache[cacheKey] = found; return found; }
         }
-        // Also search all English voices if accent-specific didn't work
         for (const pref of prefs) {
             const found = allEnglish.find(v => v.name.toLowerCase().includes(pref));
             if (found) { _voiceCache[cacheKey] = found; return found; }
         }
 
-        // 2) Gender-based fallback: pick different voice index per mascot
         const isFemale = persona.voice === 'female';
         const genderVoices = allEnglish.filter(v => {
             const n = v.name.toLowerCase();
@@ -202,7 +225,6 @@ You occasionally share useful phrases and explain when/why to use them.`
             return !n.includes('female') && !n.includes('woman');
         });
 
-        // Distribute mascots across available voices to avoid duplicates
         const mascotIndex = Object.keys(personas).findIndex(k => personas[k].name === persona.name);
         const pool = genderVoices.length > 0 ? genderVoices : allEnglish;
         const pick = pool[mascotIndex % pool.length] || voices[0];
@@ -216,7 +238,6 @@ You occasionally share useful phrases and explain when/why to use them.`
             return;
         }
 
-        // Cancel any current speech
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
@@ -224,7 +245,6 @@ You occasionally share useful phrases and explain when/why to use them.`
         utterance.pitch = persona.pitch || 1.0;
         utterance.rate = persona.rate || 0.9;
 
-        // Smart voice selection — unique per mascot
         const voice = findVoiceForPersona(persona);
         if (voice) {
             utterance.voice = voice;
@@ -270,7 +290,6 @@ CRITICAL RULES FOR CONVERSATION:
             { role: 'system', content: systemPrompt }
         ];
 
-        // Add conversation history (last 20 messages)
         conversationHistory.slice(-20).forEach(msg => {
             messages.push({
                 role: msg.role === 'mascot' ? 'assistant' : 'user',
@@ -278,7 +297,6 @@ CRITICAL RULES FOR CONVERSATION:
             });
         });
 
-        // Add current message
         messages.push({ role: 'user', content: userMessage });
 
         try {
@@ -299,7 +317,6 @@ CRITICAL RULES FOR CONVERSATION:
             return data.choices?.[0]?.message?.content || "Sorry, I didn't catch that. Could you say it again?";
         } catch (err) {
             console.error('Talk AI error:', err);
-            // Fallback responses
             const fallbacks = [
                 "That's interesting! Tell me more about that.",
                 "Oh really? And what happened next?",
@@ -308,6 +325,49 @@ CRITICAL RULES FOR CONVERSATION:
                 "Hmm, that's cool! What else can you tell me?"
             ];
             return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        }
+    }
+
+    // ─── AI FEEDBACK (post-conversation) ───
+    async function getAIFeedback() {
+        if (!currentSession || currentSession.turns < REWARD_MIN_TURNS) return null;
+
+        const userPhrases = currentSession.userMessages.join('\n');
+        const avgConf = currentSession.pronunciationScores.length > 0
+            ? (currentSession.pronunciationScores.reduce((a, b) => a + b.confidence, 0) / currentSession.pronunciationScores.length)
+            : null;
+
+        const prompt = `You are an English teacher reviewing a student's conversation practice.
+The student is at ${LangyState?.user?.level || 'B1'} level.
+Here are the phrases the student said during the conversation:
+
+${userPhrases}
+
+${avgConf !== null ? `Their average pronunciation confidence score was ${(avgConf * 100).toFixed(0)}%.` : ''}
+
+Give a SHORT feedback (2-3 sentences max):
+1. One thing they did well
+2. One specific thing to improve
+3. One actionable tip
+
+Be encouraging but specific. No markdown or formatting.`;
+
+        try {
+            const response = await fetch(LangyAI.API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: LangyAI.MODEL,
+                    messages: [{ role: 'user', content: prompt }],
+                    max_tokens: 150,
+                    temperature: 0.7
+                })
+            });
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.choices?.[0]?.message?.content || null;
+        } catch (e) {
+            return null;
         }
     }
 
@@ -326,10 +386,10 @@ CRITICAL RULES FOR CONVERSATION:
             turns: 0,
             corrections: [],
             newWords: [],
-            userMessages: []
+            userMessages: [],
+            pronunciationScores: []  // { text, confidence, time }
         };
 
-        // Preload voices
         if ('speechSynthesis' in window) {
             window.speechSynthesis.getVoices();
         }
@@ -344,6 +404,8 @@ CRITICAL RULES FOR CONVERSATION:
         if (!currentSession) return null;
 
         const duration = Math.round((Date.now() - currentSession.startTime) / 1000);
+        const qualified = currentSession.turns >= REWARD_MIN_TURNS && duration >= REWARD_MIN_DURATION;
+
         const summary = {
             duration,
             turns: currentSession.turns,
@@ -351,20 +413,49 @@ CRITICAL RULES FOR CONVERSATION:
             newWords: currentSession.newWords,
             mascot: currentSession.persona.name,
             scenario: currentSession.scenario.title,
-            userMessages: currentSession.userMessages
+            userMessages: currentSession.userMessages,
+            qualifiedForRewards: qualified,
+            pronunciationScores: currentSession.pronunciationScores
         };
 
-        // Award XP and currency
-        if (typeof LangyState !== 'undefined') {
-            const xpEarned = Math.min(100, currentSession.turns * 10);
-            const dangyEarned = Math.min(50, currentSession.turns * 5);
+        // Pronunciation average
+        if (currentSession.pronunciationScores.length > 0) {
+            const avg = currentSession.pronunciationScores.reduce((a, b) => a + b.confidence, 0) / currentSession.pronunciationScores.length;
+            summary.avgPronunciation = avg;
+            summary.pronunciationLevel = avg >= 0.85 ? 'excellent' : avg >= 0.65 ? 'good' : avg >= 0.45 ? 'fair' : 'needs_work';
+        }
+
+        // Award XP and currency ONLY if qualified
+        if (qualified && typeof LangyState !== 'undefined') {
+            const durationBonus = Math.floor(duration / 30) * 5; // 5 XP per 30 secs
+            const xpEarned = Math.min(150, currentSession.turns * 12 + durationBonus);
+            const dangyEarned = Math.min(75, currentSession.turns * 6);
             LangyState.user.xp += xpEarned;
             LangyState.currencies.dangy += dangyEarned;
             LangyState.progress.skills.speaking = Math.min(100, (LangyState.progress.skills.speaking || 0) + Math.floor(currentSession.turns / 2));
             LangyState.progress.skills.listening = Math.min(100, (LangyState.progress.skills.listening || 0) + Math.floor(currentSession.turns / 3));
             summary.xpEarned = xpEarned;
             summary.dangyEarned = dangyEarned;
+
+            // Save to talk history
+            if (!LangyState.talkHistory) LangyState.talkHistory = [];
+            LangyState.talkHistory.unshift({
+                date: new Date().toISOString(),
+                mascot: summary.mascot,
+                scenario: summary.scenario,
+                duration,
+                turns: summary.turns,
+                xp: xpEarned,
+                pronunciation: summary.avgPronunciation || null
+            });
+            // Keep last 20
+            if (LangyState.talkHistory.length > 20) LangyState.talkHistory = LangyState.talkHistory.slice(0, 20);
+
             if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+        } else {
+            summary.xpEarned = 0;
+            summary.dangyEarned = 0;
+            summary.reason = `Talk for at least ${REWARD_MIN_DURATION}s with ${REWARD_MIN_TURNS}+ exchanges`;
         }
 
         currentSession = null;
@@ -382,20 +473,36 @@ CRITICAL RULES FOR CONVERSATION:
         }
     }
 
+    // ─── HINTS ───
+    function getHints(scenarioId) {
+        return scenarioHints[scenarioId] || scenarioHints.free;
+    }
+
+    function getRandomHint(scenarioId) {
+        const hints = getHints(scenarioId);
+        return hints[Math.floor(Math.random() * hints.length)];
+    }
+
     // ─── PUBLIC API ───
     return {
         config,
         personas,
         scenarios,
+        scenarioHints,
+        REWARD_MIN_TURNS,
+        REWARD_MIN_DURATION,
         initSTT,
         startListening,
         stopListening,
         speak,
         stopSpeaking,
         getAIResponse,
+        getAIFeedback,
         startSession,
         endSession,
         addToHistory,
+        getHints,
+        getRandomHint,
         get isListening() { return isListening; },
         get session() { return currentSession; },
         get history() { return conversationHistory; }
