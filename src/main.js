@@ -73,12 +73,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 // ─── DAILY STREAK CHECK ───
-                const today = new Date().toISOString().split('T')[0];
-                const lastDate = sd.lastSession.date;
+                // FIX: Use LOCAL date, not UTC — prevents timezone bugs
+                const now = new Date();
+                const today = now.getFullYear() + '-' + 
+                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(now.getDate()).padStart(2, '0');
+                
+                // FIX: Use lastVisitDate (tracks app opens) instead of lastSession.date (only tracks lesson completions)
+                // This prevents streak loss when user opens app but doesn't finish a lesson
+                const lastDate = sd.lastVisitDate || sd.lastSession.date;
                 
                 if (lastDate && lastDate !== today) {
-                    const last = new Date(lastDate);
-                    const curr = new Date(today);
+                    // Calculate diff using local dates to avoid UTC timezone issues
+                    const lastParts = lastDate.split('-').map(Number);
+                    const todayParts = today.split('-').map(Number);
+                    const last = new Date(lastParts[0], lastParts[1] - 1, lastParts[2]);
+                    const curr = new Date(todayParts[0], todayParts[1] - 1, todayParts[2]);
                     const diffMs = curr.getTime() - last.getTime();
                     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
                     
@@ -96,20 +106,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                             for (let i = 1; i <= missedDays; i++) {
                                 const freezeDate = new Date(last);
                                 freezeDate.setDate(freezeDate.getDate() + i);
-                                sd.freezeUsedDates.push(freezeDate.toISOString().split('T')[0]);
+                                const fd = freezeDate.getFullYear() + '-' + String(freezeDate.getMonth()+1).padStart(2,'0') + '-' + String(freezeDate.getDate()).padStart(2,'0');
+                                sd.freezeUsedDates.push(fd);
                             }
                             setTimeout(() => showStreakOverlay('freeze', missedDays, sd.streakFreezes), 1500);
                         } else if (availableFreezes > 0) {
-                            // PARTIAL protection: use what we have, reduce damage
+                            // PARTIAL protection
                             const protectedDays = availableFreezes;
                             sd.streakFreezes = 0;
                             if (!sd.freezeUsedDates) sd.freezeUsedDates = [];
                             for (let i = 1; i <= protectedDays; i++) {
                                 const freezeDate = new Date(last);
                                 freezeDate.setDate(freezeDate.getDate() + i);
-                                sd.freezeUsedDates.push(freezeDate.toISOString().split('T')[0]);
+                                const fd = freezeDate.getFullYear() + '-' + String(freezeDate.getMonth()+1).padStart(2,'0') + '-' + String(freezeDate.getDate()).padStart(2,'0');
+                                sd.freezeUsedDates.push(fd);
                             }
-                            // Streak partially lost
                             const lostDays = missedDays - protectedDays;
                             sd.days = Math.max(0, sd.days - lostDays);
                             LangyState.user.streak = sd.days;
@@ -126,8 +137,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
                 
-                // Mark today as not yet completed
-                if (lastDate !== today) {
+                // FIX: Always update lastVisitDate on app open — this is separate from lesson completion
+                sd.lastVisitDate = today;
+                
+                // Mark today as not yet completed (lesson-wise)
+                if (!sd.lastSession.date || sd.lastSession.date !== today) {
                     sd.todayCompleted = false;
                     LangyState.dailyChallenge.tasks.forEach(t => t.done = false);
                 }

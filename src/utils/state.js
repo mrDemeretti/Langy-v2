@@ -221,7 +221,8 @@ function setState(path, value) {
 // ─── STREAK & SESSION RECORDING ───
 // Call this after every completed lesson/exercise session
 function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category = 'grammar' } = {}) {
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
     const sd = LangyState.streakData;
     
     // ── FIX: Reset todayCompleted if the date changed (app left open overnight) ──
@@ -244,6 +245,7 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
     
     // Update last session
     sd.lastSession = { date: today, wordsLearned, accuracy, duration };
+    sd.lastVisitDate = today; // Keep visit date in sync
     
     // Update daily stats for calendar
     if (!sd.dailyStats) sd.dailyStats = {};
