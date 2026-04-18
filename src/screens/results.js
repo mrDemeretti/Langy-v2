@@ -42,7 +42,7 @@ function renderResults(container) {
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="results-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">My Progress</div>
+                <div class="nav-header__title">${{en:'My Progress',ru:'Мой прогресс',es:'Mi Progreso'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en']}</div>
                 <div style="width:36px;"></div>
             </div>
 

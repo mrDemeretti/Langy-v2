@@ -25,7 +25,7 @@ function renderTalkSelect(container) {
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="talk-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">Langy Talk</div>
+                <div class="nav-header__title">${i18n('talk.title')}</div>
                 <div style="width:36px;"></div>
             </div>
 
@@ -34,13 +34,13 @@ function renderTalkSelect(container) {
                 <!-- Hero -->
                 <div style="text-align:center; margin-bottom:var(--sp-5);">
                     <div style="font-size:48px; margin-bottom:var(--sp-2); color:var(--primary);">${LangyIcons.mic}</div>
-                    <h2>Talk with a Native Speaker</h2>
-                    <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">Practice real conversations using your voice</p>
+                    <h2>${i18n('talk.hero_title')}</h2>
+                    <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">${i18n('talk.hero_desc')}</p>
                 </div>
 
                 <!-- Mascot Selection -->
                 <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">
-                    <span style="color:var(--primary);">${LangyIcons.users}</span> Choose Your Partner
+                    <span style="color:var(--primary);">${LangyIcons.users}</span> ${i18n('talk.choose_partner')}
                 </h4>
                 <div class="talk-mascots" id="talk-mascots">
                     ${mascots.map(([id, m]) => {
@@ -64,7 +64,7 @@ function renderTalkSelect(container) {
 
                 <!-- Scenario Selection -->
                 <h4 style="margin:var(--sp-5) 0 var(--sp-3); display:flex; align-items:center; gap:8px;">
-                    <span style="color:var(--accent-dark);">${LangyIcons.map}</span> Choose a Scenario
+                    <span style="color:var(--accent-dark);">${LangyIcons.map}</span> ${i18n('talk.choose_scenario')}
                 </h4>
                 <div class="talk-scenarios" id="talk-scenarios">
                     ${scenarios.map((s, i) => {
@@ -86,10 +86,10 @@ function renderTalkSelect(container) {
                 <div style="margin-top:var(--sp-5); padding-bottom:var(--sp-6);">
                     <button class="btn btn--primary btn--xl btn--full" id="talk-start" 
                             style="box-shadow: 0 4px 0 var(--primary-dark); font-size:var(--fs-lg); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
-                        ${LangyIcons.mic} Start Conversation
+                        ${LangyIcons.mic} ${i18n('talk.start')}
                     </button>
                     <p style="text-align:center; font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
-                        Requires microphone access · Works in Chrome/Edge/Safari
+                        ${i18n('talk.mic_hint')} · Works in Chrome/Edge/Safari
                     </p>
                 </div>
             </div>

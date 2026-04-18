@@ -176,6 +176,35 @@ const LangyI18n = {
         'levelup.title': { en: 'Level Up!', ru: 'Новый уровень!', es: '¡Subiste de Nivel!' },
         'levelup.reached': { en: "You've reached a new level!", ru: 'Вы достигли нового уровня!', es: '¡Has alcanzado un nuevo nivel!' },
         'levelup.awesome': { en: 'Awesome!', ru: 'Отлично!', es: '¡Increíble!' },
+        
+        // ─── Profile Extended ───
+        'profile.achievements': { en: 'Achievements', ru: 'Достижения', es: 'Logros' },
+        'profile.account': { en: 'Account', ru: 'Аккаунт', es: 'Cuenta' },
+        'profile.edit_desc': { en: 'Name, avatar, email', ru: 'Имя, аватар, почта', es: 'Nombre, avatar, email' },
+        'profile.language_level': { en: 'Language Level', ru: 'Уровень языка', es: 'Nivel de Idioma' },
+        'profile.preferences': { en: 'Preferences', ru: 'Настройки', es: 'Preferencias' },
+        'profile.light_mode': { en: 'Light Mode', ru: 'Светлая тема', es: 'Modo Claro' },
+        'profile.current_theme': { en: 'Current theme', ru: 'Текущая тема', es: 'Tema actual' },
+        'profile.notifications': { en: 'Notifications', ru: 'Уведомления', es: 'Notificaciones' },
+        'profile.sounds_desc': { en: 'In-app sounds', ru: 'Звуки в приложении', es: 'Sonidos de la app' },
+        'profile.haptics': { en: 'Haptic Feedback', ru: 'Виброотклик', es: 'Respuesta Háptica' },
+        'profile.haptics_desc': { en: 'Vibration on interactions', ru: 'Вибрация при нажатии', es: 'Vibración al interactuar' },
+        'profile.learning': { en: 'Learning', ru: 'Обучение', es: 'Aprendizaje' },
+        'profile.daily_goal': { en: 'Daily Goal', ru: 'Дневная цель', es: 'Objetivo Diario' },
+        'profile.daily_goal_desc': { en: '15 minutes per day', ru: '15 минут в день', es: '15 minutos al día' },
+        'profile.support': { en: 'Support', ru: 'Поддержка', es: 'Soporte' },
+        'profile.help': { en: 'Help & FAQ', ru: 'Помощь и FAQ', es: 'Ayuda y FAQ' },
+        'profile.feedback': { en: 'Send Feedback', ru: 'Отправить отзыв', es: 'Enviar Comentarios' },
+        'profile.community': { en: 'Community', ru: 'Сообщество', es: 'Comunidad' },
+        'profile.invite': { en: 'Invite Friends', ru: 'Пригласить друзей', es: 'Invitar Amigos' },
+        'profile.invite_desc': { en: 'Get 500 Dangy', ru: 'Получите 500 Дэнги', es: 'Obtén 500 Dangy' },
+        
+        // ─── Bottom Nav ───
+        'nav.home': { en: 'Home', ru: 'Главная', es: 'Inicio' },
+        'nav.learn': { en: 'Learn', ru: 'Учиться', es: 'Aprender' },
+        'nav.talk': { en: 'Talk', ru: 'Говорить', es: 'Hablar' },
+        'nav.events': { en: 'Events', ru: 'Ивенты', es: 'Eventos' },
+        'nav.profile': { en: 'Profile', ru: 'Профиль', es: 'Perfil' },
     },
     
     // Get translation

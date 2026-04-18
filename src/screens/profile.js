@@ -136,7 +136,7 @@ function renderProfile(container) {
 
                 <!-- Mini Achievements -->
                 <div class="profile__section">
-                    <div class="profile__section-title">${LangyIcons.sparkles} Achievements</div>
+                    <div class="profile__section-title">${LangyIcons.sparkles} ${i18n('profile.achievements')}</div>
                     <div class="achievements-row">
                         ${buildAchievements()}
                     </div>
@@ -144,26 +144,26 @@ function renderProfile(container) {
 
                 <!-- CEFR Certificates -->
                 <div class="profile__section">
-                    <div class="profile__section-title">${LangyIcons.trophy} My Certificates</div>
+                    <div class="profile__section-title">${LangyIcons.trophy} ${i18n('profile.certificates')}</div>
                     <div class="cefr-badges">
                         ${buildCefrBadges()}
                     </div>
                 </div>
                 <!-- Account -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Account</div>
+                    <div class="profile__section-title">${i18n('profile.account')}</div>
                     <div class="profile__option" id="prof-edit">
                         <div class="profile__option-icon" style="background:var(--primary-bg); color:var(--primary);">${LangyIcons.user}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Edit Profile</div>
-                            <div class="profile__option-desc">Name, avatar, email</div>
+                            <div class="profile__option-label">${i18n('profile.edit')}</div>
+                            <div class="profile__option-desc">${i18n('profile.edit_desc')}</div>
                         </div>
                         <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-level">
                         <div class="profile__option-icon" style="background:var(--accent-bg); color:var(--accent-dark);">${LangyIcons.barChart}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Language Level</div>
+                            <div class="profile__option-label">${i18n('profile.language_level')}</div>
                             <div class="profile__option-desc">${settings.languageLevel}</div>
                         </div>
                         <div class="profile__option-arrow">${LangyIcons.arrow}</div>
@@ -172,13 +172,13 @@ function renderProfile(container) {
 
                 <!-- Preferences -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Preferences</div>
+                    <div class="profile__section-title">${i18n('profile.preferences')}</div>
 
                     <div class="profile__option" id="prof-theme">
                         <div class="profile__option-icon" style="background:rgba(99,102,241,0.1); color:#6366F1;">${settings.darkMode ? LangyIcons.moon : LangyIcons.sun}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">${settings.darkMode ? 'Dark Mode' : 'White Mode'}</div>
-                            <div class="profile__option-desc">Current theme</div>
+                            <div class="profile__option-label">${settings.darkMode ? i18n('profile.dark_mode') : i18n('profile.light_mode')}</div>
+                            <div class="profile__option-desc">${i18n('profile.current_theme')}</div>
                         </div>
                         <div class="toggle ${settings.darkMode ? 'toggle--active' : ''}" id="toggle-dark"></div>
                     </div>
@@ -186,8 +186,8 @@ function renderProfile(container) {
                     <div class="profile__option" id="prof-notif">
                         <div class="profile__option-icon" style="background:rgba(239,68,68,0.1); color:#EF4444;">${LangyIcons.bell}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Notifications</div>
-                            <div class="profile__option-desc">Daily reminders</div>
+                            <div class="profile__option-label">${i18n('profile.notifications')}</div>
+                            <div class="profile__option-desc">${i18n('profile.reminder')}</div>
                         </div>
                         <div class="toggle ${settings.notifications ? 'toggle--active' : ''}" id="toggle-notif"></div>
                     </div>
@@ -195,8 +195,8 @@ function renderProfile(container) {
                     <div class="profile__option" id="prof-sound">
                         <div class="profile__option-icon" style="background:rgba(245,158,11,0.1); color:#F59E0B;">${LangyIcons.volume}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Sound Effects</div>
-                            <div class="profile__option-desc">In-app sounds</div>
+                            <div class="profile__option-label">${i18n('profile.sound')}</div>
+                            <div class="profile__option-desc">${i18n('profile.sounds_desc')}</div>
                         </div>
                         <div class="toggle ${settings.sound ? 'toggle--active' : ''}" id="toggle-sound"></div>
                     </div>
@@ -204,8 +204,8 @@ function renderProfile(container) {
                     <div class="profile__option" id="prof-haptics">
                         <div class="profile__option-icon" style="background:rgba(74,222,128,0.1); color:#22C55E;">${LangyIcons.vibrate}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Haptic Feedback</div>
-                            <div class="profile__option-desc">Vibration on interactions</div>
+                            <div class="profile__option-label">${i18n('profile.haptics')}</div>
+                            <div class="profile__option-desc">${i18n('profile.haptics_desc')}</div>
                         </div>
                         <div class="toggle ${settings.haptics ? 'toggle--active' : ''}" id="toggle-haptics"></div>
                     </div>
@@ -222,19 +222,19 @@ function renderProfile(container) {
 
                 <!-- Learning -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Learning</div>
+                    <div class="profile__section-title">${i18n('profile.learning')}</div>
                     <div class="profile__option" id="prof-goals">
                         <div class="profile__option-icon" style="background:var(--primary-bg); color:var(--primary);">${LangyIcons.target}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Daily Goal</div>
-                            <div class="profile__option-desc">15 minutes per day</div>
+                            <div class="profile__option-label">${i18n('profile.daily_goal')}</div>
+                            <div class="profile__option-desc">${i18n('profile.daily_goal_desc')}</div>
                         </div>
                         <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-reminder">
                         <div class="profile__option-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;">${LangyIcons.clock}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Reminder Time</div>
+                            <div class="profile__option-label">${i18n('profile.reminder')}</div>
                             <div class="profile__option-desc">${settings.dailyReminder}</div>
                         </div>
                         <div class="profile__option-arrow">${LangyIcons.arrow}</div>
@@ -243,7 +243,7 @@ function renderProfile(container) {
 
                 <!-- Support -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Support</div>
+                    <div class="profile__section-title">${i18n('profile.support')}</div>
                     <div class="profile__option" id="prof-help">
                         <div class="profile__option-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;">${LangyIcons.helpCircle}</div>
                         <div class="profile__option-text">
@@ -254,7 +254,7 @@ function renderProfile(container) {
                     <div class="profile__option" id="prof-feedback">
                         <div class="profile__option-icon" style="background:rgba(74,222,128,0.1); color:#22C55E;">${LangyIcons.messageCircle}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Send Feedback</div>
+                            <div class="profile__option-label">${i18n('profile.feedback')}</div>
                         </div>
                         <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
@@ -270,12 +270,12 @@ function renderProfile(container) {
 
                 <!-- Community -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Community</div>
+                    <div class="profile__section-title">${i18n('profile.community')}</div>
                     <div class="profile__option" id="prof-invite">
                         <div class="profile__option-icon" style="background:rgba(236,72,153,0.1); color:#EC4899;">${LangyIcons.gift}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Invite Friends</div>
-                            <div class="profile__option-desc">Get 500 Dangy</div>
+                            <div class="profile__option-label">${i18n('profile.invite')}</div>
+                            <div class="profile__option-desc">${i18n('profile.invite_desc')}</div>
                         </div>
                         <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
@@ -286,7 +286,7 @@ function renderProfile(container) {
                     <div class="profile__option" id="prof-logout">
                         <div class="profile__option-icon" style="background:var(--danger-bg); color:var(--danger);">${LangyIcons.logout}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label" style="color:var(--danger);">Log Out</div>
+                            <div class="profile__option-label" style="color:var(--danger);">${i18n('profile.logout')}</div>
                         </div>
                     </div>
                 </div>

@@ -45,7 +45,7 @@ function renderDaily(container) {
         <div class="screen screen--no-pad daily">
             <div class="nav-header">
                 <div class="nav-header__back" id="daily-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">Daily Challenge</div>
+                <div class="nav-header__title">${i18n('daily.title')}</div>
                 <div style="width:36px;"></div>
             </div>
 
@@ -55,9 +55,9 @@ function renderDaily(container) {
                 </div>
 
                 <div>
-                    <h3 style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${allDone ? LangyIcons.sparkles + ' All tasks done!' : "Today's Mission"}</h3>
+                    <h3 style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${allDone ? LangyIcons.sparkles + ' ' + i18n('daily.all_done') : i18n('daily.mission')}</h3>
                     <p class="text-secondary text-sm" style="margin-top:var(--sp-1);">
-                        ${allDone ? 'Come back tomorrow for new challenges!' : 'Complete all tasks to earn your reward!'}
+                        ${allDone ? i18n('daily.come_back') : i18n('daily.complete_all')}
                     </p>
                 </div>
 

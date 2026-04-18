@@ -17,7 +17,7 @@ function renderHomework(container) {
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="homework-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">Homework</div>
+                <div class="nav-header__title">${i18n('hw.title')}</div>
                 <div style="width:36px;"></div>
             </div>
 

@@ -37,8 +37,8 @@ function getActiveEvents() {
         // ─── WEEKLY MARATHON ───
         {
             id: 'vocab_marathon',
-            title: 'Vocabulary Marathon',
-            desc: 'Learn 50 new words this week',
+            title: i18n('events.vocab_marathon'),
+            desc: {en:'Learn 50 new words this week',ru:'Выучить 50 новых слов за неделю',es:'Aprende 50 palabras nuevas esta semana'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'],
             type: 'weekly',
             icon: LangyIcons.bookOpen,
             bg: 'linear-gradient(135deg, #F59E0B, #D97706)',
@@ -50,8 +50,8 @@ function getActiveEvents() {
         },
         {
             id: 'lesson_sprint',
-            title: 'Learning Sprint',
-            desc: 'Complete 15 lessons this week',
+            title: i18n('events.lesson_sprint'),
+            desc: {en:'Complete 15 lessons this week',ru:'Пройти 15 уроков за неделю',es:'Completa 15 lecciones esta semana'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'],
             type: 'weekly',
             icon: LangyIcons.book,
             bg: 'linear-gradient(135deg, #7C6CF6, #9D90F9)',
@@ -63,8 +63,8 @@ function getActiveEvents() {
         },
         {
             id: 'time_commitment',
-            title: 'Dedication Week',
-            desc: 'Study for 60 minutes total this week',
+            title: i18n('events.dedication'),
+            desc: {en:'Study for 60 minutes total this week',ru:'Заниматься 60 минут за неделю',es:'Estudia 60 minutos en total esta semana'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'],
             type: 'weekly',
             icon: LangyIcons.clock,
             bg: 'linear-gradient(135deg, #3B82F6, #2563EB)',
@@ -78,8 +78,8 @@ function getActiveEvents() {
         // ─── STREAK CHALLENGE ───
         {
             id: 'iron_streak',
-            title: 'Iron Will',
-            desc: 'Maintain a 7-day streak',
+            title: i18n('events.iron_streak'),
+            desc: {en:'Maintain a 7-day streak',ru:'Сохранять стрик 7 дней',es:'Mantén una racha de 7 días'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'],
             type: 'ongoing',
             icon: LangyIcons.flame,
             bg: 'linear-gradient(135deg, #EF4444, #DC2626)',
@@ -93,8 +93,8 @@ function getActiveEvents() {
         // ─── SPEED SPRINT (daily mini-game) ───
         {
             id: 'speed_sprint',
-            title: 'Speed Sprint',
-            desc: 'Answer 15 grammar questions in 90 seconds',
+            title: i18n('events.speed_sprint'),
+            desc: {en:'Answer 15 grammar questions in 90 seconds',ru:'Ответить на 15 вопросов за 90 секунд',es:'Responde 15 preguntas en 90 segundos'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'],
             type: 'minigame',
             icon: LangyIcons.zap,
             bg: 'linear-gradient(135deg, #EC4899, #DB2777)',
@@ -109,8 +109,8 @@ function getActiveEvents() {
         // ─── PERFECTION CHALLENGE ───
         {
             id: 'perfectionist',
-            title: 'Perfectionist',
-            desc: 'Complete 3 lessons with 100% accuracy this week',
+            title: i18n('events.perfectionist'),
+            desc: {en:'Complete 3 lessons with 100% accuracy this week',ru:'Пройти 3 урока со 100% точностью',es:'Completa 3 lecciones con 100% de precisión'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'],
             type: 'weekly',
             icon: LangyIcons.target,
             bg: 'linear-gradient(135deg, #10B981, #059669)',
@@ -149,13 +149,13 @@ function renderEvents(container) {
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="events-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">Events</div>
+                <div class="nav-header__title">${i18n('events.title')}</div>
                 <div class="badge badge--accent">${completedCount}/${events.length}</div>
             </div>
 
             <div style="padding: var(--sp-4) var(--sp-5); text-align:center;">
-                <h3 style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.sparkles} Active Challenges</h3>
-                <p class="text-secondary text-sm" style="margin-top:var(--sp-1);">Complete challenges to earn rewards!</p>
+                <h3 style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.sparkles} ${i18n('events.active')}</h3>
+                <p class="text-secondary text-sm" style="margin-top:var(--sp-1);">${i18n('events.complete_to_earn')}</p>
             </div>
 
             <div style="padding:0 var(--sp-4) var(--sp-8); display:flex; flex-direction:column; gap:var(--sp-4);">
@@ -222,11 +222,11 @@ function renderEventCard(event) {
                     ${event.reward.langy ? `+ ${LangyIcons.coins} ${event.reward.langy} Langy` : ''}
                 </div>
                 ${isClaimed 
-                    ? `<div class="badge badge--accent" style="font-size:var(--fs-xs);">${LangyIcons.check} Claimed</div>`
+                    ? `<div class="badge badge--accent" style="font-size:var(--fs-xs);">${LangyIcons.check} ${i18n('events.claimed')}</div>`
                     : isComplete
-                    ? `<button class="btn btn--sm event-claim-btn" data-id="${event.id}" style="background:white; color:#111; font-weight:700; border:none;">${LangyIcons.gift} Claim!</button>`
+                    ? `<button class="btn btn--sm event-claim-btn" data-id="${event.id}" style="background:white; color:#111; font-weight:700; border:none;">${LangyIcons.gift} ${i18n('events.claim')}</button>`
                     : event.action === 'sprint'
-                    ? `<button class="btn btn--sm event-sprint-btn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);">${LangyIcons.zap} Play</button>`
+                    ? `<button class="btn btn--sm event-sprint-btn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);">${LangyIcons.zap} ${i18n('events.play')}</button>`
                     : `<div class="badge" style="background:rgba(255,255,255,0.2); color:white; font-size:var(--fs-xs);">${pct}%</div>`
                 }
             </div>
@@ -254,8 +254,8 @@ function startSpeedSprint(container) {
                         <div class="sprint-timer" id="sprint-timer">${timeLeft}s</div>
                     </div>
                     <div class="sprint-header__center">
-                        <div style="font-weight:var(--fw-bold); font-size:var(--fs-lg);">Speed Sprint</div>
-                        <div class="sprint-score-display">${LangyIcons.zap} ${score}/${TOTAL_QUESTIONS} correct</div>
+                        <div style="font-weight:var(--fw-bold); font-size:var(--fs-lg);">${i18n('sprint.title')}</div>
+                        <div class="sprint-score-display">${LangyIcons.zap} ${score}/${TOTAL_QUESTIONS} ${i18n('sprint.correct')}</div>
                     </div>
                     <div class="sprint-header__right">
                         <button class="circle-btn sprint-quit" id="sprint-quit">${LangyIcons.x}</button>
@@ -376,7 +376,7 @@ function startSpeedSprint(container) {
                     text-align:center;
                 ">
                     <div style="font-size:64px; margin-bottom:var(--sp-4);">${passed ? LangyIcons.trophy : LangyIcons.target}</div>
-                    <h2>${passed ? 'Sprint Complete!' : 'Time\'s Up!'}</h2>
+                    <h2>${passed ? i18n('sprint.complete') : i18n('sprint.times_up')}</h2>
                     <p class="text-secondary" style="margin-top:var(--sp-2);">
                         ${passed ? 'You nailed every question!' : `You answered ${score}/${TOTAL_QUESTIONS} correctly`}
                     </p>
@@ -384,11 +384,11 @@ function startSpeedSprint(container) {
                     <div style="display:flex; gap:var(--sp-6); margin:var(--sp-6) 0;">
                         <div class="stat">
                             <div class="stat__value" style="color:var(--primary);">${score}/${TOTAL_QUESTIONS}</div>
-                            <div class="stat__label">Correct</div>
+                            <div class="stat__label">${i18n('sprint.correct')}</div>
                         </div>
                         <div class="stat">
                             <div class="stat__value" style="color:var(--accent-dark);">${TOTAL_TIME - timeLeft}s</div>
-                            <div class="stat__label">Time used</div>
+                            <div class="stat__label">${i18n('sprint.time_used')}</div>
                         </div>
                         <div class="stat">
                             <div class="stat__value" style="color:#F59E0B;">+${xpEarned}</div>
@@ -396,8 +396,8 @@ function startSpeedSprint(container) {
                         </div>
                     </div>
                     
-                    <button class="btn btn--primary btn--xl btn--full" id="sprint-back" style="max-width:300px;">${LangyIcons.back} Back to Events</button>
-                    <button class="btn btn--ghost btn--full" id="sprint-retry" style="max-width:300px; margin-top:var(--sp-2);">${LangyIcons.refresh} Try Again</button>
+                    <button class="btn btn--primary btn--xl btn--full" id="sprint-back" style="max-width:300px;">${LangyIcons.back} ${i18n('sprint.back')}</button>
+                    <button class="btn btn--ghost btn--full" id="sprint-retry" style="max-width:300px; margin-top:var(--sp-2);">${LangyIcons.refresh} ${i18n('sprint.try_again')}</button>
                 </div>
             </div>
         `;

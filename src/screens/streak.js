@@ -131,7 +131,7 @@ function renderStreak(container) {
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="streak-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">Streak & Stats</div>
+                <div class="nav-header__title">${i18n('streak.title')}</div>
                 <div style="width:36px;"></div>
             </div>
 
@@ -143,7 +143,7 @@ function renderStreak(container) {
                             <span style="font-size:36px; animation: streakFire 1.5s ease-in-out infinite;">${LangyIcons.flame}</span>
                             <span id="streak-count">${sd.days}</span>
                         </div>
-                        <div class="label">${sd.days === 0 ? 'Start your streak today!' : 'Day Streak'}</div>
+                        <div class="label">${sd.days === 0 ? {en:'Start your streak today!',ru:'Начните стрик сегодня!',es:'¡Empieza tu racha hoy!'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'] : i18n('home.streak')}</div>
                         ${sd.longestStreak > 0 ? `<div class="label" style="color:var(--reward-gold); margin-top:var(--sp-1);">${LangyIcons.trophy} Best: ${sd.longestStreak} days</div>` : ''}
                     </div>
 
@@ -151,19 +151,19 @@ function renderStreak(container) {
                     <div class="streak-detail__grid">
                         <div class="streak-detail__item">
                             <div class="value" style="color:var(--primary);">${sd.totalSessions}</div>
-                            <div class="label">Total Sessions</div>
+                            <div class="label">${i18n('streak.total_sessions')}</div>
                         </div>
                         <div class="streak-detail__item">
                             <div class="value" style="color:var(--accent-dark);">${totalMinutes >= 60 ? Math.floor(totalMinutes / 60) + 'h ' + (totalMinutes % 60) + 'm' : totalMinutes + 'm'}</div>
-                            <div class="label">Total Time</div>
+                            <div class="label">${i18n('streak.total_time')}</div>
                         </div>
                         <div class="streak-detail__item">
                             <div class="value" style="color:var(--reward-gold);">${sd.wordsLearned}</div>
-                            <div class="label">Words Learned</div>
+                            <div class="label">${i18n('streak.words_learned')}</div>
                         </div>
                         <div class="streak-detail__item">
                             <div class="value" style="color:${(sd.accuracy || 0) >= 75 ? 'var(--accent-dark)' : 'var(--danger)'};">${sd.accuracy || 0}%</div>
-                            <div class="label">Avg Accuracy</div>
+                            <div class="label">${i18n('streak.avg_accuracy')}</div>
                         </div>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ function renderStreak(container) {
                 <div class="card streak-freeze-card" style="margin-top:var(--sp-4);">
                     <div class="streak-freeze__header">
                         <div>
-                            <h4 style="margin:0;">${LangyIcons.shield} Streak Freeze</h4>
+                            <h4 style="margin:0;">${LangyIcons.shield} ${i18n('streak.freeze')}</h4>
                             <p style="color:var(--text-muted); font-size:var(--fs-xs); margin:var(--sp-1) 0 0;">Protects your streak when you miss a day</p>
                         </div>
                         <div class="streak-freeze__count">
