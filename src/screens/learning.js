@@ -91,7 +91,7 @@ function renderLearning(container) {
                 <header class="learning-header">
                     <div class="circle-btn" id="learning-back">${LangyIcons.back}</div>
                     <div class="learning-header__info">
-                        <div class="learning-header__unit">${mode === 'homework' ? LangyIcons.home + ' Homework' : LangyIcons.book + ` Unit ${unit.id}`}</div>
+                        <div class="learning-header__unit">${mode === 'homework' ? LangyIcons.home + ' ' + i18n('hw.title') : LangyIcons.book + ` Unit ${unit.id}`}</div>
                         <div class="learning-header__title">${unit.title}</div>
                     </div>
                     <div class="learning-progress-ring">
@@ -138,11 +138,11 @@ function renderLearning(container) {
                 <div class="lesson-intro__meta">
                     <div class="lesson-intro__tag">${LangyIcons.fileText} ${unit.grammar?.join(', ') || 'Grammar'}</div>
                     <div class="lesson-intro__tag">${LangyIcons.bookOpen} ${unit.vocabulary?.join(', ') || 'Vocabulary'}</div>
-                    <div class="lesson-intro__tag">${LangyIcons.clock} ~15 минут / minutes</div>
-                    <div class="lesson-intro__tag">${LangyIcons.target} ${totalExercises} заданий / exercises</div>
+                    <div class="lesson-intro__tag">${LangyIcons.clock} ~15 ${i18n('learn.minutes')}</div>
+                    <div class="lesson-intro__tag">${LangyIcons.target} ${totalExercises} ${i18n('learn.exercises')}</div>
                 </div>
                 <button class="btn btn--primary btn--xl btn--full lesson-intro__start" id="start-lesson">
-                    Начать урок / Start Lesson ${LangyIcons.arrowRight}
+                    ${i18n('learn.start_lesson')} ${LangyIcons.arrowRight}
                 </button>
             </div>
         `;
@@ -351,11 +351,11 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="lesson-exercise animate-in">
                 <div class="lesson-exercise__counter">
-                    Задание ${currentExerciseIdx + 1} из ${totalExercises}
+                    ${i18n('learn.exercise_counter').replace('{n}', currentExerciseIdx + 1).replace('{total}', totalExercises)}
                 </div>
                 <div id="exercise-widget"></div>
                 <button class="btn btn--ghost btn--full" id="practice-ask-ai" style="margin-top:var(--sp-3); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
-                    ${LangyIcons.messageCircle} Не понимаю / Ask AI
+                    ${LangyIcons.messageCircle} ${i18n('learn.ask_ai')}
                 </button>
             </div>
         `;
@@ -494,14 +494,14 @@ function renderLearning(container) {
 
         submitBtn.disabled = false;
         if (passed) {
-            submitBtn.innerHTML = `${LangyIcons.check} Завершить / Finish`;
+            submitBtn.innerHTML = `${LangyIcons.check} ${i18n('learn.finish')}`;
             submitBtn.onclick = () => {
                 saveLessonProgress(result);
                 _destroyed = true;
                 Router.navigate('home');
             };
         } else {
-            submitBtn.innerHTML = `${LangyIcons.refresh} Попробовать снова / Try Again`;
+            submitBtn.innerHTML = `${LangyIcons.refresh} ${i18n('learn.try_again')}`;
             submitBtn.onclick = () => updateUI();
         }
     }
@@ -530,7 +530,7 @@ function renderLearning(container) {
         // Build weak topics display for checkpoints
         const weakTopicsHtml = isCheckpoint && weakUnits.length > 0 ? `
             <div class="qr-weak-topics" style="margin-top:var(--sp-4); padding:var(--sp-4); background:var(--danger-bg); border-radius:var(--radius-lg);">
-                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-2); color:var(--danger); display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} Слабые темы / Weak Topics:</div>
+                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-2); color:var(--danger); display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} ${i18n('learn.weak_topics')}:</div>
                 ${weakUnits.map(u => `<div style="padding:var(--sp-1) 0; color:var(--text-secondary);">• Unit ${u.id}: ${u.title}</div>`).join('')}
             </div>
         ` : '';
@@ -538,7 +538,7 @@ function renderLearning(container) {
         // Quick Review button for checkpoints with weak areas
         const qrButton = isCheckpoint && weakUnits.length > 0 ? `
             <button class="btn btn--primary btn--xl btn--full" id="start-quick-review" style="margin-top:var(--sp-4); background:linear-gradient(135deg, var(--primary), var(--accent-dark)); border:none;">
-                ${LangyIcons.lightning} Повторить слабые темы / Quick Review
+                ${LangyIcons.lightning} ${i18n('learn.quick_review')}
             </button>
         ` : '';
 
@@ -546,21 +546,21 @@ function renderLearning(container) {
             <div class="lesson-summary animate-in">
                 <div class="lesson-summary__icon">${score >= 70 ? LangyIcons.sparkles : LangyIcons.flame}</div>
                 <h2 class="lesson-summary__title">
-                    ${score >= 70 ? 'Отлично! / Excellent!' : 'Хорошая попытка! / Good try!'}
+                    ${score >= 70 ? i18n('learn.excellent') : i18n('learn.good_try')}
                 </h2>
 
                 <div class="lesson-summary__stats">
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">${score}%</span>
-                        <span class="lesson-summary__stat-label">Точность / Accuracy</span>
+                        <span class="lesson-summary__stat-label">${i18n('learn.accuracy')}</span>
                     </div>
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">${correctAnswers}/${totalExercises}</span>
-                        <span class="lesson-summary__stat-label">Правильно / Correct</span>
+                        <span class="lesson-summary__stat-label">${i18n('learn.correct')}</span>
                     </div>
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">${duration}m</span>
-                        <span class="lesson-summary__stat-label">Время / Time</span>
+                        <span class="lesson-summary__stat-label">${i18n('learn.time')}</span>
                     </div>
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">+${xpEarned}</span>
@@ -572,9 +572,9 @@ function renderLearning(container) {
                 ${qrButton}
 
                 <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
-                    ${LangyIcons.home} На главную / Home
+                    ${LangyIcons.home} ${i18n('results.home')}
                 </button>
-                ${score < 70 ? `<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.refresh} Повторить / Retry</button>` : ''}
+                ${score < 70 ? `<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.refresh} ${i18n('learn.try_again')}</button>` : ''}
             </div>
         `;
 
@@ -709,7 +709,7 @@ function renderLearning(container) {
                 <div class="qr-header">
                     <div class="qr-header__badge" style="display:flex; align-items:center; gap:4px;">${LangyIcons.lightning} Quick Review</div>
                     <div class="qr-header__topic" style="display:flex; align-items:center; gap:4px;">${LangyIcons.bookOpen} ${weakUnit.title}</div>
-                    <div class="qr-header__progress">${qrCurrentUnitIdx + 1}/${qrWeakUnits.length} тем</div>
+                    <div class="qr-header__progress">${qrCurrentUnitIdx + 1}/${qrWeakUnits.length} ${i18n('learn.topics')}</div>
                 </div>
                 <div class="teach-slide__progress">
                     ${slides.map((_, i) => `<div class="teach-dot ${i === qrSlideIdx ? 'teach-dot--active' : i < qrSlideIdx ? 'teach-dot--done' : ''}"></div>`).join('')}
@@ -723,7 +723,7 @@ function renderLearning(container) {
                 ${slideContent ? `<div class="teach-content">${slideContent}</div>` : ''}
                 <div class="teach-actions">
                     <button class="btn btn--primary btn--xl btn--full" id="qr-next" style="display:none;">
-                        ${isLast ? `<span style="display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} К упражнениям / Practice</span>` : 'Далее / Next'}
+                        ${isLast ? `<span style="display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} ${i18n('learn.to_practice')}</span>` : i18n('learn.next')}
                     </button>
                 </div>
             </div>
@@ -777,7 +777,7 @@ function renderLearning(container) {
                     <div class="qr-header__topic" style="display:flex; align-items:center; gap:4px;">${LangyIcons.fileText} ${weakUnit.title}</div>
                 </div>
                 <div class="lesson-exercise__counter">
-                    Задание ${qrExerciseIdx + 1} из ${qrExercises.length}
+                    ${i18n('learn.exercise_counter').replace('{n}', qrExerciseIdx + 1).replace('{total}', qrExercises.length)}
                 </div>
                 <div id="qr-exercise-widget"></div>
             </div>
@@ -820,7 +820,7 @@ function renderLearning(container) {
                 </div>
                 <div class="lesson-summary__icon">${passed ? LangyIcons.check : LangyIcons.bookOpen}</div>
                 <h2 class="lesson-summary__title">
-                    ${passed ? 'Тема усвоена! / Topic Mastered!' : needsTheory ? 'Давай повторим теорию / Let\'s review theory' : 'Попробуй ещё раз / Try again!'}
+                    ${passed ? i18n('learn.topic_mastered') : needsTheory ? i18n('learn.review_theory') : i18n('learn.try_again')}
                 </h2>
                 <div class="lesson-summary__stats">
                     <div class="lesson-summary__stat">
@@ -833,7 +833,7 @@ function renderLearning(container) {
                     </div>
                 </div>
                 <button class="btn btn--primary btn--xl btn--full" id="qr-continue" style="margin-top:var(--sp-6);">
-                    ${passed ? `${LangyIcons.arrowRight} Далее / Next Topic` : needsTheory ? `<span style="display:flex; align-items:center; gap:8px;">${LangyIcons.bookOpen} Повторить теорию / Review Theory</span>` : `<span style="display:flex; align-items:center; gap:8px;">${LangyIcons.refresh} Ещё раз / Retry</span>`}
+                    ${passed ? `${LangyIcons.arrowRight} ${i18n('learn.next_topic')}` : needsTheory ? `<span style="display:flex; align-items:center; gap:8px;">${LangyIcons.bookOpen} ${i18n('learn.review_theory')}</span>` : `<span style="display:flex; align-items:center; gap:8px;">${LangyIcons.refresh} ${i18n('learn.try_again')}</span>`}
                 </button>
             </div>
         `;
@@ -870,14 +870,13 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="lesson-summary animate-in">
                 <div class="lesson-summary__icon" style="font-size:72px;">${LangyIcons.trophy}</div>
-                <h2 class="lesson-summary__title">Все темы усвоены!</h2>
-                <h3 style="color:var(--text-secondary); font-weight:var(--fw-medium); margin-top:var(--sp-1);">All topics mastered!</h3>
+                <h2 class="lesson-summary__title">${i18n('learn.all_mastered')}</h2>
                 <div style="margin-top:var(--sp-4); padding:var(--sp-4); background:var(--primary-bg); border-radius:var(--radius-lg); text-align:center;">
-                    <div style="font-size:var(--fs-sm); color:var(--text-secondary);">Повторено тем / Topics reviewed</div>
+                    <div style="font-size:var(--fs-sm); color:var(--text-secondary);">${i18n('learn.topics_reviewed')}</div>
                     <div style="font-size:var(--fs-2xl); font-weight:var(--fw-black); color:var(--primary);">${qrWeakUnits.length}</div>
                 </div>
                 <button class="btn btn--primary btn--xl btn--full" id="qr-finish" style="margin-top:var(--sp-6);">
-                    <span style="display:flex; align-items:center; gap:8px;">${LangyIcons.rocket} Продолжить курс / Continue Course</span>
+                    <span style="display:flex; align-items:center; gap:8px;">${LangyIcons.rocket} ${i18n('home.continue')}</span>
                 </button>
             </div>
         `;

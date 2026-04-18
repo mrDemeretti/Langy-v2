@@ -234,7 +234,7 @@ function showStreakOverlay(type, days, freezesLeft) {
                 backdrop-filter:blur(4px);
                 transition: all 0.2s ease;
                 font-family: inherit;
-            ">Got it</button>
+            ">${typeof i18n!=='undefined'?i18n('common.got_it'):'Got it'}</button>
         </div>
     `;
 
