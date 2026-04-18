@@ -489,3 +489,35 @@ function resetState() {
         LangyState[key] = defaults[key];
     });
 }
+
+// ─── NAMESPACE: LangyApp ───
+// Organizes all loose global functions under a single, discoverable API.
+// Old function names still work (backward compat) but new code should use LangyApp.xxx
+const LangyApp = {
+    // State management
+    getState,
+    setState,
+    getDefaultState,
+    getStateSnapshot,
+    loadFromSnapshot,
+    resetState,
+    
+    // Session & Streak
+    recordSession,
+    getStreakReward,
+    
+    // Leveling
+    checkLevelUp,
+    showLevelUpOverlay,
+    
+    // Events
+    updateEventProgress,
+
+    // Utility: get local date string (YYYY-MM-DD) — single source of truth
+    getLocalDateString(date) {
+        const d = date || new Date();
+        return d.getFullYear() + '-' + 
+            String(d.getMonth() + 1).padStart(2, '0') + '-' + 
+            String(d.getDate()).padStart(2, '0');
+    }
+};
