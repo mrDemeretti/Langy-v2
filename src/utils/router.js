@@ -114,7 +114,67 @@ const Router = {
                 renderFn(container);
                 window.scrollTo(0, 0);
             });
+
+            // Update bottom nav
+            this._updateBottomNav(hash);
         }
+    },
+
+    // ─── BOTTOM NAV BAR ───
+    // Screens where bottom nav should be hidden
+    _hideNavRoutes: new Set(['auth', 'onboarding', 'learning', 'placement-test', 'mascot-select', 'interests', 'subscription']),
+    
+    _navTabs: [
+        { route: 'home',    icon: 'home',          labelKey: 'nav.home' },
+        { route: 'results', icon: 'barChart',      labelKey: 'nav.learn' },
+        { route: 'talk',    icon: 'messageCircle', labelKey: 'nav.talk' },
+        { route: 'profile', icon: 'user',          labelKey: 'nav.profile' },
+    ],
+
+    _updateBottomNav(currentHash) {
+        let nav = document.getElementById('bottom-nav');
+        
+        // Hide nav on certain screens
+        if (this._hideNavRoutes.has(currentHash)) {
+            if (nav) nav.style.display = 'none';
+            document.getElementById('screen-container')?.classList.remove('has-bottom-nav');
+            return;
+        }
+
+        // Create nav if it doesn't exist
+        if (!nav) {
+            nav = document.createElement('nav');
+            nav.id = 'bottom-nav';
+            nav.className = 'bottom-nav';
+            document.getElementById('app').appendChild(nav);
+        }
+
+        nav.style.display = '';
+        document.getElementById('screen-container')?.classList.add('has-bottom-nav');
+
+        // Render tabs
+        nav.innerHTML = this._navTabs.map(tab => {
+            const isActive = currentHash === tab.route;
+            const icon = typeof LangyIcons !== 'undefined' ? LangyIcons[tab.icon] : '';
+            const label = typeof i18n !== 'undefined' ? i18n(tab.labelKey) : tab.route;
+            return `
+                <button class="bottom-nav__tab ${isActive ? 'bottom-nav__tab--active' : ''}" 
+                        data-route="${tab.route}" aria-label="${label}">
+                    <span class="bottom-nav__icon">${icon}</span>
+                    <span class="bottom-nav__label">${label}</span>
+                </button>
+            `;
+        }).join('');
+
+        // Bind click handlers
+        nav.querySelectorAll('.bottom-nav__tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const route = btn.dataset.route;
+                if (route !== currentHash) {
+                    Router.navigate(route);
+                }
+            });
+        });
     },
 
     back() {

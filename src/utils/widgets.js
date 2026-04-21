@@ -14,7 +14,7 @@ const LangyWidgets = {
         const el = document.createElement('div');
         el.className = 'widget widget--word-shuffle animate-in';
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Составьте предложение из слов / Arrange the words'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.arrange_words')}</div>
             <div class="widget__prompt">${data.prompt || ''}</div>
             <div class="widget__answer-zone" id="ws-answer"></div>
             <div class="widget__word-bank" id="ws-bank"></div>
@@ -33,7 +33,7 @@ const LangyWidgets = {
 
             answerZone.innerHTML = selected.length ? selected.map((w, i) => `
                 <button class="word-chip word-chip--selected" data-word="${w}" data-idx="${i}">${w}</button>
-            `).join('') : '<span class="widget__placeholder">Нажмите на слова... / Tap the words...</span>';
+            `).join('') : `<span class="widget__placeholder">${i18n('widget.tap_words')}</span>`;
 
             // Bank click → add to answer
             bankZone.querySelectorAll('.word-chip').forEach(chip => {
@@ -59,7 +59,7 @@ const LangyWidgets = {
         // Check button
         const checkBtn = document.createElement('button');
         checkBtn.className = 'btn btn--primary btn--full widget__check';
-        checkBtn.textContent = 'Проверить / Check';
+        checkBtn.textContent = i18n('widget.check');
         checkBtn.onclick = () => {
             const isCorrect = JSON.stringify(selected) === JSON.stringify(correctOrder);
             this._showFeedback(el, isCorrect, correctOrder.join(' '));
@@ -73,7 +73,7 @@ const LangyWidgets = {
         const el = document.createElement('div');
         el.className = 'widget widget--fill-bubble animate-in';
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Выберите правильный ответ / Choose the correct answer'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.choose_answer')}</div>
             <div class="widget__sentence">${data.sentence.replace('___', '<span class="widget__blank">___</span>')}</div>
             <div class="widget__bubbles">
                 ${data.options.map((opt, i) => `
@@ -122,7 +122,7 @@ const LangyWidgets = {
         let errors = 0;
 
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Соедините пары / Match the pairs'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.match_pairs')}</div>
             <div class="match-grid">
                 <div class="match-col" id="match-left"></div>
                 <div class="match-col" id="match-right"></div>
@@ -171,7 +171,7 @@ const LangyWidgets = {
 
                     if (matched.size === pairs.length) {
                         const isCorrect = errors <= 1;
-                        LangyWidgets._showFeedback(el, isCorrect, `${errors} ошибок`);
+                        LangyWidgets._showFeedback(el, isCorrect, `${errors} ${i18n('widget.errors')}`);
                         setTimeout(() => onComplete(isCorrect), 1200);
                     }
                 };
@@ -185,11 +185,11 @@ const LangyWidgets = {
         const el = document.createElement('div');
         el.className = 'widget widget--listen-type animate-in';
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Прослушайте и введите / Listen and type'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.listen_type')}</div>
             <div class="listen-controls">
                 <button class="listen-btn" id="lt-play">
                     <span class="listen-btn__icon">🔊</span>
-                    <span>Прослушать / Listen</span>
+                    <span>${i18n('widget.listen')}</span>
                 </button>
                 <div class="listen-speed">
                     <button class="speed-btn is-active" data-speed="1">1x</button>
@@ -197,7 +197,7 @@ const LangyWidgets = {
                 </div>
             </div>
             <div class="widget__input-row">
-                <input type="text" class="input widget__text-input" id="lt-input" placeholder="Введите услышанное..." autocomplete="off">
+                <input type="text" class="input widget__text-input" id="lt-input" placeholder="${i18n('widget.type_heard')}" autocomplete="off">
                 <button class="btn btn--primary btn--icon" id="lt-check">→</button>
             </div>
             <div class="widget__hint" id="lt-hint" style="display:none;">
@@ -267,11 +267,11 @@ const LangyWidgets = {
         const el = document.createElement('div');
         el.className = 'widget widget--type-translation animate-in';
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Переведите / Translate'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.translate')}</div>
             <div class="widget__source-text">${data.sourceText}</div>
             <div class="widget__lang-indicator">${data.fromLang || 'RU'} → ${data.toLang || 'EN'}</div>
             <div class="widget__input-row">
-                <input type="text" class="input widget__text-input" id="tt-input" placeholder="Ваш перевод..." autocomplete="off">
+                <input type="text" class="input widget__text-input" id="tt-input" placeholder="${i18n('widget.your_translation')}" autocomplete="off">
                 <button class="btn btn--primary btn--icon" id="tt-check">→</button>
             </div>
         `;
@@ -302,16 +302,16 @@ const LangyWidgets = {
         const el = document.createElement('div');
         el.className = 'widget widget--speak-aloud animate-in';
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Произнесите вслух / Say it aloud'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.say_aloud')}</div>
             <div class="widget__target-phrase">"${data.phrase}"</div>
             <div class="speak-controls">
-                <button class="speak-listen-btn" id="sa-listen" title="Послушать">🔊</button>
+                <button class="speak-listen-btn" id="sa-listen" title="${i18n('widget.listen')}">🔊</button>
                 <button class="speak-record-btn" id="sa-record">
                     <span class="speak-record-btn__inner">🎤</span>
                 </button>
-                <button class="speak-skip-btn" id="sa-skip" title="Пропустить">⏭</button>
+                <button class="speak-skip-btn" id="sa-skip" title="${i18n('learn.skip')}">⏭</button>
             </div>
-            <div class="speak-status" id="sa-status">Нажмите 🎤 чтобы начать / Tap 🎤 to start</div>
+            <div class="speak-status" id="sa-status">${i18n('widget.tap_mic')}</div>
             <div class="speak-transcript" id="sa-transcript"></div>
         `;
         container.appendChild(el);
@@ -336,7 +336,7 @@ const LangyWidgets = {
         let recognition = null;
         recordBtn.onclick = () => {
             if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-                status.textContent = 'Speech recognition не поддерживается в этом браузере';
+                status.textContent = i18n('widget.speech_not_supported');
                 setTimeout(() => onComplete('skipped'), 1500); // Pass without penalty
                 return;
             }
@@ -348,7 +348,7 @@ const LangyWidgets = {
 
             recognition.onstart = () => {
                 recordBtn.classList.add('speak-record-btn--active');
-                status.textContent = 'Говорите... / Speaking...';
+                status.textContent = i18n('widget.speaking');
             };
 
             recognition.onresult = (event) => {
@@ -372,7 +372,7 @@ const LangyWidgets = {
             };
 
             recognition.onerror = () => {
-                status.textContent = 'Не удалось распознать. Попробуйте ещё раз.';
+                status.textContent = i18n('widget.recognition_failed');
                 recordBtn.classList.remove('speak-record-btn--active');
             };
 
@@ -395,7 +395,7 @@ const LangyWidgets = {
         const el = document.createElement('div');
         el.className = 'widget widget--read-answer animate-in';
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Прочитайте и ответьте / Read and answer'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.read_answer')}</div>
             <div class="widget__reading-passage">${data.passage}</div>
             <div class="widget__question">${data.question}</div>
             <div class="widget__bubbles">
@@ -430,7 +430,7 @@ const LangyWidgets = {
         const el = document.createElement('div');
         el.className = 'widget widget--image-choice animate-in';
         el.innerHTML = `
-            <div class="widget__label">${data.instruction || 'Выберите правильную картинку / Choose the correct image'}</div>
+            <div class="widget__label">${data.instruction || i18n('widget.choose_image')}</div>
             <div class="widget__prompt" style="font-size:24px; text-align:center;">"${data.word}"</div>
             <div class="image-choice-grid">
                 ${data.options.map((opt, i) => `
@@ -466,8 +466,8 @@ const LangyWidgets = {
         const fb = document.createElement('div');
         fb.className = `widget__feedback widget__feedback--${isCorrect ? 'correct' : 'wrong'} animate-in`;
         fb.innerHTML = isCorrect
-            ? `<span class="widget__feedback-icon">✅</span> <span>Правильно! / Correct!</span>`
-            : `<span class="widget__feedback-icon">❌</span> <span>Ответ: <strong>${correctAnswer}</strong></span>`;
+            ? `<span class="widget__feedback-icon">✅</span> <span>${i18n('widget.correct')}</span>`
+            : `<span class="widget__feedback-icon">❌</span> <span>${i18n('widget.answer_was')}: <strong>${correctAnswer}</strong></span>`;
         widgetEl.appendChild(fb);
 
         if (!isCorrect && widgetEl.animate) {
