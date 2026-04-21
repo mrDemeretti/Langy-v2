@@ -437,7 +437,7 @@ function showLevelPicker() {
 }
 
 function showAvatarPicker() {
-    const avatars = ['🦊', '🐱', '🐶', '🦁', '🐼', '🐸', '🦄', '🐙', '🦋', '🐝', '🐳', '🦖', '🦉', '🐺', '🐨', '🦈', '👑', '🌸', '🔥', '⭐', '💎', '🎯', '🎨', '🎸', '🚀', '⚡', '🌙', '🪐', '🧠', '💜'];
+    const avatars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Z', '1', '7', '42', 'AI', 'EN', 'OK', 'GO', 'YO', 'LG', 'QA'];
     const colors = [
         { bg: 'linear-gradient(135deg, #10B981, #059669)', label: 'Emerald' },
         { bg: 'linear-gradient(135deg, #6366F1, #4F46E5)', label: 'Indigo' },

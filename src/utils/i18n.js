@@ -299,7 +299,7 @@ const LangyI18n = {
         'widget.translate': { en: 'Translate', ru: 'Переведите', es: 'Traduce' },
         'widget.your_translation': { en: 'Your translation...', ru: 'Ваш перевод...', es: 'Tu traducción...' },
         'widget.say_aloud': { en: 'Say it aloud', ru: 'Произнесите вслух', es: 'Dilo en voz alta' },
-        'widget.tap_mic': { en: 'Tap 🎤 to start', ru: 'Нажмите 🎤 чтобы начать', es: 'Toca 🎤 para empezar' },
+        'widget.tap_mic': { en: 'Tap the mic to start', ru: 'Нажмите на микрофон', es: 'Toca el micro para empezar' },
         'widget.speech_not_supported': { en: 'Speech recognition is not supported in this browser', ru: 'Распознавание речи не поддерживается в этом браузере', es: 'El reconocimiento de voz no es compatible con este navegador' },
         'widget.speaking': { en: 'Speaking...', ru: 'Говорите...', es: 'Habla...' },
         'widget.recognition_failed': { en: 'Could not recognize. Try again.', ru: 'Не удалось распознать. Попробуйте ещё раз.', es: 'No se pudo reconocer. Inténtalo de nuevo.' },

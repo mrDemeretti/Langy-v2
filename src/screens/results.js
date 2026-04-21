@@ -163,7 +163,7 @@ function renderResults(container) {
                             progress.lessonHistory.slice().reverse().slice(0, 10).map(lesson => `
                                 <div class="card" style="display:flex; align-items:center; justify-content:space-between; padding:var(--sp-3) var(--sp-4);">
                                     <div style="display:flex; align-items:center; gap:var(--sp-2);">
-                                        <span style="font-size:16px;">${lesson.icon || (lesson.status === 'done' ? LangyIcons.check : LangyIcons.alertTriangle)}</span>
+                                        <span style="font-size:16px;">${lesson.status === 'done' ? LangyIcons.checkCircle : LangyIcons.alertTriangle}</span>
                                         <div>
                                             <div style="font-weight:var(--fw-medium);">${lesson.title}</div>
                                             <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">${lesson.date || ''} · ${lesson.grade || ''}</div>

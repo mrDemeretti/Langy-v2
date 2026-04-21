@@ -329,19 +329,19 @@ function showOnboardingTooltips(container) {
     const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
     const tips = {
         en: [
-            { sel: '.home__streak', text: 'This is your streak! Visit daily to keep it going 🔥', pos: 'bottom' },
-            { sel: '.action-card', text: 'Tap here to start your first lesson! 📚', pos: 'top' },
-            { sel: '#bottom-nav', text: 'Swipe or tap to navigate between screens ←→', pos: 'top' },
+            { sel: '.home__streak', text: 'This is your streak! Visit daily to keep it going.', pos: 'bottom' },
+            { sel: '.action-card', text: 'Tap here to start your first lesson!', pos: 'top' },
+            { sel: '#bottom-nav', text: 'Swipe or tap to navigate between screens.', pos: 'top' },
         ],
         ru: [
-            { sel: '.home__streak', text: 'Это твой стрик! Заходи каждый день, чтобы не потерять 🔥', pos: 'bottom' },
-            { sel: '.action-card', text: 'Нажми сюда, чтобы начать первый урок! 📚', pos: 'top' },
-            { sel: '#bottom-nav', text: 'Свайпай или нажимай для навигации ←→', pos: 'top' },
+            { sel: '.home__streak', text: 'Это твой стрик! Заходи каждый день, чтобы не потерять.', pos: 'bottom' },
+            { sel: '.action-card', text: 'Нажми сюда, чтобы начать первый урок!', pos: 'top' },
+            { sel: '#bottom-nav', text: 'Свайпай или нажимай для навигации.', pos: 'top' },
         ],
         es: [
-            { sel: '.home__streak', text: '¡Esta es tu racha! Entra cada día para mantenerla 🔥', pos: 'bottom' },
-            { sel: '.action-card', text: '¡Toca aquí para empezar tu primera lección! 📚', pos: 'top' },
-            { sel: '#bottom-nav', text: 'Desliza o toca para navegar entre pantallas ←→', pos: 'top' },
+            { sel: '.home__streak', text: '¡Esta es tu racha! Entra cada día para mantenerla.', pos: 'bottom' },
+            { sel: '.action-card', text: '¡Toca aquí para empezar tu primera lección!', pos: 'top' },
+            { sel: '#bottom-nav', text: 'Desliza o toca para navegar entre pantallas.', pos: 'top' },
         ]
     };
 

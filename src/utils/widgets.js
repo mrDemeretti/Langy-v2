@@ -305,11 +305,11 @@ const LangyWidgets = {
             <div class="widget__label">${data.instruction || i18n('widget.say_aloud')}</div>
             <div class="widget__target-phrase">"${data.phrase}"</div>
             <div class="speak-controls">
-                <button class="speak-listen-btn" id="sa-listen" title="${i18n('widget.listen')}">🔊</button>
+                <button class="speak-listen-btn" id="sa-listen" title="${i18n('widget.listen')}">${LangyIcons.play}</button>
                 <button class="speak-record-btn" id="sa-record">
-                    <span class="speak-record-btn__inner">🎤</span>
+                    <span class="speak-record-btn__inner">${LangyIcons.mic || LangyIcons.play}</span>
                 </button>
-                <button class="speak-skip-btn" id="sa-skip" title="${i18n('learn.skip')}">⏭</button>
+                <button class="speak-skip-btn" id="sa-skip" title="${i18n('learn.skip')}">${LangyIcons.arrow}</button>
             </div>
             <div class="speak-status" id="sa-status">${i18n('widget.tap_mic')}</div>
             <div class="speak-transcript" id="sa-transcript"></div>
@@ -466,8 +466,8 @@ const LangyWidgets = {
         const fb = document.createElement('div');
         fb.className = `widget__feedback widget__feedback--${isCorrect ? 'correct' : 'wrong'} animate-in`;
         fb.innerHTML = isCorrect
-            ? `<span class="widget__feedback-icon">✅</span> <span>${i18n('widget.correct')}</span>`
-            : `<span class="widget__feedback-icon">❌</span> <span>${i18n('widget.answer_was')}: <strong>${correctAnswer}</strong></span>`;
+            ? `<span class="widget__feedback-icon">${LangyIcons.checkCircle}</span> <span>${i18n('widget.correct')}</span>`
+            : `<span class="widget__feedback-icon">${LangyIcons.x}</span> <span>${i18n('widget.answer_was')}: <strong>${correctAnswer}</strong></span>`;
         widgetEl.appendChild(fb);
 
         if (!isCorrect && widgetEl.animate) {
