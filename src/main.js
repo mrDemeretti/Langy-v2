@@ -19,12 +19,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Global UI Interaction Sound Listener
+    // Global UI Interaction Sound + Haptic Listener
     document.body.addEventListener('click', (e) => {
         // Find if the click hit an interactive element
-        const isInteractive = e.target.closest('.btn, .circle-btn, .profile__option, .action-card, .card--interactive, .home__streak, .coin, .nav-header__back');
-        if (isInteractive && typeof AudioUtils !== 'undefined') {
-            AudioUtils.playPop();
+        const isInteractive = e.target.closest('.btn, .circle-btn, .profile__option, .action-card, .card--interactive, .home__streak, .coin, .nav-header__back, .bottom-nav__tab');
+        if (isInteractive) {
+            if (typeof AudioUtils !== 'undefined') AudioUtils.playPop();
+            if (typeof Anim !== 'undefined') Anim.haptic('light');
         }
     });
 

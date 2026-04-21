@@ -306,6 +306,115 @@ function renderHome(container) {
     setTimeout(() => {
         Anim.staggerChildren(container, '.action-card, .circle-btn', 80);
     }, 100);
+
+    // Pull-to-refresh
+    const homeScreen = container.querySelector('.home');
+    if (homeScreen && typeof Anim !== 'undefined') {
+        Anim.initPullToRefresh(homeScreen, () => {
+            return new Promise(resolve => {
+                renderHome(container);
+                resolve();
+            });
+        });
+    }
+
+    // ─── First-Time Onboarding Tooltips ───
+    if (!localStorage.getItem('langy_onboarding_done')) {
+        setTimeout(() => showOnboardingTooltips(container), 800);
+    }
+}
+
+// ─── ONBOARDING TOOLTIP TOUR ───
+function showOnboardingTooltips(container) {
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const tips = {
+        en: [
+            { sel: '.home__streak', text: 'This is your streak! Visit daily to keep it going 🔥', pos: 'bottom' },
+            { sel: '.action-card', text: 'Tap here to start your first lesson! 📚', pos: 'top' },
+            { sel: '#bottom-nav', text: 'Swipe or tap to navigate between screens ←→', pos: 'top' },
+        ],
+        ru: [
+            { sel: '.home__streak', text: 'Это твой стрик! Заходи каждый день, чтобы не потерять 🔥', pos: 'bottom' },
+            { sel: '.action-card', text: 'Нажми сюда, чтобы начать первый урок! 📚', pos: 'top' },
+            { sel: '#bottom-nav', text: 'Свайпай или нажимай для навигации ←→', pos: 'top' },
+        ],
+        es: [
+            { sel: '.home__streak', text: '¡Esta es tu racha! Entra cada día para mantenerla 🔥', pos: 'bottom' },
+            { sel: '.action-card', text: '¡Toca aquí para empezar tu primera lección! 📚', pos: 'top' },
+            { sel: '#bottom-nav', text: 'Desliza o toca para navegar entre pantallas ←→', pos: 'top' },
+        ]
+    };
+
+    const localTips = tips[lang] || tips.en;
+    let currentTip = 0;
+
+    function showTip(idx) {
+        // Remove previous
+        document.querySelectorAll('.onboarding-tooltip, .onboarding-overlay').forEach(e => e.remove());
+        
+        if (idx >= localTips.length) {
+            localStorage.setItem('langy_onboarding_done', '1');
+            return;
+        }
+
+        const tip = localTips[idx];
+        const target = document.querySelector(tip.sel);
+        if (!target) { showTip(idx + 1); return; }
+
+        // Overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'onboarding-overlay';
+        document.body.appendChild(overlay);
+
+        // Tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = `onboarding-tooltip onboarding-tooltip--${tip.pos}`;
+        
+        const stepLabel = lang === 'ru' ? `${idx + 1} из ${localTips.length}` 
+                        : lang === 'es' ? `${idx + 1} de ${localTips.length}` 
+                        : `${idx + 1} of ${localTips.length}`;
+        const nextLabel = idx < localTips.length - 1 
+                        ? (lang === 'ru' ? 'Далее' : lang === 'es' ? 'Siguiente' : 'Next')
+                        : (lang === 'ru' ? 'Готово!' : lang === 'es' ? '¡Listo!' : 'Done!');
+        
+        tooltip.innerHTML = `
+            <div class="onboarding-tooltip__text">${tip.text}</div>
+            <div class="onboarding-tooltip__footer">
+                <span class="onboarding-tooltip__step">${stepLabel}</span>
+                <button class="onboarding-tooltip__btn">${nextLabel}</button>
+            </div>
+        `;
+        document.body.appendChild(tooltip);
+
+        // Position tooltip near target
+        const rect = target.getBoundingClientRect();
+        if (tip.pos === 'bottom') {
+            tooltip.style.top = `${rect.bottom + 12}px`;
+        } else {
+            tooltip.style.bottom = `${window.innerHeight - rect.top + 12}px`;
+        }
+        tooltip.style.left = `${Math.max(16, Math.min(rect.left, window.innerWidth - 300))}px`;
+
+        // Highlight target
+        target.style.position = 'relative';
+        target.style.zIndex = '10001';
+
+        // Next button
+        tooltip.querySelector('.onboarding-tooltip__btn').addEventListener('click', () => {
+            target.style.zIndex = '';
+            Anim.haptic('light');
+            showTip(idx + 1);
+        });
+
+        // Clicking overlay skips all
+        overlay.addEventListener('click', () => {
+            target.style.zIndex = '';
+            document.querySelectorAll('.onboarding-tooltip, .onboarding-overlay').forEach(e => e.remove());
+            localStorage.setItem('langy_onboarding_done', '1');
+        });
+    }
+
+    showTip(0);
 }
 
 Router.register('home', renderHome);

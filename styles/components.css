@@ -665,3 +665,59 @@
     padding-bottom: 72px !important;
 }
 
+/* ---- Onboarding Tooltip Tour ---- */
+.onboarding-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.onboarding-tooltip {
+    position: fixed;
+    z-index: 10002;
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-xl);
+    padding: var(--sp-4) var(--sp-5);
+    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 0 0 4px var(--primary-bg);
+    animation: scaleIn 0.3s var(--ease-spring);
+}
+
+.onboarding-tooltip__text {
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: var(--sp-3);
+}
+
+.onboarding-tooltip__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.onboarding-tooltip__step {
+    font-size: var(--fs-xs);
+    color: var(--text-tertiary);
+    font-weight: var(--fw-medium);
+}
+
+.onboarding-tooltip__btn {
+    background: var(--primary);
+    color: var(--text-inverse);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: var(--sp-2) var(--sp-4);
+    font-family: var(--font);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-out);
+}
+
+.onboarding-tooltip__btn:active {
+    transform: scale(0.95);
+}

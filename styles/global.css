@@ -358,3 +358,53 @@ img, svg { display: block; max-width: 100%; }
     stroke-width: 1.5px;
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
 }
+
+/* ---- Skeleton Loading ---- */
+.skeleton {
+    background: linear-gradient(90deg, var(--bg-alt) 25%, var(--border-light) 50%, var(--bg-alt) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    margin-bottom: 12px;
+    border: 1px solid var(--border-light);
+}
+
+.skeleton-screen {
+    padding: var(--sp-6);
+}
+
+/* ---- Pull to Refresh ---- */
+.pull-refresh-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: height 0.1s ease;
+}
+
+.pull-refresh-spinner {
+    color: var(--primary);
+    font-size: 24px;
+    transition: transform 0.1s ease;
+}
+
+.pull-refresh--loading .pull-refresh-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* ---- Reduced Motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
