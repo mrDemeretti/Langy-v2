@@ -18,7 +18,7 @@ const LangyAI = {
         const langInstructions = {
             en: 'Explain concepts in English. For beginners, use simple English.',
             ru: 'IMPORTANT: The student speaks Russian. Give ALL explanations, instructions, and feedback in Russian. Teach English vocabulary and grammar, but explain everything in Russian. Example: "Слово \\"book\\" означает \\"книга\\". Повторите: I have a book."',
-            es: 'IMPORTANT: The student speaks Spanish. Give ALL explanations, instructions, and feedback in Spanish. Teach English vocabulary and grammar, but explain everything in Spanish. Example: "La palabra \\"book\\" significa \\"libro\\". Repita: I have a book."'
+            es: 'IMPORTANT: The student speaks Spanish. Give ALL explanations, instructions, and feedback in Spanish. Teach English vocabulary and grammar, but explain everything in Spanish. Example: "La palabra \\"book\\" significa \\"libro\\". Repita: I have a book."',
         };
 
         return `You are "Langy Teacher" — a professional, experienced and strict English language teacher.
@@ -146,7 +146,7 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
         // System prompt
         messages.push({
             role: 'system',
-            content: systemOverride || this.getSystemPrompt()
+            content: systemOverride || this.getSystemPrompt(),
         });
 
         // Conversation history (last 10 messages for context window)
@@ -155,7 +155,7 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
             history.forEach(msg => {
                 messages.push({
                     role: msg.role === 'ai' ? 'assistant' : 'user',
-                    content: msg.content
+                    content: msg.content,
                 });
             });
         }
@@ -174,8 +174,8 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
                     messages: messages,
                     max_tokens: 1500,
                     temperature: 0.7,
-                    stream: !!onChunk
-                })
+                    stream: !!onChunk,
+                }),
             });
 
             if (!response.ok) {
@@ -205,7 +205,9 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
                             const delta = parsed.choices?.[0]?.delta?.content || '';
                             fullContent += delta;
                             onChunk(delta, fullContent);
-                        } catch (e) { /* skip malformed chunks */ }
+                        } catch (e) {
+                            /* skip malformed chunks */
+                        }
                     }
                 }
 
@@ -256,7 +258,7 @@ Feedback: [Your detailed feedback. Point out specific errors with corrections. B
         return {
             score: scoreMatch ? parseInt(scoreMatch[1]) : 50,
             feedback: feedbackPart.trim(),
-            grade: gradeMatch ? gradeMatch[1] : 'C'
+            grade: gradeMatch ? gradeMatch[1] : 'C',
         };
     },
 
@@ -292,7 +294,7 @@ Format as JSON:
             score: userScore,
             status: userScore >= 70 ? 'done' : 'error',
             errors: Math.floor((100 - userScore) / 10),
-            date: new Date().toISOString().split('T')[0]
+            date: new Date().toISOString().split('T')[0],
         };
 
         LangyState.progress.lessonHistory.push(historyEntry);
@@ -325,15 +327,21 @@ Format as JSON:
                 title: 'Review: ' + unit.title,
                 desc: 'Practice: ' + exercise.prompt,
                 status: 'pending',
-                icon: LangyIcons.pencil
+                icon: LangyIcons.pencil,
             });
         }
 
         // Update skills
-        const skillType = exercise.type === 'speak-aloud' ? 'speaking' :
-                         exercise.type === 'listen-type' ? 'listening' :
-                         exercise.type === 'read-answer' ? 'reading' :
-                         exercise.type === 'type-translation' ? 'writing' : 'grammar';
+        const skillType =
+            exercise.type === 'speak-aloud'
+                ? 'speaking'
+                : exercise.type === 'listen-type'
+                  ? 'listening'
+                  : exercise.type === 'read-answer'
+                    ? 'reading'
+                    : exercise.type === 'type-translation'
+                      ? 'writing'
+                      : 'grammar';
         LangyState.progress.skills[skillType] = Math.min(100, (LangyState.progress.skills[skillType] || 0) + 3);
 
         // Currency
@@ -351,12 +359,9 @@ Format as JSON:
 
     // Mock responses for offline fallback
     responses: {
-        greeting: [
-            "Welcome back! Let's continue where we left off.",
-            "Ready for today's lesson? Let's make progress!",
-        ],
-        correct: ["Excellent!", "Perfect!", "Well done!"],
-        incorrect: ["Not quite. The answer is: \"{answer}\". Let's review this.", "Close! It should be: \"{answer}\"."],
+        greeting: ["Welcome back! Let's continue where we left off.", "Ready for today's lesson? Let's make progress!"],
+        correct: ['Excellent!', 'Perfect!', 'Well done!'],
+        incorrect: ['Not quite. The answer is: "{answer}". Let\'s review this.', 'Close! It should be: "{answer}".'],
     },
 
     getResponse(type, data = {}) {
@@ -367,5 +372,5 @@ Format as JSON:
             response = response.replace(`{${key}}`, data[key]);
         });
         return response;
-    }
+    },
 };

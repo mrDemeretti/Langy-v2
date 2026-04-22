@@ -4,9 +4,9 @@
    ============================================ */
 
 function renderTalk(container) {
-    if (window._talkView === 'call') {
+    if (ScreenState.get('talkView') === 'call') {
         renderTalkCall(container);
-    } else if (window._talkView === 'summary') {
+    } else if (ScreenState.get('talkView') === 'summary') {
         renderTalkSummary(container);
     } else {
         renderTalkSelect(container);
@@ -43,11 +43,12 @@ function renderTalkSelect(container) {
                     <span style="color:var(--primary);">${LangyIcons.users}</span> ${i18n('talk.choose_partner')}
                 </h4>
                 <div class="talk-mascots" id="talk-mascots">
-                    ${mascots.map(([id, m]) => {
-                        const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
-                        const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
-                        const isSelected = parseInt(id) === (window._talkMascot ?? mascotId);
-                        return `
+                    ${mascots
+                        .map(([id, m]) => {
+                            const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
+                            const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+                            const isSelected = parseInt(id) === (ScreenState.get('talkMascot') ?? mascotId);
+                            return `
                             <div class="talk-mascot ${isSelected ? 'talk-mascot--active' : ''}" 
                                  data-id="${id}" style="--mascot-color: ${colors[id]};">
                                 <div class="talk-mascot__avatar">
@@ -59,7 +60,8 @@ function renderTalkSelect(container) {
                                 ${isSelected ? `<div class="talk-mascot__check">${LangyIcons.check}</div>` : ''}
                             </div>
                         `;
-                    }).join('')}
+                        })
+                        .join('')}
                 </div>
 
                 <!-- Scenario Selection -->
@@ -67,9 +69,10 @@ function renderTalkSelect(container) {
                     <span style="color:var(--accent-dark);">${LangyIcons.map}</span> ${i18n('talk.choose_scenario')}
                 </h4>
                 <div class="talk-scenarios" id="talk-scenarios">
-                    ${scenarios.map((s, i) => {
-                        const isSelected = (window._talkScenario || 'free') === s.id;
-                        return `
+                    ${scenarios
+                        .map((s, i) => {
+                            const isSelected = ScreenState.get('talkScenario', 'free') === s.id;
+                            return `
                             <div class="talk-scenario ${isSelected ? 'talk-scenario--active' : ''}" data-id="${s.id}">
                                 <span class="talk-scenario__icon" style="color:${s.color};">${LangyIcons[s.icon] || LangyIcons.messageCircle}</span>
                                 <div class="talk-scenario__info">
@@ -79,7 +82,8 @@ function renderTalkSelect(container) {
                                 ${isSelected ? `<span style="color:var(--primary);">${LangyIcons.check}</span>` : ''}
                             </div>
                         `;
-                    }).join('')}
+                        })
+                        .join('')}
                 </div>
 
                 <!-- Start Button -->
@@ -98,13 +102,13 @@ function renderTalkSelect(container) {
 
     // ── Event Handlers ──
     container.querySelector('#talk-back')?.addEventListener('click', () => {
-        window._talkView = null;
+        ScreenState.remove('talkView');
         Router.navigate('home');
     });
 
     container.querySelectorAll('.talk-mascot').forEach(el => {
         el.addEventListener('click', () => {
-            window._talkMascot = parseInt(el.dataset.id);
+            ScreenState.set('talkMascot', parseInt(el.dataset.id));
             if (typeof AudioUtils !== 'undefined') AudioUtils.playPop();
             renderTalkSelect(container);
         });
@@ -112,14 +116,14 @@ function renderTalkSelect(container) {
 
     container.querySelectorAll('.talk-scenario').forEach(el => {
         el.addEventListener('click', () => {
-            window._talkScenario = el.dataset.id;
+            ScreenState.set('talkScenario', el.dataset.id);
             if (typeof AudioUtils !== 'undefined') AudioUtils.playPop();
             renderTalkSelect(container);
         });
     });
 
     container.querySelector('#talk-start')?.addEventListener('click', () => {
-        window._talkView = 'call';
+        ScreenState.set('talkView', 'call');
         renderTalk(container);
     });
 
@@ -131,8 +135,8 @@ function renderTalkSelect(container) {
 // SCREEN 2: Live Call UI
 // ═══════════════════════════════════════
 function renderTalkCall(container) {
-    const mascotId = window._talkMascot ?? LangyState.mascot?.selected ?? 0;
-    const scenarioId = window._talkScenario || 'free';
+    const mascotId = ScreenState.get('talkMascot') ?? LangyState.mascot?.selected ?? 0;
+    const scenarioId = ScreenState.get('talkScenario', 'free');
     const session = TalkEngine.startSession(mascotId, scenarioId);
     const persona = session.persona;
     const scenario = session.scenario;
@@ -156,7 +160,7 @@ function renderTalkCall(container) {
             <div class="talk-progress" id="talk-progress" style="padding:0 var(--sp-5); margin-bottom:var(--sp-2);">
                 <div style="display:flex; align-items:center; gap:var(--sp-2); font-size:var(--fs-xs); color:var(--text-tertiary);">
                     <div style="display:flex; gap:6px;" id="progress-dots">
-                        ${[0,1,2].map(i => `<div class="talk-progress__dot" id="prog-dot-${i}"></div>`).join('')}
+                        ${[0, 1, 2].map(i => `<div class="talk-progress__dot" id="prog-dot-${i}"></div>`).join('')}
                     </div>
                     <span id="progress-text">0/${minTurns} exchanges to earn rewards</span>
                 </div>
@@ -240,12 +244,14 @@ function renderTalkCall(container) {
     const hintEl = container.querySelector('#talk-hint');
     const hintTextEl = container.querySelector('#hint-text');
 
-    function setStatus(text) { if (statusEl) statusEl.textContent = text; }
+    function setStatus(text) {
+        if (statusEl) statusEl.textContent = text;
+    }
     // Escape user text to prevent XSS when using innerHTML
-    function escapeHtml(str) { 
-        const d = document.createElement('div'); 
-        d.textContent = str; 
-        return d.innerHTML; 
+    function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
     }
     function setMascotSub(text) {
         if (mascotSub) {
@@ -332,7 +338,7 @@ function renderTalkCall(container) {
     // User speaks → AI responds
     async function processUserSpeech(text) {
         if (!text || text.trim().length === 0) {
-            setStatus('I didn\'t catch that. Try again!');
+            setStatus("I didn't catch that. Try again!");
             state = 'waiting';
             startHintTimer();
             return;
@@ -357,19 +363,22 @@ function renderTalkCall(container) {
         } catch (err) {
             ringEl?.classList.remove('talk-call__avatar-ring--thinking');
             if (typingEl) typingEl.style.display = 'none';
-            mascotSpeak("Sorry, I had a little hiccup. What were you saying?");
+            mascotSpeak('Sorry, I had a little hiccup. What were you saying?');
         }
     }
 
     function detectCorrections(userText, aiResponse) {
-        const hasGrammarHint = aiResponse.toLowerCase().includes('actually') ||
-                               aiResponse.toLowerCase().includes('you mean') ||
-                               aiResponse.toLowerCase().includes('more natural');
-        
+        const hasGrammarHint =
+            aiResponse.toLowerCase().includes('actually') ||
+            aiResponse.toLowerCase().includes('you mean') ||
+            aiResponse.toLowerCase().includes('more natural');
+
         if (hasGrammarHint && correctionEl) {
             correctionEl.style.display = 'block';
             correctionEl.innerHTML = `<span style="color:#F59E0B;">${LangyIcons.zap}</span> <span style="color:var(--text-secondary); font-size:var(--fs-xs);">Tip: Listen to how ${persona.name} rephrases your words</span>`;
-            setTimeout(() => { if (correctionEl) correctionEl.style.display = 'none'; }, 5000);
+            setTimeout(() => {
+                if (correctionEl) correctionEl.style.display = 'none';
+            }, 5000);
         }
     }
 
@@ -408,7 +417,7 @@ function renderTalkCall(container) {
                     startHintTimer();
                 }
             },
-            (interim) => {
+            interim => {
                 setUserSub(`${LangyIcons.mic} ${escapeHtml(interim)}...`);
             }
         );
@@ -486,23 +495,25 @@ function renderTalkCall(container) {
         clearTimeout(hintTimeout);
 
         // Get AI feedback before ending (if qualified)
-        const feedbackPromise = (turnCount >= minTurns) ? TalkEngine.getAIFeedback() : Promise.resolve(null);
+        const feedbackPromise = turnCount >= minTurns ? TalkEngine.getAIFeedback() : Promise.resolve(null);
 
-        feedbackPromise.then(feedback => {
-            window._talkAIFeedback = feedback;
-            TalkEngine.stopSpeaking();
-            TalkEngine.stopListening();
-            window._talkSummary = TalkEngine.endSession();
-            window._talkView = 'summary';
-            renderTalk(container);
-        }).catch(() => {
-            window._talkAIFeedback = null;
-            TalkEngine.stopSpeaking();
-            TalkEngine.stopListening();
-            window._talkSummary = TalkEngine.endSession();
-            window._talkView = 'summary';
-            renderTalk(container);
-        });
+        feedbackPromise
+            .then(feedback => {
+                ScreenState.set('talkAIFeedback', feedback);
+                TalkEngine.stopSpeaking();
+                TalkEngine.stopListening();
+                ScreenState.set('talkSummary', TalkEngine.endSession());
+                ScreenState.set('talkView', 'summary');
+                renderTalk(container);
+            })
+            .catch(() => {
+                ScreenState.set('talkAIFeedback', null);
+                TalkEngine.stopSpeaking();
+                TalkEngine.stopListening();
+                ScreenState.set('talkSummary', TalkEngine.endSession());
+                ScreenState.set('talkView', 'summary');
+                renderTalk(container);
+            });
     }
 
     container.querySelector('#talk-end')?.addEventListener('click', endCall);
@@ -522,8 +533,8 @@ function renderTalkCall(container) {
 // SCREEN 3: Post-Call Summary
 // ═══════════════════════════════════════
 function renderTalkSummary(container) {
-    const summary = window._talkSummary || {};
-    const feedback = window._talkAIFeedback || null;
+    const summary = ScreenState.get('talkSummary', {});
+    const feedback = ScreenState.get('talkAIFeedback', null);
     const qualified = summary.qualifiedForRewards;
     const mins = Math.floor((summary.duration || 0) / 60);
     const secs = (summary.duration || 0) % 60;
@@ -544,9 +555,11 @@ function renderTalkSummary(container) {
                     </div>
                     <h2>${qualified ? 'Great Conversation!' : 'Keep Practicing!'}</h2>
                     <p style="color:var(--text-secondary); margin-top:var(--sp-1);">
-                        ${qualified 
-                            ? `You talked with ${summary.mascot || 'your mascot'} about ${summary.scenario || 'English'}` 
-                            : summary.reason || 'Have a longer conversation to earn rewards'}
+                        ${
+                            qualified
+                                ? `You talked with ${summary.mascot || 'your mascot'} about ${summary.scenario || 'English'}`
+                                : summary.reason || 'Have a longer conversation to earn rewards'
+                        }
                     </p>
                 </div>
 
@@ -560,7 +573,9 @@ function renderTalkSummary(container) {
                         <div style="font-size:28px; font-weight:var(--fw-black); color:var(--accent-dark);">${summary.turns || 0}</div>
                         <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${LangyIcons.messageCircle} Your Turns</div>
                     </div>
-                    ${qualified ? `
+                    ${
+                        qualified
+                            ? `
                     <div class="card" style="text-align:center; padding:var(--sp-4);">
                         <div style="font-size:28px; font-weight:var(--fw-black); color:var(--reward-gold);">+${summary.xpEarned || 0}</div>
                         <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${LangyIcons.zap} XP Earned</div>
@@ -569,10 +584,14 @@ function renderTalkSummary(container) {
                         <div style="font-size:28px; font-weight:var(--fw-black); color:var(--info);">+${summary.dangyEarned || 0}</div>
                         <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${LangyIcons.diamond} Dangy</div>
                     </div>
-                    ` : ''}
+                    `
+                            : ''
+                    }
                 </div>
 
-                ${qualified ? `
+                ${
+                    qualified
+                        ? `
                 <!-- Skills Improved -->
                 <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4); background:linear-gradient(135deg, rgba(16,185,129,0.04), rgba(74,222,128,0.04)); border: 1px solid rgba(16,185,129,0.15);">
                     <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
@@ -583,7 +602,8 @@ function renderTalkSummary(container) {
                         <div class="badge badge--primary">${LangyIcons.headphones} Listening</div>
                     </div>
                 </div>
-                ` : `
+                `
+                        : `
                 <!-- Tip for unqualified -->
                 <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4); border: 1px solid rgba(245,158,11,0.2); background:rgba(245,158,11,0.04);">
                     <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
@@ -596,9 +616,12 @@ function renderTalkSummary(container) {
                         </div>
                     </div>
                 </div>
-                `}
+                `
+                }
 
-                ${pronLevel ? `
+                ${
+                    pronLevel
+                        ? `
                 <!-- Pronunciation -->
                 <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4);">
                     <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
@@ -612,31 +635,46 @@ function renderTalkSummary(container) {
                         </div>
                     </div>
                 </div>
-                ` : ''}
+                `
+                        : ''
+                }
 
-                ${feedback ? `
+                ${
+                    feedback
+                        ? `
                 <!-- AI Feedback -->
                 <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4); border:1px solid rgba(124,108,246,0.2); background:rgba(124,108,246,0.03);">
                     <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
                         <span style="color:#7C6CF6;">${LangyIcons.brain}</span> AI Feedback
                     </h4>
-                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.6;">${feedback}</p>
+                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.6;">${escapeHTML(feedback)}</p>
                 </div>
-                ` : ''}
+                `
+                        : ''
+                }
 
                 <!-- Transcript Preview -->
-                ${summary.userMessages && summary.userMessages.length > 0 ? `
+                ${
+                    summary.userMessages && summary.userMessages.length > 0
+                        ? `
                 <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4);">
                     <h4 style="margin-bottom:var(--sp-2);">Your Phrases</h4>
                     <div style="display:flex; flex-direction:column; gap:var(--sp-2); max-height:150px; overflow-y:auto;">
-                        ${summary.userMessages.slice(-5).map(msg => `
+                        ${summary.userMessages
+                            .slice(-5)
+                            .map(
+                                msg => `
                             <div style="font-size:var(--fs-sm); color:var(--text-secondary); padding:var(--sp-2); background:var(--bg-alt); border-radius:var(--radius-md);">
-                                "${msg}"
+                                "${escapeHTML(msg)}"
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
                 </div>
-                ` : ''}
+                `
+                        : ''
+                }
 
                 <!-- Actions -->
                 <div style="display:flex; gap:var(--sp-2); margin-bottom:var(--sp-3);">
@@ -659,17 +697,17 @@ function renderTalkSummary(container) {
 
     // Event handlers
     container.querySelector('#talk-again')?.addEventListener('click', () => {
-        window._talkView = 'call';
+        ScreenState.set('talkView', 'call');
         renderTalk(container);
     });
 
     container.querySelector('#talk-change')?.addEventListener('click', () => {
-        window._talkView = 'select';
+        ScreenState.set('talkView', 'select');
         renderTalk(container);
     });
 
     container.querySelector('#talk-done')?.addEventListener('click', () => {
-        window._talkView = null;
+        ScreenState.remove('talkView');
         Router.navigate('home');
     });
 }

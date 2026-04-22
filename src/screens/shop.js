@@ -4,14 +4,15 @@
 
 function renderShop(container) {
     const { shop, currencies } = LangyState;
-    const activeTab = window._shopTab || 'all';
+    const activeTab = ScreenState.get('shopTab', 'all');
     const freezeCount = LangyState.streakData.streakFreezes || 0;
 
-    const filteredItems = activeTab === 'premium'
-        ? shop.items.filter(i => i.premium)
-        : activeTab === 'owned'
-        ? shop.items.filter(i => shop.owned.includes(i.id))
-        : shop.items;
+    const filteredItems =
+        activeTab === 'premium'
+            ? shop.items.filter(i => i.premium)
+            : activeTab === 'owned'
+              ? shop.items.filter(i => shop.owned.includes(i.id))
+              : shop.items;
 
     container.innerHTML = `
         <div class="screen screen--no-pad">
@@ -47,43 +48,50 @@ function renderShop(container) {
             </div>
 
             <div class="shop__grid" id="shop-grid">
-                ${filteredItems.map(item => {
-                    const owned = shop.owned.includes(item.id);
-                    const isFreeze = item.category === 'consumable';
-                    return `
+                ${filteredItems
+                    .map(item => {
+                        const owned = shop.owned.includes(item.id);
+                        const isFreeze = item.category === 'consumable';
+                        return `
                         <div class="shop-item ${item.premium ? 'shop-item--premium' : ''} ${isFreeze ? 'shop-item--freeze' : ''}" data-id="${item.id}">
                             <div class="shop-item__preview" style="color:${isFreeze ? '#3B82F6' : item.premium ? '#F59E0B' : 'var(--primary)'}">${item.emoji}</div>
                             <div class="shop-item__name">${item.name}</div>
-                            ${isFreeze
-                                ? `<div class="shop-item__price" style="color:#3B82F6;">
+                            ${
+                                isFreeze
+                                    ? `<div class="shop-item__price" style="color:#3B82F6;">
                                     <span>${LangyIcons.diamond}</span>
                                     <span>${item.price} Dangy</span>
                                 </div>`
-                                : owned
-                                ? '<div class="badge badge--accent">Owned</div>'
-                                : `<div class="shop-item__price">
+                                    : owned
+                                      ? '<div class="badge badge--accent">Owned</div>'
+                                      : `<div class="shop-item__price">
                                     <span>${item.currency === 'langy' ? LangyIcons.coins : LangyIcons.diamond}</span>
                                     <span>${item.price}</span>
                                 </div>`
                             }
                         </div>
                     `;
-                }).join('')}
+                    })
+                    .join('')}
             </div>
 
-            ${!filteredItems.length ? `
+            ${
+                !filteredItems.length
+                    ? `
                 <div class="empty-state">
                     <div class="empty-state__icon">${LangyIcons.shoppingCart}</div>
                     <div class="empty-state__title">Nothing here yet</div>
                 </div>
-            ` : ''}
+            `
+                    : ''
+            }
         </div>
     `;
 
     // Tab switching
     container.querySelectorAll('.tabs__tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            window._shopTab = tab.dataset.tab;
+            ScreenState.set('shopTab', tab.dataset.tab);
             renderShop(container);
         });
     });
@@ -152,7 +160,9 @@ function showBuyFreezeDialog(item) {
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
     overlay.querySelector('#buy-cancel')?.addEventListener('click', () => overlay.remove());
     overlay.querySelector('#buy-confirm')?.addEventListener('click', () => {
         if (!canBuy) return;
@@ -162,7 +172,9 @@ function showBuyFreezeDialog(item) {
             if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
             overlay.remove();
             if (typeof AudioUtils !== 'undefined') AudioUtils.playCorrect?.();
-            Anim.showToast(`${LangyIcons.shield} Streak Freeze purchased! (${LangyState.streakData.streakFreezes}/${maxFreezes})`);
+            Anim.showToast(
+                `${LangyIcons.shield} Streak Freeze purchased! (${LangyState.streakData.streakFreezes}/${maxFreezes})`
+            );
             renderShop(document.getElementById('screen-container'));
         } else {
             Anim.showToast(`Not enough Dangy! ${LangyIcons.alertCircle}`);
@@ -191,14 +203,22 @@ function showBuyDialog(item) {
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
     overlay.querySelector('#buy-cancel')?.addEventListener('click', () => overlay.remove());
     overlay.querySelector('#buy-confirm')?.addEventListener('click', () => {
         const curr = item.currency === 'langy' ? 'langy' : 'dangy';
         if (LangyState.currencies[curr] >= item.price) {
             LangyState.currencies[curr] -= item.price;
             LangyState.shop.owned.push(item.id);
-            LangyState.inventory.items.push({ id: item.id, name: item.name, emoji: item.emoji, slot: item.category, equipped: false });
+            LangyState.inventory.items.push({
+                id: item.id,
+                name: item.name,
+                emoji: item.emoji,
+                slot: item.category,
+                equipped: false,
+            });
             if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
             overlay.remove();
             Anim.showToast(`${item.name} purchased! ${LangyIcons.sparkles}`);
@@ -210,4 +230,3 @@ function showBuyDialog(item) {
 }
 
 Router.register('shop', renderShop);
-

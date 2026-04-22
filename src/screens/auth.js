@@ -3,7 +3,7 @@
    ============================================ */
 
 function renderAuth(container) {
-    const isLogin = window._authMode !== 'signup';
+    const isLogin = ScreenState.get('authMode', 'login') !== 'signup';
 
     container.innerHTML = `
         <div class="screen auth">
@@ -24,11 +24,15 @@ function renderAuth(container) {
             </div>
 
             <form class="auth__form" id="auth-form">
-                ${!isLogin ? `
+                ${
+                    !isLogin
+                        ? `
                 <div class="input-group">
                     <label for="auth-name">${i18n('auth.name')}</label>
                     <input class="input" type="text" id="auth-name" placeholder="${i18n('auth.name')}" autocomplete="name">
-                </div>` : ''}
+                </div>`
+                        : ''
+                }
 
                 <div class="input-group">
                     <label for="auth-email">${i18n('auth.email')}</label>
@@ -46,7 +50,7 @@ function renderAuth(container) {
                 <div class="auth__error" id="auth-error"></div>
             </form>
 
-            <div class="divider--text">${{en:'or continue with',ru:'или войти через',es:'o continuar con'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en']}</div>
+            <div class="divider--text">${{ en: 'or continue with', ru: 'или войти через', es: 'o continuar con' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
 
             <div class="auth__social">
                 <button type="button" class="btn" id="auth-google">
@@ -64,9 +68,10 @@ function renderAuth(container) {
             </div>
 
             <p class="auth__footer">
-                ${isLogin
-                    ? i18n('auth.no_account') + ' <a href="#" id="auth-switch">' + i18n('auth.register') + '</a>'
-                    : i18n('auth.have_account') + ' <a href="#" id="auth-switch">' + i18n('auth.login') + '</a>'
+                ${
+                    isLogin
+                        ? i18n('auth.no_account') + ' <a href="#" id="auth-switch">' + i18n('auth.register') + '</a>'
+                        : i18n('auth.have_account') + ' <a href="#" id="auth-switch">' + i18n('auth.login') + '</a>'
                 }
             </p>
         </div>
@@ -75,7 +80,7 @@ function renderAuth(container) {
     // Tab switching
     container.querySelectorAll('.tabs__tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            window._authMode = tab.dataset.tab === 'signup' ? 'signup' : 'login';
+            ScreenState.set('authMode', tab.dataset.tab === 'signup' ? 'signup' : 'login');
             renderAuth(container);
         });
     });
@@ -83,15 +88,15 @@ function renderAuth(container) {
     // Switch link
     const switchLink = container.querySelector('#auth-switch');
     if (switchLink) {
-        switchLink.addEventListener('click', (e) => {
+        switchLink.addEventListener('click', e => {
             e.preventDefault();
-            window._authMode = isLogin ? 'signup' : 'login';
+            ScreenState.set('authMode', isLogin ? 'signup' : 'login');
             renderAuth(container);
         });
     }
 
     // Form submit — real auth
-    container.querySelector('#auth-form').addEventListener('submit', async (e) => {
+    container.querySelector('#auth-form').addEventListener('submit', async e => {
         e.preventDefault();
         const errorEl = container.querySelector('#auth-error');
         const submitBtn = container.querySelector('#auth-submit');
@@ -153,10 +158,12 @@ function renderAuth(container) {
     // DEV FAST LOGIN
     container.querySelector('#auth-dev-login')?.addEventListener('click', async () => {
         try {
-            await LangyDB.register("Test User", "test@example.com", "123456");
-        } catch (e) { /* ignore if exists */ }
-        
-        await LangyDB.login("test@example.com", "123456");
+            await LangyDB.register('Test User', 'test@example.com', '123456');
+        } catch (e) {
+            /* ignore if exists */
+        }
+
+        await LangyDB.login('test@example.com', '123456');
         LangyState.user.hasCompletedPlacement = true;
         LangyState.user.level = 'B2 Upper-Intermediate';
         LangyState.mascot.selected = 3; // Omar by default for testing
@@ -166,7 +173,10 @@ function renderAuth(container) {
     });
 
     // Stagger animation
-    setTimeout(() => Anim.staggerChildren(container, '.input-group, .btn, .divider--text, .auth__social, .auth__footer'), 100);
+    setTimeout(
+        () => Anim.staggerChildren(container, '.input-group, .btn, .divider--text, .auth__social, .auth__footer'),
+        100
+    );
 }
 
 Router.register('auth', renderAuth);

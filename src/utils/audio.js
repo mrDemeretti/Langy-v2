@@ -3,7 +3,7 @@
    Full sound effects suite using Web Audio API
    ============================================ */
 
-const AudioUtils = (function() {
+const AudioUtils = (function () {
     let ctx = null;
 
     function initCtx() {
@@ -180,6 +180,6 @@ const AudioUtils = (function() {
                 osc.start(t);
                 osc.stop(t + 0.8);
             });
-        }
+        },
     };
 })();

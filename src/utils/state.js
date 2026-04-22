@@ -13,13 +13,13 @@ const LangyState = {
         joinDate: '2025-12-01',
         avatar: null,
         hasCompletedPlacement: true,
-        interests: []
+        interests: [],
     },
 
     // Currencies
     currencies: {
-        langy: 350,  // premium
-        dangy: 1280  // earned
+        langy: 350, // premium
+        dangy: 1280, // earned
     },
 
     // Mascot
@@ -30,8 +30,8 @@ const LangyState = {
             shirt: null,
             pants: null,
             shoes: null,
-            accessory: null
-        }
+            accessory: null,
+        },
     },
 
     // Subscription
@@ -41,18 +41,18 @@ const LangyState = {
 
     // Streak data
     streakData: {
-        _migrated: true,       // Flag: false/missing = old user, needs reset
+        _migrated: true, // Flag: false/missing = old user, needs reset
         days: 0,
         totalSessions: 0,
         totalMinutes: 0,
         wordsLearned: 0,
         accuracy: 0,
         todayCompleted: false, // Has user done a session today?
-        activeDays: [],        // Array of ISO date strings for streak calendar
-        longestStreak: 0,      // Best streak ever
+        activeDays: [], // Array of ISO date strings for streak calendar
+        longestStreak: 0, // Best streak ever
         // Streak Freeze: protects streak when you miss a day
-        streakFreezes: 0,      // Number of freeze shields owned
-        freezeUsedDates: [],   // ISO dates when a freeze was auto-used
+        streakFreezes: 0, // Number of freeze shields owned
+        freezeUsedDates: [], // ISO dates when a freeze was auto-used
         freezePrice: LangyConfig.STREAK_FREEZE_PRICE,
         maxFreezes: LangyConfig.STREAK_MAX_FREEZES,
         timeBreakdown: {
@@ -60,23 +60,23 @@ const LangyState = {
             grammar: 0,
             listening: 0,
             speaking: 0,
-            writing: 0
+            writing: 0,
         },
         lastSession: {
-            date: null,        // ISO date string (e.g. "2026-04-16") or null
+            date: null, // ISO date string (e.g. "2026-04-16") or null
             wordsLearned: 0,
             accuracy: 0,
-            duration: 0
+            duration: 0,
         },
         // Per-day stats for calendar view
         // Key = ISO date string, Value = { sessions, minutes, words, accuracy, categories }
-        dailyStats: {}
+        dailyStats: {},
     },
 
     // Homework
     homework: {
         current: [],
-        completed: []
+        completed: [],
     },
 
     // Tests
@@ -84,7 +84,7 @@ const LangyState = {
         listening: [],
         speaking: [],
         reading: [],
-        grammar: []
+        grammar: [],
     },
 
     // Results / Progress
@@ -96,7 +96,7 @@ const LangyState = {
             listening: 0,
             speaking: 0,
             writing: 0,
-            reading: 0
+            reading: 0,
         },
         topicsCompleted: 0,
         totalTopics: 50,
@@ -121,8 +121,8 @@ const LangyState = {
             B1: { earned: false, date: null, badge: LangyIcons.award },
             B2: { earned: false, date: null, badge: LangyIcons.trophy },
             C1: { earned: false, date: null, badge: LangyIcons.crown },
-            C2: { earned: false, date: null, badge: LangyIcons.medal }
-        }
+            C2: { earned: false, date: null, badge: LangyIcons.medal },
+        },
     },
 
     // Daily Challenge
@@ -130,27 +130,77 @@ const LangyState = {
         reward: 50, // Dangy
         timeLeft: 14400, // seconds
         tasks: [
-            { id: 1, title: 'Speak for 3 minutes', desc: 'Practice speaking on any topic', done: true, icon: LangyIcons.mic },
-            { id: 2, title: 'No mistakes challenge', desc: 'Complete 10 questions without errors', done: false, icon: LangyIcons.target },
-            { id: 3, title: 'Listen & repeat', desc: 'Listen to 5 sentences and repeat', done: false, icon: LangyIcons.headphones },
+            {
+                id: 1,
+                title: 'Speak for 3 minutes',
+                desc: 'Practice speaking on any topic',
+                done: true,
+                icon: LangyIcons.mic,
+            },
+            {
+                id: 2,
+                title: 'No mistakes challenge',
+                desc: 'Complete 10 questions without errors',
+                done: false,
+                icon: LangyIcons.target,
+            },
+            {
+                id: 3,
+                title: 'Listen & repeat',
+                desc: 'Listen to 5 sentences and repeat',
+                done: false,
+                icon: LangyIcons.headphones,
+            },
             { id: 4, title: 'Learn 5 new words', desc: 'Vocabulary expansion', done: false, icon: LangyIcons.bookOpen },
-        ]
+        ],
     },
 
     // Shop
     shop: {
         items: [
-            { id: 10, name: 'Streak Freeze', emoji: LangyIcons.shield, price: 200, currency: 'dangy', category: 'consumable', desc: 'Protects your streak for 1 missed day' },
+            {
+                id: 10,
+                name: 'Streak Freeze',
+                emoji: LangyIcons.shield,
+                price: 200,
+                currency: 'dangy',
+                category: 'consumable',
+                desc: 'Protects your streak for 1 missed day',
+            },
             { id: 1, name: 'Cool Shades', emoji: LangyIcons.sun, price: 50, currency: 'dangy', category: 'accessory' },
             { id: 2, name: 'Top Hat', emoji: LangyIcons.graduationCap, price: 80, currency: 'dangy', category: 'hat' },
-            { id: 3, name: 'Crown', emoji: LangyIcons.crown, price: 200, currency: 'langy', category: 'hat', premium: true },
+            {
+                id: 3,
+                name: 'Crown',
+                emoji: LangyIcons.crown,
+                price: 200,
+                currency: 'langy',
+                category: 'hat',
+                premium: true,
+            },
             { id: 4, name: 'Star Badge', emoji: LangyIcons.star, price: 30, currency: 'dangy', category: 'accessory' },
-            { id: 5, name: 'Rocket', emoji: LangyIcons.rocket, price: 150, currency: 'langy', category: 'sticker', premium: true },
-            { id: 6, name: 'Fire Skin', emoji: LangyIcons.flame, price: 300, currency: 'langy', category: 'skin', premium: true },
+            {
+                id: 5,
+                name: 'Rocket',
+                emoji: LangyIcons.rocket,
+                price: 150,
+                currency: 'langy',
+                category: 'sticker',
+                premium: true,
+            },
+            {
+                id: 6,
+                name: 'Fire Skin',
+                emoji: LangyIcons.flame,
+                price: 300,
+                currency: 'langy',
+                category: 'skin',
+                premium: true,
+            },
             { id: 7, name: 'Bow Tie', emoji: LangyIcons.gift, price: 40, currency: 'dangy', category: 'accessory' },
             { id: 8, name: 'Party Hat', emoji: LangyIcons.sparkles, price: 60, currency: 'dangy', category: 'hat' },
         ],
-        owned: [1, 4, 8]
+        owned: [1, 4, 8],
     },
 
     // Inventory
@@ -159,24 +209,67 @@ const LangyState = {
             { id: 1, name: 'Cool Shades', emoji: LangyIcons.sun, slot: 'accessory', equipped: false },
             { id: 4, name: 'Star Badge', emoji: LangyIcons.star, slot: 'accessory', equipped: true },
             { id: 8, name: 'Party Hat', emoji: LangyIcons.sparkles, slot: 'hat', equipped: false },
-        ]
+        ],
     },
 
     // Duels
     duels: {
         stats: { wins: 0, losses: 0, ties: 0 },
         modes: [
-            { id: 'quick', name: 'Quick Match', desc: 'Fast 5-question duel', icon: LangyIcons.zap, bg: 'var(--reward-gold-bg)' },
-            { id: 'ranked', name: 'Ranked Battle', desc: 'Compete for league points', icon: LangyIcons.trophy, bg: 'var(--primary-bg)' },
-            { id: 'practice', name: 'Practice Duel', desc: 'No pressure, just practice', icon: LangyIcons.target, bg: 'var(--accent-bg)' },
+            {
+                id: 'quick',
+                name: 'Quick Match',
+                desc: 'Fast 5-question duel',
+                icon: LangyIcons.zap,
+                bg: 'var(--reward-gold-bg)',
+            },
+            {
+                id: 'ranked',
+                name: 'Ranked Battle',
+                desc: 'Compete for league points',
+                icon: LangyIcons.trophy,
+                bg: 'var(--primary-bg)',
+            },
+            {
+                id: 'practice',
+                name: 'Practice Duel',
+                desc: 'No pressure, just practice',
+                icon: LangyIcons.target,
+                bg: 'var(--accent-bg)',
+            },
         ],
         questions: [
-            { q: 'Choose the correct form:', text: '"She ___ to the store yesterday."', options: ['goed', 'went', 'go', 'gone'], correct: 1 },
-            { q: 'Fill in the blank:', text: '"I have been ___ English for 2 years."', options: ['learn', 'learned', 'learning', 'learns'], correct: 2 },
-            { q: 'Which is correct?', text: '"If I ___ rich, I would travel."', options: ['am', 'was', 'were', 'be'], correct: 2 },
-            { q: 'Choose the synonym:', text: '"Happy" means the same as...', options: ['Sad', 'Joyful', 'Angry', 'Tired'], correct: 1 },
-            { q: 'Correct spelling:', text: 'Which word is spelled correctly?', options: ['Recieve', 'Receive', 'Receve', 'Receeve'], correct: 1 },
-        ]
+            {
+                q: 'Choose the correct form:',
+                text: '"She ___ to the store yesterday."',
+                options: ['goed', 'went', 'go', 'gone'],
+                correct: 1,
+            },
+            {
+                q: 'Fill in the blank:',
+                text: '"I have been ___ English for 2 years."',
+                options: ['learn', 'learned', 'learning', 'learns'],
+                correct: 2,
+            },
+            {
+                q: 'Which is correct?',
+                text: '"If I ___ rich, I would travel."',
+                options: ['am', 'was', 'were', 'be'],
+                correct: 2,
+            },
+            {
+                q: 'Choose the synonym:',
+                text: '"Happy" means the same as...',
+                options: ['Sad', 'Joyful', 'Angry', 'Tired'],
+                correct: 1,
+            },
+            {
+                q: 'Correct spelling:',
+                text: 'Which word is spelled correctly?',
+                options: ['Recieve', 'Receive', 'Receve', 'Receeve'],
+                correct: 1,
+            },
+        ],
     },
 
     // Events (dynamic — see events.js)
@@ -192,7 +285,7 @@ const LangyState = {
         haptics: true,
         dailyReminder: '09:00',
         interfaceLang: 'en',
-        languageLevel: 'B1'
+        languageLevel: 'B1',
     },
 
     // AI Memory — mistakes, weak areas, textbook context
@@ -202,8 +295,8 @@ const LangyState = {
         currentTextbookId: null,
         lastTopic: 'Getting Started',
         behavioralNote: 'Highly motivated learner',
-        conversationContext: [] // { role: 'ai'|'user', content: string, timestamp: number, type: 'text'|'task' }
-    }
+        conversationContext: [], // { role: 'ai'|'user', content: string, timestamp: number, type: 'text'|'task' }
+    },
 };
 
 /**
@@ -248,103 +341,108 @@ function setState(path, value) {
  * @param {string} [options.category='grammar'] - Skill category
  */
 function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category = 'grammar' } = {}) {
-  try {
-    const now = new Date();
-    const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    const sd = LangyState.streakData;
-    
-    // ── FIX: Reset todayCompleted if the date changed (app left open overnight) ──
-    if (sd.lastSession.date && sd.lastSession.date !== today && sd.todayCompleted) {
-        sd.todayCompleted = false;
-    }
-    
-    // Update session stats
-    sd.totalSessions++;
-    sd.totalMinutes += duration;
-    sd.wordsLearned += wordsLearned;
-    sd.accuracy = sd.totalSessions > 0
-        ? Math.round(((sd.accuracy * (sd.totalSessions - 1)) + accuracy) / sd.totalSessions)
-        : accuracy;
-    
-    // Update time breakdown
-    if (sd.timeBreakdown[category] !== undefined) {
-        sd.timeBreakdown[category] += duration;
-    }
-    
-    // Update last session
-    sd.lastSession = { date: today, wordsLearned, accuracy, duration };
-    sd.lastVisitDate = today; // Keep visit date in sync
-    
-    // Update daily stats for calendar
-    if (!sd.dailyStats) sd.dailyStats = {};
-    if (!sd.dailyStats[today]) {
-        sd.dailyStats[today] = { sessions: 0, minutes: 0, words: 0, accuracy: 0, categories: {} };
-    }
-    const ds = sd.dailyStats[today];
-    ds.sessions++;
-    ds.minutes += duration;
-    ds.words += wordsLearned;
-    ds.accuracy = ds.sessions > 0
-        ? Math.round(((ds.accuracy * (ds.sessions - 1)) + accuracy) / ds.sessions)
-        : accuracy;
-    if (!ds.categories[category]) ds.categories[category] = 0;
-    ds.categories[category] += duration;
-    
-    // Daily Challenge: Track Perfect Lesson
-    if (accuracy === 100) {
-        if (!LangyState.dailyChallenge) LangyState.dailyChallenge = {};
-        LangyState.dailyChallenge._perfectLessonDate = today;
-    }
-    
-    // ── EVENT PROGRESS: update active event tracking ──
-    updateEventProgress({ duration, wordsLearned, accuracy, category });
-    
-    // Streak logic: increment only once per day
-    if (!sd.todayCompleted) {
-        sd.todayCompleted = true;
-        
-        // Add today to activeDays
-        if (!sd.activeDays) sd.activeDays = [];
-        if (!sd.activeDays.includes(today)) {
-            sd.activeDays.push(today);
+    try {
+        const now = new Date();
+        const today =
+            now.getFullYear() +
+            '-' +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            '-' +
+            String(now.getDate()).padStart(2, '0');
+        const sd = LangyState.streakData;
+
+        // ── FIX: Reset todayCompleted if the date changed (app left open overnight) ──
+        if (sd.lastSession.date && sd.lastSession.date !== today && sd.todayCompleted) {
+            sd.todayCompleted = false;
         }
-        
-        // Increment streak
-        sd.days++;
-        LangyState.user.streak = sd.days;
-        
-        // Update longest streak
-        if (!sd.longestStreak) sd.longestStreak = 0;
-        if (sd.days > sd.longestStreak) {
-            sd.longestStreak = sd.days;
+
+        // Update session stats
+        sd.totalSessions++;
+        sd.totalMinutes += duration;
+        sd.wordsLearned += wordsLearned;
+        sd.accuracy =
+            sd.totalSessions > 0
+                ? Math.round((sd.accuracy * (sd.totalSessions - 1) + accuracy) / sd.totalSessions)
+                : accuracy;
+
+        // Update time breakdown
+        if (sd.timeBreakdown[category] !== undefined) {
+            sd.timeBreakdown[category] += duration;
         }
-        
-        // ─── STREAK REWARDS ───
-        const streakRewards = getStreakReward(sd.days);
-        if (streakRewards) {
-            LangyState.currencies.dangy += streakRewards.dangy;
-            LangyState.currencies.langy += streakRewards.langy;
-            
-            let rewardMsg = `${LangyIcons.flame} ${sd.days} Day Streak!`;
-            if (streakRewards.dangy > 0) rewardMsg += ` +${streakRewards.dangy} Dangy`;
-            if (streakRewards.langy > 0) rewardMsg += ` +${streakRewards.langy} Langy`;
-            if (streakRewards.badge) rewardMsg += ` ${streakRewards.badge}`;
-            
-            setTimeout(() => {
-                if (typeof Anim !== 'undefined') Anim.showToast(rewardMsg);
-            }, 800);
+
+        // Update last session
+        sd.lastSession = { date: today, wordsLearned, accuracy, duration };
+        sd.lastVisitDate = today; // Keep visit date in sync
+
+        // Update daily stats for calendar
+        if (!sd.dailyStats) sd.dailyStats = {};
+        if (!sd.dailyStats[today]) {
+            sd.dailyStats[today] = { sessions: 0, minutes: 0, words: 0, accuracy: 0, categories: {} };
+        }
+        const ds = sd.dailyStats[today];
+        ds.sessions++;
+        ds.minutes += duration;
+        ds.words += wordsLearned;
+        ds.accuracy =
+            ds.sessions > 0 ? Math.round((ds.accuracy * (ds.sessions - 1) + accuracy) / ds.sessions) : accuracy;
+        if (!ds.categories[category]) ds.categories[category] = 0;
+        ds.categories[category] += duration;
+
+        // Daily Challenge: Track Perfect Lesson
+        if (accuracy === 100) {
+            if (!LangyState.dailyChallenge) LangyState.dailyChallenge = {};
+            LangyState.dailyChallenge._perfectLessonDate = today;
+        }
+
+        // ── EVENT PROGRESS: update active event tracking ──
+        updateEventProgress({ duration, wordsLearned, accuracy, category });
+
+        // Streak logic: increment only once per day
+        if (!sd.todayCompleted) {
+            sd.todayCompleted = true;
+
+            // Add today to activeDays
+            if (!sd.activeDays) sd.activeDays = [];
+            if (!sd.activeDays.includes(today)) {
+                sd.activeDays.push(today);
+            }
+
+            // Increment streak
+            sd.days++;
+            LangyState.user.streak = sd.days;
+
+            // Update longest streak
+            if (!sd.longestStreak) sd.longestStreak = 0;
+            if (sd.days > sd.longestStreak) {
+                sd.longestStreak = sd.days;
+            }
+
+            // ─── STREAK REWARDS ───
+            const streakRewards = getStreakReward(sd.days);
+            if (streakRewards) {
+                LangyState.currencies.dangy += streakRewards.dangy;
+                LangyState.currencies.langy += streakRewards.langy;
+
+                let rewardMsg = `${LangyIcons.flame} ${sd.days} Day Streak!`;
+                if (streakRewards.dangy > 0) rewardMsg += ` +${streakRewards.dangy} Dangy`;
+                if (streakRewards.langy > 0) rewardMsg += ` +${streakRewards.langy} Langy`;
+                if (streakRewards.badge) rewardMsg += ` ${streakRewards.badge}`;
+
+                setTimeout(() => {
+                    if (typeof Anim !== 'undefined') Anim.showToast(rewardMsg);
+                }, 800);
+            }
+        }
+
+        // Save
+        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+    } catch (e) {
+        if (typeof LangyLogger !== 'undefined') {
+            LangyLogger.error('recordSession', 'Failed to record session', e);
+        } else {
+            console.error('[Langy] recordSession failed:', e);
         }
     }
-    
-    // Save
-    if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
-  } catch (e) {
-    if (typeof LangyLogger !== 'undefined') {
-        LangyLogger.error('recordSession', 'Failed to record session', e);
-    } else {
-        console.error('[Langy] recordSession failed:', e);
-    }
-  }
 }
 
 /**
@@ -355,23 +453,23 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
 function getStreakReward(days) {
     // Daily rewards
     const dailyDangy = Math.min(10 + Math.floor(days / 7) * 5, 50); // 10-50 dangy/day, scaling
-    
+
     // Milestone rewards (Langy = premium, only at milestones)
     const milestones = {
-        3:   { dangy: 25,  langy: 0,  badge: LangyIcons.star + ' Nice Start!' },
-        7:   { dangy: 50,  langy: 5,  badge: LangyIcons.star + ' Weekly Warrior!' },
-        14:  { dangy: 100, langy: 10, badge: LangyIcons.award + ' Two Week Champion!' },
-        30:  { dangy: 200, langy: 25, badge: LangyIcons.trophy + ' Monthly Master!' },
-        60:  { dangy: 400, langy: 50, badge: LangyIcons.diamond + ' Diamond Streak!' },
-        90:  { dangy: 600, langy: 100, badge: LangyIcons.crown + ' Royal Learner!' },
+        3: { dangy: 25, langy: 0, badge: LangyIcons.star + ' Nice Start!' },
+        7: { dangy: 50, langy: 5, badge: LangyIcons.star + ' Weekly Warrior!' },
+        14: { dangy: 100, langy: 10, badge: LangyIcons.award + ' Two Week Champion!' },
+        30: { dangy: 200, langy: 25, badge: LangyIcons.trophy + ' Monthly Master!' },
+        60: { dangy: 400, langy: 50, badge: LangyIcons.diamond + ' Diamond Streak!' },
+        90: { dangy: 600, langy: 100, badge: LangyIcons.crown + ' Royal Learner!' },
         180: { dangy: 1000, langy: 200, badge: LangyIcons.flame + ' Half-Year Hero!' },
-        365: { dangy: 2000, langy: 500, badge: LangyIcons.medal + ' Annual Legend!' }
+        365: { dangy: 2000, langy: 500, badge: LangyIcons.medal + ' Annual Legend!' },
     };
-    
+
     if (milestones[days]) {
         return milestones[days];
     }
-    
+
     return { dangy: dailyDangy, langy: 0, badge: null };
 }
 
@@ -383,21 +481,21 @@ const DEFAULT_STATE = JSON.parse(JSON.stringify(LangyState));
 function checkLevelUp(oldXp, newXp) {
     const oldLevel = Math.floor(oldXp / LangyConfig.XP_PER_LEVEL) + 1;
     const newLevel = Math.floor(newXp / LangyConfig.XP_PER_LEVEL) + 1;
-    
+
     if (newLevel > oldLevel) {
         // Level up!
         const dangyReward = newLevel * 25;
         const langyReward = newLevel >= 5 ? 10 : 0;
         LangyState.currencies.dangy += dangyReward;
         LangyState.currencies.langy += langyReward;
-        
+
         setTimeout(() => {
             if (typeof Anim !== 'undefined') {
                 // Show level-up celebration overlay
                 showLevelUpOverlay(newLevel, dangyReward, langyReward);
             }
         }, 600);
-        
+
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
     }
 }
@@ -424,10 +522,14 @@ function showLevelUpOverlay(level, dangy, langy) {
                     <div style="color:#F59E0B; font-size:20px; font-weight:900;">+${dangy}</div>
                     <div style="color:rgba(255,255,255,0.7); font-size:11px;">Dangy</div>
                 </div>
-                ${langy > 0 ? `<div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px 20px; text-align:center;">
+                ${
+                    langy > 0
+                        ? `<div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px 20px; text-align:center;">
                     <div style="color:#818CF8; font-size:20px; font-weight:900;">+${langy}</div>
                     <div style="color:rgba(255,255,255,0.7); font-size:11px;">Langy</div>
-                </div>` : ''}
+                </div>`
+                        : ''
+                }
             </div>
             <button onclick="this.closest('#levelup-overlay').remove()" style="
                 background:rgba(255,255,255,0.2); color:#fff;
@@ -439,7 +541,9 @@ function showLevelUpOverlay(level, dangy, langy) {
         </div>
     `;
     document.body.appendChild(overlay);
-    setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, LangyConfig.OVERLAY_AUTO_DISMISS_MS);
+    setTimeout(() => {
+        if (overlay.parentNode) overlay.remove();
+    }, LangyConfig.OVERLAY_AUTO_DISMISS_MS);
 }
 
 // ─── EVENT PROGRESS ───
@@ -448,7 +552,7 @@ function updateEventProgress({ duration = 0, wordsLearned = 0, accuracy = 0, cat
     if (!LangyState.eventProgress) LangyState.eventProgress = {};
     const today = new Date().toISOString().split('T')[0];
     const ep = LangyState.eventProgress;
-    
+
     // Initialize daily counters
     if (!ep._date || ep._date !== today) {
         ep._date = today;
@@ -460,7 +564,7 @@ function updateEventProgress({ duration = 0, wordsLearned = 0, accuracy = 0, cat
         ep._todaySpeaking = 0;
         ep._todayListening = 0;
     }
-    
+
     ep._todayLessons++;
     ep._todayWords += wordsLearned;
     ep._todayMinutes += duration;
@@ -468,7 +572,7 @@ function updateEventProgress({ duration = 0, wordsLearned = 0, accuracy = 0, cat
     if (category === 'grammar') ep._todayGrammar++;
     if (category === 'speaking') ep._todaySpeaking++;
     if (category === 'listening') ep._todayListening++;
-    
+
     // Cumulative
     ep.totalLessons = (ep.totalLessons || 0) + 1;
     ep.totalWords = (ep.totalWords || 0) + wordsLearned;
@@ -490,8 +594,14 @@ function getStateSnapshot() {
 function loadFromSnapshot(data) {
     function deepMerge(target, source) {
         for (const key of Object.keys(source)) {
-            if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])
-                && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
+            if (
+                source[key] &&
+                typeof source[key] === 'object' &&
+                !Array.isArray(source[key]) &&
+                target[key] &&
+                typeof target[key] === 'object' &&
+                !Array.isArray(target[key])
+            ) {
                 deepMerge(target[key], source[key]);
             } else {
                 target[key] = source[key];
@@ -540,23 +650,27 @@ const LangyApp = {
     getStateSnapshot,
     loadFromSnapshot,
     resetState,
-    
+
     // Session & Streak
     recordSession,
     getStreakReward,
-    
+
     // Leveling
     checkLevelUp,
     showLevelUpOverlay,
-    
+
     // Events
     updateEventProgress,
 
     // Utility: get local date string (YYYY-MM-DD) — single source of truth
     getLocalDateString(date) {
         const d = date || new Date();
-        return d.getFullYear() + '-' + 
-            String(d.getMonth() + 1).padStart(2, '0') + '-' + 
-            String(d.getDate()).padStart(2, '0');
-    }
+        return (
+            d.getFullYear() +
+            '-' +
+            String(d.getMonth() + 1).padStart(2, '0') +
+            '-' +
+            String(d.getDate()).padStart(2, '0')
+        );
+    },
 };

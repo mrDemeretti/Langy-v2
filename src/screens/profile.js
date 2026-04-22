@@ -10,32 +10,33 @@ function buildCefrBadges() {
         { code: 'B1', name: 'Intermediate', color: '#3B82F6' },
         { code: 'B2', name: 'Upper-Int.', color: '#8B5CF6' },
         { code: 'C1', name: 'Advanced', color: '#F59E0B' },
-        { code: 'C2', name: 'Proficiency', color: '#EF4444' }
+        { code: 'C2', name: 'Proficiency', color: '#EF4444' },
     ];
 
     const currentLevel = LangyState.settings.languageLevel || 'A1';
 
-    return levels.map(lv => {
-        const badge = badges[lv.code];
-        const isEarned = badge && badge.earned;
-        const isActive = lv.code === currentLevel && !isEarned;
-        const stateClass = isEarned ? 'cefr-badge--earned' : isActive ? 'cefr-badge--active' : 'cefr-badge--locked';
+    return levels
+        .map(lv => {
+            const badge = badges[lv.code];
+            const isEarned = badge && badge.earned;
+            const isActive = lv.code === currentLevel && !isEarned;
+            const stateClass = isEarned ? 'cefr-badge--earned' : isActive ? 'cefr-badge--active' : 'cefr-badge--locked';
 
-        // Calculate progress for active level
-        let progressPct = 0;
-        if (isActive && typeof LangyCurriculum !== 'undefined') {
-            const tb = LangyCurriculum.getByLevel(lv.code);
-            if (tb) {
-                const mastery = LangyState.progress.mastery;
-                const passed = tb.units.filter(u => {
-                    const key = tb.id + ':' + u.id;
-                    return mastery[key] && mastery[key].passed;
-                }).length;
-                progressPct = Math.round((passed / tb.units.length) * 100);
+            // Calculate progress for active level
+            let progressPct = 0;
+            if (isActive && typeof LangyCurriculum !== 'undefined') {
+                const tb = LangyCurriculum.getByLevel(lv.code);
+                if (tb) {
+                    const mastery = LangyState.progress.mastery;
+                    const passed = tb.units.filter(u => {
+                        const key = tb.id + ':' + u.id;
+                        return mastery[key] && mastery[key].passed;
+                    }).length;
+                    progressPct = Math.round((passed / tb.units.length) * 100);
+                }
             }
-        }
 
-        return `
+            return `
             <div class="cefr-badge ${stateClass}" style="--badge-color: ${lv.color}; ${isEarned ? 'cursor:pointer;' : ''}" data-code="${lv.code}" data-earned="${isEarned}" data-name="${lv.name}" data-color="${lv.color}" data-date="${(badge && badge.date) || ''}">
                 <div class="cefr-badge__level">${lv.code}</div>
                 <div class="cefr-badge__icon">${isEarned ? LangyIcons.medal : isActive ? LangyIcons.unlock : LangyIcons.lock}</div>
@@ -44,7 +45,8 @@ function buildCefrBadges() {
                 ${isActive ? `<div class="cefr-badge__progress">${progressPct}%</div>` : ''}
             </div>
         `;
-    }).join('');
+        })
+        .join('');
 }
 
 function buildAchievements() {
@@ -52,33 +54,49 @@ function buildAchievements() {
     const days = streakData?.days || 0;
     const words = streakData?.wordsLearned || 0;
     const perfectDate = dailyChallenge?._perfectLessonDate;
-    
+
     const achievements = [
         {
-            id: 'early_bird', title: 'Early Bird', desc: 'Study before 8 AM',
-            icon: LangyIcons.sunrise, unlocked: true
+            id: 'early_bird',
+            title: 'Early Bird',
+            desc: 'Study before 8 AM',
+            icon: LangyIcons.sunrise,
+            unlocked: true,
         },
         {
-            id: 'unstoppable', title: 'Unstoppable', desc: '7 Day Streak',
-            icon: LangyIcons.flame, unlocked: days >= 7
+            id: 'unstoppable',
+            title: 'Unstoppable',
+            desc: '7 Day Streak',
+            icon: LangyIcons.flame,
+            unlocked: days >= 7,
         },
         {
-            id: 'vocab_master', title: 'Vocab Master', desc: '50 Words',
-            icon: LangyIcons.brain, unlocked: words >= 50
+            id: 'vocab_master',
+            title: 'Vocab Master',
+            desc: '50 Words',
+            icon: LangyIcons.brain,
+            unlocked: words >= 50,
         },
         {
-            id: 'perfectionist', title: 'Perfectionist', desc: '100% Lesson',
-            icon: LangyIcons.target, unlocked: perfectDate !== null && perfectDate !== undefined
-        }
+            id: 'perfectionist',
+            title: 'Perfectionist',
+            desc: '100% Lesson',
+            icon: LangyIcons.target,
+            unlocked: perfectDate !== null && perfectDate !== undefined,
+        },
     ];
 
-    return achievements.map(ach => `
+    return achievements
+        .map(
+            ach => `
         <div class="achievement-card ${!ach.unlocked ? 'achievement-card--locked' : ''}">
             <div class="achievement-card__icon">${ach.icon}</div>
             <div class="achievement-card__title">${ach.title}</div>
             <div class="achievement-card__desc">${ach.desc}</div>
         </div>
-    `).join('');
+    `
+        )
+        .join('');
 }
 
 function renderProfile(container) {
@@ -121,7 +139,9 @@ function renderProfile(container) {
             </div>
 
             <!-- Premium Banner -->
-            ${LangyState.subscription.plan !== 'premium' ? `
+            ${
+                LangyState.subscription.plan !== 'premium'
+                    ? `
             <div class="profile__premium-banner" id="prof-premium-banner">
                 <div>
                     <h3 style="margin:0; font-size:var(--fs-lg);">Langy Pro ${LangyIcons.crown}</h3>
@@ -129,7 +149,9 @@ function renderProfile(container) {
                 </div>
                 <button class="btn" style="background:white; color:#b45309; padding:4px 12px; font-weight:var(--fw-bold); border-radius:var(--radius-full);">GET</button>
             </div>
-            ` : ''}
+            `
+                    : ''
+            }
 
             <!-- Settings Sections -->
             <div class="profile__sections">
@@ -339,7 +361,9 @@ function renderProfile(container) {
 
     container.querySelector('#prof-logout')?.addEventListener('click', async () => {
         if (typeof LangyDB !== 'undefined') {
-            try { await LangyDB.logout(); } catch(e) {}
+            try {
+                await LangyDB.logout();
+            } catch (e) {}
         }
         Anim.showToast(`Logged out. See you soon! ${LangyIcons.messageCircle}`);
         setTimeout(() => Router.navigate('auth'), 800);
@@ -347,17 +371,20 @@ function renderProfile(container) {
 
     container.querySelector('#prof-invite')?.addEventListener('click', () => {
         const inviteLink = `https://langy.app/invite/${LangyState?.user?.name?.toLowerCase().replace(/\s+/g, '') || 'friend'}-${Math.floor(1000 + Math.random() * 9000)}`;
-        navigator.clipboard.writeText(inviteLink).then(() => {
-            Anim.showToast(`Invite link copied: ${inviteLink} ${LangyIcons.clipboard}`);
-        }).catch(() => {
-            Anim.showToast(`Invite link: ${inviteLink}`);
-        });
+        navigator.clipboard
+            .writeText(inviteLink)
+            .then(() => {
+                Anim.showToast(`Invite link copied: ${inviteLink} ${LangyIcons.clipboard}`);
+            })
+            .catch(() => {
+                Anim.showToast(`Invite link: ${inviteLink}`);
+            });
     });
 
     container.querySelector('#prof-level')?.addEventListener('click', () => showLevelPicker());
     container.querySelector('#prof-edit')?.addEventListener('click', () => showEditProfile());
     container.querySelector('#prof-reminder')?.addEventListener('click', () => showReminderPicker());
-    
+
     container.querySelector('#prof-goals')?.addEventListener('click', () => showGoalsPicker());
     container.querySelector('#prof-lang')?.addEventListener('click', () => showLanguagePicker(container));
     container.querySelector('#prof-help')?.addEventListener('click', () => showHelp());
@@ -394,7 +421,14 @@ function toggleDarkMode(isDark) {
 }
 
 function showLevelPicker() {
-    const levels = ['A1 Beginner', 'A2 Elementary', 'B1 Intermediate', 'B2 Upper-Intermediate', 'C1 Advanced', 'C2 Proficient'];
+    const levels = [
+        'A1 Beginner',
+        'A2 Elementary',
+        'B1 Intermediate',
+        'B2 Upper-Intermediate',
+        'C1 Advanced',
+        'C2 Proficient',
+    ];
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     overlay.innerHTML = `
@@ -402,19 +436,25 @@ function showLevelPicker() {
             <div class="overlay__handle"></div>
             <h3 style="margin-bottom:var(--sp-4);">Select Your Level</h3>
             <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
-                ${levels.map(level => `
+                ${levels
+                    .map(
+                        level => `
                     <div class="profile__option" data-level="${level}" style="background:${LangyState.settings.languageLevel === level.split(' ')[0] ? 'var(--primary-bg)' : 'transparent'}; border-radius:var(--radius-lg); cursor:pointer;">
                         <div class="lang-option" data-level="${level.split(' ')[0]}">
                     <span>${level}</span>
                     ${LangyState.settings.languageLevel === level.split(' ')[0] ? `<span style="color:var(--primary); display:flex; align-items:center; gap:4px;">${LangyIcons.check}</span>` : ''}
                 </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
         </div>
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 
     overlay.querySelectorAll('[data-level]').forEach(el => {
         el.addEventListener('click', () => {
@@ -437,7 +477,38 @@ function showLevelPicker() {
 }
 
 function showAvatarPicker() {
-    const avatars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Z', '1', '7', '42', 'AI', 'EN', 'OK', 'GO', 'YO', 'LG', 'QA'];
+    const avatars = [
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+        'K',
+        'L',
+        'M',
+        'N',
+        'P',
+        'R',
+        'S',
+        'T',
+        'V',
+        'W',
+        'X',
+        'Z',
+        '1',
+        '7',
+        '42',
+        'AI',
+        'EN',
+        'OK',
+        'GO',
+        'YO',
+        'LG',
+        'QA',
+    ];
     const colors = [
         { bg: 'linear-gradient(135deg, #10B981, #059669)', label: 'Emerald' },
         { bg: 'linear-gradient(135deg, #6366F1, #4F46E5)', label: 'Indigo' },
@@ -467,7 +538,9 @@ function showAvatarPicker() {
             <!-- Emoji Grid -->
             <p style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-2);">SELECT EMOJI</p>
             <div style="display:grid; grid-template-columns:repeat(6, 1fr); gap:var(--sp-2); margin-bottom:var(--sp-4);">
-                ${avatars.map(e => `
+                ${avatars
+                    .map(
+                        e => `
                     <div class="avatar-emoji-pick" data-emoji="${e}" style="
                         width:44px; height:44px; border-radius:var(--radius-lg);
                         display:flex; align-items:center; justify-content:center;
@@ -475,13 +548,17 @@ function showAvatarPicker() {
                         background:${e === currentAvatar ? 'var(--primary-bg)' : 'var(--bg-card)'};
                         border: 2px solid ${e === currentAvatar ? 'var(--primary)' : 'transparent'};
                     ">${e}</div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
 
             <!-- Or use initial letter -->
             <p style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-2);">OR USE YOUR INITIAL</p>
             <div style="display:flex; gap:var(--sp-2); flex-wrap:wrap; margin-bottom:var(--sp-4);">
-                ${colors.map(c => `
+                ${colors
+                    .map(
+                        c => `
                     <div class="avatar-letter-pick" data-letter="${(LangyState.user.name || 'U')[0].toUpperCase()}" data-bg="${c.bg}" style="
                         width:44px; height:44px; border-radius:50%;
                         display:flex; align-items:center; justify-content:center;
@@ -489,7 +566,9 @@ function showAvatarPicker() {
                         background:${c.bg}; color:white;
                         border: 2px solid transparent;
                     ">${(LangyState.user.name || 'U')[0].toUpperCase()}</div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
 
             <button class="btn btn--primary btn--full" id="save-avatar">Save Avatar</button>
@@ -497,7 +576,9 @@ function showAvatarPicker() {
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 
     // Emoji selection
     overlay.querySelectorAll('.avatar-emoji-pick').forEach(el => {
@@ -512,7 +593,7 @@ function showAvatarPicker() {
             el.style.background = 'var(--primary-bg)';
             el.style.borderColor = 'var(--primary)';
             // Reset letter selections
-            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => e.style.borderColor = 'transparent');
+            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => (e.style.borderColor = 'transparent'));
         });
     });
 
@@ -524,7 +605,7 @@ function showAvatarPicker() {
             preview.textContent = selectedEmoji;
             preview.style.background = el.dataset.bg;
             preview.style.fontSize = '32px';
-            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => e.style.borderColor = 'transparent');
+            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => (e.style.borderColor = 'transparent'));
             el.style.borderColor = 'white';
             // Reset emoji selections
             overlay.querySelectorAll('.avatar-emoji-pick').forEach(e => {
@@ -572,9 +653,11 @@ function showEditProfile() {
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 
     // Open avatar picker from edit profile
     const avatarTriggers = [overlay.querySelector('#edit-avatar-btn'), overlay.querySelector('#change-avatar-link')];
@@ -584,12 +667,12 @@ function showEditProfile() {
             showAvatarPicker();
         });
     });
-    
+
     overlay.querySelector('#save-profile').addEventListener('click', async () => {
         const newName = overlay.querySelector('#edit-name').value;
         const newEmail = overlay.querySelector('#edit-email').value;
-        if(newName) LangyState.user.name = newName;
-        if(newEmail) LangyState.user.email = newEmail;
+        if (newName) LangyState.user.name = newName;
+        if (newEmail) LangyState.user.email = newEmail;
         overlay.remove();
         Anim.showToast('Profile updated!');
         if (typeof LangyDB !== 'undefined') {
@@ -597,9 +680,9 @@ function showEditProfile() {
             // Also update the users store so changes persist across logins
             LangyDB.updateUserRecord({ name: newName, email: newEmail }).catch(() => {});
         }
-        if(typeof renderProfile === 'function') {
+        if (typeof renderProfile === 'function') {
             const container = document.getElementById('screen-container');
-            if(container) renderProfile(container);
+            if (container) renderProfile(container);
         }
     });
 }
@@ -620,18 +703,20 @@ function showReminderPicker() {
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
-    
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
+
     overlay.querySelector('#save-reminder').addEventListener('click', () => {
         const newTime = overlay.querySelector('#edit-time').value;
-        if(newTime) LangyState.settings.dailyReminder = newTime;
+        if (newTime) LangyState.settings.dailyReminder = newTime;
         overlay.remove();
         Anim.showToast('Reminder set for ' + newTime);
-        if(typeof renderProfile === 'function') {
+        if (typeof renderProfile === 'function') {
             const container = document.getElementById('screen-container');
-            if(container) renderProfile(container);
+            if (container) renderProfile(container);
         }
     });
 }
@@ -641,7 +726,7 @@ function showGoalsPicker() {
         { label: 'Relaxed', time: '5 min/day', icon: LangyIcons.info },
         { label: 'Normal', time: '15 min/day', icon: LangyIcons.user },
         { label: 'Serious', time: '30 min/day', icon: LangyIcons.zap },
-        { label: 'Intense', time: '60 min/day', icon: LangyIcons.fire }
+        { label: 'Intense', time: '60 min/day', icon: LangyIcons.fire },
     ];
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -650,7 +735,9 @@ function showGoalsPicker() {
             <div class="overlay__handle"></div>
             <h3 style="margin-bottom:var(--sp-4);">Select Daily Goal</h3>
             <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
-                ${goals.map(g => `
+                ${goals
+                    .map(
+                        g => `
                     <div class="profile__option" style="cursor:pointer;" onclick="Anim.showToast('Goal changed to ${g.label}'); this.closest('.overlay').remove();">
                         <div class="profile__option-icon" style="background:var(--bg-alt);">${g.icon}</div>
                         <div class="profile__option-text">
@@ -658,12 +745,16 @@ function showGoalsPicker() {
                             <div class="profile__option-desc">${g.time}</div>
                         </div>
                     </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
         </div>
     `;
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 }
 
 function showHelp() {
@@ -691,7 +782,9 @@ function showHelp() {
         </div>
     `;
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 }
 
 function showFeedback() {
@@ -709,7 +802,9 @@ function showFeedback() {
         </div>
     `;
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 }
 
 function showAbout() {
@@ -782,7 +877,9 @@ function showAbout() {
         </div>
     `;
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 }
 
 function showCertificate(code, name, color, date) {
@@ -831,16 +928,21 @@ function showCertificate(code, name, color, date) {
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 
     // Copy certificate text
     overlay.querySelector('#cert-copy')?.addEventListener('click', () => {
         const text = `Certificate of Achievement\n\n${userName} has completed ${code} — ${name}\n\nIssued by Langy AI\n${date ? 'Date: ' + date : ''}\n\n#LangyAI #LanguageLearning #CEFR`;
-        navigator.clipboard.writeText(text).then(() => {
-            Anim.showToast(`${LangyIcons.check} Certificate copied to clipboard!`);
-        }).catch(() => {
-            Anim.showToast(`${LangyIcons.clipboard} Copy: ${text.substring(0, 50)}...`);
-        });
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+                Anim.showToast(`${LangyIcons.check} Certificate copied to clipboard!`);
+            })
+            .catch(() => {
+                Anim.showToast(`${LangyIcons.clipboard} Copy: ${text.substring(0, 50)}...`);
+            });
     });
 
     // Share (Web Share API or fallback)
@@ -848,14 +950,17 @@ function showCertificate(code, name, color, date) {
         const shareData = {
             title: `${code} Certificate — Langy AI`,
             text: `I just earned my ${code} (${name}) certificate on Langy AI!`,
-            url: 'https://mrdemeretti.github.io/Langy-v2'
+            url: 'https://mrdemeretti.github.io/Langy-v2',
         };
         if (navigator.share) {
             navigator.share(shareData).catch(() => {});
         } else {
-            navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`).then(() => {
-                Anim.showToast(`${LangyIcons.check} Share text copied!`);
-            }).catch(() => {});
+            navigator.clipboard
+                .writeText(`${shareData.text}\n${shareData.url}`)
+                .then(() => {
+                    Anim.showToast(`${LangyIcons.check} Share text copied!`);
+                })
+                .catch(() => {});
         }
     });
 }
@@ -886,31 +991,31 @@ function showSubscription() {
         </div>
     `;
     document.body.appendChild(overlay);
-    
+
     // Animate in
-    setTimeout(() => overlay.querySelector('.overlay__sheet').style.transform = 'translateY(0)', 10);
-    
-    overlay.addEventListener('click', (e) => {
+    setTimeout(() => (overlay.querySelector('.overlay__sheet').style.transform = 'translateY(0)'), 10);
+
+    overlay.addEventListener('click', e => {
         if (e.target === overlay) {
             overlay.querySelector('.overlay__sheet').style.transform = 'translateY(100%)';
             setTimeout(() => overlay.remove(), 300);
         }
     });
-    
+
     overlay.querySelector('#activate-premium-btn').addEventListener('click', () => {
         LangyState.subscription.plan = 'premium';
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
         Anim.showToast(`Premium Activated! You are amazing. ${LangyIcons.sparkles}`);
-        
+
         // Remove the banner from the profile screen
         const banner = document.getElementById('prof-premium-banner');
-        if(banner) {
+        if (banner) {
             banner.style.transition = 'all 0.3s ease';
             banner.style.opacity = '0';
             banner.style.transform = 'scale(0.9)';
             setTimeout(() => banner.remove(), 300);
         }
-        
+
         overlay.querySelector('.overlay__sheet').style.transform = 'translateY(100%)';
         setTimeout(() => overlay.remove(), 300);
     });
@@ -921,13 +1026,15 @@ function showLanguagePicker(profileContainer) {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     const currentLang = LangyI18n.currentLang;
-    
+
     overlay.innerHTML = `
         <div class="overlay__sheet" style="padding-bottom:var(--sp-6);">
             <div class="overlay__handle"></div>
             <h3 style="margin-bottom:var(--sp-4);">${i18n('profile.language')}</h3>
             <div style="display:flex; flex-direction:column; gap:var(--sp-3);">
-                ${LangyI18n.languages.map(lang => `
+                ${LangyI18n.languages
+                    .map(
+                        lang => `
                     <div class="profile__option lang-option ${lang.code === currentLang ? 'profile__option--active' : ''}" data-lang="${lang.code}" style="cursor:pointer; ${lang.code === currentLang ? 'border: 2px solid var(--primary); background: var(--primary-bg);' : ''}">
                         <div class="profile__option-icon" style="font-size:24px; background:transparent;">${lang.flag}</div>
                         <div class="profile__option-text">
@@ -935,14 +1042,18 @@ function showLanguagePicker(profileContainer) {
                         </div>
                         ${lang.code === currentLang ? `<span style="color:var(--primary);">${LangyIcons.check}</span>` : ''}
                     </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
-    
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
+
     overlay.querySelectorAll('.lang-option').forEach(el => {
         el.addEventListener('click', () => {
             const lang = el.dataset.lang;

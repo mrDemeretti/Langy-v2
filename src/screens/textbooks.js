@@ -4,7 +4,7 @@
    ============================================ */
 
 function renderTextbooks(container) {
-    const activeLevel = window._textbookLevel || 'all';
+    const activeLevel = ScreenState.get('textbookLevel', 'all');
     const levels = ['all', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
     container.innerHTML = `
@@ -21,11 +21,15 @@ function renderTextbooks(container) {
 
             <div style="padding: 0 var(--sp-6) var(--sp-4); overflow-x:auto;">
                 <div class="tabs" id="textbook-levels" style="flex-wrap:nowrap; min-width:max-content;">
-                    ${levels.map(l => `
+                    ${levels
+                        .map(
+                            l => `
                         <button class="tabs__tab ${activeLevel === l ? 'tabs__tab--active' : ''}" data-level="${l}">
                             ${l === 'all' ? 'All' : l}
                         </button>
-                    `).join('')}
+                    `
+                        )
+                        .join('')}
                 </div>
             </div>
 
@@ -44,7 +48,7 @@ function renderTextbooks(container) {
     // Level tabs
     container.querySelectorAll('.tabs__tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            window._textbookLevel = tab.dataset.level;
+            ScreenState.set('textbookLevel', tab.dataset.level);
             renderTextbooks(container);
         });
     });
@@ -79,12 +83,24 @@ async function _loadTextbooksList(container, level) {
         }
 
         const fmtIcons = {
-            pdf: LangyIcons.fileText, docx: LangyIcons.fileText, txt: LangyIcons.fileText, csv: LangyIcons.barChart,
-            html: LangyIcons.globe, htm: LangyIcons.globe, epub: LangyIcons.book, rtf: LangyIcons.fileText,
-            png: LangyIcons.image, jpg: LangyIcons.image, jpeg: LangyIcons.image, gif: LangyIcons.image, webp: LangyIcons.image
+            pdf: LangyIcons.fileText,
+            docx: LangyIcons.fileText,
+            txt: LangyIcons.fileText,
+            csv: LangyIcons.barChart,
+            html: LangyIcons.globe,
+            htm: LangyIcons.globe,
+            epub: LangyIcons.book,
+            rtf: LangyIcons.fileText,
+            png: LangyIcons.image,
+            jpg: LangyIcons.image,
+            jpeg: LangyIcons.image,
+            gif: LangyIcons.image,
+            webp: LangyIcons.image,
         };
 
-        listEl.innerHTML = textbooks.map(tb => `
+        listEl.innerHTML = textbooks
+            .map(
+                tb => `
             <div class="textbook-card" data-id="${tb.id}">
                 <div class="textbook-card__icon">${fmtIcons[tb.format] || LangyIcons.fileText}</div>
                 <div class="textbook-card__info">
@@ -96,7 +112,9 @@ async function _loadTextbooksList(container, level) {
                 </div>
                 <div class="badge badge--primary">${tb.level}</div>
             </div>
-        `).join('');
+        `
+            )
+            .join('');
 
         // Click to view details
         listEl.querySelectorAll('.textbook-card').forEach(card => {
@@ -180,7 +198,9 @@ function _showAddTextbookModal() {
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 
     // File picker
     const uploadZone = overlay.querySelector('#upload-zone');
@@ -212,7 +232,7 @@ function _showAddTextbookModal() {
     });
 
     // Submit
-    overlay.querySelector('#textbook-form').addEventListener('submit', async (e) => {
+    overlay.querySelector('#textbook-form').addEventListener('submit', async e => {
         e.preventDefault();
         const errorEl = overlay.querySelector('#tb-error');
         const submitBtn = overlay.querySelector('#tb-submit');
@@ -228,19 +248,24 @@ function _showAddTextbookModal() {
             return;
         }
 
-        const format = selectedFile
-            ? selectedFile.name.split('.').pop().toLowerCase()
-            : '';
+        const format = selectedFile ? selectedFile.name.split('.').pop().toLowerCase() : '';
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Uploading...';
         errorEl.style.display = 'none';
 
         try {
-            await LangyDB.addTextbook({
-                title, author, level, description, format,
-                methodology: description
-            }, selectedFile);
+            await LangyDB.addTextbook(
+                {
+                    title,
+                    author,
+                    level,
+                    description,
+                    format,
+                    methodology: description,
+                },
+                selectedFile
+            );
 
             overlay.remove();
             Anim.showToast(`Textbook added! ${LangyIcons.book}`);
@@ -261,15 +286,34 @@ async function _showTextbookDetail(id) {
     if (!tb) return;
 
     const fmtIcons = {
-        pdf: LangyIcons.fileText, docx: LangyIcons.fileText, txt: LangyIcons.fileText, csv: LangyIcons.barChart,
-        html: LangyIcons.globe, htm: LangyIcons.globe, epub: LangyIcons.book, rtf: LangyIcons.fileText,
-        png: LangyIcons.image, jpg: LangyIcons.image, jpeg: LangyIcons.image, gif: LangyIcons.image, webp: LangyIcons.image
+        pdf: LangyIcons.fileText,
+        docx: LangyIcons.fileText,
+        txt: LangyIcons.fileText,
+        csv: LangyIcons.barChart,
+        html: LangyIcons.globe,
+        htm: LangyIcons.globe,
+        epub: LangyIcons.book,
+        rtf: LangyIcons.fileText,
+        png: LangyIcons.image,
+        jpg: LangyIcons.image,
+        jpeg: LangyIcons.image,
+        gif: LangyIcons.image,
+        webp: LangyIcons.image,
     };
     const fmtNames = {
-        pdf: 'PDF Document', docx: 'Word Document', txt: 'Text File',
-        csv: 'CSV Spreadsheet', html: 'HTML Page', htm: 'HTML Page',
-        epub: 'E-Book (EPUB)', rtf: 'Rich Text',
-        png: 'Image', jpg: 'Image', jpeg: 'Image', gif: 'Image', webp: 'Image'
+        pdf: 'PDF Document',
+        docx: 'Word Document',
+        txt: 'Text File',
+        csv: 'CSV Spreadsheet',
+        html: 'HTML Page',
+        htm: 'HTML Page',
+        epub: 'E-Book (EPUB)',
+        rtf: 'Rich Text',
+        png: 'Image',
+        jpg: 'Image',
+        jpeg: 'Image',
+        gif: 'Image',
+        webp: 'Image',
     };
 
     const hasText = tb.extractedText && tb.extractedText.trim().length > 0;
@@ -295,14 +339,20 @@ async function _showTextbookDetail(id) {
                 </div>
             </div>
 
-            ${(tb.description || tb.methodology) ? `
+            ${
+                tb.description || tb.methodology
+                    ? `
                 <div class="card" style="margin-bottom:var(--sp-3); padding:var(--sp-4);">
                     <h4 style="margin-bottom:var(--sp-2);">${LangyIcons.clipboard} Methodology</h4>
                     <p style="color:var(--text-secondary); font-size:var(--fs-sm); line-height:1.6; white-space:pre-wrap;">${_esc(tb.description || tb.methodology)}</p>
                 </div>
-            ` : ''}
+            `
+                    : ''
+            }
 
-            ${hasText ? `
+            ${
+                hasText
+                    ? `
                 <div class="card" style="margin-bottom:var(--sp-3); padding:var(--sp-4);">
                     <h4 style="margin-bottom:var(--sp-2);">${LangyIcons.bookOpen} Content Preview</h4>
                     <p style="color:var(--text-secondary); font-size:var(--fs-xs); line-height:1.5;
@@ -311,19 +361,25 @@ async function _showTextbookDetail(id) {
                         ${tb.extractedText.length.toLocaleString()} characters extracted for AI
                     </div>
                 </div>
-            ` : `
+            `
+                    : `
                 <div class="card" style="margin-bottom:var(--sp-3); padding:var(--sp-4); text-align:center;">
                     <div style="color:var(--text-tertiary); font-size:var(--fs-sm);">
                         ${LangyIcons.image} No text extracted (image or unsupported format)
                     </div>
                 </div>
-            `}
+            `
+            }
 
-            ${tb.fileName ? `
+            ${
+                tb.fileName
+                    ? `
                 <div style="font-size:var(--fs-xs); color:var(--text-tertiary); text-align:center; margin-bottom:var(--sp-3);">
                     ${LangyIcons.paperclip} ${_esc(tb.fileName)} · ${_fmtSize(tb.fileSize || 0)}
                 </div>
-            ` : ''}
+            `
+                    : ''
+            }
 
             <div style="display:flex; gap:var(--sp-3);">
                 ${tb.fileData ? `<button class="btn btn--primary btn--full" id="tb-download">Open File</button>` : ''}
@@ -334,7 +390,9 @@ async function _showTextbookDetail(id) {
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
     overlay.querySelector('#tb-close')?.addEventListener('click', () => overlay.remove());
 
     // Download / open file

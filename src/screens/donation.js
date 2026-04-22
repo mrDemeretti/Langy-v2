@@ -9,15 +9,28 @@ function renderDonation(container) {
     const plans = {
         pro: { name: 'Pro Plan', price: '$25', period: '/month', type: 'sub' },
         premium: { name: 'Premium Plan', price: '$70', period: '/month', type: 'sub' },
-        langy_pack: { name: '1000 Langy', price: '$50', period: ' (One-time)', type: 'currency', currency: 'langy', amount: 1000 },
-        dangy_pack: { name: '5000 Dangy', price: '$10', period: ' (One-time)', type: 'currency', currency: 'dangy', amount: 5000 }
+        langy_pack: {
+            name: '1000 Langy',
+            price: '$50',
+            period: ' (One-time)',
+            type: 'currency',
+            currency: 'langy',
+            amount: 1000,
+        },
+        dangy_pack: {
+            name: '5000 Dangy',
+            price: '$10',
+            period: ' (One-time)',
+            type: 'currency',
+            currency: 'dangy',
+            amount: 5000,
+        },
     };
-
 
     const plan = plans[planId] || plans.pro;
 
-    const selectedMethod = window._donationMethod || null;
-    const selectedAmount = window._donationAmount || plan.price.replace('$', '');
+    const selectedMethod = ScreenState.get('donationMethod', null);
+    const selectedAmount = ScreenState.get('donationAmount') || plan.price.replace('$', '');
 
     container.innerHTML = `
         <div class="screen screen--no-pad donation">
@@ -90,7 +103,9 @@ function renderDonation(container) {
                 </div>
 
                 <!-- Crypto details if selected -->
-                ${selectedMethod === 'usdt' || selectedMethod === 'ton' ? `
+                ${
+                    selectedMethod === 'usdt' || selectedMethod === 'ton'
+                        ? `
                     <div class="card" style="text-align:center;">
                         <h4 style="margin-bottom:var(--sp-3);">${selectedMethod === 'usdt' ? 'USDT' : 'TON'} Payment</h4>
                         <div style="background:var(--bg-alt); border-radius:var(--radius-lg); padding:var(--sp-4); margin-bottom:var(--sp-3);">
@@ -104,10 +119,14 @@ function renderDonation(container) {
                         </div>
                         <button class="btn btn--accent btn--full" style="margin-top:var(--sp-4);" id="donation-copy">${LangyIcons.clipboard} Copy Address</button>
                     </div>
-                ` : ''}
+                `
+                        : ''
+                }
 
                 <!-- Card input if selected -->
-                ${selectedMethod === 'card' ? `
+                ${
+                    selectedMethod === 'card'
+                        ? `
                     <div class="card">
                         <h4 style="margin-bottom:var(--sp-3);">Card Details</h4>
                         <div style="display:flex; flex-direction:column; gap:var(--sp-3);">
@@ -127,12 +146,14 @@ function renderDonation(container) {
                             </div>
                         </div>
                     </div>
-                ` : ''}
+                `
+                        : ''
+                }
 
                 <!-- Pay Button -->
                 <button class="btn btn--primary btn--xl btn--full" id="donation-pay"
                     style="${!selectedMethod ? 'opacity:0.5; pointer-events:none;' : ''}">
-                    ${selectedMethod === 'usdt' || selectedMethod === 'ton' ? 'I\'ve Sent Payment' : `Pay ${plan.price}${plan.period}`}
+                    ${selectedMethod === 'usdt' || selectedMethod === 'ton' ? "I've Sent Payment" : `Pay ${plan.price}${plan.period}`}
                 </button>
 
                 <p style="text-align:center; color:var(--text-tertiary); font-size:var(--fs-xs); margin-top:var(--sp-4);">
@@ -145,7 +166,7 @@ function renderDonation(container) {
     // Method selection
     container.querySelectorAll('.donation__method').forEach(method => {
         method.addEventListener('click', () => {
-            window._donationMethod = method.dataset.method;
+            ScreenState.set('donationMethod', method.dataset.method);
             renderDonation(container);
         });
     });
@@ -157,10 +178,12 @@ function renderDonation(container) {
 
     container.querySelector('#donation-pay')?.addEventListener('click', () => {
         if (!selectedMethod) return;
-        
+
         if (plan.type === 'currency') {
             LangyState.currencies[plan.currency] += plan.amount;
-            Anim.showToast(`Payment successful! You received ${plan.amount} ${plan.currency === 'langy' ? 'Langy' : 'Dangy'} ${LangyIcons.sparkles}`);
+            Anim.showToast(
+                `Payment successful! You received ${plan.amount} ${plan.currency === 'langy' ? 'Langy' : 'Dangy'} ${LangyIcons.sparkles}`
+            );
             setTimeout(() => Router.navigate('shop'), 1200);
         } else {
             LangyState.subscription.plan = planId;
@@ -172,7 +195,7 @@ function renderDonation(container) {
 
     // Back
     container.querySelector('#donation-back')?.addEventListener('click', () => {
-        window._donationMethod = null;
+        ScreenState.remove('donationMethod');
         Router.back();
     });
 

@@ -70,19 +70,18 @@ const LangyLogger = {
      */
     getRecent(count = 20) {
         return this._log.slice(-count);
-    }
+    },
 };
 
 // ── Global error handler ──
-window.onerror = function(message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno, error) {
     LangyLogger.error('Global', `${message} at ${source}:${lineno}:${colno}`, error);
     return false; // Don't suppress default browser logging
 };
 
-window.addEventListener('unhandledrejection', (event) => {
+window.addEventListener('unhandledrejection', event => {
     LangyLogger.error('Promise', 'Unhandled rejection', event.reason);
 });
-
 
 // ═══════════════════════════════════════════
 // HTML SANITIZER — XSS Protection
@@ -125,7 +124,6 @@ function sanitizeHTML(html) {
         .replace(/javascript\s*:/gi, '')
         .replace(/data\s*:/gi, 'blocked:');
 }
-
 
 // ═══════════════════════════════════════════
 // SCREEN STATE — Replaces window._ globals
@@ -223,9 +221,8 @@ const ScreenState = {
      */
     debug() {
         return { ...this._data, _cleanupCount: this._cleanupCallbacks.length };
-    }
+    },
 };
-
 
 // ═══════════════════════════════════════════
 // SHARED HELPERS — DRY utilities
@@ -240,9 +237,9 @@ const ScreenState = {
  */
 function getLocalDateString(date) {
     const d = date || new Date();
-    return d.getFullYear() + '-' +
-        String(d.getMonth() + 1).padStart(2, '0') + '-' +
-        String(d.getDate()).padStart(2, '0');
+    return (
+        d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
+    );
 }
 
 /**
@@ -269,7 +266,7 @@ function dateDiffDays(dateStr1, dateStr2) {
  */
 function debounce(fn, delay = 300) {
     let timer;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timer);
         timer = setTimeout(() => fn.apply(this, args), delay);
     };
@@ -292,5 +289,7 @@ function clamp(value, min, max) {
  * @returns {string}
  */
 function randomId(length = 8) {
-    return Math.random().toString(36).substring(2, 2 + length);
+    return Math.random()
+        .toString(36)
+        .substring(2, 2 + length);
 }

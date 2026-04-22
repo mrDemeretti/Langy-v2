@@ -6,7 +6,7 @@
 
 function renderHomework(container) {
     const { homework, progress } = LangyState;
-    const activeTab = window._homeworkTab || 'current';
+    const activeTab = ScreenState.get('homeworkTab', 'current');
 
     // Auto-generate homework if empty and lessons have been done
     if (homework.current.length === 0 && progress.lessonHistory.length > 0) {
@@ -31,10 +31,15 @@ function renderHomework(container) {
             </div>
 
             <div class="homework__list" id="homework-list">
-                ${activeTab === 'current' ? renderCurrentHomework(homework.current) 
-                    : activeTab === 'writing' ? renderWritingTab()
-                    : activeTab === 'handwriting' ? renderHandwritingTab()
-                    : renderCompletedHomework(progress.lessonHistory)}
+                ${
+                    activeTab === 'current'
+                        ? renderCurrentHomework(homework.current)
+                        : activeTab === 'writing'
+                          ? renderWritingTab()
+                          : activeTab === 'handwriting'
+                            ? renderHandwritingTab()
+                            : renderCompletedHomework(progress.lessonHistory)
+                }
             </div>
         </div>
     `;
@@ -42,7 +47,7 @@ function renderHomework(container) {
     // Tab switching
     container.querySelectorAll('.tabs__tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            window._homeworkTab = tab.dataset.tab;
+            ScreenState.set('homeworkTab', tab.dataset.tab);
             renderHomework(container);
         });
     });
@@ -58,7 +63,10 @@ function renderHomework(container) {
 
             if (status === 'pending') {
                 Anim.showToast(`Starting Homework with DeepTutor... ${LangyIcons.book}`);
-                setTimeout(() => Router.navigate('learning', { mode: 'homework', active: true, unitId: parseInt(unitId) }), 600);
+                setTimeout(
+                    () => Router.navigate('learning', { mode: 'homework', active: true, unitId: parseInt(unitId) }),
+                    600
+                );
             } else if (status === 'error' || status === 'done') {
                 showHomeworkErrors(id);
             }
@@ -96,7 +104,7 @@ function autoGenerateHomework() {
                     title: `${unit.title} — Review`,
                     desc: unit.homework?.prompt || `Review ${unit.grammar?.join(', ') || 'this lesson'}.`,
                     icon: LangyIcons.fileText,
-                    createdAt: new Date().toISOString()
+                    createdAt: new Date().toISOString(),
                 });
             }
         }
@@ -113,7 +121,9 @@ function renderCurrentHomework(items) {
             <div class="empty-state__text">No homework right now. Complete more lessons to get assignments!</div>
         </div>`;
     }
-    return items.map(item => `
+    return items
+        .map(
+            item => `
         <div class="homework-card" data-id="${item.id}" data-status="pending" data-unit-id="${item.unitId}">
             <div class="homework-card__icon" style="background: var(--primary-bg);">${item.icon || LangyIcons.fileText}</div>
             <div class="homework-card__info">
@@ -122,7 +132,9 @@ function renderCurrentHomework(items) {
             </div>
             <div class="homework-card__status homework-card__status--pending">Start ${LangyIcons.arrowRight}</div>
         </div>
-    `).join('');
+    `
+        )
+        .join('');
 }
 
 function renderCompletedHomework(items) {
@@ -133,7 +145,11 @@ function renderCompletedHomework(items) {
             <div class="empty-state__text">Complete lessons and homework to see results here</div>
         </div>`;
     }
-    return items.slice().reverse().map(item => `
+    return items
+        .slice()
+        .reverse()
+        .map(
+            item => `
         <div class="homework-card" data-id="${item.id}" data-status="${item.status}" data-unit-id="${item.unitId}">
             <div class="homework-card__icon" style="background: ${item.status === 'error' ? 'var(--danger-bg)' : 'var(--accent-bg)'};">${item.icon || LangyIcons.fileText}</div>
             <div class="homework-card__info">
@@ -144,7 +160,9 @@ function renderCompletedHomework(items) {
                 ${item.status === 'error' ? `<span style="display:flex;align-items:center;gap:4px;">Review ${LangyIcons.alertTriangle}</span>` : `<span style="display:flex;align-items:center;gap:4px;">Done ${LangyIcons.check}</span>`}
             </div>
         </div>
-    `).join('');
+    `
+        )
+        .join('');
 }
 
 // ═══════════════════════════════════════
@@ -153,11 +171,36 @@ function renderCompletedHomework(items) {
 function renderWritingTab() {
     const level = LangyState?.user?.level || 'B1 Intermediate';
     const prompts = [
-        { id: 'email', title: 'Write an Email', desc: 'Write a formal email to your boss asking for a day off.', icon: LangyIcons.send },
-        { id: 'story', title: 'Short Story', desc: 'Write a short story about an unexpected adventure.', icon: LangyIcons.bookOpen },
-        { id: 'opinion', title: 'Opinion Essay', desc: 'Do you think AI will replace teachers? Write your opinion.', icon: LangyIcons.brain },
-        { id: 'describe', title: 'Describe a Place', desc: 'Describe your favorite place in the world. Why is it special?', icon: LangyIcons.globe },
-        { id: 'letter', title: 'Letter to a Friend', desc: 'Write a letter to a friend you haven\'t seen in years.', icon: LangyIcons.heart },
+        {
+            id: 'email',
+            title: 'Write an Email',
+            desc: 'Write a formal email to your boss asking for a day off.',
+            icon: LangyIcons.send,
+        },
+        {
+            id: 'story',
+            title: 'Short Story',
+            desc: 'Write a short story about an unexpected adventure.',
+            icon: LangyIcons.bookOpen,
+        },
+        {
+            id: 'opinion',
+            title: 'Opinion Essay',
+            desc: 'Do you think AI will replace teachers? Write your opinion.',
+            icon: LangyIcons.brain,
+        },
+        {
+            id: 'describe',
+            title: 'Describe a Place',
+            desc: 'Describe your favorite place in the world. Why is it special?',
+            icon: LangyIcons.globe,
+        },
+        {
+            id: 'letter',
+            title: 'Letter to a Friend',
+            desc: "Write a letter to a friend you haven't seen in years.",
+            icon: LangyIcons.heart,
+        },
         { id: 'free', title: 'Free Writing', desc: 'Write about anything you want!', icon: LangyIcons.pencil },
     ];
 
@@ -165,14 +208,16 @@ function renderWritingTab() {
         <div style="padding: var(--sp-4) var(--sp-5);">
             
             <!-- Writing prompt selection -->
-            <div id="writing-prompts" ${window._writingActive ? 'style="display:none;"' : ''}>
+            <div id="writing-prompts" ${ScreenState.get('writingActive') ? 'style="display:none;"' : ''}>
                 <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">
                     <span style="color:var(--primary);">${LangyIcons.pencil}</span> Choose a Writing Prompt
                 </h4>
                 <p style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-bottom:var(--sp-4);">Level: ${level}</p>
 
                 <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
-                    ${prompts.map(p => `
+                    ${prompts
+                        .map(
+                            p => `
                         <div class="homework-card writing-prompt" data-prompt-id="${p.id}" data-prompt-desc="${p.desc}">
                             <div class="homework-card__icon" style="background:var(--primary-bg); color:var(--primary);">${p.icon}</div>
                             <div class="homework-card__info">
@@ -181,23 +226,25 @@ function renderWritingTab() {
                             </div>
                             <div style="color:var(--text-tertiary);">${LangyIcons.arrowRight}</div>
                         </div>
-                    `).join('')}
+                    `
+                        )
+                        .join('')}
                 </div>
             </div>
 
             <!-- Active writing area -->
-            <div id="writing-area" ${window._writingActive ? '' : 'style="display:none;"'}>
+            <div id="writing-area" ${ScreenState.get('writingActive') ? '' : 'style="display:none;"'}>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--sp-3);">
                     <h4 style="display:flex; align-items:center; gap:8px;">
                         <span style="color:var(--primary);">${LangyIcons.pencil}</span>
-                        <span id="writing-prompt-title">${window._writingPromptTitle || 'Free Writing'}</span>
+                        <span id="writing-prompt-title">${ScreenState.get('writingPromptTitle', 'Free Writing')}</span>
                     </h4>
                     <button class="btn btn--ghost btn--sm" id="writing-back" style="color:var(--text-tertiary);">${LangyIcons.x}</button>
                 </div>
                 <p id="writing-prompt-desc" style="font-size:var(--fs-sm); color:var(--text-secondary); margin-bottom:var(--sp-3); padding:var(--sp-3); background:var(--bg-alt); border-radius:var(--radius-lg);">
-                    ${window._writingPromptDesc || 'Write about anything you want!'}
+                    ${ScreenState.get('writingPromptDesc', 'Write about anything you want!')}
                 </p>
-                <textarea class="hw-writing" id="writing-textarea" placeholder="Start writing here...">${window._writingText || ''}</textarea>
+                <textarea class="hw-writing" id="writing-textarea" placeholder="Start writing here...">${ScreenState.get('writingText', '')}</textarea>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-top:var(--sp-2);">
                     <span id="writing-word-count" style="font-size:var(--fs-xs); color:var(--text-tertiary);">0 words</span>
                     <button class="btn btn--primary btn--sm" id="writing-submit" style="display:flex; align-items:center; gap:6px;">
@@ -216,17 +263,20 @@ function setupWritingTab(container) {
     // Prompt selection
     container.querySelectorAll('.writing-prompt').forEach(card => {
         card.addEventListener('click', () => {
-            window._writingActive = true;
-            window._writingPromptTitle = card.querySelector('.homework-card__title')?.textContent || 'Writing';
-            window._writingPromptDesc = card.dataset.promptDesc;
-            window._writingText = '';
+            ScreenState.set('writingActive', true);
+            ScreenState.set(
+                'writingPromptTitle',
+                card.querySelector('.homework-card__title')?.textContent || 'Writing'
+            );
+            ScreenState.set('writingPromptDesc', card.dataset.promptDesc);
+            ScreenState.set('writingText', '');
             renderHomework(container);
         });
     });
 
     // Back from writing
     container.querySelector('#writing-back')?.addEventListener('click', () => {
-        window._writingActive = false;
+        ScreenState.set('writingActive', false);
         renderHomework(container);
     });
 
@@ -234,8 +284,11 @@ function setupWritingTab(container) {
     const textarea = container.querySelector('#writing-textarea');
     const wordCount = container.querySelector('#writing-word-count');
     textarea?.addEventListener('input', () => {
-        window._writingText = textarea.value;
-        const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+        ScreenState.set('writingText', textarea.value);
+        const words = textarea.value
+            .trim()
+            .split(/\s+/)
+            .filter(w => w.length > 0).length;
         if (wordCount) wordCount.textContent = `${words} word${words !== 1 ? 's' : ''}`;
     });
 
@@ -261,7 +314,7 @@ function setupWritingTab(container) {
             const level = LangyState?.user?.level || 'B1';
             const prompt = `You are an expert English writing teacher. Analyze this student's writing.
 Student level: ${level}
-Prompt: ${window._writingPromptDesc || 'Free writing'}
+Prompt: ${ScreenState.get('writingPromptDesc', 'Free writing')}
 
 Student's text:
 "${text}"
@@ -291,8 +344,8 @@ Be encouraging but honest. Keep feedback concise.`;
                     model: LangyAI.MODEL,
                     messages: [{ role: 'user', content: prompt }],
                     max_tokens: 600,
-                    temperature: 0.6
-                })
+                    temperature: 0.6,
+                }),
             });
 
             if (!response.ok) throw new Error('AI unavailable');
@@ -304,7 +357,7 @@ Be encouraging but honest. Keep feedback concise.`;
                     <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">
                         <span style="color:var(--primary);">${LangyIcons.brain}</span> AI Feedback
                     </h4>
-                    <div style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.8; white-space:pre-line;">${feedback}</div>
+                    <div style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.8; white-space:pre-line;">${escapeHTML(feedback)}</div>
                 </div>
             `;
 
@@ -395,12 +448,12 @@ function setupHandwritingTab(container) {
     uploadZone?.addEventListener('click', () => fileInput?.click());
 
     // Drag and drop
-    uploadZone?.addEventListener('dragover', (e) => {
+    uploadZone?.addEventListener('dragover', e => {
         e.preventDefault();
         uploadZone.classList.add('hw-upload--dragover');
     });
     uploadZone?.addEventListener('dragleave', () => uploadZone.classList.remove('hw-upload--dragover'));
-    uploadZone?.addEventListener('drop', (e) => {
+    uploadZone?.addEventListener('drop', e => {
         e.preventDefault();
         uploadZone.classList.remove('hw-upload--dragover');
         const file = e.dataTransfer?.files?.[0];
@@ -420,7 +473,7 @@ function setupHandwritingTab(container) {
         }
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
             imageBase64 = e.target.result;
             if (previewImg) previewImg.src = imageBase64;
             if (uploadZone) uploadZone.style.display = 'none';
@@ -493,21 +546,24 @@ Be encouraging but specific. If you cannot read some parts, mention that.`;
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: LangyAI.MODEL,
-                    messages: [{
-                        role: 'user',
-                        content: [
-                            { type: 'text', text: prompt },
-                            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Data}` } }
-                        ]
-                    }],
+                    messages: [
+                        {
+                            role: 'user',
+                            content: [
+                                { type: 'text', text: prompt },
+                                { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Data}` } },
+                            ],
+                        },
+                    ],
                     max_tokens: 800,
-                    temperature: 0.5
-                })
+                    temperature: 0.5,
+                }),
             });
 
             if (!response.ok) throw new Error('AI unavailable');
             const data = await response.json();
-            const feedback = data.choices?.[0]?.message?.content || 'Could not analyze the image. Try again with a clearer photo.';
+            const feedback =
+                data.choices?.[0]?.message?.content || 'Could not analyze the image. Try again with a clearer photo.';
 
             if (feedbackArea) {
                 feedbackArea.innerHTML = `
@@ -515,7 +571,7 @@ Be encouraging but specific. If you cannot read some parts, mention that.`;
                         <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">
                             <span style="color:#F59E0B;">${LangyIcons.brain}</span> Handwriting Analysis
                         </h4>
-                        <div style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.8; white-space:pre-line;">${feedback}</div>
+                        <div style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.8; white-space:pre-line;">${escapeHTML(feedback)}</div>
                     </div>
                 `;
             }
@@ -572,7 +628,7 @@ function showHomeworkErrors(itemId) {
             <h4 style="margin-bottom: var(--sp-3);">Feedback</h4>
             <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
                 <div class="card card--flat" style="padding:var(--sp-3); border-left:4px solid var(--primary);">
-                    <div style="font-size:var(--fs-sm); line-height:1.5;">${item.feedback || "Good work on this unit! Keep practicing to improve your score."}</div>
+                    <div style="font-size:var(--fs-sm); line-height:1.5;">${escapeHTML(item.feedback || 'Good work on this unit! Keep practicing to improve your score.')}</div>
                 </div>
             </div>
 
@@ -582,7 +638,7 @@ function showHomeworkErrors(itemId) {
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => {
+    overlay.addEventListener('click', e => {
         if (e.target === overlay) overlay.remove();
     });
     overlay.querySelector('#error-close')?.addEventListener('click', () => overlay.remove());

@@ -4,7 +4,6 @@
    ============================================ */
 
 const LangyWidgets = {
-
     // ─── WORD SHUFFLE: Составить предложение из перемешанных слов ───
     renderWordShuffle(container, data, onComplete) {
         const words = data.words.slice();
@@ -27,13 +26,23 @@ const LangyWidgets = {
         function render() {
             // Shuffle words for bank (only unselected)
             const available = words.filter(w => !selected.includes(w));
-            bankZone.innerHTML = available.map((w, i) => `
+            bankZone.innerHTML = available
+                .map(
+                    (w, i) => `
                 <button class="word-chip" data-word="${w}" data-idx="${i}">${w}</button>
-            `).join('');
+            `
+                )
+                .join('');
 
-            answerZone.innerHTML = selected.length ? selected.map((w, i) => `
+            answerZone.innerHTML = selected.length
+                ? selected
+                      .map(
+                          (w, i) => `
                 <button class="word-chip word-chip--selected" data-word="${w}" data-idx="${i}">${w}</button>
-            `).join('') : `<span class="widget__placeholder">${i18n('widget.tap_words')}</span>`;
+            `
+                      )
+                      .join('')
+                : `<span class="widget__placeholder">${i18n('widget.tap_words')}</span>`;
 
             // Bank click → add to answer
             bankZone.querySelectorAll('.word-chip').forEach(chip => {
@@ -76,9 +85,13 @@ const LangyWidgets = {
             <div class="widget__label">${data.instruction || i18n('widget.choose_answer')}</div>
             <div class="widget__sentence">${data.sentence.replace('___', '<span class="widget__blank">___</span>')}</div>
             <div class="widget__bubbles">
-                ${data.options.map((opt, i) => `
+                ${data.options
+                    .map(
+                        (opt, i) => `
                     <button class="bubble-btn" data-idx="${i}">${opt}</button>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
         `;
         container.appendChild(el);
@@ -118,7 +131,7 @@ const LangyWidgets = {
         const leftItems = pairs.map(p => p.left);
         const rightItems = pairs.map(p => p.right).sort(() => Math.random() - 0.5);
         let selectedLeft = null;
-        let matched = new Set();
+        const matched = new Set();
         let errors = 0;
 
         el.innerHTML = `
@@ -134,16 +147,22 @@ const LangyWidgets = {
             const leftCol = el.querySelector('#match-left');
             const rightCol = el.querySelector('#match-right');
 
-            leftCol.innerHTML = leftItems.map((w, i) => `
+            leftCol.innerHTML = leftItems
+                .map(
+                    (w, i) => `
                 <button class="match-card ${matched.has(i) ? 'match-card--done' : ''} ${selectedLeft === i ? 'match-card--active' : ''}" 
                         data-idx="${i}" ${matched.has(i) ? 'disabled' : ''}>${w}</button>
-            `).join('');
+            `
+                )
+                .join('');
 
-            rightCol.innerHTML = rightItems.map((w, i) => {
-                const originalIdx = pairs.findIndex(p => p.right === w);
-                return `<button class="match-card ${matched.has(originalIdx) ? 'match-card--done' : ''}" 
+            rightCol.innerHTML = rightItems
+                .map((w, i) => {
+                    const originalIdx = pairs.findIndex(p => p.right === w);
+                    return `<button class="match-card ${matched.has(originalIdx) ? 'match-card--done' : ''}" 
                               data-idx="${originalIdx}" ${matched.has(originalIdx) ? 'disabled' : ''}>${w}</button>`;
-            }).join('');
+                })
+                .join('');
 
             // Left click
             leftCol.querySelectorAll('.match-card:not([disabled])').forEach(card => {
@@ -210,7 +229,7 @@ const LangyWidgets = {
         // TTS playback
         const playBtn = el.querySelector('#lt-play');
         let utterance = null;
-        
+
         function speak(rate = 1) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -239,7 +258,10 @@ const LangyWidgets = {
         const checkBtn = el.querySelector('#lt-check');
 
         const check = () => {
-            const userAnswer = input.value.trim().toLowerCase().replace(/[.,!?]/g, '');
+            const userAnswer = input.value
+                .trim()
+                .toLowerCase()
+                .replace(/[.,!?]/g, '');
             const expected = data.text.toLowerCase().replace(/[.,!?]/g, '');
             const isCorrect = userAnswer === expected || this._levenshtein(userAnswer, expected) <= 2;
             this._showFeedback(el, isCorrect, data.text);
@@ -247,7 +269,9 @@ const LangyWidgets = {
         };
 
         checkBtn.onclick = check;
-        input.onkeypress = (e) => { if (e.key === 'Enter') check(); };
+        input.onkeypress = e => {
+            if (e.key === 'Enter') check();
+        };
         input.focus();
 
         // Show hint after 10 seconds
@@ -281,8 +305,11 @@ const LangyWidgets = {
         const checkBtn = el.querySelector('#tt-check');
 
         const check = () => {
-            const userAnswer = input.value.trim().toLowerCase().replace(/[.,!?'"]/g, '');
-            // Accept multiple correct answers  
+            const userAnswer = input.value
+                .trim()
+                .toLowerCase()
+                .replace(/[.,!?'"]/g, '');
+            // Accept multiple correct answers
             const acceptedAnswers = Array.isArray(data.answer) ? data.answer : [data.answer];
             const isCorrect = acceptedAnswers.some(ans => {
                 const expected = ans.toLowerCase().replace(/[.,!?'"]/g, '');
@@ -293,7 +320,9 @@ const LangyWidgets = {
         };
 
         checkBtn.onclick = check;
-        input.onkeypress = (e) => { if (e.key === 'Enter') check(); };
+        input.onkeypress = e => {
+            if (e.key === 'Enter') check();
+        };
         input.focus();
     },
 
@@ -351,22 +380,22 @@ const LangyWidgets = {
                 status.textContent = i18n('widget.speaking');
             };
 
-            recognition.onresult = (event) => {
+            recognition.onresult = event => {
                 const spoken = event.results[0][0].transcript;
                 transcript.textContent = `"${spoken}"`;
                 const similarity = this._similarity(spoken.toLowerCase(), data.phrase.toLowerCase());
                 const isCorrect = similarity > 0.6;
                 const accStr = Math.round(similarity * 100) + '%';
-                
+
                 let fbText = data.phrase;
                 if (!isCorrect) {
-                    const tips = ["Try speaking slightly slower.", "Focus on word endings.", "Listen again carefully."];
+                    const tips = ['Try speaking slightly slower.', 'Focus on word endings.', 'Listen again carefully.'];
                     const tip = tips[Math.floor(Math.random() * tips.length)];
                     fbText += ` <br><small>Accuracy: ${accStr}</small><br><small style="color:var(--warning)">Tip: ${tip}</small>`;
                 } else {
                     fbText += ` <br><small>Accuracy: ${accStr} — Great job!</small>`;
                 }
-                
+
                 this._showFeedback(el, isCorrect, fbText);
                 setTimeout(() => onComplete(isCorrect), 2500);
             };
@@ -389,7 +418,6 @@ const LangyWidgets = {
         };
     },
 
-
     // ─── READ AND ANSWER: Прочитать текст и ответить ───
     renderReadAndAnswer(container, data, onComplete) {
         const el = document.createElement('div');
@@ -399,9 +427,13 @@ const LangyWidgets = {
             <div class="widget__reading-passage">${data.passage}</div>
             <div class="widget__question">${data.question}</div>
             <div class="widget__bubbles">
-                ${data.options.map((opt, i) => `
+                ${data.options
+                    .map(
+                        (opt, i) => `
                     <button class="bubble-btn bubble-btn--wide" data-idx="${i}">${opt}</button>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
         `;
         container.appendChild(el);
@@ -433,19 +465,23 @@ const LangyWidgets = {
             <div class="widget__label">${data.instruction || i18n('widget.choose_image')}</div>
             <div class="widget__prompt" style="font-size:24px; text-align:center;">"${data.word}"</div>
             <div class="image-choice-grid">
-                ${data.options.map((opt, i) => `
+                ${data.options
+                    .map(
+                        (opt, i) => `
                     <button class="image-choice-card" data-idx="${i}">
                         <div class="image-choice-card__emoji">${opt.emoji}</div>
                         <div class="image-choice-card__label">${opt.label}</div>
                     </button>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
         `;
         container.appendChild(el);
 
         el.querySelectorAll('.image-choice-card').forEach(card => {
             card.onclick = () => {
-                el.querySelectorAll('.image-choice-card').forEach(c => c.disabled = true);
+                el.querySelectorAll('.image-choice-card').forEach(c => (c.disabled = true));
                 const isCorrect = parseInt(card.dataset.idx) === data.correct;
                 if (isCorrect) card.classList.add('image-choice-card--correct');
                 else {
@@ -471,12 +507,15 @@ const LangyWidgets = {
         widgetEl.appendChild(fb);
 
         if (!isCorrect && widgetEl.animate) {
-            widgetEl.animate([
-                { transform: 'translateX(-4px)' },
-                { transform: 'translateX(4px)' },
-                { transform: 'translateX(-4px)' },
-                { transform: 'translateX(0)' }
-            ], { duration: 300 });
+            widgetEl.animate(
+                [
+                    { transform: 'translateX(-4px)' },
+                    { transform: 'translateX(4px)' },
+                    { transform: 'translateX(-4px)' },
+                    { transform: 'translateX(0)' },
+                ],
+                { duration: 300 }
+            );
         }
 
         // Sound feedback
@@ -521,7 +560,7 @@ const LangyWidgets = {
             'type-translation': this.renderTypeTranslation,
             'speak-aloud': this.renderSpeakAloud,
             'read-answer': this.renderReadAndAnswer,
-            'image-choice': this.renderImageChoice
+            'image-choice': this.renderImageChoice,
         };
 
         const renderer = renderers[type];
@@ -531,5 +570,5 @@ const LangyWidgets = {
             console.warn('Unknown widget type:', type);
             onComplete(true);
         }
-    }
+    },
 };

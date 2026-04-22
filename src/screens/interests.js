@@ -25,13 +25,17 @@ function renderInterests(container) {
             </div>
 
             <div class="interest-grid">
-                ${interestPool.map(item => `
+                ${interestPool
+                    .map(
+                        item => `
                     <div class="interest-card" data-id="${item.id}">
                         <div class="interest-card__emoji">${item.emoji}</div>
                         <div class="interest-card__name">${item.name}</div>
                         <div class="interest-card__check">${LangyIcons.check}</div>
                     </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
 
             <div class="interests__footer" style="margin-top:var(--sp-8);">

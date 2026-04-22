@@ -49,29 +49,42 @@ function renderInventory(container) {
             <div class="inventory__items">
                 <h4 style="margin-bottom:var(--sp-3);">Your Items (${inventory.items.length})</h4>
 
-                ${inventory.items.length ? `
+                ${
+                    inventory.items.length
+                        ? `
                     <div class="inventory__items-grid">
-                        ${inventory.items.map(item => `
+                        ${inventory.items
+                            .map(
+                                item => `
                             <div class="inventory-item ${item.equipped ? 'inventory-item--equipped' : ''}" data-id="${item.id}" title="${item.name}">
                                 ${item.emoji}
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
 
                         <!-- Empty slots -->
-                        ${Array(Math.max(0, 8 - inventory.items.length)).fill('').map(() => `
+                        ${Array(Math.max(0, 8 - inventory.items.length))
+                            .fill('')
+                            .map(
+                                () => `
                             <div class="inventory-item" style="opacity:0.3; cursor:default; border-style:dashed;">
                                 ${LangyIcons.plus}
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
-                ` : `
+                `
+                        : `
                     <div class="empty-state">
                         <div class="empty-state__icon">${LangyIcons.user}</div>
                         <div class="empty-state__title">No items yet</div>
                         <div class="empty-state__text">Visit the shop to get some items!</div>
                         <button class="btn btn--primary" id="inv-to-shop">Go to Shop</button>
                     </div>
-                `}
+                `
+                }
             </div>
         </div>
     `;

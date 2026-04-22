@@ -6,7 +6,7 @@
 
 const LangyI18n = {
     currentLang: 'en',
-    
+
     // All translatable UI strings
     translations: {
         // ─── General ───
@@ -30,10 +30,14 @@ const LangyI18n = {
         'general.no': { en: 'No', ru: 'Нет', es: 'No' },
         'general.details': { en: 'Details', ru: 'Подробнее', es: 'Detalles' },
         'general.level': { en: 'Level', ru: 'Уровень', es: 'Nivel' },
-        
+
         // ─── Auth ───
         'auth.title': { en: 'Learn English', ru: 'Учите Английский', es: 'Aprende Inglés' },
-        'auth.subtitle': { en: 'Your AI-powered language journey', ru: 'Ваш ИИ-помощник в изучении языка', es: 'Tu viaje lingüístico con IA' },
+        'auth.subtitle': {
+            en: 'Your AI-powered language journey',
+            ru: 'Ваш ИИ-помощник в изучении языка',
+            es: 'Tu viaje lingüístico con IA',
+        },
         'auth.login': { en: 'Log In', ru: 'Войти', es: 'Iniciar Sesión' },
         'auth.register': { en: 'Sign Up', ru: 'Регистрация', es: 'Registrarse' },
         'auth.email': { en: 'Email', ru: 'Эл. почта', es: 'Correo electrónico' },
@@ -42,7 +46,7 @@ const LangyI18n = {
         'auth.forgot': { en: 'Forgot password?', ru: 'Забыли пароль?', es: '¿Olvidaste tu contraseña?' },
         'auth.no_account': { en: "Don't have an account?", ru: 'Нет аккаунта?', es: '¿No tienes cuenta?' },
         'auth.have_account': { en: 'Already have an account?', ru: 'Уже есть аккаунт?', es: '¿Ya tienes cuenta?' },
-        
+
         // ─── Home ───
         'home.streak': { en: 'Day Streak!', ru: 'Дней подряд!', es: '¡Días seguidos!' },
         'home.continue': { en: 'Continue Course', ru: 'Продолжить курс', es: 'Continuar Curso' },
@@ -59,7 +63,7 @@ const LangyI18n = {
         'home.shop': { en: 'Shop', ru: 'Магазин', es: 'Tienda' },
         'home.shop_desc': { en: 'Rewards', ru: 'Награды', es: 'Recompensas' },
         'home.daily': { en: 'Daily Challenge', ru: 'Ежедневный вызов', es: 'Reto Diario' },
-        
+
         // ─── Learning ───
         'learn.title': { en: 'Lesson', ru: 'Урок', es: 'Lección' },
         'learn.theory': { en: 'Theory', ru: 'Теория', es: 'Teoría' },
@@ -76,7 +80,11 @@ const LangyI18n = {
         'learn.minutes': { en: 'minutes', ru: 'минут', es: 'minutos' },
         'learn.exercises': { en: 'exercises', ru: 'заданий', es: 'ejercicios' },
         'learn.start_lesson': { en: 'Start Lesson', ru: 'Начать урок', es: 'Iniciar Lección' },
-        'learn.exercise_counter': { en: 'Exercise {n} of {total}', ru: 'Задание {n} из {total}', es: 'Ejercicio {n} de {total}' },
+        'learn.exercise_counter': {
+            en: 'Exercise {n} of {total}',
+            ru: 'Задание {n} из {total}',
+            es: 'Ejercicio {n} de {total}',
+        },
         'learn.ask_ai': { en: 'Ask AI for help', ru: 'Спросить ИИ', es: 'Preguntar a la IA' },
         'learn.finish': { en: 'Finish', ru: 'Завершить', es: 'Terminar' },
         'learn.weak_topics': { en: 'Weak Topics', ru: 'Слабые темы', es: 'Temas Débiles' },
@@ -91,7 +99,11 @@ const LangyI18n = {
         'learn.next_topic': { en: 'Next Topic', ru: 'Следующая тема', es: 'Siguiente Tema' },
         'learn.topic_mastered': { en: 'Topic Mastered!', ru: 'Тема усвоена!', es: '¡Tema Dominado!' },
         'learn.review_theory': { en: 'Review Theory', ru: 'Повторить теорию', es: 'Repasar Teoría' },
-        'learn.all_mastered': { en: 'All topics mastered!', ru: 'Все темы усвоены!', es: '¡Todos los temas dominados!' },
+        'learn.all_mastered': {
+            en: 'All topics mastered!',
+            ru: 'Все темы усвоены!',
+            es: '¡Todos los temas dominados!',
+        },
         'learn.topics_reviewed': { en: 'Topics reviewed', ru: 'Повторено тем', es: 'Temas repasados' },
         'results.home': { en: 'Home', ru: 'На главную', es: 'Inicio' },
         // ─── Profile ───
@@ -109,7 +121,7 @@ const LangyI18n = {
         'profile.subscription': { en: 'Premium', ru: 'Премиум', es: 'Premium' },
         'profile.reminder': { en: 'Daily Reminder', ru: 'Напоминание', es: 'Recordatorio Diario' },
         'profile.save_changes': { en: 'Save Changes', ru: 'Сохранить изменения', es: 'Guardar Cambios' },
-        
+
         // ─── Streak ───
         'streak.title': { en: 'Your Streak', ru: 'Ваш стрик', es: 'Tu Racha' },
         'streak.days': { en: 'days', ru: 'дней', es: 'días' },
@@ -119,11 +131,15 @@ const LangyI18n = {
         'streak.total_time': { en: 'Total Time', ru: 'Общее время', es: 'Tiempo Total' },
         'streak.words_learned': { en: 'Words Learned', ru: 'Слов выучено', es: 'Palabras Aprendidas' },
         'streak.avg_accuracy': { en: 'Avg Accuracy', ru: 'Ср. точность', es: 'Precisión Prom.' },
-        
+
         // ─── Events ───
         'events.title': { en: 'Events', ru: 'Ивенты', es: 'Eventos' },
         'events.active': { en: 'Active Challenges', ru: 'Активные челленджи', es: 'Desafíos Activos' },
-        'events.complete_to_earn': { en: 'Complete challenges to earn rewards!', ru: 'Выполняйте челленджи, чтобы получить награды!', es: '¡Completa desafíos para ganar recompensas!' },
+        'events.complete_to_earn': {
+            en: 'Complete challenges to earn rewards!',
+            ru: 'Выполняйте челленджи, чтобы получить награды!',
+            es: '¡Completa desafíos para ganar recompensas!',
+        },
         'events.claim': { en: 'Claim!', ru: 'Забрать!', es: '¡Reclamar!' },
         'events.claimed': { en: 'Claimed', ru: 'Получено', es: 'Reclamado' },
         'events.play': { en: 'Play', ru: 'Играть', es: 'Jugar' },
@@ -133,48 +149,76 @@ const LangyI18n = {
         'events.iron_streak': { en: 'Iron Will', ru: 'Железная воля', es: 'Voluntad de Hierro' },
         'events.speed_sprint': { en: 'Speed Sprint', ru: 'Скоростной спринт', es: 'Sprint Rápido' },
         'events.perfectionist': { en: 'Perfectionist', ru: 'Перфекционист', es: 'Perfeccionista' },
-        
+
         // ─── Daily Challenge ───
         'daily.title': { en: 'Daily Challenge', ru: 'Ежедневный вызов', es: 'Reto Diario' },
         'daily.all_done': { en: 'All tasks done!', ru: 'Все задания выполнены!', es: '¡Todas las tareas hechas!' },
         'daily.mission': { en: "Today's Mission", ru: 'Задание на сегодня', es: 'Misión del Día' },
-        'daily.come_back': { en: 'Come back tomorrow for new challenges!', ru: 'Завтра будут новые задания!', es: '¡Vuelve mañana para nuevos desafíos!' },
-        'daily.complete_all': { en: 'Complete all tasks to earn your reward!', ru: 'Выполните все задания, чтобы получить награду!', es: '¡Completa todas las tareas para obtener tu recompensa!' },
-        'daily.complete_lessons': { en: 'Focus: Complete Lessons', ru: 'Фокус: Завершите уроки', es: 'Enfoque: Completar Lecciones' },
+        'daily.come_back': {
+            en: 'Come back tomorrow for new challenges!',
+            ru: 'Завтра будут новые задания!',
+            es: '¡Vuelve mañana para nuevos desafíos!',
+        },
+        'daily.complete_all': {
+            en: 'Complete all tasks to earn your reward!',
+            ru: 'Выполните все задания, чтобы получить награду!',
+            es: '¡Completa todas las tareas para obtener tu recompensa!',
+        },
+        'daily.complete_lessons': {
+            en: 'Focus: Complete Lessons',
+            ru: 'Фокус: Завершите уроки',
+            es: 'Enfoque: Completar Lecciones',
+        },
         'daily.vocabulary': { en: 'Vocabulary Expansion', ru: 'Расширение словаря', es: 'Expansión de Vocabulario' },
         'daily.commitment': { en: 'Commitment', ru: 'Целеустремлённость', es: 'Compromiso' },
-        'daily.perfect': { en: 'Mastery: Perfect Lesson', ru: 'Мастерство: Идеальный урок', es: 'Maestría: Lección Perfecta' },
-        
+        'daily.perfect': {
+            en: 'Mastery: Perfect Lesson',
+            ru: 'Мастерство: Идеальный урок',
+            es: 'Maestría: Lección Perfecta',
+        },
+
         // ─── Talk ───
         'talk.title': { en: 'Langy Talk', ru: 'Langy Talk', es: 'Langy Talk' },
         'talk.hero_title': { en: 'Talk with a Native Speaker', ru: 'Разговор с носителем', es: 'Habla con un Nativo' },
-        'talk.hero_desc': { en: 'Practice real conversations using your voice', ru: 'Практикуйте реальные разговоры голосом', es: 'Practica conversaciones reales con tu voz' },
+        'talk.hero_desc': {
+            en: 'Practice real conversations using your voice',
+            ru: 'Практикуйте реальные разговоры голосом',
+            es: 'Practica conversaciones reales con tu voz',
+        },
         'talk.choose_partner': { en: 'Choose Your Partner', ru: 'Выберите партнёра', es: 'Elige tu Compañero' },
         'talk.choose_scenario': { en: 'Choose a Scenario', ru: 'Выберите сценарий', es: 'Elige un Escenario' },
         'talk.start': { en: 'Start Conversation', ru: 'Начать разговор', es: 'Iniciar Conversación' },
-        'talk.mic_hint': { en: 'Requires microphone access', ru: 'Требуется доступ к микрофону', es: 'Requiere acceso al micrófono' },
+        'talk.mic_hint': {
+            en: 'Requires microphone access',
+            ru: 'Требуется доступ к микрофону',
+            es: 'Requiere acceso al micrófono',
+        },
         'talk.listening': { en: 'Listening...', ru: 'Слушаю...', es: 'Escuchando...' },
         'talk.thinking': { en: 'is thinking...', ru: 'думает...', es: 'está pensando...' },
         'talk.speaking': { en: 'is speaking...', ru: 'говорит...', es: 'está hablando...' },
-        'talk.your_turn': { en: 'Your turn — tap mic to speak', ru: 'Ваш ход — нажмите микрофон', es: 'Tu turno — toca el micrófono' },
+        'talk.your_turn': {
+            en: 'Your turn — tap mic to speak',
+            ru: 'Ваш ход — нажмите микрофон',
+            es: 'Tu turno — toca el micrófono',
+        },
         'talk.end': { en: 'End', ru: 'Завершить', es: 'Terminar' },
-        
+
         // ─── Shop ───
         'shop.title': { en: 'Shop', ru: 'Магазин', es: 'Tienda' },
         'shop.buy': { en: 'Buy', ru: 'Купить', es: 'Comprar' },
         'shop.owned': { en: 'Owned', ru: 'Куплено', es: 'Comprado' },
-        
+
         // ─── Subscription ───
         'sub.title': { en: 'Go Premium', ru: 'Премиум подписка', es: 'Hazte Premium' },
         'sub.monthly': { en: 'Monthly', ru: 'Месячная', es: 'Mensual' },
         'sub.yearly': { en: 'Yearly', ru: 'Годовая', es: 'Anual' },
         'sub.best_value': { en: 'Best Value', ru: 'Лучшая цена', es: 'Mejor Valor' },
-        
+
         // ─── Results ───
         'results.title': { en: 'Lesson Complete!', ru: 'Урок завершён!', es: '¡Lección Completada!' },
         'results.great': { en: 'Great job!', ru: 'Отличная работа!', es: '¡Buen trabajo!' },
         'results.home': { en: 'Back to Home', ru: 'На главную', es: 'Ir al Inicio' },
-        
+
         // ─── Sprint ───
         'sprint.title': { en: 'Speed Sprint', ru: 'Скоростной спринт', es: 'Sprint Rápido' },
         'sprint.complete': { en: 'Sprint Complete!', ru: 'Спринт завершён!', es: '¡Sprint Completado!' },
@@ -186,22 +230,30 @@ const LangyI18n = {
 
         // ─── Onboarding ───
         'onboard.select_lang': { en: 'Interface Language', ru: 'Язык интерфейса', es: 'Idioma de Interfaz' },
-        'onboard.why_learn': { en: 'Why are you learning English?', ru: 'Почему вы учите английский?', es: '¿Por qué aprendes inglés?' },
+        'onboard.why_learn': {
+            en: 'Why are you learning English?',
+            ru: 'Почему вы учите английский?',
+            es: '¿Por qué aprendes inglés?',
+        },
         'onboard.travel': { en: 'Travel', ru: 'Путешествия', es: 'Viajes' },
         'onboard.work': { en: 'Work & Career', ru: 'Работа и карьера', es: 'Trabajo y Carrera' },
         'onboard.study': { en: 'Study Abroad', ru: 'Учёба за рубежом', es: 'Estudiar en el Extranjero' },
         'onboard.fun': { en: 'Just for Fun', ru: 'Для себя', es: 'Solo por Diversión' },
-        
+
         // ─── Homework ───
         'hw.title': { en: 'Homework', ru: 'Домашнее задание', es: 'Tarea' },
         'hw.no_tasks': { en: 'No homework yet', ru: 'Пока нет заданий', es: 'Aún no hay tareas' },
         'hw.writing': { en: 'Writing Analysis', ru: 'Анализ письма', es: 'Análisis de Escritura' },
-        
+
         // ─── Level-up ───
         'levelup.title': { en: 'Level Up!', ru: 'Новый уровень!', es: '¡Subiste de Nivel!' },
-        'levelup.reached': { en: "You've reached a new level!", ru: 'Вы достигли нового уровня!', es: '¡Has alcanzado un nuevo nivel!' },
+        'levelup.reached': {
+            en: "You've reached a new level!",
+            ru: 'Вы достигли нового уровня!',
+            es: '¡Has alcanzado un nuevo nivel!',
+        },
         'levelup.awesome': { en: 'Awesome!', ru: 'Отлично!', es: '¡Increíble!' },
-        
+
         // ─── Profile Extended ───
         'profile.achievements': { en: 'Achievements', ru: 'Достижения', es: 'Logros' },
         'profile.account': { en: 'Account', ru: 'Аккаунт', es: 'Cuenta' },
@@ -213,7 +265,11 @@ const LangyI18n = {
         'profile.notifications': { en: 'Notifications', ru: 'Уведомления', es: 'Notificaciones' },
         'profile.sounds_desc': { en: 'In-app sounds', ru: 'Звуки в приложении', es: 'Sonidos de la app' },
         'profile.haptics': { en: 'Haptic Feedback', ru: 'Виброотклик', es: 'Respuesta Háptica' },
-        'profile.haptics_desc': { en: 'Vibration on interactions', ru: 'Вибрация при нажатии', es: 'Vibración al interactuar' },
+        'profile.haptics_desc': {
+            en: 'Vibration on interactions',
+            ru: 'Вибрация при нажатии',
+            es: 'Vibración al interactuar',
+        },
         'profile.learning': { en: 'Learning', ru: 'Обучение', es: 'Aprendizaje' },
         'profile.daily_goal': { en: 'Daily Goal', ru: 'Дневная цель', es: 'Objetivo Diario' },
         'profile.daily_goal_desc': { en: '15 minutes per day', ru: '15 минут в день', es: '15 minutos al día' },
@@ -223,25 +279,37 @@ const LangyI18n = {
         'profile.community': { en: 'Community', ru: 'Сообщество', es: 'Comunidad' },
         'profile.invite': { en: 'Invite Friends', ru: 'Пригласить друзей', es: 'Invitar Amigos' },
         'profile.invite_desc': { en: 'Get 500 Dangy', ru: 'Получите 500 Дэнги', es: 'Obtén 500 Dangy' },
-        
+
         // ─── Bottom Nav ───
         'nav.home': { en: 'Home', ru: 'Главная', es: 'Inicio' },
         'nav.learn': { en: 'Learn', ru: 'Учиться', es: 'Aprender' },
         'nav.talk': { en: 'Talk', ru: 'Говорить', es: 'Hablar' },
         'nav.events': { en: 'Events', ru: 'Ивенты', es: 'Eventos' },
         'nav.profile': { en: 'Profile', ru: 'Профиль', es: 'Perfil' },
-        
+
         // ─── Daily Challenge ───
         'daily.title': { en: 'Daily Challenge', ru: 'Ежедневный вызов', es: 'Desafío Diario' },
         'daily.mission': { en: "Today's Mission", ru: 'Миссия дня', es: 'Misión del Día' },
         'daily.all_done': { en: 'All tasks done!', ru: 'Все задания выполнены!', es: '¡Todas las tareas hechas!' },
-        'daily.come_back': { en: 'Come back tomorrow for new challenges!', ru: 'Возвращайтесь завтра за новыми заданиями!', es: '¡Vuelve mañana para nuevos desafíos!' },
-        'daily.complete_all': { en: 'Complete all tasks to earn your reward!', ru: 'Выполните все задания, чтобы получить награду!', es: '¡Completa todas las tareas para ganar tu recompensa!' },
-        
+        'daily.come_back': {
+            en: 'Come back tomorrow for new challenges!',
+            ru: 'Возвращайтесь завтра за новыми заданиями!',
+            es: '¡Vuelve mañana para nuevos desafíos!',
+        },
+        'daily.complete_all': {
+            en: 'Complete all tasks to earn your reward!',
+            ru: 'Выполните все задания, чтобы получить награду!',
+            es: '¡Completa todas las tareas para ganar tu recompensa!',
+        },
+
         // ─── Events ───
         'events.title': { en: 'Events', ru: 'Ивенты', es: 'Eventos' },
         'events.active': { en: 'Active Challenges', ru: 'Активные вызовы', es: 'Desafíos Activos' },
-        'events.complete_to_earn': { en: 'Complete challenges to earn rewards!', ru: 'Выполняйте задания и получайте награды!', es: '¡Completa desafíos para ganar recompensas!' },
+        'events.complete_to_earn': {
+            en: 'Complete challenges to earn rewards!',
+            ru: 'Выполняйте задания и получайте награды!',
+            es: '¡Completa desafíos para ganar recompensas!',
+        },
         'events.claimed': { en: 'Claimed', ru: 'Получено', es: 'Reclamado' },
         'events.claim': { en: 'Claim!', ru: 'Забрать!', es: '¡Reclamar!' },
         'events.play': { en: 'Play', ru: 'Играть', es: 'Jugar' },
@@ -251,7 +319,7 @@ const LangyI18n = {
         'events.iron_streak': { en: 'Iron Will', ru: 'Железная воля', es: 'Voluntad de Hierro' },
         'events.speed_sprint': { en: 'Speed Sprint', ru: 'Скоростной спринт', es: 'Sprint de Velocidad' },
         'events.perfectionist': { en: 'Perfectionist', ru: 'Перфекционист', es: 'Perfeccionista' },
-        
+
         // ─── Sprint ───
         'sprint.title': { en: 'Speed Sprint', ru: 'Скоростной спринт', es: 'Sprint de Velocidad' },
         'sprint.correct': { en: 'correct', ru: 'правильно', es: 'correctas' },
@@ -260,7 +328,7 @@ const LangyI18n = {
         'sprint.time_used': { en: 'Time used', ru: 'Время', es: 'Tiempo' },
         'sprint.back': { en: 'Back to Events', ru: 'К ивентам', es: 'Volver a Eventos' },
         'sprint.try_again': { en: 'Try Again', ru: 'Ещё раз', es: 'Intentar de Nuevo' },
-        
+
         // ─── Streak ───
         'streak.title': { en: 'Streak & Stats', ru: 'Стрик и статистика', es: 'Racha y Estadísticas' },
         'streak.total_sessions': { en: 'Total Sessions', ru: 'Всего сессий', es: 'Sesiones Totales' },
@@ -268,46 +336,78 @@ const LangyI18n = {
         'streak.words_learned': { en: 'Words Learned', ru: 'Слов изучено', es: 'Palabras Aprendidas' },
         'streak.avg_accuracy': { en: 'Avg Accuracy', ru: 'Ср. точность', es: 'Precisión Prom.' },
         'streak.freeze': { en: 'Streak Freeze', ru: 'Заморозка стрика', es: 'Congelar Racha' },
-        
+
         // ─── Shop ───
         'shop.title': { en: 'Shop', ru: 'Магазин', es: 'Tienda' },
-        
+
         // ─── Homework ───
         'hw.title': { en: 'Homework', ru: 'Домашка', es: 'Tarea' },
-        
+
         // ─── Onboarding ───
         'onboarding.lets_go': { en: "Let's go!", ru: 'Начнём!', es: '¡Empecemos!' },
         'onboarding.step': { en: 'Step', ru: 'Шаг', es: 'Paso' },
         'onboarding.interests_title': { en: 'What interests you?', ru: 'Что тебе интересно?', es: '¿Qué te interesa?' },
-        'onboarding.interests_desc': { en: 'Choose topics for your lessons. You can select multiple.', ru: 'Выбери темы, на которых мы будем строить уроки. Можно выбрать несколько.', es: 'Elige temas para tus lecciones. Puedes seleccionar varios.' },
+        'onboarding.interests_desc': {
+            en: 'Choose topics for your lessons. You can select multiple.',
+            ru: 'Выбери темы, на которых мы будем строить уроки. Можно выбрать несколько.',
+            es: 'Elige temas para tus lecciones. Puedes seleccionar varios.',
+        },
         'onboarding.selected': { en: 'selected', ru: 'выбрано', es: 'seleccionado(s)' },
         'onboarding.choose_teacher': { en: 'Choose your teacher', ru: 'Выбери преподавателя', es: 'Elige tu profesor' },
-        'onboarding.mascot_desc': { en: 'Each mascot has its own personality and teaching style', ru: 'Каждый маскот имеет свой характер и стиль обучения', es: 'Cada mascota tiene su personalidad y estilo de enseñanza' },
+        'onboarding.mascot_desc': {
+            en: 'Each mascot has its own personality and teaching style',
+            ru: 'Каждый маскот имеет свой характер и стиль обучения',
+            es: 'Cada mascota tiene su personalidad y estilo de enseñanza',
+        },
         'onboarding.start_test': { en: 'Start Level Test!', ru: 'Начать тест уровня!', es: '¡Comenzar test de nivel!' },
         'onboarding.is_teacher': { en: 'is your teacher!', ru: 'будет твоим учителем!', es: '¡es tu profesor!' },
-        
+
         // ─── Widgets (Exercises) ───
-        'widget.arrange_words': { en: 'Arrange the words into a sentence', ru: 'Составьте предложение из слов', es: 'Ordena las palabras en una oración' },
+        'widget.arrange_words': {
+            en: 'Arrange the words into a sentence',
+            ru: 'Составьте предложение из слов',
+            es: 'Ordena las palabras en una oración',
+        },
         'widget.tap_words': { en: 'Tap the words...', ru: 'Нажмите на слова...', es: 'Toca las palabras...' },
         'widget.check': { en: 'Check', ru: 'Проверить', es: 'Comprobar' },
-        'widget.choose_answer': { en: 'Choose the correct answer', ru: 'Выберите правильный ответ', es: 'Elige la respuesta correcta' },
+        'widget.choose_answer': {
+            en: 'Choose the correct answer',
+            ru: 'Выберите правильный ответ',
+            es: 'Elige la respuesta correcta',
+        },
         'widget.match_pairs': { en: 'Match the pairs', ru: 'Соедините пары', es: 'Une las parejas' },
         'widget.errors': { en: 'errors', ru: 'ошибок', es: 'errores' },
         'widget.listen_type': { en: 'Listen and type', ru: 'Прослушайте и введите', es: 'Escucha y escribe' },
         'widget.listen': { en: 'Listen', ru: 'Прослушать', es: 'Escuchar' },
-        'widget.type_heard': { en: 'Type what you heard...', ru: 'Введите услышанное...', es: 'Escribe lo que oíste...' },
+        'widget.type_heard': {
+            en: 'Type what you heard...',
+            ru: 'Введите услышанное...',
+            es: 'Escribe lo que oíste...',
+        },
         'widget.translate': { en: 'Translate', ru: 'Переведите', es: 'Traduce' },
         'widget.your_translation': { en: 'Your translation...', ru: 'Ваш перевод...', es: 'Tu traducción...' },
         'widget.say_aloud': { en: 'Say it aloud', ru: 'Произнесите вслух', es: 'Dilo en voz alta' },
         'widget.tap_mic': { en: 'Tap the mic to start', ru: 'Нажмите на микрофон', es: 'Toca el micro para empezar' },
-        'widget.speech_not_supported': { en: 'Speech recognition is not supported in this browser', ru: 'Распознавание речи не поддерживается в этом браузере', es: 'El reconocimiento de voz no es compatible con este navegador' },
+        'widget.speech_not_supported': {
+            en: 'Speech recognition is not supported in this browser',
+            ru: 'Распознавание речи не поддерживается в этом браузере',
+            es: 'El reconocimiento de voz no es compatible con este navegador',
+        },
         'widget.speaking': { en: 'Speaking...', ru: 'Говорите...', es: 'Habla...' },
-        'widget.recognition_failed': { en: 'Could not recognize. Try again.', ru: 'Не удалось распознать. Попробуйте ещё раз.', es: 'No se pudo reconocer. Inténtalo de nuevo.' },
+        'widget.recognition_failed': {
+            en: 'Could not recognize. Try again.',
+            ru: 'Не удалось распознать. Попробуйте ещё раз.',
+            es: 'No se pudo reconocer. Inténtalo de nuevo.',
+        },
         'widget.read_answer': { en: 'Read and answer', ru: 'Прочитайте и ответьте', es: 'Lee y responde' },
-        'widget.choose_image': { en: 'Choose the correct image', ru: 'Выберите правильную картинку', es: 'Elige la imagen correcta' },
+        'widget.choose_image': {
+            en: 'Choose the correct image',
+            ru: 'Выберите правильную картинку',
+            es: 'Elige la imagen correcta',
+        },
         'widget.correct': { en: 'Correct!', ru: 'Правильно!', es: '¡Correcto!' },
         'widget.answer_was': { en: 'Answer', ru: 'Ответ', es: 'Respuesta' },
-        
+
         // ─── Duels ───
         'duels.title': { en: 'Language Duels', ru: 'Языковые дуэли', es: 'Duelos de Idiomas' },
         'duels.choose_mode': { en: 'Choose Your Mode', ru: 'Выбери режим', es: 'Elige tu modo' },
@@ -323,14 +423,14 @@ const LangyI18n = {
         'duels.tie': { en: "It's a Tie!", ru: 'Ничья!', es: '¡Empate!' },
         'duels.rematch': { en: 'Rematch', ru: 'Реванш', es: 'Revancha' },
     },
-    
+
     // Get translation
     t(key) {
         const entry = this.translations[key];
         if (!entry) return key;
         return entry[this.currentLang] || entry['en'] || key;
     },
-    
+
     // Set language
     setLang(lang) {
         if (['en', 'ru', 'es'].includes(lang)) {
@@ -340,7 +440,7 @@ const LangyI18n = {
             if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
         }
     },
-    
+
     // Load saved language
     loadSavedLang() {
         const saved = localStorage.getItem('langy_lang');
@@ -353,14 +453,16 @@ const LangyI18n = {
             else if (browserLang === 'es') this.currentLang = 'es';
         }
     },
-    
+
     // Get available languages
     languages: [
         { code: 'en', name: 'English', flag: '🇬🇧' },
         { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-        { code: 'es', name: 'Español', flag: '🇪🇸' }
-    ]
+        { code: 'es', name: 'Español', flag: '🇪🇸' },
+    ],
 };
 
 // Shorthand
-function i18n(key) { return LangyI18n.t(key); }
+function i18n(key) {
+    return LangyI18n.t(key);
+}

@@ -9,9 +9,10 @@ function renderResults(container) {
     const totalUnits = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getTotalUnits() : 1;
     const completedLessons = progress.lessonHistory.filter(l => l.status === 'done');
     const failedLessons = progress.lessonHistory.filter(l => l.status === 'error');
-    const avgScore = progress.lessonHistory.length > 0
-        ? Math.round(progress.lessonHistory.reduce((s, l) => s + (l.score || 0), 0) / progress.lessonHistory.length)
-        : 0;
+    const avgScore =
+        progress.lessonHistory.length > 0
+            ? Math.round(progress.lessonHistory.reduce((s, l) => s + (l.score || 0), 0) / progress.lessonHistory.length)
+            : 0;
 
     // Extract CEFR code from level string like "B2 Upper Intermediate / Выше среднего"
     const userCefr = (user.level || 'A1').substring(0, 2);
@@ -32,17 +33,27 @@ function renderResults(container) {
 
     // Status config
     const statusConfig = {
-        completed: { label: 'Completed', icon: LangyIcons.checkCircle, color: 'var(--accent-dark)', bg: 'rgba(16,185,129,0.08)' },
-        active:    { label: 'In Progress', icon: LangyIcons.rocket, color: 'var(--primary)', bg: 'rgba(16,185,129,0.1)' },
-        mastered:  { label: 'Mastered', icon: LangyIcons.star, color: 'var(--reward-gold)', bg: 'rgba(245,158,11,0.08)' },
-        locked:    { label: 'Locked', icon: LangyIcons.lock, color: 'var(--text-tertiary)', bg: 'var(--bg-card)' }
+        completed: {
+            label: 'Completed',
+            icon: LangyIcons.checkCircle,
+            color: 'var(--accent-dark)',
+            bg: 'rgba(16,185,129,0.08)',
+        },
+        active: { label: 'In Progress', icon: LangyIcons.rocket, color: 'var(--primary)', bg: 'rgba(16,185,129,0.1)' },
+        mastered: {
+            label: 'Mastered',
+            icon: LangyIcons.star,
+            color: 'var(--reward-gold)',
+            bg: 'rgba(245,158,11,0.08)',
+        },
+        locked: { label: 'Locked', icon: LangyIcons.lock, color: 'var(--text-tertiary)', bg: 'var(--bg-card)' },
     };
 
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="results-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">${{en:'My Progress',ru:'Мой прогресс',es:'Mi Progreso'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en']}</div>
+                <div class="nav-header__title">${{ en: 'My Progress', ru: 'Мой прогресс', es: 'Mi Progreso' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
                 <div style="width:36px;"></div>
             </div>
 
@@ -84,10 +95,11 @@ function renderResults(container) {
                         ${LangyIcons.map} Learning Path
                     </h4>
                     <div class="cefr-path" id="cefr-path">
-                        ${levelStatuses.map((lvl, idx) => {
-                            const cfg = statusConfig[lvl.status] || statusConfig.locked;
-                            const isExpanded = lvl.status === 'active';
-                            return `
+                        ${levelStatuses
+                            .map((lvl, idx) => {
+                                const cfg = statusConfig[lvl.status] || statusConfig.locked;
+                                const isExpanded = lvl.status === 'active';
+                                return `
                                 <div class="cefr-level cefr-level--${lvl.status} ${isExpanded ? 'cefr-level--expanded' : ''}" data-tb-id="${lvl.id}" data-cefr="${lvl.cefr}">
                                     <div class="cefr-level__header" data-idx="${idx}">
                                         <div class="cefr-level__connector">
@@ -103,11 +115,15 @@ function renderResults(container) {
                                                 <span style="color:${cfg.color}; display:flex; align-items:center; gap:4px;">${cfg.icon} ${cfg.label}</span>
                                                 <span>${lvl.completedUnits}/${lvl.unitCount} units</span>
                                             </div>
-                                            ${lvl.status !== 'locked' ? `
+                                            ${
+                                                lvl.status !== 'locked'
+                                                    ? `
                                                 <div class="progress" style="height:4px; margin-top:6px;">
                                                     <div class="progress__fill" style="width:${lvl.status === 'mastered' ? 100 : lvl.progress}%; background:${cfg.color};"></div>
                                                 </div>
-                                            ` : ''}
+                                            `
+                                                    : ''
+                                            }
                                         </div>
                                         <div class="cefr-level__arrow" style="color:${cfg.color};">${LangyIcons.chevronDown}</div>
                                     </div>
@@ -116,7 +132,8 @@ function renderResults(container) {
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+                            })
+                            .join('')}
                     </div>
                 </div>
 
@@ -137,10 +154,25 @@ function renderResults(container) {
                 <div>
                     <h4 style="margin-bottom:var(--sp-3); padding-left: var(--sp-1);">Skills Breakdown</h4>
                     <div class="results__skills">
-                        ${Object.entries(progress.skills).map(([skill, value]) => {
-                            const icons = { vocabulary: LangyIcons.book, grammar: LangyIcons.pencil, listening: LangyIcons.headphones, speaking: LangyIcons.mic, writing: LangyIcons.fileText, reading: LangyIcons.bookOpen };
-                            const colors = { vocabulary: 'var(--primary)', grammar: 'var(--info)', listening: 'var(--accent-dark)', speaking: 'var(--reward-gold)', writing: 'var(--warning)', reading: 'var(--primary-dark)' };
-                            return `
+                        ${Object.entries(progress.skills)
+                            .map(([skill, value]) => {
+                                const icons = {
+                                    vocabulary: LangyIcons.book,
+                                    grammar: LangyIcons.pencil,
+                                    listening: LangyIcons.headphones,
+                                    speaking: LangyIcons.mic,
+                                    writing: LangyIcons.fileText,
+                                    reading: LangyIcons.bookOpen,
+                                };
+                                const colors = {
+                                    vocabulary: 'var(--primary)',
+                                    grammar: 'var(--info)',
+                                    listening: 'var(--accent-dark)',
+                                    speaking: 'var(--reward-gold)',
+                                    writing: 'var(--warning)',
+                                    reading: 'var(--primary-dark)',
+                                };
+                                return `
                                 <div class="skill-bar">
                                     <div class="skill-bar__header">
                                         <span style="display:flex;align-items:center;gap:8px;">${icons[skill] || LangyIcons.barChart} ${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
@@ -151,7 +183,8 @@ function renderResults(container) {
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+                            })
+                            .join('')}
                     </div>
                 </div>
 
@@ -159,8 +192,14 @@ function renderResults(container) {
                 <div>
                     <h4 style="margin-bottom:var(--sp-3); padding-left: var(--sp-1);">Lesson History</h4>
                     <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
-                        ${progress.lessonHistory.length > 0 ? 
-                            progress.lessonHistory.slice().reverse().slice(0, 10).map(lesson => `
+                        ${
+                            progress.lessonHistory.length > 0
+                                ? progress.lessonHistory
+                                      .slice()
+                                      .reverse()
+                                      .slice(0, 10)
+                                      .map(
+                                          lesson => `
                                 <div class="card" style="display:flex; align-items:center; justify-content:space-between; padding:var(--sp-3) var(--sp-4);">
                                     <div style="display:flex; align-items:center; gap:var(--sp-2);">
                                         <span style="font-size:16px;">${lesson.status === 'done' ? LangyIcons.checkCircle : LangyIcons.alertTriangle}</span>
@@ -171,24 +210,35 @@ function renderResults(container) {
                                     </div>
                                     <span class="badge ${lesson.score >= 70 ? 'badge--accent' : 'badge--danger'}">${lesson.score}%</span>
                                 </div>
-                            `).join('') 
-                            : `<div class="text-center text-xs text-secondary" style="padding:var(--sp-4); display:flex; flex-direction:column; align-items:center; gap:8px;">${LangyIcons.book} No lessons completed yet. Start learning to see your progress!</div>`
+                            `
+                                      )
+                                      .join('')
+                                : `<div class="text-center text-xs text-secondary" style="padding:var(--sp-4); display:flex; flex-direction:column; align-items:center; gap:8px;">${LangyIcons.book} No lessons completed yet. Start learning to see your progress!</div>`
                         }
                     </div>
                 </div>
 
                 <!-- Weak Areas (from AI memory) -->
-                ${LangyState.aiMemory.mistakes.length > 0 ? `
+                ${
+                    LangyState.aiMemory.mistakes.length > 0
+                        ? `
                 <div>
                     <h4 style="margin-bottom:var(--sp-3); padding-left:var(--sp-1); display:flex; align-items:center; gap:8px;">${LangyIcons.alertTriangle} Areas to Improve</h4>
                     <div class="card" style="display:flex; flex-direction:column; gap:var(--sp-2);">
-                        ${LangyState.aiMemory.mistakes.slice(-5).map(m => `
+                        ${LangyState.aiMemory.mistakes
+                            .slice(-5)
+                            .map(
+                                m => `
                             <div style="font-size:var(--fs-sm); padding:var(--sp-2); border-bottom:1px solid var(--border-light);">
                                 <span style="color:var(--danger);">${LangyIcons.x}</span> ${m.question || m.context || 'Grammar mistake'}
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
-                </div>` : ''}
+                </div>`
+                        : ''
+                }
 
                 <!-- Weekly Activity Chart -->
                 <div>
@@ -199,13 +249,15 @@ function renderResults(container) {
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
                             <span>${LangyState.streakData.totalSessions || 0} total sessions</span>
-                            <span>${Math.round((LangyState.streakData.totalMinutes || 0))} min studied</span>
+                            <span>${Math.round(LangyState.streakData.totalMinutes || 0)} min studied</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Review Weak Units -->
-                ${failedLessons.length > 0 ? `
+                ${
+                    failedLessons.length > 0
+                        ? `
                 <div>
                     <div class="card" style="padding:var(--sp-4); background:linear-gradient(135deg, rgba(239,68,68,0.04), rgba(245,158,11,0.04)); border: 1px dashed rgba(239,68,68,0.2);">
                         <div style="display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-3);">
@@ -220,7 +272,9 @@ function renderResults(container) {
                         </button>
                     </div>
                 </div>
-                ` : ''}
+                `
+                        : ''
+                }
             </div>
         </div>
     `;
@@ -285,24 +339,25 @@ function loadLevelUnits(textbookId, container) {
         grammar: LangyIcons.book,
         situational: LangyIcons.messageCircle,
         pronunciation: LangyIcons.mic,
-        review: LangyIcons.refreshCw
+        review: LangyIcons.refreshCw,
     };
 
     const unitStatusIcons = {
         completed: { icon: LangyIcons.checkCircle, color: 'var(--accent-dark)', label: 'Done' },
-        current:   { icon: LangyIcons.rocket, color: 'var(--primary)', label: 'Current' },
-        mastered:  { icon: LangyIcons.star, color: 'var(--reward-gold)', label: 'Mastered' },
-        locked:    { icon: LangyIcons.lock, color: 'var(--text-tertiary)', label: 'Locked' }
+        current: { icon: LangyIcons.rocket, color: 'var(--primary)', label: 'Current' },
+        mastered: { icon: LangyIcons.star, color: 'var(--reward-gold)', label: 'Mastered' },
+        locked: { icon: LangyIcons.lock, color: 'var(--text-tertiary)', label: 'Locked' },
     };
 
-    container.innerHTML = units.map(u => {
-        const st = unitStatusIcons[u.status] || unitStatusIcons.locked;
-        const typeIcon = unitTypeIcons[u.unitType] || LangyIcons.book;
-        const canQuickCheck = u.status === 'mastered';
-        const cleanTitle = u.title.replace(/^[🗣️🎤🔄📗]+\s*/, '');
-        const isCheckpoint = u.unitType === 'review';
+    container.innerHTML = units
+        .map(u => {
+            const st = unitStatusIcons[u.status] || unitStatusIcons.locked;
+            const typeIcon = unitTypeIcons[u.unitType] || LangyIcons.book;
+            const canQuickCheck = u.status === 'mastered';
+            const cleanTitle = u.title.replace(/^[🗣️🎤🔄📗]+\s*/, '');
+            const isCheckpoint = u.unitType === 'review';
 
-        return `
+            return `
             <div class="cefr-unit cefr-unit--${u.status} ${isCheckpoint ? 'cefr-unit--checkpoint' : ''}" data-unit-id="${u.id}" data-tb-id="${textbookId}" ${canQuickCheck ? 'data-quick-check="true"' : ''}>
                 <div class="cefr-unit__status" style="color:${isCheckpoint ? 'var(--info)' : st.color};">${isCheckpoint ? LangyIcons.clipboard : st.icon}</div>
                 <div class="cefr-unit__info">
@@ -315,12 +370,17 @@ function loadLevelUnits(textbookId, container) {
                         ${u.score !== null ? `<span class="badge ${u.score >= 70 ? 'badge--accent' : 'badge--danger'}" style="font-size:10px; padding:1px 6px;">${u.score}%</span>` : ''}
                     </div>
                 </div>
-                ${canQuickCheck ? `<div class="cefr-unit__check" title="Quick Check">
+                ${
+                    canQuickCheck
+                        ? `<div class="cefr-unit__check" title="Quick Check">
                     ${LangyIcons.target}
-                </div>` : ''}
+                </div>`
+                        : ''
+                }
             </div>
         `;
-    }).join('');
+        })
+        .join('');
 
     // Quick Check click handler
     container.querySelectorAll('.cefr-unit[data-quick-check="true"]').forEach(unitEl => {
@@ -378,7 +438,9 @@ function startQuickCheck(textbookId, unitId) {
     document.body.appendChild(overlay);
 
     overlay.querySelector('#qc-close')?.addEventListener('click', () => overlay.remove());
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
 
     function renderQuestion() {
         if (currentIdx >= shuffled.length) {
@@ -392,7 +454,7 @@ function startQuickCheck(textbookId, unitId) {
         widgetArea.innerHTML = '';
         progressBar.style.width = Math.round((currentIdx / shuffled.length) * 100) + '%';
 
-        LangyWidgets.render(widgetArea, ex.type, ex.data, (isCorrect) => {
+        LangyWidgets.render(widgetArea, ex.type, ex.data, isCorrect => {
             if (isCorrect === true) correctCount++;
             currentIdx++;
             setTimeout(renderQuestion, 1400);
@@ -421,11 +483,15 @@ function startQuickCheck(textbookId, unitId) {
                 <div style="font-size:var(--fs-sm); margin-top:var(--sp-3); font-weight:var(--fw-semibold); color:${passed ? 'var(--accent-dark)' : 'var(--warning)'};">
                     ${passed ? `Mastery confirmed! ${LangyIcons.checkCircle}` : 'Needs review — consider revisiting this unit'}
                 </div>
-                ${!passed ? `
+                ${
+                    !passed
+                        ? `
                     <div style="margin-top:var(--sp-4);">
                         <button class="btn btn--primary btn--full" id="qc-start-unit">Start This Unit</button>
                     </div>
-                ` : ''}
+                `
+                        : ''
+                }
                 <button class="btn btn--ghost btn--full" id="qc-done" style="margin-top:var(--sp-2);">Close</button>
             </div>
         `;
@@ -486,16 +552,18 @@ function buildWeeklyChart() {
 
     const maxMins = Math.max(...weekData.map(d => d.mins), 1);
 
-    return weekData.map(d => {
-        const heightPct = d.mins > 0 ? Math.max(10, Math.round((d.mins / maxMins) * 100)) : 5;
-        return `
+    return weekData
+        .map(d => {
+            const heightPct = d.mins > 0 ? Math.max(10, Math.round((d.mins / maxMins) * 100)) : 5;
+            return `
             <div class="weekly-chart__bar-wrap">
                 ${d.mins > 0 ? `<div class="weekly-chart__value">${d.mins}m</div>` : ''}
                 <div class="weekly-chart__bar ${d.isToday ? 'weekly-chart__bar--today' : ''} ${!d.active ? 'weekly-chart__bar--empty' : ''}" style="height:${heightPct}%;"></div>
                 <div class="weekly-chart__label" style="${d.isToday ? 'color:var(--primary); font-weight:var(--fw-bold);' : ''}">${d.day}</div>
             </div>
         `;
-    }).join('');
+        })
+        .join('');
 }
 
 Router.register('results', renderResults);

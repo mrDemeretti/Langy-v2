@@ -21,10 +21,13 @@ function renderTests(container) {
             </div>
 
             <div class="tests__categories" id="tests-list">
-                ${categories.map(cat => {
-                    const items = tests[cat.key] || [];
-                    const avgScore = items.length ? Math.round(items.reduce((s, t) => s + t.score, 0) / items.length) : 0;
-                    return `
+                ${categories
+                    .map(cat => {
+                        const items = tests[cat.key] || [];
+                        const avgScore = items.length
+                            ? Math.round(items.reduce((s, t) => s + t.score, 0) / items.length)
+                            : 0;
+                        return `
                         <div class="test-category" data-cat="${cat.key}">
                             <div class="test-category__header">
                                 <div class="test-category__icon" style="background:${cat.color};">${cat.icon}</div>
@@ -37,21 +40,30 @@ function renderTests(container) {
                                     <div style="font-size:var(--fs-xs); color:var(--text-secondary);">avg</div>
                                 </div>
                             </div>
-                            ${items.length ? `
+                            ${
+                                items.length
+                                    ? `
                                 <div class="test-category__scores">
-                                    ${items.map(t => `
+                                    ${items
+                                        .map(
+                                            t => `
                                         <div class="test-score">
                                             <span style="color:${t.score >= 80 ? 'var(--accent-dark)' : t.score >= 60 ? 'var(--reward-gold)' : 'var(--danger)'};">${t.grade}</span>
                                             ${t.score}%
                                         </div>
-                                    `).join('')}
+                                    `
+                                        )
+                                        .join('')}
                                 </div>
-                            ` : `
+                            `
+                                    : `
                                 <div style="font-size:var(--fs-xs); color:var(--text-tertiary); padding:var(--sp-2) 0;">No tests taken yet</div>
-                            `}
+                            `
+                            }
                         </div>
                     `;
-                }).join('')}
+                    })
+                    .join('')}
             </div>
 
             <div style="padding: var(--sp-5) var(--sp-6);">
@@ -70,14 +82,16 @@ function renderTests(container) {
             { key: 'grammar', name: 'Grammar', icon: LangyIcons.pencil },
             { key: 'vocabulary', name: 'Vocabulary', icon: LangyIcons.book },
             { key: 'listening', name: 'Listening', icon: LangyIcons.headphones },
-            { key: 'reading', name: 'Reading', icon: LangyIcons.bookOpen }
+            { key: 'reading', name: 'Reading', icon: LangyIcons.bookOpen },
         ];
         overlay.innerHTML = `
             <div class="overlay__sheet">
                 <div class="overlay__handle"></div>
                 <h3 style="margin-bottom:var(--sp-4);">Choose Test Category</h3>
                 <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
-                    ${cats.map(c => `
+                    ${cats
+                        .map(
+                            c => `
                         <div class="profile__option test-cat-pick" data-cat="${c.key}" style="cursor:pointer;">
                             <div class="profile__option-icon" style="background:var(--primary-bg);">${c.icon}</div>
                             <div class="profile__option-text">
@@ -86,12 +100,16 @@ function renderTests(container) {
                             </div>
                             <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                         </div>
-                    `).join('')}
+                    `
+                        )
+                        .join('')}
                 </div>
             </div>
         `;
         document.body.appendChild(overlay);
-        overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) overlay.remove();
+        });
         overlay.querySelectorAll('.test-cat-pick').forEach(el => {
             el.addEventListener('click', () => {
                 const catKey = el.dataset.cat;
@@ -123,7 +141,11 @@ function showTestDetails(catKey) {
             <div class="overlay__handle"></div>
             <h3 style="margin-bottom: var(--sp-4);">${catNames[catKey]} Tests</h3>
 
-            ${tests.length ? tests.map(t => `
+            ${
+                tests.length
+                    ? tests
+                          .map(
+                              t => `
                 <div class="card" style="margin-bottom:var(--sp-3); padding:var(--sp-4);">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
@@ -139,19 +161,25 @@ function showTestDetails(catKey) {
                         <div class="progress__fill" style="width:${t.score}%;"></div>
                     </div>
                 </div>
-            `).join('') : `
+            `
+                          )
+                          .join('')
+                    : `
                 <div class="empty-state">
                     <div class="empty-state__icon">${LangyIcons.inbox}</div>
                     <div class="empty-state__title">No tests yet</div>
                 </div>
-            `}
+            `
+            }
 
             <button class="btn btn--ghost btn--full" style="margin-top:var(--sp-2);" id="test-detail-close">Close</button>
         </div>
     `;
 
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
     overlay.querySelector('#test-detail-close')?.addEventListener('click', () => overlay.remove());
 }
 
@@ -209,10 +237,15 @@ function runSkillTest(catKey, container) {
 
         const widgetArea = container.querySelector('#test-widget-area');
         const widgetType = ex.widgetType || ex.type || 'fill-bubble';
-        const widgetData = ex.widgetData || ex.data || { sentence: ex.prompt || 'Choose the answer', options: ex.options || ['A', 'B', 'C'], correct: ex.correct || 0 };
+        const widgetData = ex.widgetData ||
+            ex.data || {
+                sentence: ex.prompt || 'Choose the answer',
+                options: ex.options || ['A', 'B', 'C'],
+                correct: ex.correct || 0,
+            };
 
         if (typeof LangyWidgets !== 'undefined') {
-            LangyWidgets.render(widgetArea, widgetType, widgetData, (isCorrect) => {
+            LangyWidgets.render(widgetArea, widgetType, widgetData, isCorrect => {
                 if (isCorrect === true) correct++;
                 idx++;
                 setTimeout(() => renderQuestion(), 1200);
@@ -229,8 +262,9 @@ function runSkillTest(catKey, container) {
         if (!LangyState.tests[catKey]) LangyState.tests[catKey] = [];
         LangyState.tests[catKey].push({
             name: `${catKey.charAt(0).toUpperCase() + catKey.slice(1)} Test`,
-            score, grade,
-            date: new Date().toISOString().split('T')[0]
+            score,
+            grade,
+            date: new Date().toISOString().split('T')[0],
         });
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
 

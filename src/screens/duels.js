@@ -3,13 +3,20 @@
    ============================================ */
 
 function renderDuels(container) {
-    const view = window._duelView || 'modes';
+    const view = ScreenState.get('duelView', 'modes');
 
     switch (view) {
-        case 'modes': renderDuelModes(container); break;
-        case 'search': renderDuelSearch(container); break;
-        case 'battle': renderDuelBattle(container); break;
-        default: renderDuelModes(container);
+        case 'modes':
+            renderDuelModes(container);
+            break;
+        case 'search':
+            renderDuelSearch(container);
+            break;
+        case 'battle':
+            renderDuelBattle(container);
+            break;
+        default:
+            renderDuelModes(container);
     }
 }
 
@@ -21,15 +28,39 @@ function getPlayerLeague(wins) {
 }
 
 function buildLeaderboard(playerWins) {
-    const names = ['Sophia M.', 'James K.', 'Yuki T.', 'Marco P.', 'Elena V.', 'Omar A.', 'Lily C.', 'Noah R.', 'Ava S.', 'Liam G.', 'Zara H.', 'Kai N.'];
-    const colors = ['#EF4444','#3B82F6','#8B5CF6','#F59E0B','#EC4899','#10B981','#6366F1','#14B8A6','#F97316','#06B6D4'];
+    const names = [
+        'Sophia M.',
+        'James K.',
+        'Yuki T.',
+        'Marco P.',
+        'Elena V.',
+        'Omar A.',
+        'Lily C.',
+        'Noah R.',
+        'Ava S.',
+        'Liam G.',
+        'Zara H.',
+        'Kai N.',
+    ];
+    const colors = [
+        '#EF4444',
+        '#3B82F6',
+        '#8B5CF6',
+        '#F59E0B',
+        '#EC4899',
+        '#10B981',
+        '#6366F1',
+        '#14B8A6',
+        '#F97316',
+        '#06B6D4',
+    ];
 
     // Generate bots with realistic XP ranges
     const bots = names.slice(0, 10).map((name, i) => ({
         name,
         xp: Math.floor(Math.random() * 400 + 100 - i * 15),
         color: colors[i % colors.length],
-        initial: name[0]
+        initial: name[0],
     }));
 
     // Ensure sorted descending
@@ -43,20 +74,35 @@ function buildLeaderboard(playerWins) {
 
     bots.forEach((bot, i) => {
         if (!playerInserted && playerXP >= bot.xp) {
-            rows.push({ name: playerName, xp: playerXP, color: '#10B981', initial: (playerName[0] || 'Y').toUpperCase(), isPlayer: true });
+            rows.push({
+                name: playerName,
+                xp: playerXP,
+                color: '#10B981',
+                initial: (playerName[0] || 'Y').toUpperCase(),
+                isPlayer: true,
+            });
             playerInserted = true;
         }
         rows.push(bot);
     });
     if (!playerInserted) {
-        rows.push({ name: playerName, xp: playerXP, color: '#10B981', initial: (playerName[0] || 'Y').toUpperCase(), isPlayer: true });
+        rows.push({
+            name: playerName,
+            xp: playerXP,
+            color: '#10B981',
+            initial: (playerName[0] || 'Y').toUpperCase(),
+            isPlayer: true,
+        });
     }
 
     // Only show top 10
-    return rows.slice(0, 10).map((r, i) => `
+    return rows
+        .slice(0, 10)
+        .map(
+            (r, i) => `
         <div class="leaderboard__row ${r.isPlayer ? 'leaderboard__row--you' : ''}" style="animation-delay:${i * 50}ms;">
             <div class="leaderboard__rank" style="color:${i === 0 ? '#F59E0B' : i === 1 ? '#9CA3AF' : i === 2 ? '#CD7F32' : 'var(--text-secondary)'};">
-                ${i < 3 ? [`<span style="color:#F59E0B">${LangyIcons.trophy}</span>`,`<span style="color:#9CA3AF">${LangyIcons.medal}</span>`,`<span style="color:#CD7F32">${LangyIcons.award}</span>`][i] : '#' + (i + 1)}
+                ${i < 3 ? [`<span style="color:#F59E0B">${LangyIcons.trophy}</span>`, `<span style="color:#9CA3AF">${LangyIcons.medal}</span>`, `<span style="color:#CD7F32">${LangyIcons.award}</span>`][i] : '#' + (i + 1)}
             </div>
             <div class="leaderboard__avatar" style="background:${r.color};">${r.initial}</div>
             <div class="leaderboard__info">
@@ -65,7 +111,9 @@ function buildLeaderboard(playerWins) {
             </div>
             <div class="leaderboard__xp">${r.xp} XP</div>
         </div>
-    `).join('');
+    `
+        )
+        .join('');
 }
 
 function renderDuelModes(container) {
@@ -85,7 +133,9 @@ function renderDuelModes(container) {
             </div>
 
             <div class="duels__modes">
-                ${duels.modes.map(mode => `
+                ${duels.modes
+                    .map(
+                        mode => `
                     <div class="duel-mode" data-mode="${mode.id}">
                         <div class="duel-mode__icon" style="background:${mode.bg};">${mode.icon}</div>
                         <div>
@@ -93,7 +143,9 @@ function renderDuelModes(container) {
                             <div class="duel-mode__desc">${mode.desc}</div>
                         </div>
                     </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
 
             <div style="padding: var(--sp-6); text-align:center;">
@@ -129,14 +181,14 @@ function renderDuelModes(container) {
 
     container.querySelectorAll('.duel-mode').forEach(mode => {
         mode.addEventListener('click', () => {
-            window._duelMode = mode.dataset.mode;
-            window._duelView = 'search';
+            ScreenState.set('duelMode', mode.dataset.mode);
+            ScreenState.set('duelView', 'search');
             renderDuels(container);
         });
     });
 
     container.querySelector('#duels-back')?.addEventListener('click', () => {
-        window._duelView = 'modes';
+        ScreenState.set('duelView', 'modes');
         Router.navigate('home');
     });
 
@@ -162,12 +214,12 @@ function renderDuelSearch(container) {
     `;
 
     container.querySelector('#search-back')?.addEventListener('click', () => {
-        window._duelView = 'modes';
+        ScreenState.set('duelView', 'modes');
         renderDuels(container);
     });
 
     container.querySelector('#search-cancel')?.addEventListener('click', () => {
-        window._duelView = 'modes';
+        ScreenState.set('duelView', 'modes');
         renderDuels(container);
     });
 
@@ -181,28 +233,46 @@ Format EXACTLY as JSON array of objects:
   { "q": "Grammar rule", "text": "The sentence with ___ blank", "options": ["A", "B", "C", "D"], "correct": 0 }
 ]
 Only reply with JSON.`;
-            
+
             const result = await LangyAI.chat(prompt);
             const jsonMatch = result.match(/\[[\s\S]*\]/);
             let questions = [];
             if (jsonMatch) {
                 questions = JSON.parse(jsonMatch[0]);
             } else {
-                throw new Error("Invalid output");
+                throw new Error('Invalid output');
             }
-            window._duelState = { questions, questionIndex: 0, myScore: 0, opponentScore: 0, answered: false };
+            ScreenState.set('duelState', {
+                questions,
+                questionIndex: 0,
+                myScore: 0,
+                opponentScore: 0,
+                answered: false,
+            });
         } catch (e) {
             console.warn('Duel AI fallback:', e);
-            window._duelState = { questions: LangyState.duels.questions.slice(0,3), questionIndex: 0, myScore: 0, opponentScore: 0, answered: false };
+            ScreenState.set('duelState', {
+                questions: LangyState.duels.questions.slice(0, 3),
+                questionIndex: 0,
+                myScore: 0,
+                opponentScore: 0,
+                answered: false,
+            });
         }
-        
-        window._duelView = 'battle';
+
+        ScreenState.set('duelView', 'battle');
         renderDuels(container);
     }, 500);
 }
 
 function renderDuelBattle(container) {
-    const state = window._duelState || { questions: LangyState.duels.questions, questionIndex: 0, myScore: 0, opponentScore: 0, answered: false };
+    const state = ScreenState.get('duelState') || {
+        questions: LangyState.duels.questions,
+        questionIndex: 0,
+        myScore: 0,
+        opponentScore: 0,
+        answered: false,
+    };
     const question = state.questions[state.questionIndex];
 
     if (!question) {
@@ -241,9 +311,13 @@ function renderDuelBattle(container) {
                     <div style="font-size:var(--fs-sm); color:var(--text-secondary); margin-bottom:var(--sp-2);">${question.q}</div>
                     <div class="duel-question__text">${question.text}</div>
                     <div class="duel-question__options">
-                        ${question.options.map((opt, i) => `
+                        ${question.options
+                            .map(
+                                (opt, i) => `
                             <button class="duel-option" data-index="${i}">${opt}</button>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
                 </div>
             </div>
@@ -255,7 +329,8 @@ function renderDuelBattle(container) {
     const timerEl = container.querySelector('#duel-timer');
     const timerInterval = setInterval(() => {
         timeLeft--;
-        if (timerEl) timerEl.innerHTML = `<span style="display:flex;align-items:center;gap:8px;">${LangyIcons.clock} ${timeLeft}</span>`;
+        if (timerEl)
+            timerEl.innerHTML = `<span style="display:flex;align-items:center;gap:8px;">${LangyIcons.clock} ${timeLeft}</span>`;
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             if (!state.answered) {
@@ -301,7 +376,7 @@ function renderDuelBattle(container) {
 function nextQuestion(container, state) {
     state.questionIndex++;
     state.answered = false;
-    window._duelState = state;
+    ScreenState.set('duelState', state);
     renderDuels(container);
 }
 
@@ -327,12 +402,16 @@ function renderDuelResults(container, state) {
                 </div>
             </div>
 
-            ${won ? `
+            ${
+                won
+                    ? `
                 <div class="daily__reward" style="animation: pulse 1s ease-in-out infinite;">
                     <span>${LangyIcons.gift}</span>
                     <span>+25 Dangy earned!</span>
                 </div>
-            ` : ''}
+            `
+                    : ''
+            }
 
             <div style="display:flex; gap:var(--sp-3); width:100%; max-width:300px;">
                 <button class="btn btn--ghost btn--full" id="duel-home">${i18n('nav.home')}</button>
@@ -355,13 +434,13 @@ function renderDuelResults(container, state) {
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
 
     container.querySelector('#duel-home')?.addEventListener('click', () => {
-        window._duelView = 'modes';
+        ScreenState.set('duelView', 'modes');
         Router.navigate('home');
     });
 
     container.querySelector('#duel-rematch')?.addEventListener('click', () => {
-        window._duelView = 'search';
-        window._duelState = null;
+        ScreenState.set('duelView', 'search');
+        ScreenState.remove('duelState');
         renderDuels(container);
     });
 }

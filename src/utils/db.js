@@ -21,7 +21,7 @@ const LangyDB = {
 
             const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
-            request.onupgradeneeded = (e) => {
+            request.onupgradeneeded = e => {
                 const db = e.target.result;
 
                 if (!db.objectStoreNames.contains('users')) {
@@ -33,7 +33,7 @@ const LangyDB = {
                 if (!db.objectStoreNames.contains('textbooks')) {
                     const tbStore = db.createObjectStore('textbooks', {
                         keyPath: 'id',
-                        autoIncrement: true
+                        autoIncrement: true,
                     });
                     tbStore.createIndex('userEmail', 'userEmail', { unique: false });
                     tbStore.createIndex('level', 'level', { unique: false });
@@ -43,12 +43,12 @@ const LangyDB = {
                 }
             };
 
-            request.onsuccess = (e) => {
+            request.onsuccess = e => {
                 this.db = e.target.result;
                 resolve();
             };
 
-            request.onerror = (e) => {
+            request.onerror = e => {
                 console.error('IndexedDB error:', e.target.error);
                 reject(e.target.error);
             };
@@ -83,12 +83,14 @@ const LangyDB = {
                 return Array.from(new Uint8Array(buffer))
                     .map(b => b.toString(16).padStart(2, '0'))
                     .join('');
-            } catch (e) { /* fallback below */ }
+            } catch (e) {
+                /* fallback below */
+            }
         }
         // Fallback for file:// protocol
         let hash = 0;
         for (let i = 0; i < salted.length; i++) {
-            hash = ((hash << 5) - hash) + salted.charCodeAt(i);
+            hash = (hash << 5) - hash + salted.charCodeAt(i);
             hash |= 0;
         }
         return 'fb_' + Math.abs(hash).toString(36);
@@ -114,7 +116,7 @@ const LangyDB = {
             avatar: null,
             hasCompletedPlacement: false,
             level: 'Testing...',
-            joinDate: new Date().toISOString().split('T')[0]
+            joinDate: new Date().toISOString().split('T')[0],
         };
 
         await this._req('users', 'readwrite', s => s.put(user));
@@ -126,7 +128,7 @@ const LangyDB = {
         defaults.user.joinDate = user.joinDate;
         defaults.user.level = 'Pending Test';
         defaults.user.hasCompletedPlacement = false;
-        
+
         // Zero out initial progress for new users
         defaults.progress.overall = 0;
         defaults.progress.topicsCompleted = 0;
@@ -134,15 +136,17 @@ const LangyDB = {
         defaults.progress.currentLessonIdx = 0;
         defaults.progress.skipsRemaining = 2;
         defaults.progress.lessonHistory = [];
-        Object.keys(defaults.progress.skills).forEach(s => defaults.progress.skills[s] = 0);
+        Object.keys(defaults.progress.skills).forEach(s => (defaults.progress.skills[s] = 0));
         defaults.progress.recentTopics = [];
         defaults.tests = { listening: [], speaking: [], reading: [], grammar: [] };
 
-        await this._req('progress', 'readwrite', s => s.put({
-            email: user.email,
-            data: defaults,
-            savedAt: Date.now()
-        }));
+        await this._req('progress', 'readwrite', s =>
+            s.put({
+                email: user.email,
+                data: defaults,
+                savedAt: Date.now(),
+            })
+        );
 
         await this._setSession(user.email);
         this.currentUser = user;
@@ -171,7 +175,11 @@ const LangyDB = {
     },
 
     async logout() {
-        try { await this.saveProgress(); } catch (e) { /* ok */ }
+        try {
+            await this.saveProgress();
+        } catch (e) {
+            /* ok */
+        }
         await this._clearSession();
         this.currentUser = null;
         this.stopAutoSave();
@@ -196,7 +204,9 @@ const LangyDB = {
     async _clearSession() {
         try {
             await this._req('session', 'readwrite', s => s.delete('current'));
-        } catch (e) { /* ok */ }
+        } catch (e) {
+            /* ok */
+        }
     },
 
     /* ========== PROGRESS SYNC ========== */
@@ -204,11 +214,13 @@ const LangyDB = {
     async saveProgress() {
         if (!this.currentUser || !this.db) return;
         const snapshot = getStateSnapshot();
-        await this._req('progress', 'readwrite', s => s.put({
-            email: this.currentUser.email,
-            data: snapshot,
-            savedAt: Date.now()
-        }));
+        await this._req('progress', 'readwrite', s =>
+            s.put({
+                email: this.currentUser.email,
+                data: snapshot,
+                savedAt: Date.now(),
+            })
+        );
     },
 
     async loadProgress(email) {
@@ -240,7 +252,7 @@ const LangyDB = {
             fileType: file ? file.type : '',
             fileSize: file ? file.size : 0,
             extractedText,
-            createdAt: Date.now()
+            createdAt: Date.now(),
         };
 
         return this._req('textbooks', 'readwrite', s => s.add(record));
@@ -312,8 +324,8 @@ const LangyDB = {
             const arrayBuf = await file.arrayBuffer();
             const zip = await JSZip.loadAsync(arrayBuf);
             let text = '';
-            const htmlFiles = Object.keys(zip.files).filter(p =>
-                p.endsWith('.html') || p.endsWith('.xhtml') || p.endsWith('.htm')
+            const htmlFiles = Object.keys(zip.files).filter(
+                p => p.endsWith('.html') || p.endsWith('.xhtml') || p.endsWith('.htm')
             );
             for (const path of htmlFiles) {
                 const content = await zip.files[path].async('text');
@@ -351,11 +363,10 @@ const LangyDB = {
             clearInterval(this.autoSaveInterval);
             this.autoSaveInterval = null;
         }
-    }
+    },
 };
 
 // Configure PDF.js worker (if loaded)
 if (typeof pdfjsLib !== 'undefined') {
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }

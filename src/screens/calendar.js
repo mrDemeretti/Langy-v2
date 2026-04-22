@@ -10,9 +10,9 @@ function renderCalendar(container) {
     const freezeDays = sd.freezeUsedDates || [];
 
     // State
-    let viewDate = new Date(); // Current month being viewed
-    let selectedDate = null;   // Currently selected day
-    let period = 'month';      // 'week' | 'month' | 'year'
+    const viewDate = new Date(); // Current month being viewed
+    let selectedDate = null; // Currently selected day
+    let period = 'month'; // 'week' | 'month' | 'year'
 
     function render() {
         const year = viewDate.getFullYear();
@@ -34,11 +34,15 @@ function renderCalendar(container) {
 
                     <!-- Period Toggle -->
                     <div class="cal-period-toggle">
-                        ${['week', 'month', 'year'].map(p => `
+                        ${['week', 'month', 'year']
+                            .map(
+                                p => `
                             <button class="cal-period-btn ${period === p ? 'cal-period-btn--active' : ''}" data-period="${p}">
                                 ${p.charAt(0).toUpperCase() + p.slice(1)}
                             </button>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
 
                     <!-- Summary Cards -->
@@ -74,9 +78,9 @@ function renderCalendar(container) {
                     <!-- Calendar Grid -->
                     <div class="cal-grid">
                         <div class="cal-grid__header">
-                            ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d =>
-                                `<div class="cal-grid__day-label">${d}</div>`
-                            ).join('')}
+                            ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                                .map(d => `<div class="cal-grid__day-label">${d}</div>`)
+                                .join('')}
                         </div>
                         <div class="cal-grid__body">
                             ${buildMonthGrid(year, month)}
@@ -126,7 +130,9 @@ function renderCalendar(container) {
                 const detail = container.querySelector('#cal-day-detail');
                 if (detail) detail.innerHTML = renderDayDetail(selectedDate);
                 // Highlight selected
-                container.querySelectorAll('.cal-grid__cell--selected').forEach(c => c.classList.remove('cal-grid__cell--selected'));
+                container
+                    .querySelectorAll('.cal-grid__cell--selected')
+                    .forEach(c => c.classList.remove('cal-grid__cell--selected'));
                 cell.classList.add('cal-grid__cell--selected');
             });
         });
@@ -184,9 +190,11 @@ function renderCalendar(container) {
                 'cal-grid__cell',
                 `cal-grid__cell--${level}`,
                 isToday ? 'cal-grid__cell--today' : '',
-                (dayData || isActive) ? 'cal-grid__cell--has-data' : '',
-                selectedDate === iso ? 'cal-grid__cell--selected' : ''
-            ].filter(Boolean).join(' ');
+                dayData || isActive ? 'cal-grid__cell--has-data' : '',
+                selectedDate === iso ? 'cal-grid__cell--selected' : '',
+            ]
+                .filter(Boolean)
+                .join(' ');
 
             html += `<div class="${classes}" data-date="${iso}">${content}</div>`;
         }
@@ -215,8 +223,12 @@ function renderCalendar(container) {
         const startISO = startDate.toISOString().split('T')[0];
         const endISO = endDate.toISOString().split('T')[0];
 
-        let sessions = 0, minutes = 0, words = 0, accuracySum = 0, accuracyCount = 0;
-        let dailyMinutes = []; // For activity bar
+        let sessions = 0,
+            minutes = 0,
+            words = 0,
+            accuracySum = 0,
+            accuracyCount = 0;
+        const dailyMinutes = []; // For activity bar
 
         Object.entries(dailyStats).forEach(([date, data]) => {
             if (date >= startISO && date <= endISO) {
@@ -244,14 +256,14 @@ function renderCalendar(container) {
             words,
             accuracy: accuracyCount > 0 ? Math.round(accuracySum / accuracyCount) : 0,
             dailyMinutes: dailyMinutes.sort((a, b) => a.date.localeCompare(b.date)),
-            activeDays: activeDays.filter(d => d >= startISO && d <= endISO).length
+            activeDays: activeDays.filter(d => d >= startISO && d <= endISO).length,
         };
     }
 
     function renderActivityBar(stats) {
         if (stats.dailyMinutes.length === 0) return '';
         const maxMins = Math.max(...stats.dailyMinutes.map(d => d.minutes), 1);
-        
+
         return `
             <div class="card" style="margin-bottom:var(--sp-4);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-3);">
@@ -259,17 +271,19 @@ function renderCalendar(container) {
                     <span style="font-size:var(--fs-xs); color:var(--text-muted);">${stats.activeDays} active days</span>
                 </div>
                 <div class="cal-activity-bar">
-                    ${stats.dailyMinutes.map(d => {
-                        const height = Math.max(4, (d.minutes / maxMins) * 100);
-                        const dateObj = new Date(d.date);
-                        const label = dateObj.getDate();
-                        return `
+                    ${stats.dailyMinutes
+                        .map(d => {
+                            const height = Math.max(4, (d.minutes / maxMins) * 100);
+                            const dateObj = new Date(d.date);
+                            const label = dateObj.getDate();
+                            return `
                             <div class="cal-bar-col" title="${d.date}: ${d.minutes}m">
                                 <div class="cal-bar" style="height:${height}%;"></div>
                                 <span class="cal-bar-label">${label}</span>
                             </div>
                         `;
-                    }).join('')}
+                        })
+                        .join('')}
                 </div>
             </div>
         `;
@@ -280,7 +294,12 @@ function renderCalendar(container) {
         const isActive = activeDays.includes(dateStr);
         const isFreeze = freezeDays.includes(dateStr);
         const dateObj = new Date(dateStr + 'T12:00:00');
-        const formatted = dateObj.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        const formatted = dateObj.toLocaleDateString('en', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        });
 
         if (!data && !isActive && !isFreeze) {
             return `
@@ -311,7 +330,7 @@ function renderCalendar(container) {
             grammar: 'var(--info)',
             listening: 'var(--accent-dark)',
             speaking: 'var(--reward-gold)',
-            writing: 'var(--warning)'
+            writing: 'var(--warning)',
         };
 
         return `
@@ -336,10 +355,14 @@ function renderCalendar(container) {
                     </div>
                 </div>
 
-                ${Object.keys(cats).length > 0 ? `
+                ${
+                    Object.keys(cats).length > 0
+                        ? `
                     <div style="margin-top:var(--sp-3);">
                         <div style="font-size:var(--fs-xs); color:var(--text-muted); margin-bottom:var(--sp-2);">Breakdown</div>
-                        ${Object.entries(cats).map(([cat, mins]) => `
+                        ${Object.entries(cats)
+                            .map(
+                                ([cat, mins]) => `
                             <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:var(--sp-1);">
                                 <span style="font-size:var(--fs-xs); width:70px; text-transform:capitalize;">${cat}</span>
                                 <div style="flex:1; height:8px; background:var(--bg-alt); border-radius:var(--radius-full); overflow:hidden;">
@@ -347,9 +370,13 @@ function renderCalendar(container) {
                                 </div>
                                 <span style="font-size:var(--fs-xs); color:var(--text-muted); width:30px; text-align:right;">${mins}m</span>
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
-                ` : ''}
+                `
+                        : ''
+                }
             </div>
         `;
     }

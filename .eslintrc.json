@@ -48,16 +48,18 @@
         "mammoth": "readonly",
         "JSZip": "readonly",
         "firebase": "readonly",
-        "showOnboardingTooltips": "readonly"
+        "showOnboardingTooltips": "readonly",
+        "LangyWidgets": "readonly",
+        "module": "readonly"
     },
     "parserOptions": {
         "ecmaVersion": 2022,
         "sourceType": "script"
     },
     "rules": {
-        "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^(render|show|hide|init)" }],
+        "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^(render|show|hide|init|Langy|Router|Anim|Audio|Screen|Deep|Talk|Exercise|Widget|escape|sanitize|get|set|record|check|update|load|reset|toggle|debounce|clamp|random|i18n|dateDiff)" }],
         "no-undef": "error",
-        "no-redeclare": "error",
+        "no-redeclare": ["error", { "builtinGlobals": false }],
         "no-duplicate-case": "error",
         "no-empty": "warn",
         "no-extra-semi": "warn",

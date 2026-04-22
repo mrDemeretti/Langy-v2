@@ -13,19 +13,19 @@ const DeepTutor = {
         this.badge = document.createElement('div');
         this.badge.className = 'tutor-widget';
         this.badge.id = 'tutor-widget';
-        
+
         const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
         const chosenIdx = LangyState.mascot.selected || 0;
-        
+
         this.badge.innerHTML = `
             <div class="tutor-widget__badge">
                 <img src="assets/mascots/${mascotNames[chosenIdx]}.png" alt="Mascot">
             </div>
         `;
-        
+
         this.badge.onclick = () => this.open();
         document.body.appendChild(this.badge);
-        
+
         // Hidden by default until show() is called by the router
         // CSS already sets display:none, no need for inline style
 
@@ -48,12 +48,12 @@ const DeepTutor = {
 
         document.body.appendChild(this.overlay);
         this.messages = this.overlay.querySelector('#tutor-messages');
-        
+
         // Handlers
         this.overlay.querySelector('#tutor-close').onclick = () => this.close();
         this.overlay.querySelector('#tutor-send').onclick = () => this.handleSend();
-        this.overlay.querySelector('#tutor-input').onkeypress = (e) => { 
-            if (e.key === 'Enter') this.handleSend(); 
+        this.overlay.querySelector('#tutor-input').onkeypress = e => {
+            if (e.key === 'Enter') this.handleSend();
         };
 
         // Load History
@@ -93,7 +93,7 @@ const DeepTutor = {
             LangyState.aiMemory.conversationContext.push({
                 role,
                 content: text,
-                timestamp: Date.now()
+                timestamp: Date.now(),
             });
         }
     },
@@ -113,24 +113,25 @@ const DeepTutor = {
 
         try {
             await LangyAI.askDeepTutor(
-                val, 
+                val,
                 (chunk, full) => {
                     // Update the bubble in real-time
                     aiBubble.textContent = full;
                     this.messages.scrollTop = this.messages.scrollHeight;
                 },
-                (finalResponse) => {
+                finalResponse => {
                     // Save to persistent memory once complete
                     LangyState.aiMemory.conversationContext.push({
                         role: 'ai',
                         content: finalResponse,
-                        timestamp: Date.now()
+                        timestamp: Date.now(),
                     });
                     this.setEmotion('neutral');
                 }
             );
         } catch (err) {
-            aiBubble.textContent = "Sorry, I'm having trouble connecting. Please check your internet connection and try again.";
+            aiBubble.textContent =
+                "Sorry, I'm having trouble connecting. Please check your internet connection and try again.";
             this.setEmotion('neutral');
         }
     },
@@ -165,10 +166,10 @@ const DeepTutor = {
         if (!this.badge) return;
         const img = this.badge.querySelector('img');
         const emotions = ['happy', 'thinking', 'encouraging', 'surprised', 'neutral'];
-        
+
         emotions.forEach(e => this.badge.classList.remove(`mascot--${e}`));
         if (emotion !== 'neutral') {
             this.badge.classList.add(`mascot--${emotion}`);
         }
-    }
+    },
 };

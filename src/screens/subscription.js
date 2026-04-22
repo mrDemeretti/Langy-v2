@@ -10,24 +10,39 @@ function renderSubscription(container) {
             price: '$0',
             period: '',
             features: ['5 lessons per day', 'Basic vocabulary', 'Limited AI conversations', 'Community access'],
-            recommended: false
+            recommended: false,
         },
         {
             id: 'pro',
             name: 'Pro',
             price: '$25',
             period: '/month',
-            features: ['Unlimited lessons', 'Full AI tutor access', 'Speech recognition', 'Personalized curriculum', 'Mistake tracking', 'Priority support'],
-            recommended: true
+            features: [
+                'Unlimited lessons',
+                'Full AI tutor access',
+                'Speech recognition',
+                'Personalized curriculum',
+                'Mistake tracking',
+                'Priority support',
+            ],
+            recommended: true,
         },
         {
             id: 'premium',
             name: 'Premium',
             price: '$70',
             period: '/month',
-            features: ['Everything in Pro', 'Private AI sessions', 'Advanced analytics', 'Exclusive mascot skins', 'VIP events access', '1-on-1 coaching', 'Certificate program'],
-            recommended: false
-        }
+            features: [
+                'Everything in Pro',
+                'Private AI sessions',
+                'Advanced analytics',
+                'Exclusive mascot skins',
+                'VIP events access',
+                '1-on-1 coaching',
+                'Certificate program',
+            ],
+            recommended: false,
+        },
     ];
 
     container.innerHTML = `
@@ -38,7 +53,9 @@ function renderSubscription(container) {
             </div>
 
             <div class="plan-cards">
-                ${plans.map(plan => `
+                ${plans
+                    .map(
+                        plan => `
                     <div class="plan-card ${plan.recommended ? 'plan-card--recommended' : ''}" data-plan="${plan.id}">
                         ${plan.recommended ? '<div class="plan-card__badge">BEST</div>' : ''}
                         <div class="plan-card__header">
@@ -57,7 +74,9 @@ function renderSubscription(container) {
                             ${plan.id === 'free' ? 'Start Free' : 'Subscribe'}
                         </button>
                     </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
 
             <p class="text-center text-sm text-secondary" style="margin-top: var(--sp-2);">

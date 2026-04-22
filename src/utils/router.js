@@ -11,17 +11,23 @@
 // Add backward-compat methods if needed
 if (typeof ScreenState !== 'undefined' && !ScreenState._persistent) {
     ScreenState._persistent = new Set();
-    ScreenState.persist = function(key) { this._persistent.add(key); };
+    ScreenState.persist = function (key) {
+        this._persistent.add(key);
+    };
     const originalClear = ScreenState.clear.bind(ScreenState);
-    ScreenState._clearTransient = function() {
+    ScreenState._clearTransient = function () {
         // Only clear non-persistent keys
         const keysToDelete = Object.keys(this._data).filter(k => !this._persistent.has(k));
         keysToDelete.forEach(k => delete this._data[k]);
         // Still run cleanup callbacks
-        this._cleanupCallbacks.forEach(fn => { try { fn(); } catch(e) {} });
+        this._cleanupCallbacks.forEach(fn => {
+            try {
+                fn();
+            } catch (e) {}
+        });
         this._cleanupCallbacks = [];
     };
-    ScreenState.clearAll = function() {
+    ScreenState.clearAll = function () {
         this._persistent.clear();
         originalClear();
     };
@@ -91,22 +97,25 @@ const Router = {
         if (this.currentRoute && this.currentRoute !== hash) {
             const cleanup = this._cleanupFns[this.currentRoute];
             if (typeof cleanup === 'function') {
-                try { cleanup(); } catch (e) { console.warn('Cleanup error:', e); }
+                try {
+                    cleanup();
+                } catch (e) {
+                    console.warn('Cleanup error:', e);
+                }
             }
             // Clear transient screen state on navigation
             ScreenState._clearTransient();
         }
 
         // Auto-save progress on navigation
-        if (this.currentRoute && hash !== this.currentRoute
-            && typeof LangyDB !== 'undefined' && LangyDB.currentUser) {
+        if (this.currentRoute && hash !== this.currentRoute && typeof LangyDB !== 'undefined' && LangyDB.currentUser) {
             LangyDB.saveProgress().catch(e => console.warn('Nav save:', e));
         }
 
         const renderFn = this.routes[hash];
         if (renderFn) {
             this.currentRoute = hash;
-            
+
             // Toggle DeepTutor Visibility based on route
             if (typeof DeepTutor !== 'undefined') {
                 if (hash === 'learning') {
@@ -144,18 +153,26 @@ const Router = {
 
     // ─── BOTTOM NAV BAR ───
     // Screens where bottom nav should be hidden
-    _hideNavRoutes: new Set(['auth', 'onboarding', 'learning', 'placement-test', 'mascot-select', 'interests', 'subscription']),
-    
+    _hideNavRoutes: new Set([
+        'auth',
+        'onboarding',
+        'learning',
+        'placement-test',
+        'mascot-select',
+        'interests',
+        'subscription',
+    ]),
+
     _navTabs: [
-        { route: 'home',    icon: 'home',          labelKey: 'nav.home' },
-        { route: 'results', icon: 'barChart',      labelKey: 'nav.learn' },
-        { route: 'talk',    icon: 'messageCircle', labelKey: 'nav.talk' },
-        { route: 'profile', icon: 'user',          labelKey: 'nav.profile' },
+        { route: 'home', icon: 'home', labelKey: 'nav.home' },
+        { route: 'results', icon: 'barChart', labelKey: 'nav.learn' },
+        { route: 'talk', icon: 'messageCircle', labelKey: 'nav.talk' },
+        { route: 'profile', icon: 'user', labelKey: 'nav.profile' },
     ],
 
     _updateBottomNav(currentHash) {
         let nav = document.getElementById('bottom-nav');
-        
+
         // Hide nav on certain screens
         if (this._hideNavRoutes.has(currentHash)) {
             if (nav) nav.style.display = 'none';
@@ -175,18 +192,20 @@ const Router = {
         document.getElementById('screen-container')?.classList.add('has-bottom-nav');
 
         // Render tabs
-        nav.innerHTML = this._navTabs.map(tab => {
-            const isActive = currentHash === tab.route;
-            const icon = typeof LangyIcons !== 'undefined' ? LangyIcons[tab.icon] : '';
-            const label = typeof i18n !== 'undefined' ? i18n(tab.labelKey) : tab.route;
-            return `
+        nav.innerHTML = this._navTabs
+            .map(tab => {
+                const isActive = currentHash === tab.route;
+                const icon = typeof LangyIcons !== 'undefined' ? LangyIcons[tab.icon] : '';
+                const label = typeof i18n !== 'undefined' ? i18n(tab.labelKey) : tab.route;
+                return `
                 <button class="bottom-nav__tab ${isActive ? 'bottom-nav__tab--active' : ''}" 
                         data-route="${tab.route}" aria-label="${label}">
                     <span class="bottom-nav__icon">${icon}</span>
                     <span class="bottom-nav__label">${label}</span>
                 </button>
             `;
-        }).join('');
+            })
+            .join('');
 
         // Bind click handlers
         nav.querySelectorAll('.bottom-nav__tab').forEach(btn => {
@@ -201,5 +220,5 @@ const Router = {
 
     back() {
         window.history.back();
-    }
+    },
 };

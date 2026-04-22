@@ -8,17 +8,17 @@ function buildWeekDays() {
     const dayNames_i18n = {
         en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
         ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-        es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+        es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
     };
     const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
     const dayNames = dayNames_i18n[lang] || dayNames_i18n.en;
     const activeDays = LangyState.streakData.activeDays || [];
     const todayISO = today.toISOString().split('T')[0];
-    
+
     // Get Monday of current week
     const monday = new Date(today);
     monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-    
+
     let html = '';
     for (let i = 0; i < 7; i++) {
         const d = new Date(monday);
@@ -28,13 +28,13 @@ function buildWeekDays() {
         const isDone = activeDays.includes(iso);
         const isToday = iso === todayISO;
         const isSunday = d.getDay() === 0;
-        
+
         let stateClass = '';
         if (isDone) stateClass = 'streak-day--done';
         else if (isToday) stateClass = 'streak-day--active';
-        
+
         const dot = isSunday && !isDone ? LangyIcons.gift : '';
-        
+
         html += `<div class="streak-day ${stateClass}"><div class="streak-day__dot">${dot}</div><span>${dayName}</span></div>`;
     }
     return html;
@@ -43,11 +43,11 @@ function buildWeekDays() {
 function buildWeekProgress() {
     const today = new Date();
     const activeDays = LangyState.streakData.activeDays || [];
-    
+
     // Get Monday of current week
     const monday = new Date(today);
     monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-    
+
     let completed = 0;
     for (let i = 0; i < 7; i++) {
         const d = new Date(monday);
@@ -188,7 +188,7 @@ function renderHome(container) {
     };
 
     // Main CTA button
-    container.querySelector('#nav-learning')?.addEventListener('click', (e) => {
+    container.querySelector('#nav-learning')?.addEventListener('click', e => {
         Anim.ripple(e);
         if (!user.hasCompletedPlacement) {
             Router.navigate('placement-test');
@@ -203,7 +203,7 @@ function renderHome(container) {
     Object.entries(navMap).forEach(([id, route]) => {
         const el = container.querySelector(`#${id}`);
         if (el) {
-            el.addEventListener('click', (e) => {
+            el.addEventListener('click', e => {
                 if (!user.hasCompletedPlacement && ['homework', 'tests', 'results', 'daily'].includes(route)) {
                     Anim.showToast('Please complete your Placement Test first!');
                     setTimeout(() => Router.navigate('placement-test'), 1000);
@@ -234,16 +234,16 @@ function renderHome(container) {
     // Signature phrases come FIRST, then generic
     const mascotId = LangyState.mascot.selected || 0;
     const signaturePhrases = {
-        3: ["Yellaaaaaaaaaa!", "Yella habibi, let's go!", "Listen to my story..."],
-        1: ["It's lit!", "Straight up!", "La Flame says LEARN!"],
-        2: ["Alright, alright, alright.", "Just keep livin'.", "Let's get learnin'."],
-        0: ["You look amazing today!", "Let's serve some English!", "Slay this lesson!"],
+        3: ['Yellaaaaaaaaaa!', "Yella habibi, let's go!", 'Listen to my story...'],
+        1: ["It's lit!", 'Straight up!', 'La Flame says LEARN!'],
+        2: ['Alright, alright, alright.', "Just keep livin'.", "Let's get learnin'."],
+        0: ['You look amazing today!', "Let's serve some English!", 'Slay this lesson!'],
     };
     const genericPhrases = [
-        "Wanna chat?",
-        "Tap again to talk!",
+        'Wanna chat?',
+        'Tap again to talk!',
         "Let's have a conversation!",
-        "Practice speaking with me!",
+        'Practice speaking with me!',
     ];
     // First tap = always signature, then mix
     let usedSignature = false;
@@ -281,20 +281,25 @@ function renderHome(container) {
             bubble.style.animation = 'none';
             bubble.offsetHeight;
             bubble.style.animation = 'bubblePop 0.4s ease-out';
-            
+
             // Auto-hide after 2s
-            clearTimeout(window._bubbleTimeout);
-            window._bubbleTimeout = setTimeout(() => {
-                bubble.style.animation = 'bubbleFade 0.3s ease-in forwards';
-                setTimeout(() => { bubble.style.display = 'none'; }, 300);
-            }, 2000);
+            clearTimeout(ScreenState.get('bubbleTimeout'));
+            ScreenState.set(
+                'bubbleTimeout',
+                setTimeout(() => {
+                    bubble.style.animation = 'bubbleFade 0.3s ease-in forwards';
+                    setTimeout(() => {
+                        bubble.style.display = 'none';
+                    }, 300);
+                }, 2000)
+            );
         }
 
         // On second tap → go to Langy Talk
         if (mascotTapCount >= 2) {
             mascotTapCount = 0;
-            window._talkMascot = mascotId;  // Pre-select current mascot
-            window._talkView = null;  // Start at selection screen
+            ScreenState.set('talkMascot', mascotId); // Pre-select current mascot
+            ScreenState.remove('talkView'); // Start at selection screen
             const sideIcons = container.querySelectorAll('.circle-btn');
             const actionCards = container.querySelectorAll('.action-card');
             Anim.flyOut([...sideIcons, ...actionCards]);
@@ -342,16 +347,16 @@ function showOnboardingTooltips(container) {
             { sel: '.home__streak', text: '¡Esta es tu racha! Entra cada día para mantenerla.', pos: 'bottom' },
             { sel: '.action-card', text: '¡Toca aquí para empezar tu primera lección!', pos: 'top' },
             { sel: '#bottom-nav', text: 'Desliza o toca para navegar entre pantallas.', pos: 'top' },
-        ]
+        ],
     };
 
     const localTips = tips[lang] || tips.en;
-    let currentTip = 0;
+    const currentTip = 0;
 
     function showTip(idx) {
         // Remove previous
         document.querySelectorAll('.onboarding-tooltip, .onboarding-overlay').forEach(e => e.remove());
-        
+
         if (idx >= localTips.length) {
             localStorage.setItem('langy_onboarding_done', '1');
             return;
@@ -359,7 +364,10 @@ function showOnboardingTooltips(container) {
 
         const tip = localTips[idx];
         const target = document.querySelector(tip.sel);
-        if (!target) { showTip(idx + 1); return; }
+        if (!target) {
+            showTip(idx + 1);
+            return;
+        }
 
         // Overlay
         const overlay = document.createElement('div');
@@ -369,14 +377,26 @@ function showOnboardingTooltips(container) {
         // Tooltip
         const tooltip = document.createElement('div');
         tooltip.className = `onboarding-tooltip onboarding-tooltip--${tip.pos}`;
-        
-        const stepLabel = lang === 'ru' ? `${idx + 1} из ${localTips.length}` 
-                        : lang === 'es' ? `${idx + 1} de ${localTips.length}` 
-                        : `${idx + 1} of ${localTips.length}`;
-        const nextLabel = idx < localTips.length - 1 
-                        ? (lang === 'ru' ? 'Далее' : lang === 'es' ? 'Siguiente' : 'Next')
-                        : (lang === 'ru' ? 'Готово!' : lang === 'es' ? '¡Listo!' : 'Done!');
-        
+
+        const stepLabel =
+            lang === 'ru'
+                ? `${idx + 1} из ${localTips.length}`
+                : lang === 'es'
+                  ? `${idx + 1} de ${localTips.length}`
+                  : `${idx + 1} of ${localTips.length}`;
+        const nextLabel =
+            idx < localTips.length - 1
+                ? lang === 'ru'
+                    ? 'Далее'
+                    : lang === 'es'
+                      ? 'Siguiente'
+                      : 'Next'
+                : lang === 'ru'
+                  ? 'Готово!'
+                  : lang === 'es'
+                    ? '¡Listo!'
+                    : 'Done!';
+
         tooltip.innerHTML = `
             <div class="onboarding-tooltip__text">${tip.text}</div>
             <div class="onboarding-tooltip__footer">

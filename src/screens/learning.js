@@ -63,28 +63,34 @@ function renderLearning(container) {
     let currentExerciseIdx = 0;
     let correctAnswers = 0;
     let failedExerciseIndices = []; // Track which exercises were failed
-    let lessonStartTime = Date.now();
+    const lessonStartTime = Date.now();
     let _destroyed = false;
     let teachSlideIdx = 0;
     const teachSlides = unit.teachSlides || [];
 
     // Quick Review state
-    let qrWeakUnits = [];       // Units that need review
-    let qrCurrentUnitIdx = 0;   // Which weak unit we're reviewing
-    let qrPhase = 'theory';     // 'theory' | 'practice' | 'result'
+    let qrWeakUnits = []; // Units that need review
+    let qrCurrentUnitIdx = 0; // Which weak unit we're reviewing
+    let qrPhase = 'theory'; // 'theory' | 'practice' | 'result'
     let qrSlideIdx = 0;
     let qrExerciseIdx = 0;
     let qrCorrect = 0;
-    let qrAttempts = 0;         // Attempts without theory (max 2 before forced theory)
+    let qrAttempts = 0; // Attempts without theory (max 2 before forced theory)
     let qrExercises = [];
 
     // ─── MAIN RENDER ───
     function updateUI() {
         if (_destroyed) return;
-        const progress = currentStep === 'intro' ? 0 :
-                        currentStep === 'theory' ? 15 :
-                        currentStep === 'practice' ? 15 + Math.round((currentExerciseIdx / totalExercises) * 70) :
-                        currentStep === 'summary' ? 100 : 50;
+        const progress =
+            currentStep === 'intro'
+                ? 0
+                : currentStep === 'theory'
+                  ? 15
+                  : currentStep === 'practice'
+                    ? 15 + Math.round((currentExerciseIdx / totalExercises) * 70)
+                    : currentStep === 'summary'
+                      ? 100
+                      : 50;
 
         container.innerHTML = `
             <div class="screen screen--no-pad learning-screen">
@@ -119,13 +125,27 @@ function renderLearning(container) {
         const content = container.querySelector('#lesson-content');
 
         switch (currentStep) {
-            case 'intro': renderIntro(content); break;
-            case 'teach': renderTeach(content); break;
-            case 'theory': renderTheory(content); break;
-            case 'practice': renderPractice(content); break;
-            case 'homework': renderHomeworkMode(content); break;
-            case 'summary': renderSummary(content); break;
-            case 'quick-review': renderQuickReview(content); break;
+            case 'intro':
+                renderIntro(content);
+                break;
+            case 'teach':
+                renderTeach(content);
+                break;
+            case 'theory':
+                renderTheory(content);
+                break;
+            case 'practice':
+                renderPractice(content);
+                break;
+            case 'homework':
+                renderHomeworkMode(content);
+                break;
+            case 'summary':
+                renderSummary(content);
+                break;
+            case 'quick-review':
+                renderQuickReview(content);
+                break;
         }
     }
 
@@ -148,7 +168,7 @@ function renderLearning(container) {
         `;
 
         target.querySelector('#start-lesson').onclick = () => {
-            currentStep = teachSlides.length > 0 ? 'teach' : (unit.theory ? 'theory' : 'practice');
+            currentStep = teachSlides.length > 0 ? 'teach' : unit.theory ? 'theory' : 'practice';
             teachSlideIdx = 0;
             updateUI();
 
@@ -169,20 +189,27 @@ function renderLearning(container) {
     // ─── MASCOT TEACH ───
     function renderTeach(target) {
         const slide = teachSlides[teachSlideIdx];
-        if (!slide) { currentStep = 'practice'; currentExerciseIdx = 0; updateUI(); return; }
+        if (!slide) {
+            currentStep = 'practice';
+            currentExerciseIdx = 0;
+            updateUI();
+            return;
+        }
 
         const isLast = teachSlideIdx >= teachSlides.length - 1;
         const mascotNames = ['zendaya', 'travis', 'matthew', 'omar'];
-        const chosenIdx = (typeof LangyState !== 'undefined' && LangyState.mascot) ? LangyState.mascot.selected || 0 : 0;
+        const chosenIdx = typeof LangyState !== 'undefined' && LangyState.mascot ? LangyState.mascot.selected || 0 : 0;
         const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
 
         // Build slide content based on type
         let slideContent = '';
         if (slide.type === 'examples' && slide.items) {
-            slideContent = `<div class="teach-examples">${slide.items.map(it => {
-                const hl = it.highlight ? `<span class="teach-hl">${it.highlight}</span>` : '';
-                return `<div class="teach-example-row"><span class="teach-base">${it.base}</span><span class="teach-arrow">→</span><span class="teach-result">${it.past}${hl ? '' : ''}</span></div>`;
-            }).join('')}</div>`;
+            slideContent = `<div class="teach-examples">${slide.items
+                .map(it => {
+                    const hl = it.highlight ? `<span class="teach-hl">${it.highlight}</span>` : '';
+                    return `<div class="teach-example-row"><span class="teach-base">${it.base}</span><span class="teach-arrow">→</span><span class="teach-result">${it.past}${hl ? '' : ''}</span></div>`;
+                })
+                .join('')}</div>`;
         } else if (slide.type === 'compare' && slide.left && slide.right) {
             slideContent = `<div class="teach-compare"><div class="teach-col"><div class="teach-col__label">${slide.left.label}</div>${slide.left.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div><div class="teach-vs">VS</div><div class="teach-col teach-col--accent"><div class="teach-col__label">${slide.right.label}</div>${slide.right.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div></div>`;
         } else if (slide.type === 'vocab-intro' && slide.words) {
@@ -273,10 +300,15 @@ function renderLearning(container) {
                         const rightBtn = target.querySelector(`.teach-quiz__opt[data-idx="${slide.correct}"]`);
                         if (rightBtn) rightBtn.classList.add('teach-quiz__opt--correct');
                     }
-                    target.querySelectorAll('.teach-quiz__opt').forEach(b => b.disabled = true);
+                    target.querySelectorAll('.teach-quiz__opt').forEach(b => (b.disabled = true));
                     if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion(correct ? 'happy' : 'encouraging');
                     // Auto-advance after 1.5s
-                    setTimeout(() => { if (!_destroyed) { teachSlideIdx++; updateUI(); } }, 1500);
+                    setTimeout(() => {
+                        if (!_destroyed) {
+                            teachSlideIdx++;
+                            updateUI();
+                        }
+                    }, 1500);
                 };
             });
         }
@@ -286,7 +318,10 @@ function renderLearning(container) {
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.open();
-                DeepTutor.handleSend(`The student doesn't understand this explanation: "${slide.mascotText}". Please explain it more simply, with more examples.`, true);
+                DeepTutor.handleSend(
+                    `The student doesn't understand this explanation: "${slide.mascotText}". Please explain it more simply, with more examples.`,
+                    true
+                );
             }
         };
 
@@ -300,7 +335,9 @@ function renderLearning(container) {
                 utterance.pitch = 1.0;
                 window.speechSynthesis.speak(utterance);
                 speakBtn.innerHTML = `${LangyIcons.volume} Playing...`;
-                utterance.onend = () => { speakBtn.innerHTML = `${LangyIcons.volume} Озвучить / Listen`; };
+                utterance.onend = () => {
+                    speakBtn.innerHTML = `${LangyIcons.volume} Озвучить / Listen`;
+                };
             } else {
                 Anim.showToast('TTS не поддерживается в этом браузере');
             }
@@ -351,7 +388,9 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="lesson-exercise animate-in">
                 <div class="lesson-exercise__counter">
-                    ${i18n('learn.exercise_counter').replace('{n}', currentExerciseIdx + 1).replace('{total}', totalExercises)}
+                    ${i18n('learn.exercise_counter')
+                        .replace('{n}', currentExerciseIdx + 1)
+                        .replace('{total}', totalExercises)}
                 </div>
                 <div id="exercise-widget"></div>
                 <button class="btn btn--ghost btn--full" id="practice-ask-ai" style="margin-top:var(--sp-3); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
@@ -364,7 +403,7 @@ function renderLearning(container) {
         const widgetType = exercise.widgetType || mapExerciseToWidget(exercise);
         const widgetData = exercise.widgetData || mapExerciseData(exercise);
 
-        LangyWidgets.render(widgetArea, widgetType, widgetData, (isCorrect) => {
+        LangyWidgets.render(widgetArea, widgetType, widgetData, isCorrect => {
             if (isCorrect === 'skipped') {
                 totalExercises--; // Do not count skipped exercises towards total score calculation
                 if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('encouraging');
@@ -374,7 +413,11 @@ function renderLearning(container) {
             } else {
                 failedExerciseIndices.push(currentExerciseIdx);
                 if (typeof LangyAI !== 'undefined') {
-                    LangyAI.recordMistake(exercise.widgetData?.sentence || exercise.prompt || '', '', exercise.widgetData?.answer || '');
+                    LangyAI.recordMistake(
+                        exercise.widgetData?.sentence || exercise.prompt || '',
+                        '',
+                        exercise.widgetData?.answer || ''
+                    );
                 }
                 if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('encouraging');
             }
@@ -390,7 +433,11 @@ function renderLearning(container) {
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.open();
-                const prompt = exercise.widgetData?.sentence || exercise.widgetData?.sourceText || exercise.widgetData?.phrase || '';
+                const prompt =
+                    exercise.widgetData?.sentence ||
+                    exercise.widgetData?.sourceText ||
+                    exercise.widgetData?.phrase ||
+                    '';
                 if (prompt) {
                     DeepTutor.handleSend(`I'm confused about this exercise: "${prompt}". Can you explain it?`, true);
                 }
@@ -404,15 +451,24 @@ function renderLearning(container) {
         // ExerciseGenerator exercises already use widget type names
         if (ex.data) return ex.type;
         switch (ex.type) {
-            case 'choice': return 'fill-bubble';
-            case 'fill-blank': return 'fill-bubble';
-            case 'translate': return 'type-translation';
-            case 'speaking': return 'speak-aloud';
-            case 'word-shuffle': return 'word-shuffle';
-            case 'match-pairs': return 'match-pairs';
-            case 'listen-type': return 'listen-type';
-            case 'read-answer': return 'read-answer';
-            default: return 'fill-bubble';
+            case 'choice':
+                return 'fill-bubble';
+            case 'fill-blank':
+                return 'fill-bubble';
+            case 'translate':
+                return 'type-translation';
+            case 'speaking':
+                return 'speak-aloud';
+            case 'word-shuffle':
+                return 'word-shuffle';
+            case 'match-pairs':
+                return 'match-pairs';
+            case 'listen-type':
+                return 'listen-type';
+            case 'read-answer':
+                return 'read-answer';
+            default:
+                return 'fill-bubble';
         }
     }
 
@@ -428,7 +484,11 @@ function renderLearning(container) {
             case 'speaking':
                 return { phrase: ex.prompt || ex.answer };
             default:
-                return { sentence: ex.prompt || 'Choose the correct answer', options: ex.options || ['A', 'B', 'C'], correct: ex.correct || 0 };
+                return {
+                    sentence: ex.prompt || 'Choose the correct answer',
+                    options: ex.options || ['A', 'B', 'C'],
+                    correct: ex.correct || 0,
+                };
         }
     }
 
@@ -457,7 +517,7 @@ function renderLearning(container) {
         submitBtn.onclick = async () => {
             const text = input.value.trim();
             if (text.length < 10) {
-                Anim.showToast("Слишком коротко! / Too short!");
+                Anim.showToast('Слишком коротко! / Too short!');
                 return;
             }
 
@@ -471,7 +531,7 @@ function renderLearning(container) {
                 const mockResult = {
                     score: Math.floor(Math.random() * 30) + 55,
                     grade: 'C',
-                    feedback: 'Good effort! Keep practicing your grammar and vocabulary.'
+                    feedback: 'Good effort! Keep practicing your grammar and vocabulary.',
                 };
                 showHomeworkGrade(resultArea, mockResult, submitBtn);
             }
@@ -514,7 +574,7 @@ function renderLearning(container) {
         const isCheckpoint = unit.unitType === 'review';
 
         // For checkpoints: analyze which covered units had failures
-        let weakUnits = [];
+        const weakUnits = [];
         if (isCheckpoint && failedExerciseIndices.length > 0) {
             const coveredUnits = LangyCurriculum.getCheckpointCoverage(unit.id);
             // Map failed exercises back to covered units (distribute evenly)
@@ -528,25 +588,31 @@ function renderLearning(container) {
         }
 
         // Build weak topics display for checkpoints
-        const weakTopicsHtml = isCheckpoint && weakUnits.length > 0 ? `
+        const weakTopicsHtml =
+            isCheckpoint && weakUnits.length > 0
+                ? `
             <div class="qr-weak-topics" style="margin-top:var(--sp-4); padding:var(--sp-4); background:var(--danger-bg); border-radius:var(--radius-lg);">
                 <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-2); color:var(--danger); display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} ${i18n('learn.weak_topics')}:</div>
                 ${weakUnits.map(u => `<div style="padding:var(--sp-1) 0; color:var(--text-secondary);">• Unit ${u.id}: ${u.title}</div>`).join('')}
             </div>
-        ` : '';
+        `
+                : '';
 
         // Quick Review button for checkpoints with weak areas
-        const qrButton = isCheckpoint && weakUnits.length > 0 ? `
+        const qrButton =
+            isCheckpoint && weakUnits.length > 0
+                ? `
             <button class="btn btn--primary btn--xl btn--full" id="start-quick-review" style="margin-top:var(--sp-4); background:linear-gradient(135deg, var(--primary), var(--accent-dark)); border:none;">
                 ${LangyIcons.lightning} ${i18n('learn.quick_review')}
             </button>
-        ` : '';
+        `
+                : '';
 
         target.innerHTML = `
             <div class="lesson-summary animate-in">
-                <div class="lesson-summary__icon">${score >= 70 ? LangyIcons.sparkles : LangyIcons.flame}</div>
+                <div class="lesson-summary__icon">${score >= LangyConfig.PASS_THRESHOLD ? LangyIcons.sparkles : LangyIcons.flame}</div>
                 <h2 class="lesson-summary__title">
-                    ${score >= 70 ? i18n('learn.excellent') : i18n('learn.good_try')}
+                    ${score >= LangyConfig.PASS_THRESHOLD ? i18n('learn.excellent') : i18n('learn.good_try')}
                 </h2>
 
                 <div class="lesson-summary__stats">
@@ -574,26 +640,26 @@ function renderLearning(container) {
                 <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
                     ${LangyIcons.home} ${i18n('results.home')}
                 </button>
-                ${score < 70 ? `<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.refresh} ${i18n('learn.try_again')}</button>` : ''}
+                ${score < LangyConfig.PASS_THRESHOLD ? `<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.refresh} ${i18n('learn.try_again')}</button>` : ''}
             </div>
         `;
 
         // Save progress
-        saveLessonProgress({ score, grade: score >= 90 ? 'A' : score >= 70 ? 'B' : 'C', feedback: '' });
+        saveLessonProgress({ score, grade: score >= 90 ? 'A' : score >= LangyConfig.PASS_THRESHOLD ? 'B' : 'C', feedback: '' });
         const oldXp = LangyState.user.xp;
         LangyState.user.xp += xpEarned;
         LangyState.currencies.dangy += correctAnswers * 10;
         if (typeof checkLevelUp === 'function') checkLevelUp(oldXp, LangyState.user.xp);
 
         // Dynamically determine the dominant category and vocab words
-        let categoryCounts = { vocabulary: 0, grammar: 0, listening: 0, speaking: 0, writing: 0 };
+        const categoryCounts = { vocabulary: 0, grammar: 0, listening: 0, speaking: 0, writing: 0 };
         let vocabWordsCount = 0;
-        
+
         exercises.forEach(ex => {
             const t = ex.type;
             if (t === 'match-pairs' || t === 'image-choice') {
                 categoryCounts.vocabulary++;
-                vocabWordsCount += (ex.data && ex.data.pairs) ? ex.data.pairs.length : 1;
+                vocabWordsCount += ex.data && ex.data.pairs ? ex.data.pairs.length : 1;
             } else if (t === 'listen-type') {
                 categoryCounts.listening++;
             } else if (t === 'speak-aloud') {
@@ -605,7 +671,9 @@ function renderLearning(container) {
             }
         });
 
-        const dominantCategory = Object.keys(categoryCounts).reduce((a, b) => categoryCounts[a] > categoryCounts[b] ? a : b);
+        const dominantCategory = Object.keys(categoryCounts).reduce((a, b) =>
+            categoryCounts[a] > categoryCounts[b] ? a : b
+        );
         const actualWordsLearned = Math.min(vocabWordsCount, Math.floor(correctAnswers)); // Ensure it doesn't exceed total correct
 
         // Record session for streak tracking & rewards
@@ -614,7 +682,7 @@ function renderLearning(container) {
                 duration: duration,
                 wordsLearned: actualWordsLearned,
                 accuracy: score,
-                category: dominantCategory
+                category: dominantCategory,
             });
         }
 
@@ -647,9 +715,9 @@ function renderLearning(container) {
 
         // AI feedback after lesson
         if (typeof DeepTutor !== 'undefined') {
-            DeepTutor.setEmotion(score >= 70 ? 'happy' : 'encouraging');
+            DeepTutor.setEmotion(score >= LangyConfig.PASS_THRESHOLD ? 'happy' : 'encouraging');
             DeepTutor.handleSend(
-                `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${score >= 70 ? 'Great job!' : 'Need more practice.'}`,
+                `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${score >= LangyConfig.PASS_THRESHOLD ? 'Great job!' : 'Need more practice.'}`,
                 true
             );
         }
@@ -735,7 +803,10 @@ function renderLearning(container) {
         const fullText = slide.mascotText || '';
         let charIdx = 0;
         function typeChar() {
-            if (_destroyed || charIdx >= fullText.length) { if (nextBtn) nextBtn.style.display = ''; return; }
+            if (_destroyed || charIdx >= fullText.length) {
+                if (nextBtn) nextBtn.style.display = '';
+                return;
+            }
             charIdx++;
             textEl.textContent = fullText.slice(0, charIdx);
             setTimeout(typeChar, 20);
@@ -777,7 +848,9 @@ function renderLearning(container) {
                     <div class="qr-header__topic" style="display:flex; align-items:center; gap:4px;">${LangyIcons.fileText} ${weakUnit.title}</div>
                 </div>
                 <div class="lesson-exercise__counter">
-                    ${i18n('learn.exercise_counter').replace('{n}', qrExerciseIdx + 1).replace('{total}', qrExercises.length)}
+                    ${i18n('learn.exercise_counter')
+                        .replace('{n}', qrExerciseIdx + 1)
+                        .replace('{total}', qrExercises.length)}
                 </div>
                 <div id="qr-exercise-widget"></div>
             </div>
@@ -787,25 +860,29 @@ function renderLearning(container) {
         const widgetType = exercise.widgetType || mapExerciseToWidget(exercise);
         const widgetData = exercise.widgetData || mapExerciseData(exercise);
 
-        LangyWidgets.render(widgetArea, widgetType, widgetData, (isCorrect) => {
+        LangyWidgets.render(widgetArea, widgetType, widgetData, isCorrect => {
             if (isCorrect) qrCorrect++;
             qrExerciseIdx++;
-            setTimeout(() => { if (!_destroyed) updateUI(); }, 1400);
+            setTimeout(() => {
+                if (!_destroyed) updateUI();
+            }, 1400);
         });
     }
 
     // Quick Review: Result for one topic
     function renderQRResult(target, weakUnit) {
         const qrScore = qrExercises.length > 0 ? Math.round((qrCorrect / qrExercises.length) * 100) : 0;
-        const passed = qrScore >= 70;
+        const passed = qrScore >= LangyConfig.PASS_THRESHOLD;
 
         if (passed) {
             // Mark this unit as mastered
             const masteryKey = activeTb.id + ':' + weakUnit.id;
             LangyState.progress.mastery[masteryKey] = {
-                score: qrScore, passed: true,
+                score: qrScore,
+                passed: true,
                 attempts: (LangyState.progress.mastery[masteryKey]?.attempts || 0) + 1,
-                failedIndices: [], lastAttempt: new Date().toISOString().split('T')[0]
+                failedIndices: [],
+                lastAttempt: new Date().toISOString().split('T')[0],
             };
         }
 
@@ -896,10 +973,10 @@ function renderLearning(container) {
             score: result.score,
             grade: result.grade,
             feedback: result.feedback || '',
-            status: result.score >= 70 ? 'done' : 'error',
+            status: result.score >= LangyConfig.PASS_THRESHOLD ? 'done' : 'error',
             errors: Math.max(0, totalExercises - correctAnswers),
             date: new Date().toISOString().split('T')[0],
-            icon: result.score >= 70 ? LangyIcons.check : LangyIcons.fileText
+            icon: result.score >= LangyConfig.PASS_THRESHOLD ? LangyIcons.check : LangyIcons.fileText,
         };
 
         LangyState.progress.lessonHistory.push(historyEntry);
@@ -909,17 +986,17 @@ function renderLearning(container) {
         const prev = LangyState.progress.mastery[masteryKey];
         LangyState.progress.mastery[masteryKey] = {
             score: Math.max(result.score, prev?.score || 0),
-            passed: result.score >= 70 || (prev?.passed || false),
+            passed: result.score >= LangyConfig.PASS_THRESHOLD || prev?.passed || false,
             attempts: (prev?.attempts || 0) + 1,
             failedIndices: failedExerciseIndices,
-            lastAttempt: new Date().toISOString().split('T')[0]
+            lastAttempt: new Date().toISOString().split('T')[0],
         };
 
         // Remove from homework queue if completed
         LangyState.homework.current = LangyState.homework.current.filter(h => h.unitId !== unit.id);
 
         // Advance curriculum (with checkpoint gating)
-        if (mode === 'lesson' && result.score >= 70 && unit.id === LangyState.progress.currentUnitId) {
+        if (mode === 'lesson' && result.score >= LangyConfig.PASS_THRESHOLD && unit.id === LangyState.progress.currentUnitId) {
             const nextUnit = activeTb.units.find(u => u.id === unit.id + 1);
             if (nextUnit) {
                 // If next unit is past a checkpoint, verify checkpoint is cleared
@@ -937,7 +1014,10 @@ function renderLearning(container) {
 
         // Update overall
         LangyState.progress.topicsCompleted = LangyState.progress.lessonHistory.filter(l => l.status === 'done').length;
-        LangyState.progress.overall = Math.min(100, Math.round((LangyState.progress.topicsCompleted / activeTb.units.length) * 100));
+        LangyState.progress.overall = Math.min(
+            100,
+            Math.round((LangyState.progress.topicsCompleted / activeTb.units.length) * 100)
+        );
 
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
     }
@@ -971,7 +1051,7 @@ function renderLearning(container) {
             badges[cefr] = {
                 earned: true,
                 date: new Date().toISOString().split('T')[0],
-                badge: LangyIcons.medal
+                badge: LangyIcons.medal,
             };
             // Show celebration!
             setTimeout(() => {
@@ -992,9 +1072,11 @@ function renderLearning(container) {
             id: Date.now(),
             unitId: completedUnit.id,
             title: `${completedUnit.title} — Review`,
-            desc: completedUnit.homework?.prompt || `Review ${completedUnit.grammar?.join(', ') || 'this lesson'} and write practice sentences.`,
+            desc:
+                completedUnit.homework?.prompt ||
+                `Review ${completedUnit.grammar?.join(', ') || 'this lesson'} and write practice sentences.`,
             icon: LangyIcons.fileText,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
         };
 
         LangyState.homework.current.push(hw);

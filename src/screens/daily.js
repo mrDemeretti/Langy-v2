@@ -70,7 +70,7 @@ function renderDaily(container) {
                 <div style="width:100%; max-width:240px;">
                     <div style="display:flex; justify-content:space-between; font-size:var(--fs-xs); margin-bottom:var(--sp-1);">
                         <span>${completedCount}/${totalTasks} completed</span>
-                        <span>${Math.round(completedCount / totalTasks * 100)}%</span>
+                        <span>${Math.round((completedCount / totalTasks) * 100)}%</span>
                     </div>
                     <div class="progress">
                         <div class="progress__fill" style="width:${(completedCount / totalTasks) * 100}%;"></div>
@@ -79,7 +79,9 @@ function renderDaily(container) {
             </div>
 
             <div class="daily__tasks" id="daily-tasks">
-                ${tasks.map((task, i) => `
+                ${tasks
+                    .map(
+                        (task, i) => `
                     <div class="daily-task ${task.done ? 'daily-task--done' : ''}" data-index="${i}">
                         <div class="daily-task__check ${task.done ? 'daily-task__check--done' : ''}">
                             <div class="dc-task__status">${task.done ? LangyIcons.check : ''}</div>
@@ -91,7 +93,9 @@ function renderDaily(container) {
                         </div>
                         ${!task.done ? `<button class="btn btn--primary btn--sm daily-task-start" data-action="${task.action || 'start'}">${task.actionLabel || 'Start'}</button>` : `<span class="badge badge--accent">Done!</span>`}
                     </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
         </div>
     `;
@@ -120,11 +124,11 @@ function renderDaily(container) {
 
     // Task actions
     container.querySelectorAll('.daily-task-start').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', e => {
             e.stopPropagation();
             const action = btn.dataset.action;
             clearInterval(timerInterval);
-            
+
             if (action === 'lesson') {
                 Router.navigate('learning');
             } else if (action === 'homework') {
@@ -156,33 +160,45 @@ function generateDailyTasks() {
 
     const tasks = [
         {
-            id: 1, title: 'Focus: Complete Lessons', 
+            id: 1,
+            title: 'Focus: Complete Lessons',
             desc: 'Finish 2 language lessons',
             done: sessions >= 2,
-            icon: LangyIcons.book, action: 'lesson', actionLabel: 'Study',
-            progressText: `${Math.min(sessions, 2)}/2 lessons`
+            icon: LangyIcons.book,
+            action: 'lesson',
+            actionLabel: 'Study',
+            progressText: `${Math.min(sessions, 2)}/2 lessons`,
         },
         {
-            id: 2, title: 'Vocabulary Expansion',
+            id: 2,
+            title: 'Vocabulary Expansion',
             desc: 'Learn 10 new words',
-            done: words >= 10, 
-            icon: LangyIcons.bookOpen, action: 'lesson', actionLabel: 'Learn',
-            progressText: `${Math.min(words, 10)}/10 words`
+            done: words >= 10,
+            icon: LangyIcons.bookOpen,
+            action: 'lesson',
+            actionLabel: 'Learn',
+            progressText: `${Math.min(words, 10)}/10 words`,
         },
         {
-            id: 3, title: 'Commitment',
+            id: 3,
+            title: 'Commitment',
             desc: 'Study for 15 minutes today',
-            done: minutes >= 15, 
-            icon: LangyIcons.hourglass, action: 'lesson', actionLabel: 'Practice',
-            progressText: `${Math.min(minutes, 15)}/15 mins`
+            done: minutes >= 15,
+            icon: LangyIcons.hourglass,
+            action: 'lesson',
+            actionLabel: 'Practice',
+            progressText: `${Math.min(minutes, 15)}/15 mins`,
         },
         {
-            id: 4, title: 'Mastery: Perfect Lesson',
+            id: 4,
+            title: 'Mastery: Perfect Lesson',
             desc: 'Complete a lesson with 100% accuracy',
             done: perfectDone,
-            icon: LangyIcons.target, action: 'lesson', actionLabel: 'Try',
-            progressText: perfectDone ? '1/1 perfect' : '0/1 perfect'
-        }
+            icon: LangyIcons.target,
+            action: 'lesson',
+            actionLabel: 'Try',
+            progressText: perfectDone ? '1/1 perfect' : '0/1 perfect',
+        },
     ];
 
     return tasks;

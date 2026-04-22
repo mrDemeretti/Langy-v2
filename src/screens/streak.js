@@ -8,7 +8,7 @@ function buyStreakFreeze() {
     const price = sd.freezePrice || 200;
     const max = sd.maxFreezes || 3;
     const current = sd.streakFreezes || 0;
-    
+
     if (current >= max) {
         if (typeof Anim !== 'undefined') Anim.showToast(`${LangyIcons.shield} Max freezes reached!`);
         return false;
@@ -17,13 +17,14 @@ function buyStreakFreeze() {
         if (typeof Anim !== 'undefined') Anim.showToast(`${LangyIcons.alertCircle} Not enough Dangy!`);
         return false;
     }
-    
+
     LangyState.currencies.dangy -= price;
     sd.streakFreezes = current + 1;
-    
-    if (typeof Anim !== 'undefined') Anim.showToast(`${LangyIcons.shield} Streak Freeze bought! (${sd.streakFreezes}/${max})`);
+
+    if (typeof Anim !== 'undefined')
+        Anim.showToast(`${LangyIcons.shield} Streak Freeze bought! (${sd.streakFreezes}/${max})`);
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
-    
+
     return true;
 }
 
@@ -33,16 +34,18 @@ function buildStreakCalendar() {
     const freezeDays = sd.freezeUsedDates || [];
     const today = new Date();
     const todayISO = today.toISOString().split('T')[0];
-    
+
     // Build last 28 days (4 weeks)
     let html = '';
     const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    
+
     // Header row
     html += '<div class="streak-cal__header">';
-    dayLabels.forEach(d => { html += `<span>${d}</span>`; });
+    dayLabels.forEach(d => {
+        html += `<span>${d}</span>`;
+    });
     html += '</div>';
-    
+
     // Get start date (28 days ago, aligned to Monday)
     const start = new Date(today);
     start.setDate(start.getDate() - 27);
@@ -50,15 +53,15 @@ function buildStreakCalendar() {
     while (start.getDay() !== 1) {
         start.setDate(start.getDate() - 1);
     }
-    
+
     html += '<div class="streak-cal__grid">';
     const totalDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24)) + 1;
-    
+
     for (let i = 0; i < Math.max(totalDays, 28); i++) {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
         const iso = d.toISOString().split('T')[0];
-        
+
         if (d > today) {
             html += '<div class="streak-cal__day streak-cal__day--future"></div>';
         } else if (activeDays.includes(iso)) {
@@ -72,42 +75,48 @@ function buildStreakCalendar() {
         }
     }
     html += '</div>';
-    
+
     return html;
 }
 
 function buildRewardsRoadmap(currentDays) {
     const milestones = [
-        { days: 3,   emoji: LangyIcons.star, reward: '25 Dangy', label: '3 Days' },
-        { days: 7,   emoji: LangyIcons.star, reward: '50 Dangy + 5 Langy', label: 'Week' },
-        { days: 14,  emoji: LangyIcons.award, reward: '100 Dangy + 10 Langy', label: '2 Weeks' },
-        { days: 30,  emoji: LangyIcons.trophy, reward: '200 Dangy + 25 Langy', label: 'Month' },
-        { days: 60,  emoji: LangyIcons.diamond, reward: '400 Dangy + 50 Langy', label: '2 Months' },
-        { days: 90,  emoji: LangyIcons.crown, reward: '600 Dangy + 100 Langy', label: '3 Months' },
+        { days: 3, emoji: LangyIcons.star, reward: '25 Dangy', label: '3 Days' },
+        { days: 7, emoji: LangyIcons.star, reward: '50 Dangy + 5 Langy', label: 'Week' },
+        { days: 14, emoji: LangyIcons.award, reward: '100 Dangy + 10 Langy', label: '2 Weeks' },
+        { days: 30, emoji: LangyIcons.trophy, reward: '200 Dangy + 25 Langy', label: 'Month' },
+        { days: 60, emoji: LangyIcons.diamond, reward: '400 Dangy + 50 Langy', label: '2 Months' },
+        { days: 90, emoji: LangyIcons.crown, reward: '600 Dangy + 100 Langy', label: '3 Months' },
         { days: 180, emoji: LangyIcons.flame, reward: '1000 Dangy + 200 Langy', label: '6 Months' },
         { days: 365, emoji: LangyIcons.medal, reward: '2000 Dangy + 500 Langy', label: '1 Year' },
     ];
-    
-    return milestones.map(m => {
-        const isEarned = currentDays >= m.days;
-        const isNext = !isEarned && (currentDays < m.days);
-        const progress = isEarned ? 100 : Math.round((currentDays / m.days) * 100);
-        
-        return `
+
+    return milestones
+        .map(m => {
+            const isEarned = currentDays >= m.days;
+            const isNext = !isEarned && currentDays < m.days;
+            const progress = isEarned ? 100 : Math.round((currentDays / m.days) * 100);
+
+            return `
             <div class="reward-milestone ${isEarned ? 'reward-milestone--earned' : ''} ${isNext ? 'reward-milestone--next' : ''}">
                 <div class="reward-milestone__icon">${m.emoji}</div>
                 <div class="reward-milestone__info">
                     <div class="reward-milestone__label">${m.label}</div>
                     <div class="reward-milestone__reward">${m.reward}</div>
-                    ${!isEarned ? `
+                    ${
+                        !isEarned
+                            ? `
                         <div class="reward-milestone__bar">
                             <div class="reward-milestone__fill" style="width:${progress}%"></div>
                         </div>
-                    ` : '<span class="reward-milestone__check">${LangyIcons.check} Earned</span>'}
+                    `
+                            : '<span class="reward-milestone__check">${LangyIcons.check} Earned</span>'
+                    }
                 </div>
             </div>
         `;
-    }).join('');
+        })
+        .join('');
 }
 
 function renderStreak(container) {
@@ -124,7 +133,7 @@ function renderStreak(container) {
         grammar: 'var(--info)',
         listening: 'var(--accent-dark)',
         speaking: 'var(--reward-gold)',
-        writing: 'var(--warning)'
+        writing: 'var(--warning)',
     };
 
     container.innerHTML = `
@@ -143,7 +152,7 @@ function renderStreak(container) {
                             <span style="font-size:36px; animation: streakFire 1.5s ease-in-out infinite;">${LangyIcons.flame}</span>
                             <span id="streak-count">${sd.days}</span>
                         </div>
-                        <div class="label">${sd.days === 0 ? {en:'Start your streak today!',ru:'Начните стрик сегодня!',es:'¡Empieza tu racha hoy!'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'] : i18n('home.streak')}</div>
+                        <div class="label">${sd.days === 0 ? { en: 'Start your streak today!', ru: 'Начните стрик сегодня!', es: '¡Empieza tu racha hoy!' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'] : i18n('home.streak')}</div>
                         ${sd.longestStreak > 0 ? `<div class="label" style="color:var(--reward-gold); margin-top:var(--sp-1);">${LangyIcons.trophy} Best: ${sd.longestStreak} days</div>` : ''}
                     </div>
 
@@ -176,8 +185,10 @@ function renderStreak(container) {
                             <p style="color:var(--text-muted); font-size:var(--fs-xs); margin:var(--sp-1) 0 0;">Protects your streak when you miss a day</p>
                         </div>
                         <div class="streak-freeze__count">
-                            ${Array.from({length: maxFreezes}, (_, i) => 
-                                `<span class="freeze-shield ${i < freezes ? 'freeze-shield--active' : ''}">${i < freezes ? LangyIcons.shield : LangyIcons.circle}</span>`
+                            ${Array.from(
+                                { length: maxFreezes },
+                                (_, i) =>
+                                    `<span class="freeze-shield ${i < freezes ? 'freeze-shield--active' : ''}">${i < freezes ? LangyIcons.shield : LangyIcons.circle}</span>`
                             ).join('')}
                         </div>
                     </div>
@@ -208,11 +219,15 @@ function renderStreak(container) {
                 </div>
 
                 <!-- Time breakdown chart -->
-                ${totalMinutes > 0 ? `
+                ${
+                    totalMinutes > 0
+                        ? `
                 <div class="card" style="margin-top:var(--sp-4);">
                     <h4 style="margin-bottom:var(--sp-4);">Time by Category</h4>
                     <div class="streak-detail__time-chart">
-                        ${Object.entries(breakdown).map(([key, minutes]) => `
+                        ${Object.entries(breakdown)
+                            .map(
+                                ([key, minutes]) => `
                             <div class="time-bar">
                                 <div class="time-bar__label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
                                 <div class="time-bar__track">
@@ -220,10 +235,14 @@ function renderStreak(container) {
                                 </div>
                                 <div class="time-bar__value">${minutes >= 60 ? Math.floor(minutes / 60) + 'h' : minutes + 'm'}</div>
                             </div>
-                        `).join('')}
+                        `
+                            )
+                            .join('')}
                     </div>
                 </div>
-                ` : ''}
+                `
+                        : ''
+                }
 
                 <!-- Rewards Roadmap -->
                 <div class="card" style="margin-top:var(--sp-4);">
@@ -234,7 +253,9 @@ function renderStreak(container) {
                 </div>
 
                 <!-- Last session -->
-                ${sd.lastSession.date ? `
+                ${
+                    sd.lastSession.date
+                        ? `
                 <div class="card" style="margin-top:var(--sp-4); margin-bottom:var(--sp-6);">
                     <h4 style="margin-bottom:var(--sp-3);">Last Session</h4>
                     <div style="display:flex; justify-content:space-around;">
@@ -252,14 +273,16 @@ function renderStreak(container) {
                         </div>
                     </div>
                 </div>
-                ` : `
+                `
+                        : `
                 <div class="card" style="margin-top:var(--sp-4); margin-bottom:var(--sp-6); text-align:center; padding: var(--sp-8);">
                     <div style="font-size:48px; margin-bottom:var(--sp-3);">${LangyIcons.book}</div>
                     <h4>No sessions yet!</h4>
                     <p style="color:var(--text-muted); margin-top:var(--sp-2);">Complete a lesson to start tracking your progress</p>
                     <button class="btn btn--primary" id="streak-start-lesson" style="margin-top:var(--sp-4);">${LangyIcons.rocket} Start Learning</button>
                 </div>
-                `}
+                `
+                }
             </div>
         </div>
     `;
@@ -268,8 +291,8 @@ function renderStreak(container) {
     container.querySelector('#streak-back')?.addEventListener('click', () => Router.navigate('home'));
     container.querySelector('#streak-start-lesson')?.addEventListener('click', () => Router.navigate('learning'));
     container.querySelector('#open-full-calendar')?.addEventListener('click', () => Router.navigate('calendar'));
-    
-    container.querySelector('#buy-freeze')?.addEventListener('click', (e) => {
+
+    container.querySelector('#buy-freeze')?.addEventListener('click', e => {
         if (buyStreakFreeze()) {
             // Re-render to update UI
             renderStreak(container);
@@ -281,7 +304,9 @@ function renderStreak(container) {
         container.querySelectorAll('.time-bar__fill').forEach(bar => {
             const width = bar.style.width;
             bar.style.width = '0%';
-            setTimeout(() => { bar.style.width = width; }, 100);
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
         });
     }, 200);
 
@@ -290,7 +315,9 @@ function renderStreak(container) {
         container.querySelectorAll('.reward-milestone__fill').forEach(bar => {
             const width = bar.style.width;
             bar.style.width = '0%';
-            setTimeout(() => { bar.style.width = width; }, 150);
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 150);
         });
     }, 400);
 

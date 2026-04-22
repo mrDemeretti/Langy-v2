@@ -4,10 +4,30 @@
 
 function renderMascotSelect(container) {
     const mascots = [
-        { id: 0, name: 'Zendaya', personality: 'Cheerful & Encouraging. Always sees the bright side and celebrates your wins!', color: '#7C6CF6' },
-        { id: 1, name: 'Travis', personality: 'Creative & Playful. Teaches through stories, games and surprises!', color: '#4ADE80' },
-        { id: 2, name: 'Matthew', personality: 'Smart & Structured. Loves grammar rules and systematic learning!', color: '#F59E0B' },
-        { id: 3, name: 'Omar', personality: 'Wise & Multilingual. Your supportive guide connecting your native language to English!', color: '#06B6D4' },
+        {
+            id: 0,
+            name: 'Zendaya',
+            personality: 'Cheerful & Encouraging. Always sees the bright side and celebrates your wins!',
+            color: '#7C6CF6',
+        },
+        {
+            id: 1,
+            name: 'Travis',
+            personality: 'Creative & Playful. Teaches through stories, games and surprises!',
+            color: '#4ADE80',
+        },
+        {
+            id: 2,
+            name: 'Matthew',
+            personality: 'Smart & Structured. Loves grammar rules and systematic learning!',
+            color: '#F59E0B',
+        },
+        {
+            id: 3,
+            name: 'Omar',
+            personality: 'Wise & Multilingual. Your supportive guide connecting your native language to English!',
+            color: '#06B6D4',
+        },
     ];
 
     const selected = LangyState.mascot.selected;
@@ -20,7 +40,9 @@ function renderMascotSelect(container) {
             </div>
 
             <div class="mascot-select__carousel" id="mascot-carousel">
-                ${mascots.map(m => `
+                ${mascots
+                    .map(
+                        m => `
                     <div class="mascot-card ${selected === m.id ? 'mascot-card--selected' : ''}" data-id="${m.id}">
                         <div class="mascot-card__model" style="border-color: ${m.color}30;">
                             <span style="font-size:11px; color: var(--text-tertiary);">GLB Model<br>Placeholder</span>
@@ -29,7 +51,9 @@ function renderMascotSelect(container) {
                         <div class="mascot-card__personality">${m.personality}</div>
                         ${selected === m.id ? `<div class="badge badge--primary" style="display:flex;align-items:center;gap:4px;">Selected ${LangyIcons.check}</div>` : ''}
                     </div>
-                `).join('')}
+                `
+                    )
+                    .join('')}
             </div>
 
             <button class="btn btn--primary btn--xl btn--full ${selected === null ? 'btn--disabled' : ''}" id="mascot-continue"
