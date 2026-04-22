@@ -3,68 +3,76 @@
    + ScreenState: centralized screen-level state
    ============================================ */
 
-// ─── SCREEN STATE MANAGER ───
-// Replaces all `window._` anti-patterns with a scoped, auto-cleaning state object.
-// Each screen gets its own namespace that auto-clears on navigation.
-const ScreenState = {
-    _data: {},
-    _persistent: new Set(), // keys that survive navigation
+// ─── SCREEN STATE ───
+// ScreenState is now defined in core.js (loaded before this file).
+// It provides: get(), set(), has(), remove(), onCleanup(), clear(), debug()
+// Old code using ScreenState.persist() should use window-level storage instead.
 
-    // Get screen-scoped state
-    get(key, defaultVal) {
-        return this._data[key] !== undefined ? this._data[key] : defaultVal;
-    },
-
-    // Set screen-scoped state
-    set(key, value) {
-        this._data[key] = value;
-    },
-
-    // Mark a key as persistent (survives nav, e.g. onboarding progress)
-    persist(key) {
-        this._persistent.add(key);
-    },
-
-    // Delete a specific key
-    delete(key) {
-        delete this._data[key];
-        this._persistent.delete(key);
-    },
-
-    // Clear non-persistent state (called on route change)
-    _clearTransient() {
+// Add backward-compat methods if needed
+if (typeof ScreenState !== 'undefined' && !ScreenState._persistent) {
+    ScreenState._persistent = new Set();
+    ScreenState.persist = function(key) { this._persistent.add(key); };
+    const originalClear = ScreenState.clear.bind(ScreenState);
+    ScreenState._clearTransient = function() {
+        // Only clear non-persistent keys
         const keysToDelete = Object.keys(this._data).filter(k => !this._persistent.has(k));
         keysToDelete.forEach(k => delete this._data[k]);
-    },
-
-    // Clear everything (called on logout)
-    clearAll() {
-        this._data = {};
+        // Still run cleanup callbacks
+        this._cleanupCallbacks.forEach(fn => { try { fn(); } catch(e) {} });
+        this._cleanupCallbacks = [];
+    };
+    ScreenState.clearAll = function() {
         this._persistent.clear();
-    }
-};
+        originalClear();
+    };
+}
 
-// ─── ROUTER ───
+/**
+ * @namespace Router
+ * @description Hash-based SPA router with screen cleanup and ScreenState integration.
+ */
 const Router = {
+    /** @type {Object<string, Function>} Registered route handlers */
     routes: {},
+    /** @type {string|null} Currently active route name */
     currentRoute: null,
-    _cleanupFns: {},     // per-screen cleanup callbacks
-    _routeParams: {},    // route params (replaces window._routeParams)
+    /** @type {Object<string, Function>} Per-screen cleanup callbacks */
+    _cleanupFns: {},
+    /** @type {Object} Current route parameters */
+    _routeParams: {},
 
+    /**
+     * Register a route handler.
+     * @param {string} path - Route name (e.g. 'home', 'profile')
+     * @param {Function} renderFn - Function that renders the screen into a container
+     * @param {Function} [cleanupFn] - Optional cleanup function called on navigation away
+     */
     register(path, renderFn, cleanupFn) {
         this.routes[path] = renderFn;
         if (cleanupFn) this._cleanupFns[path] = cleanupFn;
     },
 
+    /**
+     * Navigate to a route.
+     * @param {string} path - Route name
+     * @param {Object} [params={}] - Optional parameters accessible via Router.getParams()
+     */
     navigate(path, params = {}) {
         this._routeParams = params;
         window.location.hash = path;
     },
 
+    /**
+     * Get parameters passed to the current route.
+     * @returns {Object}
+     */
     getParams() {
         return this._routeParams || {};
     },
 
+    /**
+     * Initialize the router — listen for hash changes and render initial route.
+     */
     init() {
         window.addEventListener('hashchange', () => this.handleRoute());
         this.handleRoute();
@@ -111,7 +119,21 @@ const Router = {
             Anim.transitionTo(() => {
                 const container = document.getElementById('screen-container');
                 container.innerHTML = '';
-                renderFn(container);
+                try {
+                    renderFn(container);
+                } catch (e) {
+                    if (typeof LangyLogger !== 'undefined') {
+                        LangyLogger.error('Router.handleRoute', `Screen '${hash}' crashed`, e);
+                    }
+                    container.innerHTML = `
+                        <div style="padding:32px;text-align:center;color:var(--text-secondary);">
+                            <div style="font-size:48px;margin-bottom:16px;">${typeof LangyIcons !== 'undefined' ? LangyIcons.alertTriangle : '!'}</div>
+                            <h3>Something went wrong</h3>
+                            <p style="font-size:14px;margin:8px 0 16px;">Screen "${escapeHTML(hash)}" failed to load.</p>
+                            <button class="btn btn--primary" onclick="Router.navigate('home')">Go Home</button>
+                        </div>
+                    `;
+                }
                 window.scrollTo(0, 0);
             });
 

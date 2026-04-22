@@ -53,8 +53,8 @@ const LangyState = {
         // Streak Freeze: protects streak when you miss a day
         streakFreezes: 0,      // Number of freeze shields owned
         freezeUsedDates: [],   // ISO dates when a freeze was auto-used
-        freezePrice: 200,      // Dangy cost per freeze
-        maxFreezes: 3,         // Max freezes you can hold
+        freezePrice: LangyConfig.STREAK_FREEZE_PRICE,
+        maxFreezes: LangyConfig.STREAK_MAX_FREEZES,
         timeBreakdown: {
             vocabulary: 0,
             grammar: 0,
@@ -206,21 +206,49 @@ const LangyState = {
     }
 };
 
-// Simple state getter/setter
+/**
+ * Get a value from LangyState using dot-notation path.
+ * @param {string} path - Dot-separated path (e.g. 'user.name', 'progress.skills.grammar')
+ * @returns {*} The value at the path, or undefined if not found
+ */
 function getState(path) {
     return path.split('.').reduce((obj, key) => obj?.[key], LangyState);
 }
 
+/**
+ * Set a value in LangyState using dot-notation path.
+ * @param {string} path - Dot-separated path (e.g. 'user.streak')
+ * @param {*} value - Value to set
+ * @throws {TypeError} If intermediate path doesn't exist
+ */
 function setState(path, value) {
     const keys = path.split('.');
     const last = keys.pop();
-    const target = keys.reduce((obj, key) => obj[key], LangyState);
+    const target = keys.reduce((obj, key) => {
+        if (obj == null || typeof obj !== 'object') {
+            throw new TypeError(`setState: invalid path segment '${key}' in '${path}'`);
+        }
+        return obj[key];
+    }, LangyState);
+    if (target == null) {
+        LangyLogger.warn('setState', `Path '${path}' resolved to null/undefined`);
+        return;
+    }
     target[last] = value;
 }
 
-// ─── STREAK & SESSION RECORDING ───
-// Call this after every completed lesson/exercise session
+/**
+ * Record a completed lesson/exercise session.
+ * Updates streak, XP, daily stats, and event progress.
+ *
+ * @param {Object} options
+ * @param {number} [options.duration=0] - Duration in minutes
+ * @param {number} [options.wordsLearned=0] - Words learned
+ * @param {number} [options.accuracy=0] - Score 0-100
+ * @param {string} [options.category='grammar'] - Skill category
+ */
 function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category = 'grammar' } = {}) {
+  try {
     const now = new Date();
     const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
     const sd = LangyState.streakData;
@@ -310,9 +338,20 @@ function recordSession({ duration = 0, wordsLearned = 0, accuracy = 0, category 
     
     // Save
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+  } catch (e) {
+    if (typeof LangyLogger !== 'undefined') {
+        LangyLogger.error('recordSession', 'Failed to record session', e);
+    } else {
+        console.error('[Langy] recordSession failed:', e);
+    }
+  }
 }
 
-// Streak reward tiers
+/**
+ * Get reward for a given streak day count.
+ * @param {number} days - Current streak day count
+ * @returns {{dangy: number, langy: number, badge: string|null}} Reward object
+ */
 function getStreakReward(days) {
     // Daily rewards
     const dailyDangy = Math.min(10 + Math.floor(days / 7) * 5, 50); // 10-50 dangy/day, scaling
@@ -342,8 +381,8 @@ const DEFAULT_STATE = JSON.parse(JSON.stringify(LangyState));
 // ─── LEVEL UP CHECK ───
 // Call after any XP change to detect level boundaries
 function checkLevelUp(oldXp, newXp) {
-    const oldLevel = Math.floor(oldXp / 500) + 1;
-    const newLevel = Math.floor(newXp / 500) + 1;
+    const oldLevel = Math.floor(oldXp / LangyConfig.XP_PER_LEVEL) + 1;
+    const newLevel = Math.floor(newXp / LangyConfig.XP_PER_LEVEL) + 1;
     
     if (newLevel > oldLevel) {
         // Level up!
@@ -400,7 +439,7 @@ function showLevelUpOverlay(level, dangy, langy) {
         </div>
     `;
     document.body.appendChild(overlay);
-    setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 8000);
+    setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, LangyConfig.OVERLAY_AUTO_DISMISS_MS);
 }
 
 // ─── EVENT PROGRESS ───
