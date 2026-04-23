@@ -639,155 +639,204 @@ function renderTalkSummary(container) {
     const qualified = summary.qualifiedForRewards;
     const mins = Math.floor((summary.duration || 0) / 60);
     const secs = (summary.duration || 0) % 60;
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const isFirstSession = !LangyState.talkHistory || LangyState.talkHistory.length <= 1;
 
-    // Pronunciation display
+    // Determine if feedback is structured (JSON) or plain text
+    const isStructured = feedback && feedback._structured;
+    const praise = isStructured ? feedback.praise : null;
+    const corrections = isStructured ? (feedback.corrections || []) : [];
+    const tip = isStructured ? feedback.tip : null;
+    const plainFeedback = !isStructured && typeof feedback === 'string' ? feedback : null;
+
+    // Pronunciation
     const pronLabels = { excellent: 'Excellent', good: 'Good', fair: 'Fair', needs_work: 'Needs Work' };
     const pronColors = { excellent: 'var(--primary)', good: '#4ADE80', fair: '#F59E0B', needs_work: '#EF4444' };
     const pronLevel = summary.pronunciationLevel || null;
 
+    // Next session prompt
+    const nextPrompt = (() => {
+        if (!qualified) {
+            return {
+                icon: LangyIcons.mic,
+                text: {
+                    en: 'Try having a longer conversation next time — 3+ exchanges unlocks rewards!',
+                    ru: 'Попробуй поговорить дольше — 3+ обмена открывают награды!',
+                    es: 'Intenta conversar más la próxima vez — 3+ intercambios desbloquean premios!',
+                }[lang],
+            };
+        }
+        if (isFirstSession) {
+            return {
+                icon: LangyIcons.sparkles,
+                text: {
+                    en: "Amazing first session! Come back tomorrow to build your streak and keep improving.",
+                    ru: 'Отличная первая сессия! Возвращайся завтра, чтобы начать серию.',
+                    es: '¡Increíble primera sesión! Vuelve mañana para comenzar tu racha.',
+                }[lang],
+            };
+        }
+        if (corrections.length === 0) {
+            return {
+                icon: LangyIcons.trophy,
+                text: {
+                    en: "Flawless session! Try a harder scenario next time to push your limits.",
+                    ru: 'Безупречно! Попробуй более сложный сценарий в следующий раз.',
+                    es: '¡Sesión perfecta! Prueba un escenario más difícil la próxima vez.',
+                }[lang],
+            };
+        }
+        return {
+            icon: LangyIcons.flame,
+            text: {
+                en: 'Practice the corrections above, then come back for another round!',
+                ru: 'Запомни исправления выше, потом возвращайся на новый раунд!',
+                es: '¡Practica las correcciones de arriba y vuelve por otra ronda!',
+            }[lang],
+        };
+    })();
+
     container.innerHTML = `
         <div class="screen screen--no-pad">
-            <div style="padding: var(--sp-6) var(--sp-5); overflow-y:auto; flex:1;">
+            <div style="padding: var(--sp-5) var(--sp-5) var(--sp-4); overflow-y:auto; flex:1;">
 
-                <!-- Result Header -->
-                <div style="text-align:center; margin-bottom:var(--sp-6);">
-                    <div style="font-size:56px; margin-bottom:var(--sp-2); color:${qualified ? 'var(--reward-gold)' : 'var(--text-tertiary)'};">
-                        ${qualified ? LangyIcons.trophy : LangyIcons.messageCircle}
+                <!-- Header: concise -->
+                <div style="text-align:center; margin-bottom:var(--sp-5);">
+                    <div style="font-size:48px; margin-bottom:var(--sp-2); color:${qualified ? 'var(--primary)' : 'var(--text-tertiary)'};">
+                        ${qualified ? LangyIcons.check : LangyIcons.messageCircle}
                     </div>
-                    <h2>${qualified ? 'Great Conversation!' : 'Keep Practicing!'}</h2>
-                    <p style="color:var(--text-secondary); margin-top:var(--sp-1);">
-                        ${
-                            qualified
-                                ? `You talked with ${summary.mascot || 'your mascot'} about ${summary.scenario || 'English'}`
-                                : summary.reason || 'Have a longer conversation to earn rewards'
-                        }
+                    <h2 style="font-size:var(--fs-xl);">${{
+                        en: qualified ? 'Nice work!' : 'Good start!',
+                        ru: qualified ? 'Отлично!' : 'Хорошее начало!',
+                        es: qualified ? '¡Buen trabajo!' : '¡Buen comienzo!',
+                    }[lang]}</h2>
+                    <p style="color:var(--text-tertiary); font-size:var(--fs-sm); margin-top:var(--sp-1);">
+                        ${mins}:${secs.toString().padStart(2, '0')} · ${summary.turns || 0} ${
+                            { en: 'exchanges', ru: 'реплик', es: 'intercambios' }[lang]
+                        }${summary.mascot ? ` · ${summary.mascot}` : ''}
                     </p>
                 </div>
 
-                <!-- Stats Grid -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-3); margin-bottom:var(--sp-5);">
-                    <div class="card" style="text-align:center; padding:var(--sp-4);">
-                        <div style="font-size:28px; font-weight:var(--fw-black); color:var(--primary);">${mins}:${secs.toString().padStart(2, '0')}</div>
-                        <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${LangyIcons.clock} Duration</div>
-                    </div>
-                    <div class="card" style="text-align:center; padding:var(--sp-4);">
-                        <div style="font-size:28px; font-weight:var(--fw-black); color:var(--accent-dark);">${summary.turns || 0}</div>
-                        <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${LangyIcons.messageCircle} Your Turns</div>
-                    </div>
-                    ${
-                        qualified
-                            ? `
-                    <div class="card" style="text-align:center; padding:var(--sp-4);">
-                        <div style="font-size:28px; font-weight:var(--fw-black); color:var(--reward-gold);">+${summary.xpEarned || 0}</div>
-                        <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${LangyIcons.zap} XP Earned</div>
-                    </div>
-                    <div class="card" style="text-align:center; padding:var(--sp-4);">
-                        <div style="font-size:28px; font-weight:var(--fw-black); color:var(--info);">+${summary.dangyEarned || 0}</div>
-                        <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${LangyIcons.diamond} Dangy</div>
-                    </div>
-                    `
-                            : ''
-                    }
-                </div>
-
-                ${
-                    qualified
-                        ? `
-                <!-- Skills Improved -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4); background:linear-gradient(135deg, rgba(16,185,129,0.04), rgba(74,222,128,0.04)); border: 1px solid rgba(16,185,129,0.15);">
-                    <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
-                        <span style="color:var(--primary);">${LangyIcons.trendingUp}</span> Skills Improved
-                    </h4>
-                    <div style="display:flex; gap:var(--sp-3);">
-                        <div class="badge badge--accent">${LangyIcons.mic} Speaking</div>
-                        <div class="badge badge--primary">${LangyIcons.headphones} Listening</div>
-                    </div>
-                </div>
-                `
-                        : `
-                <!-- Tip for unqualified -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4); border: 1px solid rgba(245,158,11,0.2); background:rgba(245,158,11,0.04);">
+                ${praise ? `
+                <!-- Praise -->
+                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);
+                    border-left:3px solid var(--primary); background:var(--primary-bg);">
                     <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
-                        <span style="color:#F59E0B; flex-shrink:0;">${LangyIcons.zap}</span>
+                        <span style="color:var(--primary); font-size:20px; flex-shrink:0;">${LangyIcons.sparkles}</span>
                         <div>
-                            <div style="font-weight:var(--fw-semibold); font-size:var(--fs-sm);">Tip</div>
-                            <div style="font-size:var(--fs-xs); color:var(--text-secondary); margin-top:2px;">
-                                Tap the mic button and try answering your partner's questions. Have at least 3 exchanges to earn rewards!
+                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--primary); margin-bottom:2px;">
+                                ${{ en: 'What you did well', ru: 'Что получилось', es: 'Lo que hiciste bien' }[lang]}
                             </div>
+                            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
+                                ${escapeHTML(praise)}
+                            </p>
                         </div>
                     </div>
                 </div>
-                `
-                }
+                ` : ''}
 
-                ${
-                    pronLevel
-                        ? `
-                <!-- Pronunciation -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4);">
-                    <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
-                        <span style="color:${pronColors[pronLevel]};">${LangyIcons.mic}</span> Pronunciation
-                    </h4>
-                    <div style="display:flex; align-items:center; gap:var(--sp-3);">
-                        <div style="font-size:28px; font-weight:var(--fw-black); color:${pronColors[pronLevel]};">${Math.round((summary.avgPronunciation || 0) * 100)}%</div>
+                ${corrections.length > 0 ? `
+                <!-- Corrections -->
+                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);">
+                    <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px;">
+                        <span style="color:#F59E0B;">${LangyIcons.pencil}</span>
+                        ${{ en: 'Key corrections', ru: 'Исправления', es: 'Correcciones' }[lang]}
+                    </div>
+                    ${corrections.map(c => `
+                        <div style="margin-bottom:var(--sp-3); padding-bottom:var(--sp-3); border-bottom:1px solid var(--border);">
+                            <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:4px;">
+                                <span style="color:var(--danger); font-size:var(--fs-sm); text-decoration:line-through;">${escapeHTML(c.said || '')}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:4px;">
+                                <span style="color:var(--primary); font-size:var(--fs-sm); font-weight:var(--fw-bold);">${escapeHTML(c.better || '')}</span>
+                            </div>
+                            ${c.why ? `<div style="font-size:var(--fs-xs); color:var(--text-tertiary); font-style:italic;">${escapeHTML(c.why)}</div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+
+                ${tip ? `
+                <!-- Tip -->
+                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);
+                    border-left:3px solid #7C6CF6; background:rgba(124,108,246,0.04);">
+                    <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
+                        <span style="color:#7C6CF6; font-size:20px; flex-shrink:0;">${LangyIcons.brain}</span>
                         <div>
-                            <div style="font-weight:var(--fw-semibold); color:${pronColors[pronLevel]};">${pronLabels[pronLevel]}</div>
-                            <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">Speech clarity</div>
+                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:#7C6CF6; margin-bottom:2px;">
+                                ${{ en: 'Tip for next time', ru: 'Совет на будущее', es: 'Consejo' }[lang]}
+                            </div>
+                            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
+                                ${escapeHTML(tip)}
+                            </p>
                         </div>
                     </div>
                 </div>
-                `
-                        : ''
-                }
+                ` : ''}
 
-                ${
-                    feedback
-                        ? `
-                <!-- AI Feedback -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4); border:1px solid rgba(124,108,246,0.2); background:rgba(124,108,246,0.03);">
-                    <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
-                        <span style="color:#7C6CF6;">${LangyIcons.brain}</span> AI Feedback
-                    </h4>
-                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.6;">${escapeHTML(feedback)}</p>
-                </div>
-                `
-                        : ''
-                }
-
-                <!-- Transcript Preview -->
-                ${
-                    summary.userMessages && summary.userMessages.length > 0
-                        ? `
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-4);">
-                    <h4 style="margin-bottom:var(--sp-2);">Your Phrases</h4>
-                    <div style="display:flex; flex-direction:column; gap:var(--sp-2); max-height:150px; overflow-y:auto;">
-                        ${summary.userMessages
-                            .slice(-5)
-                            .map(
-                                msg => `
-                            <div style="font-size:var(--fs-sm); color:var(--text-secondary); padding:var(--sp-2); background:var(--bg-alt); border-radius:var(--radius-md);">
-                                "${escapeHTML(msg)}"
-                            </div>
-                        `
-                            )
-                            .join('')}
+                ${plainFeedback ? `
+                <!-- Fallback: plain text feedback -->
+                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);
+                    border-left:3px solid #7C6CF6; background:rgba(124,108,246,0.04);">
+                    <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
+                        <span style="color:#7C6CF6; font-size:20px; flex-shrink:0;">${LangyIcons.brain}</span>
+                        <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.6;">
+                            ${escapeHTML(plainFeedback)}
+                        </p>
                     </div>
                 </div>
-                `
-                        : ''
-                }
+                ` : ''}
+
+                ${pronLevel ? `
+                <!-- Pronunciation (compact) -->
+                <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4);
+                    background:var(--bg-card); border-radius:var(--radius-lg); margin-bottom:var(--sp-3);
+                    border:1px solid var(--border);">
+                    <span style="color:${pronColors[pronLevel]}; font-size:18px;">${LangyIcons.mic}</span>
+                    <span style="font-size:var(--fs-sm); color:var(--text-secondary);">
+                        ${{ en: 'Pronunciation', ru: 'Произношение', es: 'Pronunciación' }[lang]}
+                    </span>
+                    <span style="margin-left:auto; font-weight:var(--fw-bold); color:${pronColors[pronLevel]};">
+                        ${Math.round((summary.avgPronunciation || 0) * 100)}% · ${pronLabels[pronLevel]}
+                    </span>
+                </div>
+                ` : ''}
+
+                ${qualified && (summary.xpEarned || summary.dangyEarned) ? `
+                <!-- Rewards (compact single line) -->
+                <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4);
+                    background:var(--bg-card); border-radius:var(--radius-lg); margin-bottom:var(--sp-3);
+                    border:1px solid var(--border);">
+                    <span style="color:var(--reward-gold); font-size:18px;">${LangyIcons.zap}</span>
+                    <span style="font-size:var(--fs-sm); color:var(--text-secondary);">
+                        ${{ en: 'Earned', ru: 'Получено', es: 'Ganado' }[lang]}
+                    </span>
+                    <span style="margin-left:auto; font-size:var(--fs-sm); color:var(--text-secondary);">
+                        <strong style="color:var(--reward-gold);">+${summary.xpEarned || 0}</strong> XP
+                        ${summary.dangyEarned ? ` · <strong style="color:var(--info);">+${summary.dangyEarned}</strong> Dangy` : ''}
+                    </span>
+                </div>
+                ` : ''}
+
+                <!-- Next session prompt -->
+                <div style="text-align:center; padding:var(--sp-4) var(--sp-2); margin:var(--sp-2) 0 var(--sp-4);">
+                    <span style="font-size:24px;">${nextPrompt.icon}</span>
+                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin-top:var(--sp-2); max-width:300px; margin-left:auto; margin-right:auto; line-height:1.5;">
+                        ${nextPrompt.text}
+                    </p>
+                </div>
 
                 <!-- Actions -->
                 <div style="display:flex; gap:var(--sp-2); margin-bottom:var(--sp-3);">
                     <button class="btn btn--primary btn--full" id="talk-again">
-                        ${LangyIcons.refreshCw} Talk Again
+                        ${LangyIcons.refreshCw} ${{ en: 'Talk Again', ru: 'Ещё раз', es: 'Hablar de nuevo' }[lang]}
                     </button>
                     <button class="btn btn--secondary btn--full" id="talk-change">
-                        ${LangyIcons.users} Change Partner
+                        ${LangyIcons.users} ${{ en: 'Change', ru: 'Сменить', es: 'Cambiar' }[lang]}
                     </button>
                 </div>
                 <button class="btn btn--ghost btn--full" id="talk-done">
-                    Back to Home
+                    ${{ en: 'Done', ru: 'Готово', es: 'Listo' }[lang]}
                 </button>
             </div>
         </div>

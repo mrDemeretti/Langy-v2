@@ -472,12 +472,19 @@ ${userPhrases}
 
 ${avgConf !== null ? `Their average pronunciation confidence score was ${(avgConf * 100).toFixed(0)}%.` : ''}
 
-Give a SHORT feedback (2-3 sentences max):
-1. One thing they did well
-2. One specific thing to improve
-3. One actionable tip
+Respond with a JSON object only (no markdown, no code fences):
+{
+  "praise": "One specific thing they did well (1 sentence)",
+  "corrections": [
+    {"said": "what they said wrong", "better": "the corrected version", "why": "brief explanation (5 words max)"}
+  ],
+  "tip": "One actionable tip for next time (1 sentence)"
+}
 
-Be encouraging but specific. No markdown or formatting.`;
+Rules:
+- Maximum 2 corrections. If they spoke perfectly, use an empty array [].
+- Be encouraging and specific. Reference actual phrases they used.
+- Keep "why" very short: e.g. "past tense needed", "article missing", "word order".`;
 
         try {
             const response = await fetch(LangyAI.API_URL, {
@@ -486,13 +493,34 @@ Be encouraging but specific. No markdown or formatting.`;
                 body: JSON.stringify({
                     model: LangyAI.MODEL,
                     messages: [{ role: 'user', content: prompt }],
-                    max_tokens: 150,
-                    temperature: 0.7,
+                    max_tokens: 250,
+                    temperature: 0.6,
                 }),
             });
             if (!response.ok) return null;
             const data = await response.json();
-            return data.choices?.[0]?.message?.content || null;
+            const raw = data.choices?.[0]?.message?.content || null;
+            if (!raw) return null;
+
+            // Try to parse as JSON
+            try {
+                const cleaned = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+                const parsed = JSON.parse(cleaned);
+                // Validate structure
+                if (parsed.praise && typeof parsed.praise === 'string') {
+                    return {
+                        _structured: true,
+                        praise: parsed.praise,
+                        corrections: Array.isArray(parsed.corrections) ? parsed.corrections.slice(0, 2) : [],
+                        tip: parsed.tip || '',
+                    };
+                }
+            } catch (_jsonErr) {
+                // JSON parse failed — fall back to plain text
+            }
+
+            // Fallback: return as plain text (backward compat)
+            return raw;
         } catch (e) {
             return null;
         }
