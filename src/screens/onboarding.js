@@ -409,13 +409,17 @@ function renderOnboarding(container) {
         container.querySelector('#onboarding-finish').addEventListener('click', () => {
             LangyState.mascot.selected = selectedMascot;
 
+            // Capture user context before clearing ScreenState
+            const userGoal = ScreenState.get('intentGoal', 'speak');
+            const userConfidence = ScreenState.get('intentConfidence', 'intermediate');
+
             // Clean up temp state
             ScreenState.clear();
 
             // Mark onboarding as done
             LangyState.user.hasCompletedOnboarding = true;
 
-            // Save and go directly to home (skip placement test)
+            // Save progress
             if (typeof LangyDB !== 'undefined') {
                 LangyDB.saveProgress().catch(() => {});
             }
@@ -425,8 +429,23 @@ function renderOnboarding(container) {
                 `${teacherName} ${{ en: 'is your teacher', ru: 'теперь твой учитель', es: 'es tu profesor' }[lang]}! ${LangyIcons.sparkles}`
             );
 
-            // Go to home — the adaptive system will fine-tune the level from actual usage
-            setTimeout(() => Router.navigate('home'), 600);
+            // ─── SPEAKING-FIRST: Go directly into first talk session ───
+            // Pre-configure the talk screen to skip the picker and start immediately
+            const scenarioMap = {
+                speak: 'coffee',      // casual & approachable
+                work: 'interview',    // professional context
+                travel: 'airport',    // travel scenario
+                exam: 'free',         // flexible practice
+            };
+            // For absolute beginners, use the friendliest scenario
+            const scenario = userConfidence === 'zero' ? 'roommate' : (scenarioMap[userGoal] || 'coffee');
+
+            ScreenState.set('talkMascot', selectedMascot);
+            ScreenState.set('talkScenario', scenario);
+            ScreenState.set('firstTalkSession', true);
+            ScreenState.set('talkView', 'call');
+
+            setTimeout(() => Router.navigate('talk'), 600);
         });
 
         setTimeout(() => Anim.staggerChildren(container, '.mascot-card'), 80);

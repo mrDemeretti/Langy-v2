@@ -4,13 +4,114 @@
    ============================================ */
 
 function renderTalk(container) {
-    if (ScreenState.get('talkView') === 'call') {
+    // ─── First Talk Session: show warm intro before jumping into call ───
+    if (ScreenState.get('firstTalkSession')) {
+        renderFirstTalkIntro(container);
+    } else if (ScreenState.get('talkView') === 'call') {
         renderTalkCall(container);
     } else if (ScreenState.get('talkView') === 'summary') {
         renderTalkSummary(container);
     } else {
         renderTalkSelect(container);
     }
+}
+
+// ═══════════════════════════════════════
+// FIRST SESSION: Warm intro before first call
+// ═══════════════════════════════════════
+function renderFirstTalkIntro(container) {
+    const mascotId = ScreenState.get('talkMascot') ?? LangyState.mascot?.selected ?? 0;
+    const scenarioId = ScreenState.get('talkScenario', 'coffee');
+    const scenario = TalkEngine.scenarios.find(s => s.id === scenarioId) || TalkEngine.scenarios[0];
+    const persona = TalkEngine.personas[mascotId] || TalkEngine.personas[0];
+    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const confidence = LangyState.user.confidenceLevel || 'intermediate';
+
+    const tipText = {
+        zero: {
+            en: "Don't worry about mistakes — just try! I'll help you along the way.",
+            ru: 'Не волнуйся из-за ошибок — просто попробуй! Я помогу по ходу.',
+            es: 'No te preocupes por los errores — ¡solo intenta! Te ayudaré.',
+        },
+        basic: {
+            en: "Use simple phrases. I'll guide the conversation and help when you get stuck.",
+            ru: 'Используй простые фразы. Я буду вести разговор и помогу, если застрянешь.',
+            es: 'Usa frases simples. Yo guiaré la conversación y te ayudaré.',
+        },
+        intermediate: {
+            en: "Just talk naturally. I'll gently correct any mistakes as we go.",
+            ru: 'Просто говори естественно. Я мягко исправлю ошибки по ходу.',
+            es: 'Solo habla con naturalidad. Corregiré suavemente tus errores.',
+        },
+        advanced: {
+            en: "Let's have a real conversation. I'll challenge you with idioms and nuance.",
+            ru: 'Давай поговорим по-настоящему. Буду использовать идиомы и нюансы.',
+            es: 'Tengamos una conversación real. Te retaré con modismos y matices.',
+        },
+    };
+
+    const tip = (tipText[confidence] || tipText.intermediate)[lang];
+
+    container.innerHTML = `
+        <div class="screen" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:var(--sp-6); text-align:center; animation:fadeInUp 0.5s ease-out;">
+            
+            <div style="width:100px; height:100px; border-radius:50%; overflow:hidden; margin-bottom:var(--sp-4);
+                        box-shadow:0 8px 32px rgba(0,0,0,0.15); border:3px solid var(--primary);">
+                <img src="assets/mascots/${imgs[mascotId]}.png" alt="${persona.name}"
+                     style="width:100%; height:100%; object-fit:contain;"
+                     onerror="this.parentElement.innerHTML='<span style=font-size:48px>${persona.name[0]}</span>'">
+            </div>
+
+            <h2 style="margin-bottom:var(--sp-2);">${{
+                en: `${persona.name} is ready`,
+                ru: `${persona.name} готов${mascotId === 0 ? 'а' : ''}`,
+                es: `${persona.name} está list${mascotId === 0 ? 'a' : 'o'}`,
+            }[lang]}</h2>
+
+            <p style="color:var(--text-secondary); margin-bottom:var(--sp-2); max-width:300px;">
+                ${{ en: 'Your first conversation:', ru: 'Твой первый разговор:', es: 'Tu primera conversación:' }[lang]}
+                <strong style="color:var(--primary);">${scenario.title}</strong>
+            </p>
+
+            <div class="card" style="padding:var(--sp-4); margin:var(--sp-4) 0; text-align:left; max-width:340px; width:100%;">
+                <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
+                    <span style="color:var(--primary); font-size:20px; flex-shrink:0;">${LangyIcons.info}</span>
+                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.5; margin:0;">
+                        ${tip}
+                    </p>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:var(--sp-2); font-size:var(--fs-xs); color:var(--text-tertiary); margin-bottom:var(--sp-6);">
+                <span>${LangyIcons.mic} ${{ en: 'Tap mic to talk', ru: 'Нажми на микрофон', es: 'Toca el micrófono' }[lang]}</span>
+                <span>·</span>
+                <span>${LangyIcons.headphones} ${{ en: 'Listen & respond', ru: 'Слушай и отвечай', es: 'Escucha y responde' }[lang]}</span>
+            </div>
+
+            <button class="btn btn--primary btn--xl btn--full" id="first-talk-start"
+                    style="max-width:340px; font-size:var(--fs-lg); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
+                ${LangyIcons.mic} ${{ en: "Let's talk!", ru: 'Поговорим!', es: '¡Hablemos!' }[lang]}
+            </button>
+
+            <button class="btn btn--ghost" id="first-talk-skip"
+                    style="margin-top:var(--sp-3); font-size:var(--fs-sm);">
+                ${{ en: 'Skip to home', ru: 'Перейти на главную', es: 'Ir al inicio' }[lang]}
+            </button>
+        </div>
+    `;
+
+    container.querySelector('#first-talk-start')?.addEventListener('click', () => {
+        ScreenState.remove('firstTalkSession');
+        ScreenState.set('talkView', 'call');
+        renderTalk(container);
+    });
+
+    container.querySelector('#first-talk-skip')?.addEventListener('click', () => {
+        ScreenState.remove('firstTalkSession');
+        ScreenState.remove('talkView');
+        Router.navigate('home');
+    });
 }
 
 // ═══════════════════════════════════════
