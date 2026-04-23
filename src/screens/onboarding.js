@@ -1,277 +1,325 @@
 /* ============================================
-   SCREEN: ONBOARDING — Welcome Flow
-   Welcome → Interests → Mascot → Placement Test
+   SCREEN: ONBOARDING — Quick Intent Setup
+   Welcome → Goal → Confidence → Context → Teacher
+   Gets user speaking in under 60 seconds.
    ============================================ */
 
 function renderOnboarding(container) {
     const step = ScreenState.get('onboardingStep', 0);
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const TOTAL_STEPS = 4; // 0=welcome, 1=goal, 2=confidence, 3=context, 4=teacher
 
-    // ─── STEP 0: Welcome Slides ───
-    if (step === 0) {
-        const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
-        const slides = [
-            {
-                emoji: LangyIcons.globe,
-                title: { en: 'Welcome to Langy!', ru: 'Добро пожаловать в Langy!', es: '¡Bienvenido a Langy!' }[lang],
-                subtitle: {
-                    en: 'Your personal AI English tutor',
-                    ru: 'Твой персональный AI-преподаватель английского',
-                    es: 'Tu tutor de inglés con IA personal',
-                }[lang],
-                desc: {
-                    en: 'Forget boring textbooks. Learn through conversations, games and duels.',
-                    ru: 'Забудь скучные учебники. Учись через разговоры, игры и дуэли.',
-                    es: 'Olvida los libros aburridos. Aprende con conversaciones, juegos y duelos.',
-                }[lang],
-            },
-            {
-                emoji: LangyIcons.brain,
-                title: { en: 'Smart AI Teacher', ru: 'Умный ИИ-учитель', es: 'Profesor IA Inteligente' }[lang],
-                subtitle: {
-                    en: 'Adapts to your level',
-                    ru: 'Адаптируется под твой уровень',
-                    es: 'Se adapta a tu nivel',
-                }[lang],
-                desc: {
-                    en: 'Explains grammar in your language, corrects mistakes and selects lessons just for you.',
-                    ru: 'Объясняет грамматику на русском, исправляет ошибки и подбирает уроки лично для тебя.',
-                    es: 'Explica gramática en tu idioma, corrige errores y elige lecciones para ti.',
-                }[lang],
-            },
-            {
-                emoji: LangyIcons.trophy,
-                title: { en: 'Learn by Playing', ru: 'Учись играючи', es: 'Aprende Jugando' }[lang],
-                subtitle: {
-                    en: 'Streaks, duels, rankings',
-                    ru: 'Стрики, дуэли, рейтинги',
-                    es: 'Rachas, duelos, rankings',
-                }[lang],
-                desc: {
-                    en: 'Compete with friends, earn rewards and level up your mascot.',
-                    ru: 'Соревнуйся с друзьями, зарабатывай награды и прокачивай своего маскота.',
-                    es: 'Compite con amigos, gana recompensas y sube de nivel a tu mascota.',
-                }[lang],
-            },
-        ];
-
-        const currentSlide = ScreenState.get('onboardingSlide', 0);
-        const s = slides[currentSlide];
-        const isLast = currentSlide === slides.length - 1;
-
-        container.innerHTML = `
-            <div class="screen onboarding">
-                <div class="onboarding__skip" id="onboarding-skip">${i18n('learn.skip')}</div>
-                
-                <div class="onboarding__slide" style="animation: fadeInUp 0.5s ease-out;">
-                    <div class="onboarding__emoji">${s.emoji}</div>
-                    <h1 class="onboarding__title">${s.title}</h1>
-                    <p class="onboarding__subtitle">${s.subtitle}</p>
-                    <p class="onboarding__desc">${s.desc}</p>
-                </div>
-
-                <div class="onboarding__dots">
-                    ${slides
-                        .map(
-                            (_, i) => `
-                        <div class="onboarding__dot ${i === currentSlide ? 'onboarding__dot--active' : ''}"></div>
-                    `
-                        )
-                        .join('')}
-                </div>
-
-                <button class="btn btn--primary btn--lg btn--full onboarding__btn" id="onboarding-next">
-                    ${isLast ? `${i18n('onboarding.lets_go')} ${LangyIcons.rocket}` : `${i18n('learn.next')} ${LangyIcons.arrowRight}`}
-                </button>
-            </div>
-        `;
-
-        container.querySelector('#onboarding-next').addEventListener('click', () => {
-            if (isLast) {
-                ScreenState.set('onboardingStep', 1);
-                renderOnboarding(container);
-            } else {
-                ScreenState.set('onboardingSlide', currentSlide + 1);
-                renderOnboarding(container);
-            }
-        });
-
-        container.querySelector('#onboarding-skip').addEventListener('click', () => {
-            ScreenState.set('onboardingStep', 1);
-            renderOnboarding(container);
-        });
-
-        // Swipe support
-        let touchStartX = 0;
-        const slideEl = container.querySelector('.onboarding__slide');
-        slideEl?.addEventListener('touchstart', e => {
-            touchStartX = e.touches[0].clientX;
-        });
-        slideEl?.addEventListener('touchend', e => {
-            const diff = touchStartX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0 && currentSlide < slides.length - 1) {
-                    ScreenState.set('onboardingSlide', currentSlide + 1);
-                    renderOnboarding(container);
-                } else if (diff < 0 && currentSlide > 0) {
-                    ScreenState.set('onboardingSlide', currentSlide - 1);
-                    renderOnboarding(container);
-                }
-            }
-        });
-
-        return;
-    }
-
-    // ─── STEP 1: Choose Interests ───
-    if (step === 1) {
-        const lang2 = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
-        const interests = [
-            { id: 'travel', emoji: LangyIcons.globe, label: { en: 'Travel', ru: 'Путешествия', es: 'Viajes' }[lang2] },
-            {
-                id: 'work',
-                emoji: LangyIcons.clipboard,
-                label: { en: 'Work & Career', ru: 'Работа и карьера', es: 'Trabajo y Carrera' }[lang2],
-            },
-            {
-                id: 'movies',
-                emoji: LangyIcons.play,
-                label: { en: 'Movies & TV', ru: 'Кино и сериалы', es: 'Cine y Series' }[lang2],
-            },
-            { id: 'gaming', emoji: LangyIcons.play, label: { en: 'Gaming', ru: 'Игры', es: 'Juegos' }[lang2] },
-            { id: 'music', emoji: LangyIcons.volume, label: { en: 'Music', ru: 'Музыка', es: 'Música' }[lang2] },
-            {
-                id: 'tech',
-                emoji: LangyIcons.globe,
-                label: { en: 'IT & Tech', ru: 'IT и технологии', es: 'IT y Tecnología' }[lang2],
-            },
-            { id: 'sports', emoji: LangyIcons.award, label: { en: 'Sports', ru: 'Спорт', es: 'Deportes' }[lang2] },
-            {
-                id: 'food',
-                emoji: LangyIcons.info,
-                label: { en: 'Food & Cooking', ru: 'Еда и кулинария', es: 'Cocina' }[lang2],
-            },
-            { id: 'books', emoji: LangyIcons.book, label: { en: 'Books', ru: 'Книги', es: 'Libros' }[lang2] },
-            {
-                id: 'social',
-                emoji: LangyIcons.messageCircle,
-                label: { en: 'Chatting with foreigners', ru: 'Общение с иностранцами', es: 'Hablar con extranjeros' }[
-                    lang2
-                ],
-            },
-            {
-                id: 'exams',
-                emoji: LangyIcons.graduationCap,
-                label: { en: 'Exams (IELTS, TOEFL)', ru: 'Экзамены (IELTS, TOEFL)', es: 'Exámenes (IELTS, TOEFL)' }[
-                    lang2
-                ],
-            },
-            {
-                id: 'business',
-                emoji: LangyIcons.barChart,
-                label: { en: 'Business English', ru: 'Бизнес-английский', es: 'Inglés de Negocios' }[lang2],
-            },
-        ];
-
-        const selected = ScreenState.get('selectedInterests', []);
+    // ─── Shared pill-selector renderer ───
+    function renderPillStep(config) {
+        const selected = ScreenState.get(config.stateKey, null);
 
         container.innerHTML = `
             <div class="screen onboarding">
                 <div class="onboarding__header">
-                    <div class="onboarding__step-badge">${i18n('onboarding.step')} 1/2</div>
-                    <h2 class="onboarding__title" style="font-size: var(--fs-2xl);">${i18n('onboarding.interests_title')}</h2>
-                    <p class="onboarding__desc">${i18n('onboarding.interests_desc')}</p>
+                    <div class="onboarding__step-badge">${config.stepLabel}</div>
+                    <h2 class="onboarding__title" style="font-size: var(--fs-2xl);">${config.title}</h2>
+                    <p class="onboarding__desc">${config.subtitle}</p>
                 </div>
 
-                <div class="onboarding__grid" id="interests-grid">
-                    ${interests
+                <div class="onboarding__pills" id="pill-grid" style="display:flex; flex-direction:column; gap:var(--sp-3); padding:0 var(--sp-2);">
+                    ${config.options
                         .map(
-                            i => `
-                        <div class="interest-chip ${selected.includes(i.id) ? 'interest-chip--selected' : ''}" data-id="${i.id}">
-                            <span class="interest-chip__emoji">${i.emoji}</span>
-                            <span class="interest-chip__label">${i.label}</span>
-                        </div>
+                            opt => `
+                        <button class="onboarding__pill ${selected === opt.id ? 'onboarding__pill--selected' : ''}"
+                                data-id="${opt.id}"
+                                style="
+                                    display:flex; align-items:center; gap:var(--sp-3);
+                                    padding:var(--sp-4); border-radius:var(--radius-lg);
+                                    border:2px solid ${selected === opt.id ? 'var(--primary)' : 'var(--border)'};
+                                    background:${selected === opt.id ? 'var(--primary-bg)' : 'var(--bg-card)'};
+                                    cursor:pointer; text-align:left; width:100%;
+                                    transition: all 0.2s ease;
+                                    font-family:inherit; font-size:var(--fs-base);
+                                    color:var(--text-primary);
+                                ">
+                            <span style="font-size:24px; flex-shrink:0; width:32px; text-align:center;">${opt.icon}</span>
+                            <div>
+                                <div style="font-weight:var(--fw-bold);">${opt.label}</div>
+                                ${opt.desc ? `<div style="font-size:var(--fs-sm); color:var(--text-secondary); margin-top:2px;">${opt.desc}</div>` : ''}
+                            </div>
+                            ${selected === opt.id ? `<span style="margin-left:auto; color:var(--primary);">${LangyIcons.check}</span>` : ''}
+                        </button>
                     `
                         )
                         .join('')}
                 </div>
 
                 <div class="onboarding__bottom">
-                    <div class="onboarding__counter">${selected.length} ${i18n('onboarding.selected')}</div>
-                    <button class="btn btn--primary btn--lg btn--full onboarding__btn ${selected.length === 0 ? 'btn--disabled' : ''}" id="onboarding-next" ${selected.length === 0 ? 'disabled' : ''}>
-                        ${i18n('learn.next')} ${LangyIcons.arrowRight}
+                    <button class="btn btn--primary btn--lg btn--full onboarding__btn ${!selected ? 'btn--disabled' : ''}"
+                            id="onboarding-next" ${!selected ? 'disabled' : ''}>
+                        ${config.nextLabel || `${i18n('learn.next')} ${LangyIcons.arrowRight}`}
                     </button>
                 </div>
             </div>
         `;
 
-        container.querySelectorAll('.interest-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                const id = chip.dataset.id;
-                const idx = selected.indexOf(id);
-                if (idx > -1) {
-                    selected.splice(idx, 1);
-                } else {
-                    selected.push(id);
-                }
-                ScreenState.set('selectedInterests', selected);
-
-                // Animate chip
-                chip.classList.toggle('interest-chip--selected');
-                chip.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    chip.style.transform = '';
-                }, 150);
-
-                // Update counter and button
-                const counter = container.querySelector('.onboarding__counter');
-                const btn = container.querySelector('#onboarding-next');
-                counter.textContent = `${selected.length} ${i18n('onboarding.selected')}`;
-                if (selected.length > 0) {
-                    btn.classList.remove('btn--disabled');
-                    btn.disabled = false;
-                } else {
-                    btn.classList.add('btn--disabled');
-                    btn.disabled = true;
-                }
+        // Pill click handlers
+        container.querySelectorAll('.onboarding__pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                ScreenState.set(config.stateKey, pill.dataset.id);
+                renderOnboarding(container);
             });
         });
 
+        // Next button
         container.querySelector('#onboarding-next').addEventListener('click', () => {
-            LangyState.user.interests = selected;
-            ScreenState.set('onboardingStep', 2);
+            if (config.onNext) config.onNext(selected);
+            ScreenState.set('onboardingStep', config.nextStep);
             renderOnboarding(container);
         });
 
-        setTimeout(() => Anim.staggerChildren(container, '.interest-chip'), 50);
+        setTimeout(() => Anim.staggerChildren(container, '.onboarding__pill'), 50);
+    }
+
+    // ═══════════════════════════════════════════
+    // STEP 0: Single Welcome Screen
+    // ═══════════════════════════════════════════
+    if (step === 0) {
+        container.innerHTML = `
+            <div class="screen onboarding">
+                <div class="onboarding__slide" style="animation: fadeInUp 0.5s ease-out; text-align:center; padding-top:var(--sp-8);">
+                    <div style="margin-bottom:var(--sp-6);">
+                        <img src="assets/logo.png" alt="Langy"
+                             style="width:80px; height:auto; margin:0 auto var(--sp-4); display:block;"
+                             onerror="this.style.display='none'">
+                    </div>
+                    <div class="onboarding__emoji" style="font-size:48px; margin-bottom:var(--sp-4);">${LangyIcons.messageCircle}</div>
+                    <h1 class="onboarding__title">${{
+                        en: "Let's get you speaking",
+                        ru: 'Начнём говорить',
+                        es: 'Empecemos a hablar',
+                    }[lang]}</h1>
+                    <p class="onboarding__subtitle" style="max-width:300px; margin:var(--sp-3) auto 0;">${{
+                        en: '4 quick questions to set up your AI English teacher. Takes 30 seconds.',
+                        ru: '4 быстрых вопроса для настройки AI-учителя. Займёт 30 секунд.',
+                        es: '4 preguntas rápidas para configurar tu profesor IA. 30 segundos.',
+                    }[lang]}</p>
+                </div>
+
+                <div class="onboarding__bottom" style="padding:0 var(--sp-4);">
+                    <button class="btn btn--primary btn--lg btn--full onboarding__btn" id="onboarding-next">
+                        ${{ en: "Let's go", ru: 'Поехали', es: 'Vamos' }[lang]} ${LangyIcons.rocket}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.querySelector('#onboarding-next').addEventListener('click', () => {
+            ScreenState.set('onboardingStep', 1);
+            renderOnboarding(container);
+        });
+
         return;
     }
 
-    // ─── STEP 2: Choose Mascot ───
+    // ═══════════════════════════════════════════
+    // STEP 1: What's your goal?
+    // ═══════════════════════════════════════════
+    if (step === 1) {
+        renderPillStep({
+            stepLabel: `1 / ${TOTAL_STEPS}`,
+            stateKey: 'intentGoal',
+            title: { en: 'What do you want?', ru: 'Какая у тебя цель?', es: '¿Cuál es tu objetivo?' }[lang],
+            subtitle: {
+                en: 'Pick one — we\'ll tailor everything to it',
+                ru: 'Выбери одну — мы всё настроим под неё',
+                es: 'Elige una — ajustaremos todo',
+            }[lang],
+            nextStep: 2,
+            options: [
+                {
+                    id: 'speak',
+                    icon: LangyIcons.mic,
+                    label: { en: 'Start speaking confidently', ru: 'Заговорить уверенно', es: 'Hablar con confianza' }[lang],
+                    desc: { en: 'Real conversations from day one', ru: 'Реальные разговоры с первого дня', es: 'Conversaciones reales desde el día uno' }[lang],
+                },
+                {
+                    id: 'work',
+                    icon: LangyIcons.clipboard,
+                    label: { en: 'English for work', ru: 'Английский для работы', es: 'Inglés para el trabajo' }[lang],
+                    desc: { en: 'Meetings, emails, presentations', ru: 'Встречи, письма, презентации', es: 'Reuniones, emails, presentaciones' }[lang],
+                },
+                {
+                    id: 'travel',
+                    icon: LangyIcons.globe,
+                    label: { en: 'Travel without barriers', ru: 'Путешествовать без барьеров', es: 'Viajar sin barreras' }[lang],
+                    desc: { en: 'Navigate any country easily', ru: 'Свободно ориентироваться в любой стране', es: 'Moverse fácilmente en cualquier país' }[lang],
+                },
+                {
+                    id: 'exam',
+                    icon: LangyIcons.graduationCap,
+                    label: { en: 'Pass an exam', ru: 'Сдать экзамен', es: 'Aprobar un examen' }[lang],
+                    desc: { en: 'IELTS, TOEFL, Cambridge', ru: 'IELTS, TOEFL, Cambridge', es: 'IELTS, TOEFL, Cambridge' }[lang],
+                },
+            ],
+            onNext(val) {
+                // Map goal to interests for personalization
+                const goalToInterests = {
+                    speak: ['social', 'movies'],
+                    work: ['business', 'tech'],
+                    travel: ['travel', 'food'],
+                    exam: ['exams', 'books'],
+                };
+                LangyState.user.interests = goalToInterests[val] || ['social'];
+                LangyState.user.goal = val;
+            },
+        });
+        return;
+    }
+
+    // ═══════════════════════════════════════════
+    // STEP 2: How confident are you?
+    // ═══════════════════════════════════════════
     if (step === 2) {
-        const lang3 = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+        renderPillStep({
+            stepLabel: `2 / ${TOTAL_STEPS}`,
+            stateKey: 'intentConfidence',
+            title: { en: 'How\'s your English?', ru: 'Как у тебя с английским?', es: '¿Cómo está tu inglés?' }[lang],
+            subtitle: {
+                en: 'No test needed — just be honest',
+                ru: 'Тест не нужен — просто честно',
+                es: 'Sin examen — solo sé honesto',
+            }[lang],
+            nextStep: 3,
+            options: [
+                {
+                    id: 'zero',
+                    icon: LangyIcons.seedling || LangyIcons.heart,
+                    label: { en: 'Total beginner', ru: 'Полный ноль', es: 'Principiante total' }[lang],
+                    desc: { en: 'I know almost nothing', ru: 'Почти ничего не знаю', es: 'No sé casi nada' }[lang],
+                },
+                {
+                    id: 'basic',
+                    icon: LangyIcons.bookOpen,
+                    label: { en: 'I know the basics', ru: 'Знаю базу', es: 'Sé lo básico' }[lang],
+                    desc: { en: 'Simple phrases, basic grammar', ru: 'Простые фразы, базовая грамматика', es: 'Frases simples, gramática básica' }[lang],
+                },
+                {
+                    id: 'intermediate',
+                    icon: LangyIcons.messageCircle,
+                    label: { en: 'I can have a conversation', ru: 'Могу поговорить', es: 'Puedo conversar' }[lang],
+                    desc: { en: 'But I make mistakes and freeze up', ru: 'Но делаю ошибки и зависаю', es: 'Pero cometo errores y me bloqueo' }[lang],
+                },
+                {
+                    id: 'advanced',
+                    icon: LangyIcons.trophy,
+                    label: { en: 'Pretty good actually', ru: 'Довольно хорошо', es: 'Bastante bien' }[lang],
+                    desc: { en: 'I want to polish and perfect it', ru: 'Хочу отшлифовать и улучшить', es: 'Quiero pulir y perfeccionar' }[lang],
+                },
+            ],
+            onNext(val) {
+                // Map confidence to CEFR level
+                const confidenceToLevel = {
+                    zero: 'A1',
+                    basic: 'A2',
+                    intermediate: 'B1',
+                    advanced: 'B2',
+                };
+                const cefr = confidenceToLevel[val] || 'B1';
+                const levelNames = {
+                    A1: 'Beginner / Начинающий',
+                    A2: 'Elementary / Элементарный',
+                    B1: 'Intermediate / Средний',
+                    B2: 'Upper Intermediate / Выше среднего',
+                };
+                LangyState.user.level = `${cefr} ${levelNames[cefr]}`;
+                LangyState.user.hasCompletedPlacement = true;
+                LangyState.settings.languageLevel = cefr;
+                LangyState.user.confidenceLevel = val;
+
+                // Auto-select textbook
+                if (typeof LangyCurriculum !== 'undefined') {
+                    LangyCurriculum.selectTextbookByLevel(cefr);
+                }
+            },
+        });
+        return;
+    }
+
+    // ═══════════════════════════════════════════
+    // STEP 3: What context?
+    // ═══════════════════════════════════════════
+    if (step === 3) {
+        renderPillStep({
+            stepLabel: `3 / ${TOTAL_STEPS}`,
+            stateKey: 'intentContext',
+            title: { en: 'What do you enjoy?', ru: 'Что тебе нравится?', es: '¿Qué te gusta?' }[lang],
+            subtitle: {
+                en: 'We\'ll use this in your conversations',
+                ru: 'Используем это в разговорах',
+                es: 'Lo usaremos en tus conversaciones',
+            }[lang],
+            nextStep: 4,
+            options: [
+                {
+                    id: 'movies',
+                    icon: LangyIcons.play,
+                    label: { en: 'Movies & TV shows', ru: 'Кино и сериалы', es: 'Películas y series' }[lang],
+                },
+                {
+                    id: 'tech',
+                    icon: LangyIcons.globe,
+                    label: { en: 'Tech & startups', ru: 'Технологии и стартапы', es: 'Tecnología y startups' }[lang],
+                },
+                {
+                    id: 'daily',
+                    icon: LangyIcons.sun,
+                    label: { en: 'Daily life & culture', ru: 'Быт и культура', es: 'Vida diaria y cultura' }[lang],
+                },
+                {
+                    id: 'sports',
+                    icon: LangyIcons.award,
+                    label: { en: 'Sports & fitness', ru: 'Спорт и фитнес', es: 'Deportes y fitness' }[lang],
+                },
+                {
+                    id: 'music',
+                    icon: LangyIcons.volume,
+                    label: { en: 'Music & art', ru: 'Музыка и искусство', es: 'Música y arte' }[lang],
+                },
+            ],
+            onNext(val) {
+                // Append context interest to existing list
+                const existing = LangyState.user.interests || [];
+                if (!existing.includes(val)) existing.push(val);
+                LangyState.user.interests = existing;
+                LangyState.user.context = val;
+            },
+        });
+        return;
+    }
+
+    // ═══════════════════════════════════════════
+    // STEP 4: Choose your teacher (mascot)
+    // ═══════════════════════════════════════════
+    if (step === 4) {
         const mascots = [
             {
                 id: 0,
                 name: 'Zendaya',
                 emoji: LangyIcons.sparkles,
                 desc: {
-                    en: 'Bright and inspiring. Makes learning stylish!',
-                    ru: 'Яркая и вдохновляющая. Делает обучение стильным!',
-                    es: 'Brillante e inspiradora. ¡Aprendizaje con estilo!',
-                }[lang3],
-                style: { en: 'Trend Coach', ru: 'Трендовый наставник', es: 'Coach de Tendencias' }[lang3],
+                    en: 'Bright & inspiring. Makes learning stylish!',
+                    ru: 'Яркая и вдохновляющая!',
+                    es: 'Brillante e inspiradora!',
+                }[lang],
+                style: { en: 'Trendy', ru: 'Модная', es: 'Moderna' }[lang],
                 file: 'zendaya',
             },
             {
                 id: 1,
-                name: 'Travis Scott',
+                name: 'Travis',
                 emoji: LangyIcons.zap,
                 desc: {
-                    en: 'Energetic and charismatic. Teaches through music & culture.',
-                    ru: 'Энергичный и харизматичный. Учит через музыку и культуру.',
-                    es: 'Energético y carismático. Enseña con música y cultura.',
-                }[lang3],
-                style: { en: 'Culture Tracker', ru: 'Культурный трекер', es: 'Rastreador Cultural' }[lang3],
+                    en: 'Energetic & fun. Teaches through culture.',
+                    ru: 'Энергичный! Учит через культуру.',
+                    es: 'Energético! Enseña con cultura.',
+                }[lang],
+                style: { en: 'Creative', ru: 'Креативный', es: 'Creativo' }[lang],
                 file: 'travis',
             },
             {
@@ -279,11 +327,11 @@ function renderOnboarding(container) {
                 name: 'Matthew',
                 emoji: LangyIcons.play,
                 desc: {
-                    en: 'Calm and confident. Explains everything clearly with charm.',
-                    ru: 'Спокойный и уверенный. Объясняет всё чётко и с шармом.',
-                    es: 'Tranquilo y seguro. Explica todo con claridad y encanto.',
-                }[lang3],
-                style: { en: 'Hollywood Class', ru: 'Голливудский класс', es: 'Clase de Hollywood' }[lang3],
+                    en: 'Calm & clear. Explains everything patiently.',
+                    ru: 'Спокойный и чёткий. Терпеливо объясняет.',
+                    es: 'Tranquilo y claro. Explica con paciencia.',
+                }[lang],
+                style: { en: 'Classic', ru: 'Классический', es: 'Clásico' }[lang],
                 file: 'matthew',
             },
             {
@@ -291,11 +339,11 @@ function renderOnboarding(container) {
                 name: 'Omar',
                 emoji: LangyIcons.user,
                 desc: {
-                    en: 'Wise and charismatic. Teaches through life stories.',
-                    ru: 'Мудрый и харизматичный. Учит через жизненные истории.',
-                    es: 'Sabio y carismático. Enseña con historias de vida.',
-                }[lang3],
-                style: { en: 'Wise Friend', ru: 'Мудрый друг', es: 'Amigo Sabio' }[lang3],
+                    en: 'Wise & supportive. Teaches through stories.',
+                    ru: 'Мудрый и поддерживающий. Учит через истории.',
+                    es: 'Sabio y motivador. Enseña con historias.',
+                }[lang],
+                style: { en: 'Wise', ru: 'Мудрый', es: 'Sabio' }[lang],
                 file: 'omar',
             },
         ];
@@ -305,9 +353,17 @@ function renderOnboarding(container) {
         container.innerHTML = `
             <div class="screen onboarding">
                 <div class="onboarding__header">
-                    <div class="onboarding__step-badge">${i18n('onboarding.step')} 2/2</div>
-                    <h2 class="onboarding__title" style="font-size: var(--fs-2xl);">${i18n('onboarding.choose_teacher')}</h2>
-                    <p class="onboarding__desc">${i18n('onboarding.mascot_desc')}</p>
+                    <div class="onboarding__step-badge">4 / ${TOTAL_STEPS}</div>
+                    <h2 class="onboarding__title" style="font-size: var(--fs-2xl);">${{
+                        en: 'Pick your teacher',
+                        ru: 'Выбери учителя',
+                        es: 'Elige tu profesor',
+                    }[lang]}</h2>
+                    <p class="onboarding__desc">${{
+                        en: 'They\'ll guide all your conversations',
+                        ru: 'Они будут вести все твои разговоры',
+                        es: 'Guiarán todas tus conversaciones',
+                    }[lang]}</p>
                 </div>
 
                 <div class="onboarding__mascots" id="mascot-grid">
@@ -327,7 +383,7 @@ function renderOnboarding(container) {
                                 <div class="mascot-card__style">${m.style}</div>
                                 <div class="mascot-card__desc">${m.desc}</div>
                             </div>
-                            ${selectedMascot === m.id ? '<div class="mascot-card__check">${LangyIcons.check}</div>' : ''}
+                            ${selectedMascot === m.id ? '<div class="mascot-card__check">' + LangyIcons.check + '</div>' : ''}
                         </div>
                     `
                         )
@@ -335,8 +391,9 @@ function renderOnboarding(container) {
                 </div>
 
                 <div class="onboarding__bottom">
-                    <button class="btn btn--primary btn--lg btn--full onboarding__btn ${selectedMascot === null ? 'btn--disabled' : ''}" id="onboarding-finish" ${selectedMascot === null ? 'disabled' : ''}>
-                        ${i18n('onboarding.start_test')} ${LangyIcons.brain}
+                    <button class="btn btn--primary btn--lg btn--full onboarding__btn ${selectedMascot === null ? 'btn--disabled' : ''}"
+                            id="onboarding-finish" ${selectedMascot === null ? 'disabled' : ''}>
+                        ${{ en: 'Start learning', ru: 'Начать обучение', es: 'Empezar a aprender' }[lang]} ${LangyIcons.rocket}
                     </button>
                 </div>
             </div>
@@ -352,21 +409,24 @@ function renderOnboarding(container) {
         container.querySelector('#onboarding-finish').addEventListener('click', () => {
             LangyState.mascot.selected = selectedMascot;
 
-            // Clean up temp variables
-            ScreenState.clear(); // Clean up all temp onboarding state
+            // Clean up temp state
+            ScreenState.clear();
 
             // Mark onboarding as done
             LangyState.user.hasCompletedOnboarding = true;
 
-            // Save and go to placement test
+            // Save and go directly to home (skip placement test)
             if (typeof LangyDB !== 'undefined') {
                 LangyDB.saveProgress().catch(() => {});
             }
 
+            const teacherName = ['Zendaya', 'Travis', 'Matthew', 'Omar'][selectedMascot];
             Anim.showToast(
-                `${['Zendaya', 'Travis Scott', 'Matthew', 'Omar'][selectedMascot]} ${i18n('onboarding.is_teacher')} ${LangyIcons.sparkles}`
+                `${teacherName} ${{ en: 'is your teacher', ru: 'теперь твой учитель', es: 'es tu profesor' }[lang]}! ${LangyIcons.sparkles}`
             );
-            setTimeout(() => Router.navigate('placement-test'), 600);
+
+            // Go to home — the adaptive system will fine-tune the level from actual usage
+            setTimeout(() => Router.navigate('home'), 600);
         });
 
         setTimeout(() => Anim.staggerChildren(container, '.mascot-card'), 80);
