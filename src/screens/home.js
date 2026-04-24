@@ -141,6 +141,9 @@ function renderHome(container) {
                 </div>
             </div>
 
+            <!-- Daily Speaking Ritual -->
+                ${typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
+
             <!-- Main CTA -->
             <div class="home__main-cta" style="padding: 0 var(--sp-5) var(--sp-2);">
                 <button id="nav-learning" class="btn btn--primary btn--xl btn--full" style="box-shadow: 0 4px 0 var(--primary-dark), 0 8px 16px rgba(16, 185, 129, 0.2); font-size: var(--fs-lg); display: flex; align-items: center; justify-content: center; gap: var(--sp-2); flex-direction: ${user.hasCompletedPlacement ? 'column' : 'row'}; padding: ${user.hasCompletedPlacement ? '12px 24px' : ''};">
@@ -212,6 +215,13 @@ function renderHome(container) {
                 Anim.ripple(e);
                 Router.navigate(route);
             });
+        }
+    });
+
+    // Daily Speaking card → launch talk
+    container.querySelector('#daily-speak-card')?.addEventListener('click', () => {
+        if (typeof DailySpeaking !== 'undefined' && !DailySpeaking.isDoneToday()) {
+            DailySpeaking.launchDaily();
         }
     });
 
