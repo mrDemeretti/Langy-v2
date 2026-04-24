@@ -641,8 +641,14 @@ function renderTalkSummary(container) {
     const secs = (summary.duration || 0) % 60;
     const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
     const isFirstSession = !LangyState.talkHistory || LangyState.talkHistory.length <= 1;
+    const sessionCount = (LangyState.talkHistory || []).length || 1;
+    const mascotId = summary.mascotId ?? LangyState.mascot?.selected ?? 0;
+    const mascotName = summary.mascot || ['Zendaya', 'Travis', 'Matthew', 'Omar'][mascotId] || 'Your coach';
+    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+    const mascotColors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
+    const mascotColor = mascotColors[mascotId] || 'var(--primary)';
 
-    // Determine if feedback is structured (JSON) or plain text
+    // Structured vs plain feedback
     const isStructured = feedback && feedback._structured;
     const praise = isStructured ? feedback.praise : null;
     const corrections = isStructured ? (feedback.corrections || []) : [];
@@ -654,80 +660,99 @@ function renderTalkSummary(container) {
     const pronColors = { excellent: 'var(--primary)', good: '#4ADE80', fair: '#F59E0B', needs_work: '#EF4444' };
     const pronLevel = summary.pronunciationLevel || null;
 
-    // Next session prompt
-    const nextPrompt = (() => {
+    // Coaching next-step (personalized, not generic)
+    const goal = LangyState.user?.goal || 'speak';
+    const nextScenario = (() => {
+        const scenarioSuggestions = {
+            speak: { en: 'Coffee Shop', ru: 'Кофейня', es: 'Cafetería' },
+            work: { en: 'Job Interview', ru: 'Собеседование', es: 'Entrevista' },
+            travel: { en: 'At the Airport', ru: 'В аэропорту', es: 'En el aeropuerto' },
+            exam: { en: 'Free Talk', ru: 'Свободный разговор', es: 'Charla libre' },
+        };
+        const current = summary.scenario || '';
+        const suggestions = Object.values(scenarioSuggestions);
+        const different = suggestions.find(s => s.en !== current) || suggestions[0];
+        return different[lang];
+    })();
+
+    const nextStep = (() => {
         if (!qualified) {
             return {
-                icon: LangyIcons.mic,
-                text: {
-                    en: 'Try having a longer conversation next time — 3+ exchanges unlocks rewards!',
-                    ru: 'Попробуй поговорить дольше — 3+ обмена открывают награды!',
-                    es: 'Intenta conversar más la próxima vez — 3+ intercambios desbloquean premios!',
-                }[lang],
-            };
+                en: `Try talking a bit longer next time — ${mascotName} needs 3+ exchanges to give proper feedback.`,
+                ru: `Попробуй поговорить дольше — ${mascotName} нужно 3+ реплики для полноценного фидбэка.`,
+                es: `Intenta hablar un poco más — ${mascotName} necesita 3+ intercambios para dar feedback.`,
+            }[lang];
         }
         if (isFirstSession) {
             return {
-                icon: LangyIcons.sparkles,
-                text: {
-                    en: "Amazing first session! Come back tomorrow to build your streak and keep improving.",
-                    ru: 'Отличная первая сессия! Возвращайся завтра, чтобы начать серию.',
-                    es: '¡Increíble primera sesión! Vuelve mañana para comenzar tu racha.',
-                }[lang],
-            };
+                en: `Come back tomorrow and try "${nextScenario}" — ${mascotName} will remember your progress.`,
+                ru: `Возвращайся завтра и попробуй «${nextScenario}» — ${mascotName} запомнит твой прогресс.`,
+                es: `Vuelve mañana y prueba "${nextScenario}" — ${mascotName} recordará tu progreso.`,
+            }[lang];
         }
         if (corrections.length === 0) {
             return {
-                icon: LangyIcons.trophy,
-                text: {
-                    en: "Flawless session! Try a harder scenario next time to push your limits.",
-                    ru: 'Безупречно! Попробуй более сложный сценарий в следующий раз.',
-                    es: '¡Sesión perfecta! Prueba un escenario más difícil la próxima vez.',
-                }[lang],
-            };
+                en: `You nailed it! Try "${nextScenario}" next — ${mascotName} thinks you're ready for a challenge.`,
+                ru: `Безупречно! Попробуй «${nextScenario}» — ${mascotName} считает, что ты готов к вызову.`,
+                es: `¡Perfecto! Prueba "${nextScenario}" — ${mascotName} cree que estás listo para más.`,
+            }[lang];
         }
         return {
-            icon: LangyIcons.flame,
-            text: {
-                en: 'Practice the corrections above, then come back for another round!',
-                ru: 'Запомни исправления выше, потом возвращайся на новый раунд!',
-                es: '¡Practica las correcciones de arriba y vuelve por otra ronda!',
-            }[lang],
-        };
+            en: `Practice the corrections above, then try again — ${mascotName} will check your progress.`,
+            ru: `Запомни исправления выше и попробуй ещё — ${mascotName} проверит твой прогресс.`,
+            es: `Practica las correcciones y vuelve a intentar — ${mascotName} revisará tu progreso.`,
+        }[lang];
     })();
 
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div style="padding: var(--sp-5) var(--sp-5) var(--sp-4); overflow-y:auto; flex:1;">
 
-                <!-- Header: concise -->
-                <div style="text-align:center; margin-bottom:var(--sp-5);">
-                    <div style="font-size:48px; margin-bottom:var(--sp-2); color:${qualified ? 'var(--primary)' : 'var(--text-tertiary)'};">
-                        ${qualified ? LangyIcons.check : LangyIcons.messageCircle}
+                <!-- Coach Header -->
+                <div style="text-align:center; margin-bottom:var(--sp-5); animation:fadeInUp 0.5s var(--ease-out);">
+                    <div style="position:relative; display:inline-block; margin-bottom:var(--sp-3);">
+                        <div style="width:72px; height:72px; border-radius:50%; overflow:hidden; margin:0 auto;
+                                    border:3px solid ${mascotColor}; box-shadow:0 4px 20px ${mascotColor}33;">
+                            <img src="assets/mascots/${imgs[mascotId]}.png" alt="${mascotName}"
+                                 style="width:100%; height:100%; object-fit:contain;"
+                                 onerror="this.parentElement.innerHTML='<span style=font-size:32px>${mascotName[0]}</span>'">
+                        </div>
+                        <div style="position:absolute; bottom:-4px; right:-4px; width:24px; height:24px;
+                                    border-radius:50%; background:var(--primary); color:white;
+                                    display:flex; align-items:center; justify-content:center; font-size:14px;
+                                    box-shadow:var(--shadow-sm);">
+                            ${qualified ? LangyIcons.check : LangyIcons.messageCircle}
+                        </div>
                     </div>
-                    <h2 style="font-size:var(--fs-xl);">${{
-                        en: qualified ? 'Nice work!' : 'Good start!',
-                        ru: qualified ? 'Отлично!' : 'Хорошее начало!',
-                        es: qualified ? '¡Buen trabajo!' : '¡Buen comienzo!',
+                    <div style="font-size:var(--fs-xs); color:${mascotColor}; font-weight:var(--fw-bold); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:var(--sp-1);">
+                        ${{ en: `Session #${sessionCount}`, ru: `Сессия #${sessionCount}`, es: `Sesión #${sessionCount}` }[lang]}
+                    </div>
+                    <h2 style="font-size:var(--fs-xl); margin-bottom:var(--sp-1);">${{
+                        en: `${mascotName}'s notes`,
+                        ru: `Заметки от ${mascotName}`,
+                        es: `Notas de ${mascotName}`,
                     }[lang]}</h2>
-                    <p style="color:var(--text-tertiary); font-size:var(--fs-sm); margin-top:var(--sp-1);">
-                        ${mins}:${secs.toString().padStart(2, '0')} · ${summary.turns || 0} ${
-                            { en: 'exchanges', ru: 'реплик', es: 'intercambios' }[lang]
-                        }${summary.mascot ? ` · ${summary.mascot}` : ''}
+                    <p style="color:var(--text-tertiary); font-size:var(--fs-sm);">
+                        ${mins}:${secs.toString().padStart(2, '0')} · ${summary.turns || 0} ${{ en: 'exchanges', ru: 'реплик', es: 'intercambios' }[lang]}
                     </p>
                 </div>
 
                 ${praise ? `
-                <!-- Praise -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);
-                    border-left:3px solid var(--primary); background:var(--primary-bg);">
+                <!-- What you did well -->
+                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+                    background:linear-gradient(135deg, ${mascotColor}08, ${mascotColor}04);
+                    border:1px solid ${mascotColor}20; animation:fadeInUp 0.5s var(--ease-out) 0.1s both;">
                     <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
-                        <span style="color:var(--primary); font-size:20px; flex-shrink:0;">${LangyIcons.sparkles}</span>
+                        <div style="width:32px; height:32px; border-radius:50%; background:${mascotColor}15;
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                                    color:${mascotColor}; font-size:16px;">
+                            ${LangyIcons.sparkles}
+                        </div>
                         <div>
-                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--primary); margin-bottom:2px;">
+                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:${mascotColor}; margin-bottom:4px;">
                                 ${{ en: 'What you did well', ru: 'Что получилось', es: 'Lo que hiciste bien' }[lang]}
                             </div>
-                            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
+                            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.6;">
                                 ${escapeHTML(praise)}
                             </p>
                         </div>
@@ -737,36 +762,49 @@ function renderTalkSummary(container) {
 
                 ${corrections.length > 0 ? `
                 <!-- Corrections -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);">
-                    <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px;">
-                        <span style="color:#F59E0B;">${LangyIcons.pencil}</span>
-                        ${{ en: 'Key corrections', ru: 'Исправления', es: 'Correcciones' }[lang]}
+                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+                    background:var(--bg-card); border:1px solid var(--border);
+                    animation:fadeInUp 0.5s var(--ease-out) 0.2s both;">
+                    <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">
+                        <div style="width:32px; height:32px; border-radius:50%; background:rgba(245,158,11,0.1);
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                                    color:#F59E0B; font-size:16px;">
+                            ${LangyIcons.pencil}
+                        </div>
+                        ${{ en: 'Key corrections', ru: 'Исправления', es: 'Correcciones clave' }[lang]}
                     </div>
                     ${corrections.map(c => `
-                        <div style="margin-bottom:var(--sp-3); padding-bottom:var(--sp-3); border-bottom:1px solid var(--border);">
-                            <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:4px;">
-                                <span style="color:var(--danger); font-size:var(--fs-sm); text-decoration:line-through;">${escapeHTML(c.said || '')}</span>
+                        <div style="padding:var(--sp-3); margin-bottom:var(--sp-2); border-radius:var(--radius-sm);
+                                    background:var(--bg-alt);">
+                            <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:6px;">
+                                <span style="color:var(--danger); font-size:var(--fs-sm); text-decoration:line-through; opacity:0.7;">${escapeHTML(c.said || '')}</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:4px;">
+                                <span style="color:var(--primary); font-size:13px;">→</span>
                                 <span style="color:var(--primary); font-size:var(--fs-sm); font-weight:var(--fw-bold);">${escapeHTML(c.better || '')}</span>
                             </div>
-                            ${c.why ? `<div style="font-size:var(--fs-xs); color:var(--text-tertiary); font-style:italic;">${escapeHTML(c.why)}</div>` : ''}
+                            ${c.why ? `<div style="font-size:var(--fs-xs); color:var(--text-tertiary); font-style:italic; padding-left:22px;">${escapeHTML(c.why)}</div>` : ''}
                         </div>
                     `).join('')}
                 </div>
                 ` : ''}
 
                 ${tip ? `
-                <!-- Tip -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);
-                    border-left:3px solid #7C6CF6; background:rgba(124,108,246,0.04);">
+                <!-- Coach tip -->
+                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+                    background:rgba(124,108,246,0.04); border:1px solid rgba(124,108,246,0.15);
+                    animation:fadeInUp 0.5s var(--ease-out) 0.3s both;">
                     <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
-                        <span style="color:#7C6CF6; font-size:20px; flex-shrink:0;">${LangyIcons.brain}</span>
+                        <div style="width:32px; height:32px; border-radius:50%; background:rgba(124,108,246,0.1);
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                                    color:#7C6CF6; font-size:16px;">
+                            ${LangyIcons.brain}
+                        </div>
                         <div>
-                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:#7C6CF6; margin-bottom:2px;">
-                                ${{ en: 'Tip for next time', ru: 'Совет на будущее', es: 'Consejo' }[lang]}
+                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:#7C6CF6; margin-bottom:4px;">
+                                ${{ en: `${mascotName}'s tip`, ru: `Совет от ${mascotName}`, es: `Consejo de ${mascotName}` }[lang]}
                             </div>
-                            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
+                            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.6;">
                                 ${escapeHTML(tip)}
                             </p>
                         </div>
@@ -775,8 +813,7 @@ function renderTalkSummary(container) {
                 ` : ''}
 
                 ${plainFeedback ? `
-                <!-- Fallback: plain text feedback -->
-                <div class="card" style="padding:var(--sp-4); margin-bottom:var(--sp-3);
+                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
                     border-left:3px solid #7C6CF6; background:rgba(124,108,246,0.04);">
                     <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
                         <span style="color:#7C6CF6; font-size:20px; flex-shrink:0;">${LangyIcons.brain}</span>
@@ -788,10 +825,9 @@ function renderTalkSummary(container) {
                 ` : ''}
 
                 ${pronLevel ? `
-                <!-- Pronunciation (compact) -->
                 <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4);
-                    background:var(--bg-card); border-radius:var(--radius-lg); margin-bottom:var(--sp-3);
-                    border:1px solid var(--border);">
+                    background:var(--bg-card); border-radius:var(--radius-md); margin-bottom:var(--sp-3);
+                    border:1px solid var(--border); animation:fadeInUp 0.5s var(--ease-out) 0.35s both;">
                     <span style="color:${pronColors[pronLevel]}; font-size:18px;">${LangyIcons.mic}</span>
                     <span style="font-size:var(--fs-sm); color:var(--text-secondary);">
                         ${{ en: 'Pronunciation', ru: 'Произношение', es: 'Pronunciación' }[lang]}
@@ -802,10 +838,9 @@ function renderTalkSummary(container) {
                 </div>
                 ` : ''}
 
-                ${qualified && (summary.xpEarned || summary.dangyEarned) ? `
-                <!-- Rewards (compact single line) -->
+                ${!isFirstSession && qualified && (summary.xpEarned || summary.dangyEarned) ? `
                 <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4);
-                    background:var(--bg-card); border-radius:var(--radius-lg); margin-bottom:var(--sp-3);
+                    background:var(--bg-card); border-radius:var(--radius-md); margin-bottom:var(--sp-3);
                     border:1px solid var(--border);">
                     <span style="color:var(--reward-gold); font-size:18px;">${LangyIcons.zap}</span>
                     <span style="font-size:var(--fs-sm); color:var(--text-secondary);">
@@ -818,41 +853,42 @@ function renderTalkSummary(container) {
                 </div>
                 ` : ''}
 
-                <!-- Next session prompt -->
-                <div style="text-align:center; padding:var(--sp-4) var(--sp-2); margin:var(--sp-2) 0 var(--sp-4);">
-                    <span style="font-size:24px;">${nextPrompt.icon}</span>
-                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin-top:var(--sp-2); max-width:300px; margin-left:auto; margin-right:auto; line-height:1.5;">
-                        ${nextPrompt.text}
+                <!-- Next step (coaching CTA) -->
+                <div style="text-align:center; padding:var(--sp-4) var(--sp-3); margin:var(--sp-2) 0 var(--sp-4);
+                    background:linear-gradient(135deg, var(--primary-bg), rgba(16,185,129,0.03));
+                    border-radius:var(--radius-md); border:1px dashed var(--primary);
+                    animation:fadeInUp 0.5s var(--ease-out) 0.4s both;">
+                    <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--primary); margin-bottom:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:6px;">
+                        ${LangyIcons.target} ${{ en: 'Your next step', ru: 'Твой следующий шаг', es: 'Tu siguiente paso' }[lang]}
+                    </div>
+                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; max-width:300px; margin-left:auto; margin-right:auto; line-height:1.5;">
+                        ${nextStep}
                     </p>
                 </div>
 
                 <!-- Actions -->
                 <div style="display:flex; gap:var(--sp-2); margin-bottom:var(--sp-3);">
                     <button class="btn btn--primary btn--full" id="talk-again">
-                        ${LangyIcons.refreshCw} ${{ en: 'Talk Again', ru: 'Ещё раз', es: 'Hablar de nuevo' }[lang]}
-                    </button>
-                    <button class="btn btn--secondary btn--full" id="talk-change">
-                        ${LangyIcons.users} ${{ en: 'Change', ru: 'Сменить', es: 'Cambiar' }[lang]}
+                        ${LangyIcons.refreshCw} ${isFirstSession
+                            ? { en: 'Try another topic', ru: 'Другая тема', es: 'Otro tema' }[lang]
+                            : { en: 'Talk Again', ru: 'Ещё раз', es: 'Hablar de nuevo' }[lang]}
                     </button>
                 </div>
                 <button class="btn btn--ghost btn--full" id="talk-done">
-                    ${{ en: 'Done', ru: 'Готово', es: 'Listo' }[lang]}
+                    ${{ en: 'Done for now', ru: 'На этом всё', es: 'Listo por ahora' }[lang]}
                 </button>
             </div>
         </div>
     `;
 
-    // Play victory sound ONLY if qualified
     if (qualified && typeof AudioUtils !== 'undefined') AudioUtils.playVictory();
 
-    // Event handlers
     container.querySelector('#talk-again')?.addEventListener('click', () => {
-        ScreenState.set('talkView', 'call');
-        renderTalk(container);
-    });
-
-    container.querySelector('#talk-change')?.addEventListener('click', () => {
-        ScreenState.set('talkView', 'select');
+        if (isFirstSession) {
+            ScreenState.set('talkView', 'select');
+        } else {
+            ScreenState.set('talkView', 'call');
+        }
         renderTalk(container);
     });
 
