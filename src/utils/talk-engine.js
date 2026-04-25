@@ -396,12 +396,23 @@ You occasionally share useful phrases and explain when/why to use them.`,
         const persona = personas[mascotId] || personas[0];
         const scenario = scenarios.find(s => s.id === scenarioId) || scenarios[0];
         const level = LangyState?.user?.level || 'B1 Intermediate';
+        // Coach focus: if a targeted practice session, inject coaching directive
+        const coachFocus = typeof ScreenState !== 'undefined' ? ScreenState.get('coachFocus', null) : null;
+        const coachDirective = coachFocus ? `
+
+COACHING FOCUS FOR THIS SESSION:
+The student is working on improving: ${coachFocus}.
+Naturally guide the conversation to situations where the student needs to use ${coachFocus} correctly.
+If they make a mistake related to ${coachFocus}, gently correct them by rephrasing.
+If they get it right, acknowledge it briefly.
+Do NOT lecture about grammar — keep it conversational and natural.
+Aim for the student to practice ${coachFocus} at least 3-4 times during this conversation.` : '';
 
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
-STUDENT NAME: ${LangyState?.user?.name || 'Student'}
+STUDENT NAME: ${LangyState?.user?.name || 'Student'}${coachDirective}
 
 CRITICAL RULES FOR CONVERSATION:
 1. Respond as a REAL person in a REAL conversation. Be natural.

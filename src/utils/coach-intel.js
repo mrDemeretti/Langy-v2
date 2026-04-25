@@ -23,12 +23,10 @@ const CoachIntel = (() => {
     }
 
     // ─── Pattern Status ───
-    // Determines if a pattern is: recurring, improving, new, or needs_work
     function patternStatus(p) {
         if (!p) return 'new';
         if (p.count === 1) return 'new';
 
-        // Check if pattern appeared in the latest session log entries
         const log = _getSessionLog();
         const recent3 = log.slice(-3);
         const older3 = log.slice(-6, -3);
@@ -41,7 +39,7 @@ const CoachIntel = (() => {
         return 'new';
     }
 
-    // ─── Top Patterns (for display) ───
+    // ─── Top Patterns ───
     function topPatterns(max = 3) {
         return _getPatterns()
             .slice(0, max)
@@ -61,7 +59,6 @@ const CoachIntel = (() => {
         const patterns = _getPatterns();
         if (patterns.length === 0) return null;
 
-        // Prioritize: recurring > needs_work > new
         const withStatus = patterns.map(p => ({ ...p, status: patternStatus(p) }));
         const focus =
             withStatus.find(p => p.status === 'recurring') ||
@@ -98,7 +95,7 @@ const CoachIntel = (() => {
         };
     }
 
-    // ─── Session-to-session continuity message ───
+    // ─── Session-to-session continuity ───
     function sessionContinuity(currentCorrections, lang = 'en') {
         const patterns = _getPatterns();
         if (patterns.length === 0 || !currentCorrections?.length) return null;
@@ -106,7 +103,6 @@ const CoachIntel = (() => {
         const currentTags = currentCorrections
             .map(c => (c.tag || c.why || 'general').toLowerCase().replace(/\s+/g, '_'));
 
-        // Find a tag from this session that is recurring (count > 1 means it existed before)
         for (const tag of currentTags) {
             const existing = patterns.find(p => p.tag === tag && p.count > 1);
             if (existing) {
@@ -119,7 +115,6 @@ const CoachIntel = (() => {
             }
         }
 
-        // Check if a frequent pattern did NOT appear this time
         const top = patterns[0];
         if (top && top.count >= 3 && !currentTags.includes(top.tag)) {
             const label = _humanizeTag(top.tag);
@@ -131,6 +126,20 @@ const CoachIntel = (() => {
         }
 
         return null;
+    }
+
+    // ─── Launch Focused Practice ───
+    // Sets coachFocus in ScreenState so talk-engine injects coaching directive into AI prompt,
+    // then navigates to talk with call view. Reuses entire existing talk pipeline.
+    function launchFocusPractice(focusTag) {
+        if (!focusTag) return;
+        const label = _humanizeTag(focusTag);
+        ScreenState.set('coachFocus', label);
+        ScreenState.set('coachFocusTag', focusTag);
+        ScreenState.set('talkView', 'call');
+        // Use user's preferred mascot, free-talk scenario for flexibility
+        ScreenState.set('talkScenario', 'free');
+        Router.navigate('talk');
     }
 
     // ─── Coach Notes card for profile ───
@@ -154,24 +163,22 @@ const CoachIntel = (() => {
 
         if (patterns.length === 0) return '';
 
-        const statusIcon = {
-            recurring: '🔁',
-            needs_work: '⚠️',
-            improving: '✅',
-            new: '🆕',
-        };
+        const statusIcon = { recurring: '🔁', needs_work: '⚠️', improving: '✅', new: '🆕' };
         const statusLabel = {
             recurring: { en: 'Recurring', ru: 'Повторяется', es: 'Recurrente' },
             needs_work: { en: 'Needs work', ru: 'Нужна практика', es: 'Necesita práctica' },
             improving: { en: 'Improving', ru: 'Улучшается', es: 'Mejorando' },
             new: { en: 'New', ru: 'Новое', es: 'Nuevo' },
         };
-        const statusColor = {
-            recurring: '#F59E0B',
-            needs_work: '#EF4444',
-            improving: '#10B981',
-            new: 'var(--text-tertiary)',
-        };
+        const statusColor = { recurring: '#F59E0B', needs_work: '#EF4444', improving: '#10B981', new: 'var(--text-tertiary)' };
+
+        const practiceCTA = focus && focus.status !== 'improving' ? `
+                <div style="padding:var(--sp-3) var(--sp-4); border-top:1px solid var(--border);">
+                    <button class="btn btn--primary btn--full btn--sm" id="coach-practice-profile"
+                        style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                        ${LangyIcons.mic} ${{ en: 'Practice this now', ru: 'Практиковать сейчас', es: 'Practicar ahora' }[lang]}
+                    </button>
+                </div>` : '';
 
         return `
         <div class="profile__section">
@@ -212,6 +219,7 @@ const CoachIntel = (() => {
                     </p>
                 </div>
                 ` : ''}
+                ${practiceCTA}
             </div>
         </div>`;
     }
@@ -237,7 +245,6 @@ const CoachIntel = (() => {
                 </span>
             </div>`;
 
-        // Session continuity — the "app remembers me" moment
         if (continuity) {
             html += `
             <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-3); line-height:1.5; padding-bottom:var(--sp-3); border-bottom:1px solid rgba(124,108,246,0.1);">
@@ -245,7 +252,6 @@ const CoachIntel = (() => {
             </p>`;
         }
 
-        // Top patterns summary
         if (patterns.length > 0) {
             const statusDot = { recurring: '#F59E0B', needs_work: '#EF4444', improving: '#10B981', new: 'var(--text-tertiary)' };
             html += `<div style="margin-bottom:${focus ? 'var(--sp-3)' : '0'};">`;
@@ -260,8 +266,24 @@ const CoachIntel = (() => {
             html += `</div>`;
         }
 
-        // Recommended focus (actionable)
-        if (focus) {
+        if (focus && focus.status !== 'improving') {
+            html += `
+            <div style="padding:var(--sp-3); background:rgba(124,108,246,0.06); border-radius:var(--radius-sm); margin-bottom:var(--sp-3);">
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                    <span style="color:#7C6CF6; font-size:12px;">${LangyIcons.target}</span>
+                    <span style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:#7C6CF6; text-transform:uppercase; letter-spacing:0.3px;">
+                        ${{ en: 'Next focus', ru: 'Следующий фокус', es: 'Próximo enfoque' }[lang]}
+                    </span>
+                </div>
+                <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.4;">
+                    ${focus.text}
+                </p>
+            </div>
+            <button class="btn btn--primary btn--full btn--sm" id="coach-practice-summary"
+                style="display:flex; align-items:center; justify-content:center; gap:6px; background:#7C6CF6;">
+                ${LangyIcons.mic} ${{ en: 'Practice this now', ru: 'Практиковать сейчас', es: 'Practicar ahora' }[lang]}
+            </button>`;
+        } else if (focus) {
             html += `
             <div style="padding:var(--sp-3); background:rgba(124,108,246,0.06); border-radius:var(--radius-sm);">
                 <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
@@ -295,5 +317,6 @@ const CoachIntel = (() => {
         patternStatus,
         renderCoachNotes,
         renderSummaryMemory,
+        launchFocusPractice,
     };
 })();

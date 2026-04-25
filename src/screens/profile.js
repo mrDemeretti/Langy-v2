@@ -360,6 +360,15 @@ function renderProfile(container) {
         }
     });
 
+    // Coach: wire 'Practice this now' from Coach Notes
+    container.querySelector('#coach-practice-profile')?.addEventListener('click', () => {
+        if (typeof CoachIntel !== 'undefined') {
+            const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+            const focus = CoachIntel.recommendedFocus(_lang);
+            if (focus) CoachIntel.launchFocusPractice(focus.tag);
+        }
+    });
+
     // Avatar interaction → open avatar picker
     const avatarEl = container.querySelector('#prof-avatar');
     if (avatarEl) {

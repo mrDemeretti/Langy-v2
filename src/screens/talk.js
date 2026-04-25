@@ -257,6 +257,21 @@ function renderTalkCall(container) {
                 <button class="btn btn--ghost btn--sm" id="talk-end-top" style="color:var(--danger);">End</button>
             </div>
 
+            ${(() => {
+                const _cf = ScreenState.get('coachFocus', null);
+                if (!_cf) return '';
+                const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                return `
+            <div style="display:flex; align-items:center; gap:8px; padding:6px var(--sp-5);
+                background:linear-gradient(135deg, rgba(124,108,246,0.08), rgba(124,108,246,0.03));
+                border-bottom:1px solid rgba(124,108,246,0.1);">
+                <span style="color:#7C6CF6; font-size:14px;">${LangyIcons.target}</span>
+                <span style="font-size:var(--fs-xs); color:#7C6CF6; font-weight:var(--fw-semibold);">
+                    ${{ en: 'Coach focus:', ru: 'Фокус Coach:', es: 'Enfoque Coach:' }[_lang]} ${_cf}
+                </span>
+            </div>`;
+            })()}
+
             <!-- Progress Bar -->
             <div class="talk-progress" id="talk-progress" style="padding:0 var(--sp-5); margin-bottom:var(--sp-2);">
                 <div style="display:flex; align-items:center; gap:var(--sp-2); font-size:var(--fs-xs); color:var(--text-tertiary);">
@@ -926,6 +941,8 @@ function renderTalkSummary(container) {
     if (qualified && typeof AudioUtils !== 'undefined') AudioUtils.playVictory();
 
     container.querySelector('#talk-again')?.addEventListener('click', () => {
+        ScreenState.remove('coachFocus');
+        ScreenState.remove('coachFocusTag');
         if (isFirstSession) {
             ScreenState.set('talkView', 'select');
         } else {
@@ -936,7 +953,17 @@ function renderTalkSummary(container) {
 
     container.querySelector('#talk-done')?.addEventListener('click', () => {
         ScreenState.remove('talkView');
+        ScreenState.remove('coachFocus');
+        ScreenState.remove('coachFocusTag');
         Router.navigate('home');
+    });
+
+    // Coach: wire 'Practice this now' button from summary memory card
+    container.querySelector('#coach-practice-summary')?.addEventListener('click', () => {
+        if (typeof CoachIntel !== 'undefined') {
+            const focus = CoachIntel.recommendedFocus(lang);
+            if (focus) CoachIntel.launchFocusPractice(focus.tag);
+        }
     });
 }
 
