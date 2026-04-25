@@ -1,40 +1,46 @@
 /* ============================================
    LANGY DESIGN SYSTEM — VARIABLES
-   Calm AI / Soft Tech palette
+   Premium AI Coach palette
    ============================================ */
 
 :root {
     /* ---- Colors ---- */
-    --bg:           #F4F1ED;
-    --bg-alt:       #EAE5DF;
+    --bg:           #F6F4F1;
+    --bg-alt:       #EDEBE7;
     --surface:      #FFFFFF;
-    --surface-alt:  #F7F5F2;
-    --border:       #E2DCD3;
-    --border-light: #EBE6DF;
+    --surface-alt:  #F9F8F6;
+    --border:       #E5E1DB;
+    --border-light: #EDEAE5;
+    --bg-card:      #FFFFFF;
 
-    --text:         #2B2A35;
-    --text-secondary: #706F7A;
-    --text-tertiary:  #A1A0AB;
+    --text:         #1A1A2E;
+    --text-secondary: #64637A;
+    --text-tertiary:  #9E9DAE;
     --text-inverse: #FFFFFF;
 
     --primary:      #10B981;
     --primary-light:#34D399;
     --primary-dark: #059669;
-    --primary-bg:   rgba(16, 185, 129, 0.08);
-    --primary-bg-hover: rgba(16, 185, 129, 0.14);
+    --primary-bg:   rgba(16, 185, 129, 0.06);
+    --primary-bg-hover: rgba(16, 185, 129, 0.12);
 
     --accent:       #FBBF24;
     --accent-light: #FCD34D;
     --accent-dark:  #D97706;
-    --accent-bg:    rgba(251, 191, 36, 0.10);
+    --accent-bg:    rgba(251, 191, 36, 0.08);
+
+    --coach:        #7C6CF6;
+    --coach-light:  #9B8FFA;
+    --coach-bg:     rgba(124, 108, 246, 0.05);
+    --coach-border: rgba(124, 108, 246, 0.12);
 
     --reward-gold:  #F59E0B;
     --reward-gold-light: #FCD34D;
-    --reward-gold-bg: rgba(245, 158, 11, 0.10);
+    --reward-gold-bg: rgba(245, 158, 11, 0.08);
     --reward-silver:#94A3B8;
 
     --danger:       #EF4444;
-    --danger-bg:    rgba(239, 68, 68, 0.08);
+    --danger-bg:    rgba(239, 68, 68, 0.06);
     --warning:      #F97316;
     --info:         #3B82F6;
 
@@ -67,22 +73,23 @@
     --sp-16: 64px;
 
     /* ---- Radii ---- */
-    --radius-sm:  12px;
-    --radius-md:  16px;
-    --radius-lg:  20px;
-    --radius-xl:  24px;
-    --radius-2xl: 32px;
+    --radius-sm:  10px;
+    --radius-md:  14px;
+    --radius-lg:  18px;
+    --radius-xl:  22px;
+    --radius-2xl: 28px;
     --radius-full: 9999px;
 
     /* ---- Shadows ---- */
-    --shadow-xs:  0 1px 2px rgba(0,0,0,0.04);
-    --shadow-sm:  0 2px 8px rgba(0,0,0,0.06);
-    --shadow-md:  0 4px 16px rgba(0,0,0,0.08);
-    --shadow-lg:  0 8px 32px rgba(0,0,0,0.10);
-    --shadow-xl:  0 12px 48px rgba(0,0,0,0.12);
-    --shadow-glow-primary: 0 4px 24px rgba(16, 185, 129, 0.25);
-    --shadow-glow-accent:  0 4px 24px rgba(251, 191, 36, 0.25);
-    --shadow-glow-gold:    0 4px 24px rgba(245, 158, 11, 0.30);
+    --shadow-xs:  0 1px 2px rgba(0,0,0,0.03);
+    --shadow-sm:  0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md:  0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg:  0 8px 32px rgba(0,0,0,0.08);
+    --shadow-xl:  0 12px 48px rgba(0,0,0,0.10);
+    --shadow-glow-primary: 0 4px 20px rgba(16, 185, 129, 0.20);
+    --shadow-glow-accent:  0 4px 20px rgba(251, 191, 36, 0.20);
+    --shadow-glow-gold:    0 4px 20px rgba(245, 158, 11, 0.25);
+    --shadow-glow-coach:   0 4px 20px rgba(124, 108, 246, 0.18);
 
     /* ---- Transitions ---- */
     --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
@@ -107,15 +114,19 @@
 }
 
 :root.dark {
-    --bg:           #121212;
-    --bg-alt:       #1E1E1E;
-    --surface:      #1E1E1E;
-    --surface-alt:  #2A2A2A;
-    --border:       #333333;
-    --border-light: #2A2A2A;
+    --bg:           #0F0F14;
+    --bg-alt:       #18181F;
+    --surface:      #1C1C26;
+    --surface-alt:  #232330;
+    --border:       #2A2A38;
+    --border-light: #232330;
+    --bg-card:      #1C1C26;
 
-    --text:         #E5E5E5;
+    --text:         #EAEAF0;
     --text-secondary: #9CA3AF;
     --text-tertiary:  #6B7280;
     --text-inverse: #1F2937;
+
+    --coach-bg:     rgba(124, 108, 246, 0.08);
+    --coach-border: rgba(124, 108, 246, 0.18);
 }

@@ -32,15 +32,15 @@
 .btn--primary {
     background: var(--primary);
     color: var(--text-inverse);
-    box-shadow: 0 4px 0 var(--primary-dark), 0 8px 16px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.25);
 }
 .btn--primary:active {
-    transform: translateY(2px) scale(0.96);
-    box-shadow: 0 2px 0 var(--primary-dark), 0 4px 8px rgba(16, 185, 129, 0.2);
+    transform: translateY(1px) scale(0.97);
+    box-shadow: 0 1px 6px rgba(16, 185, 129, 0.2);
 }
 .btn--primary:hover {
     background: var(--primary-light);
-    box-shadow: 0 4px 0 var(--primary-dark), var(--shadow-glow-primary);
+    box-shadow: var(--shadow-glow-primary);
 }
 
 .btn--secondary {
@@ -139,8 +139,8 @@
     background: var(--surface);
     border-radius: var(--radius-xl);
     padding: var(--sp-5);
-    box-shadow: 0 4px 0 var(--border), 0 8px 16px rgba(0,0,0,0.05);
-    border: 3px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     transition: all var(--duration-normal) var(--ease-out);
 }
 
@@ -156,8 +156,8 @@
 }
 
 .card--primary {
-    border: 2px solid var(--primary);
-    box-shadow: var(--shadow-sm), 0 0 0 4px var(--primary-bg);
+    border: 1px solid var(--primary);
+    box-shadow: var(--shadow-sm), 0 0 0 3px var(--primary-bg);
 }
 
 .card--glow {

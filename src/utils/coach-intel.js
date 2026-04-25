@@ -217,9 +217,9 @@ const CoachIntel = (() => {
         if (!outcome) return '';
 
         const verdictConfig = {
-            improved: { icon: '✅', color: '#10B981', bg: 'rgba(16,185,129,0.06)', border: 'rgba(16,185,129,0.15)' },
-            improving: { icon: '📈', color: '#F59E0B', bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.15)' },
-            still_working: { icon: '🔄', color: '#7C6CF6', bg: 'rgba(124,108,246,0.06)', border: 'rgba(124,108,246,0.15)' },
+            improved: { dot: '#10B981' },
+            improving: { dot: '#F59E0B' },
+            still_working: { dot: 'var(--coach, #7C6CF6)' },
         };
         const vc = verdictConfig[outcome.verdict] || verdictConfig.still_working;
 
@@ -230,45 +230,42 @@ const CoachIntel = (() => {
         };
 
         return `
-        <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
-            background:${vc.bg}; border:1px solid ${vc.border};
+        <div style="padding:var(--sp-5); margin-bottom:var(--sp-3); border-radius:var(--radius-lg);
+            background:var(--coach-bg, rgba(124,108,246,0.05)); border:1px solid var(--coach-border, rgba(124,108,246,0.12));
             animation:fadeInUp 0.5s var(--ease-out) 0.35s both;">
 
-            <!-- Header: Focused Practice Result -->
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-3);">
-                <span style="font-size:18px;">${LangyIcons.target}</span>
-                <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--text);">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-4);">
+                <span style="color:var(--coach, #7C6CF6); font-size:16px;">${LangyIcons.target}</span>
+                <span style="font-weight:var(--fw-bold); font-size:var(--fs-xs); color:var(--coach, #7C6CF6); text-transform:uppercase; letter-spacing:0.5px;">
                     ${{ en: 'Focused Practice Result', ru: 'Результат фокусной практики', es: 'Resultado de práctica enfocada' }[lang]}
                 </span>
             </div>
 
-            <!-- What you practiced -->
-            <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3);
-                background:var(--bg-card); border-radius:var(--radius-sm); margin-bottom:var(--sp-3);">
+            <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4);
+                background:var(--surface); border-radius:var(--radius-sm); margin-bottom:var(--sp-4);
+                border:1px solid var(--border-light);">
                 <div style="flex:1;">
-                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:2px;">
+                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary); letter-spacing:0.3px; margin-bottom:3px;">
                         ${{ en: 'Focus area', ru: 'Фокус', es: 'Área de enfoque' }[lang]}
                     </div>
-                    <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--text);">
+                    <div style="font-weight:var(--fw-bold); font-size:var(--fs-md); color:var(--text);">
                         ${outcome.label}
                     </div>
                 </div>
-                <div style="text-align:right;">
-                    <div style="font-size:18px; margin-bottom:2px;">${vc.icon}</div>
-                    <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:${vc.color};">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="width:8px; height:8px; border-radius:50%; background:${vc.dot};"></span>
+                    <span style="font-size:var(--fs-sm); font-weight:var(--fw-semibold); color:${vc.dot};">
                         ${verdictLabels[outcome.verdict][lang]}
-                    </div>
+                    </span>
                 </div>
             </div>
 
-            <!-- Coaching message -->
-            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-3); line-height:1.5;">
+            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-4); line-height:1.6;">
                 ${outcome.message}
             </p>
 
-            <!-- Next action -->
             <button class="btn btn--full btn--sm" id="coach-focus-next"
-                style="background:${vc.color}; color:white; border:none; display:flex; align-items:center; justify-content:center; gap:6px;"
+                style="background:var(--coach, #7C6CF6); color:white; border:none; display:flex; align-items:center; justify-content:center; gap:6px;"
                 data-action="${outcome.nextAction}" data-focus="${outcome.focusTag}">
                 ${outcome.nextAction === 'practice_again' ? LangyIcons.refreshCw : LangyIcons.mic}
                 ${outcome.nextActionLabel}
@@ -286,9 +283,9 @@ const CoachIntel = (() => {
         if (patterns.length === 0 && sessionCount < 2) {
             return `
             <div class="profile__section">
-                <div class="profile__section-title">${LangyIcons.brain} Coach Notes</div>
-                <div class="card" style="padding:var(--sp-4); text-align:center;">
-                    <p style="color:var(--text-tertiary); font-size:var(--fs-sm); margin:0;">
+                <div class="profile__section-title" style="color:var(--coach, #7C6CF6);">${LangyIcons.brain} Coach Notes</div>
+                <div style="padding:var(--sp-5); text-align:center; background:var(--coach-bg, rgba(124,108,246,0.05)); border-radius:var(--radius-lg); border:1px solid var(--coach-border, rgba(124,108,246,0.12));">
+                    <p style="color:var(--text-tertiary); font-size:var(--fs-sm); margin:0; line-height:1.6;">
                         ${{ en: 'Complete a few practice sessions and your Coach will start tracking patterns here.', ru: 'Проведи несколько сессий, и Coach начнёт отслеживать закономерности.', es: 'Completa unas sesiones y tu Coach empezará a rastrear patrones aquí.' }[lang]}
                     </p>
                 </div>
@@ -297,33 +294,32 @@ const CoachIntel = (() => {
 
         if (patterns.length === 0) return '';
 
-        const statusIcon = { recurring: '🔁', needs_work: '⚠️', improving: '✅', new: '🆕' };
+        const statusColor = { recurring: '#F59E0B', needs_work: '#EF4444', improving: '#10B981', new: 'var(--text-tertiary)' };
         const statusLabel = {
             recurring: { en: 'Recurring', ru: 'Повторяется', es: 'Recurrente' },
             needs_work: { en: 'Needs work', ru: 'Нужна практика', es: 'Necesita práctica' },
             improving: { en: 'Improving', ru: 'Улучшается', es: 'Mejorando' },
             new: { en: 'New', ru: 'Новое', es: 'Nuevo' },
         };
-        const statusColor = { recurring: '#F59E0B', needs_work: '#EF4444', improving: '#10B981', new: 'var(--text-tertiary)' };
 
         const practiceCTA = focus && focus.status !== 'improving' ? `
-                <div style="padding:var(--sp-3) var(--sp-4); border-top:1px solid var(--border);">
-                    <button class="btn btn--primary btn--full btn--sm" id="coach-practice-profile"
-                        style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                <div style="padding:var(--sp-3) var(--sp-4); border-top:1px solid var(--coach-border, rgba(124,108,246,0.12));">
+                    <button class="btn btn--full btn--sm" id="coach-practice-profile"
+                        style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--coach, #7C6CF6); color:white; border:none;">
                         ${LangyIcons.mic} ${{ en: 'Practice this now', ru: 'Практиковать сейчас', es: 'Practicar ahora' }[lang]}
                     </button>
                 </div>` : '';
 
         return `
         <div class="profile__section">
-            <div class="profile__section-title">${LangyIcons.brain} Coach Notes</div>
-            <div class="card" style="padding:0; overflow:hidden;">
+            <div class="profile__section-title" style="color:var(--coach, #7C6CF6);">${LangyIcons.brain} Coach Notes</div>
+            <div style="padding:0; overflow:hidden; background:var(--coach-bg, rgba(124,108,246,0.05)); border-radius:var(--radius-lg); border:1px solid var(--coach-border, rgba(124,108,246,0.12));">
                 ${patterns.map((p, i) => `
-                <div style="padding:var(--sp-3) var(--sp-4); ${i < patterns.length - 1 ? 'border-bottom:1px solid var(--border);' : ''}
+                <div style="padding:var(--sp-3) var(--sp-4); ${i < patterns.length - 1 ? 'border-bottom:1px solid var(--coach-border, rgba(124,108,246,0.12));' : ''}
                     display:flex; align-items:center; gap:var(--sp-3);">
-                    <div style="font-size:18px; flex-shrink:0;">${statusIcon[p.status]}</div>
+                    <span style="width:8px; height:8px; border-radius:50%; background:${statusColor[p.status]}; flex-shrink:0;"></span>
                     <div style="flex:1; min-width:0;">
-                        <div style="font-weight:var(--fw-semibold); font-size:var(--fs-sm); margin-bottom:2px;">
+                        <div style="font-weight:var(--fw-semibold); font-size:var(--fs-sm); color:var(--text); margin-bottom:1px;">
                             ${p.label}
                         </div>
                         ${p.example ? `<div style="font-size:var(--fs-xs); color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -331,20 +327,20 @@ const CoachIntel = (() => {
                         </div>` : ''}
                     </div>
                     <div style="text-align:right; flex-shrink:0;">
-                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:${statusColor[p.status]};">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-semibold); color:${statusColor[p.status]};">
                             ${statusLabel[p.status][lang] || statusLabel[p.status].en}
                         </div>
-                        <div style="font-size:11px; color:var(--text-tertiary);">×${p.count}</div>
+                        <div style="font-size:10px; color:var(--text-tertiary);">×${p.count}</div>
                     </div>
                 </div>
                 `).join('')}
 
                 ${focus ? `
-                <div style="padding:var(--sp-3) var(--sp-4); background:linear-gradient(135deg, var(--primary-bg), rgba(16,185,129,0.03));
-                    border-top:1px solid var(--border);">
+                <div style="padding:var(--sp-3) var(--sp-4); background:rgba(124,108,246,0.03);
+                    border-top:1px solid var(--coach-border, rgba(124,108,246,0.12));">
                     <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-                        <span style="color:var(--primary); font-size:14px;">${LangyIcons.target}</span>
-                        <span style="font-weight:var(--fw-bold); font-size:var(--fs-xs); color:var(--primary); text-transform:uppercase; letter-spacing:0.3px;">
+                        <span style="color:var(--coach, #7C6CF6); font-size:12px;">${LangyIcons.target}</span>
+                        <span style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--coach, #7C6CF6); text-transform:uppercase; letter-spacing:0.4px;">
                             ${{ en: 'Recommended focus', ru: 'Рекомендация', es: 'Enfoque recomendado' }[lang]}
                         </span>
                     </div>
@@ -368,20 +364,19 @@ const CoachIntel = (() => {
         if (!continuity && patterns.length === 0) return '';
 
         let html = `
-        <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
-            background:linear-gradient(135deg, rgba(124,108,246,0.06), rgba(124,108,246,0.02));
-            border:1px solid rgba(124,108,246,0.15);
+        <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-lg);
+            background:var(--coach-bg, rgba(124,108,246,0.05)); border:1px solid var(--coach-border, rgba(124,108,246,0.12));
             animation:fadeInUp 0.5s var(--ease-out) 0.45s both;">
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-3);">
-                <span style="color:#7C6CF6; font-size:16px;">${LangyIcons.brain}</span>
-                <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:#7C6CF6;">
+                <span style="color:var(--coach, #7C6CF6); font-size:16px;">${LangyIcons.brain}</span>
+                <span style="font-weight:var(--fw-bold); font-size:var(--fs-xs); color:var(--coach, #7C6CF6); text-transform:uppercase; letter-spacing:0.4px;">
                     ${{ en: 'Coach Memory', ru: 'Память Coach', es: 'Memoria del Coach' }[lang]}
                 </span>
             </div>`;
 
         if (continuity) {
             html += `
-            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-3); line-height:1.5; padding-bottom:var(--sp-3); border-bottom:1px solid rgba(124,108,246,0.1);">
+            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-3); line-height:1.6; padding-bottom:var(--sp-3); border-bottom:1px solid var(--coach-border, rgba(124,108,246,0.12));">
                 ${continuity}
             </p>`;
         }
@@ -402,31 +397,31 @@ const CoachIntel = (() => {
 
         if (focus && focus.status !== 'improving') {
             html += `
-            <div style="padding:var(--sp-3); background:rgba(124,108,246,0.06); border-radius:var(--radius-sm); margin-bottom:var(--sp-3);">
+            <div style="padding:var(--sp-3); background:rgba(124,108,246,0.04); border-radius:var(--radius-sm); margin-bottom:var(--sp-3);">
                 <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-                    <span style="color:#7C6CF6; font-size:12px;">${LangyIcons.target}</span>
-                    <span style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:#7C6CF6; text-transform:uppercase; letter-spacing:0.3px;">
+                    <span style="color:var(--coach, #7C6CF6); font-size:12px;">${LangyIcons.target}</span>
+                    <span style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--coach, #7C6CF6); text-transform:uppercase; letter-spacing:0.3px;">
                         ${{ en: 'Next focus', ru: 'Следующий фокус', es: 'Próximo enfoque' }[lang]}
                     </span>
                 </div>
-                <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.4;">
+                <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
                     ${focus.text}
                 </p>
             </div>
-            <button class="btn btn--primary btn--full btn--sm" id="coach-practice-summary"
-                style="display:flex; align-items:center; justify-content:center; gap:6px; background:#7C6CF6;">
+            <button class="btn btn--full btn--sm" id="coach-practice-summary"
+                style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--coach, #7C6CF6); color:white; border:none;">
                 ${LangyIcons.mic} ${{ en: 'Practice this now', ru: 'Практиковать сейчас', es: 'Practicar ahora' }[lang]}
             </button>`;
         } else if (focus) {
             html += `
-            <div style="padding:var(--sp-3); background:rgba(124,108,246,0.06); border-radius:var(--radius-sm);">
+            <div style="padding:var(--sp-3); background:rgba(124,108,246,0.04); border-radius:var(--radius-sm);">
                 <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-                    <span style="color:#7C6CF6; font-size:12px;">${LangyIcons.target}</span>
-                    <span style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:#7C6CF6; text-transform:uppercase; letter-spacing:0.3px;">
+                    <span style="color:var(--coach, #7C6CF6); font-size:12px;">${LangyIcons.target}</span>
+                    <span style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--coach, #7C6CF6); text-transform:uppercase; letter-spacing:0.3px;">
                         ${{ en: 'Next focus', ru: 'Следующий фокус', es: 'Próximo enfoque' }[lang]}
                     </span>
                 </div>
-                <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.4;">
+                <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
                     ${focus.text}
                 </p>
             </div>`;

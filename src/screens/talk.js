@@ -133,14 +133,14 @@ function renderTalkSelect(container) {
             <div style="padding: var(--sp-4) var(--sp-5); overflow-y:auto; flex:1;">
 
                 <!-- Hero -->
-                <div style="text-align:center; margin-bottom:var(--sp-5);">
-                    <div style="font-size:48px; margin-bottom:var(--sp-2); color:var(--primary);">${LangyIcons.mic}</div>
-                    <h2>${i18n('talk.hero_title')}</h2>
-                    <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">${i18n('talk.hero_desc')}</p>
+                <div style="text-align:center; margin-bottom:var(--sp-4);">
+                    <div style="font-size:36px; margin-bottom:var(--sp-2); color:var(--primary); opacity:0.8;">${LangyIcons.mic}</div>
+                    <h2 style="font-size:var(--fs-xl);">${i18n('talk.hero_title')}</h2>
+                    <p style="color:var(--text-tertiary); font-size:var(--fs-sm); margin-top:var(--sp-1);">${i18n('talk.hero_desc')}</p>
                 </div>
 
                 <!-- Mascot Selection -->
-                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">
+                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px; font-size:var(--fs-sm); color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; font-weight:var(--fw-bold);">
                     <span style="color:var(--primary);">${LangyIcons.users}</span> ${i18n('talk.choose_partner')}
                 </h4>
                 <div class="talk-mascots" id="talk-mascots">
@@ -166,7 +166,7 @@ function renderTalkSelect(container) {
                 </div>
 
                 <!-- Scenario Selection -->
-                <h4 style="margin:var(--sp-5) 0 var(--sp-3); display:flex; align-items:center; gap:8px;">
+                <h4 style="margin:var(--sp-4) 0 var(--sp-3); display:flex; align-items:center; gap:8px; font-size:var(--fs-sm); color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; font-weight:var(--fw-bold);">
                     <span style="color:var(--accent-dark);">${LangyIcons.map}</span> ${i18n('talk.choose_scenario')}
                 </h4>
                 <div class="talk-scenarios" id="talk-scenarios">
@@ -190,7 +190,7 @@ function renderTalkSelect(container) {
                 <!-- Start Button -->
                 <div style="margin-top:var(--sp-5); padding-bottom:var(--sp-6);">
                     <button class="btn btn--primary btn--xl btn--full" id="talk-start" 
-                            style="box-shadow: 0 4px 0 var(--primary-dark); font-size:var(--fs-lg); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
+                            style="font-size:var(--fs-lg); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
                         ${LangyIcons.mic} ${i18n('talk.start')}
                     </button>
                     <p style="text-align:center; font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
