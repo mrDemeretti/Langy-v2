@@ -868,7 +868,17 @@ function renderTalkSummary(container) {
                 </div>
                 ` : ''}
 
-                <!-- Next step (coaching CTA) -->
+                ${(() => {
+                    const _focusTag = ScreenState.get('coachFocusTag', null);
+                    const _isCoach = ['coach', 'pro', 'premium'].includes(LangyState.subscription?.plan);
+
+                    // ── Focused practice session: show focus recap instead of generic next-step ──
+                    if (_focusTag && _isCoach && typeof CoachIntel !== 'undefined') {
+                        return CoachIntel.renderFocusRecap(_focusTag, corrections, lang);
+                    }
+
+                    // ── Regular session: generic next step ──
+                    return `
                 <div style="text-align:center; padding:var(--sp-4) var(--sp-3); margin:var(--sp-2) 0 var(--sp-4);
                     background:linear-gradient(135deg, var(--primary-bg), rgba(16,185,129,0.03));
                     border-radius:var(--radius-md); border:1px dashed var(--primary);
@@ -879,10 +889,16 @@ function renderTalkSummary(container) {
                     <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; max-width:300px; margin-left:auto; margin-right:auto; line-height:1.5;">
                         ${nextStep}
                     </p>
-                </div>
+                </div>`;
+                })()}
 
                 ${(() => {
+                    const _focusTag = ScreenState.get('coachFocusTag', null);
                     const _isCoach = ['coach', 'pro', 'premium'].includes(LangyState.subscription?.plan);
+
+                    // If focused practice, recap already shown above — skip Coach Memory
+                    if (_focusTag && _isCoach) return '';
+
                     // Coach: rich memory card via CoachIntel
                     if (_isCoach && typeof CoachIntel !== 'undefined') {
                         return CoachIntel.renderSummaryMemory(corrections, lang);
@@ -963,6 +979,24 @@ function renderTalkSummary(container) {
         if (typeof CoachIntel !== 'undefined') {
             const focus = CoachIntel.recommendedFocus(lang);
             if (focus) CoachIntel.launchFocusPractice(focus.tag);
+        }
+    });
+
+    // Coach: wire focus recap next-action button
+    container.querySelector('#coach-focus-next')?.addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const action = btn.dataset.action;
+        const focusTag = btn.dataset.focus;
+
+        if (action === 'practice_again' && focusTag && typeof CoachIntel !== 'undefined') {
+            // Relaunch focused practice on same tag
+            CoachIntel.launchFocusPractice(focusTag);
+        } else {
+            // Move on: clear focus, go to regular talk
+            ScreenState.remove('coachFocus');
+            ScreenState.remove('coachFocusTag');
+            ScreenState.set('talkView', 'call');
+            renderTalk(container);
         }
     });
 }

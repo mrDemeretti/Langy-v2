@@ -129,17 +129,151 @@ const CoachIntel = (() => {
     }
 
     // ─── Launch Focused Practice ───
-    // Sets coachFocus in ScreenState so talk-engine injects coaching directive into AI prompt,
-    // then navigates to talk with call view. Reuses entire existing talk pipeline.
     function launchFocusPractice(focusTag) {
         if (!focusTag) return;
         const label = _humanizeTag(focusTag);
         ScreenState.set('coachFocus', label);
         ScreenState.set('coachFocusTag', focusTag);
         ScreenState.set('talkView', 'call');
-        // Use user's preferred mascot, free-talk scenario for flexibility
         ScreenState.set('talkScenario', 'free');
         Router.navigate('talk');
+    }
+
+    // ═══════════════════════════════════════
+    // FOCUS OUTCOME EVALUATION
+    // ═══════════════════════════════════════
+
+    // Evaluate how the user did on their chosen focus area
+    // Returns: { verdict: 'improved'|'still_working'|'good_practice', label, message, nextAction, nextActionLabel }
+    function evaluateFocusOutcome(focusTag, corrections, lang = 'en') {
+        if (!focusTag) return null;
+        const normalizedFocus = focusTag.toLowerCase().replace(/\s+/g, '_');
+        const label = _humanizeTag(normalizedFocus);
+
+        // Check if focus-related corrections appeared in this session
+        const focusCorrections = (corrections || []).filter(c => {
+            const tag = (c.tag || c.why || '').toLowerCase().replace(/\s+/g, '_');
+            return tag === normalizedFocus || tag.includes(normalizedFocus) || normalizedFocus.includes(tag);
+        });
+
+        // Look at historical pattern for context
+        const historicalPattern = _getPatterns().find(p => p.tag === normalizedFocus);
+        const prevCount = historicalPattern?.prevCount || 0;
+        const totalCount = historicalPattern?.count || 0;
+
+        let verdict, message, nextAction, nextActionLabel;
+
+        if (focusCorrections.length === 0) {
+            // Focus didn't appear in corrections — improvement signal
+            verdict = 'improved';
+            message = {
+                en: `No ${label} issues detected this time. That's real progress.`,
+                ru: `${label} — на этот раз без ошибок. Это реальный прогресс.`,
+                es: `Sin errores de ${label} esta vez. Eso es progreso real.`,
+            }[lang];
+            nextAction = 'move_on';
+            nextActionLabel = {
+                en: 'Continue practicing',
+                ru: 'Продолжить практику',
+                es: 'Continuar practicando',
+            }[lang];
+        } else if (focusCorrections.length === 1 && totalCount > 3) {
+            // Only 1 correction on a previously frequent issue — getting better
+            verdict = 'improving';
+            message = {
+                en: `${label} appeared once — less than before. You're getting more consistent.`,
+                ru: `${label} — одна ошибка, меньше чем раньше. Становится стабильнее.`,
+                es: `${label} apareció una vez — menos que antes. Estás mejorando.`,
+            }[lang];
+            nextAction = 'practice_again';
+            nextActionLabel = {
+                en: 'Reinforce this focus',
+                ru: 'Закрепить этот фокус',
+                es: 'Reforzar este enfoque',
+            }[lang];
+        } else {
+            // Focus still appeared — needs more work
+            verdict = 'still_working';
+            message = {
+                en: `${label} came up ${focusCorrections.length} time${focusCorrections.length > 1 ? 's' : ''}. Keep practicing — awareness is the first step.`,
+                ru: `${label} — ${focusCorrections.length} раз(а). Продолжай — осознанность это первый шаг.`,
+                es: `${label} apareció ${focusCorrections.length} vez/veces. Sigue practicando — la conciencia es el primer paso.`,
+            }[lang];
+            nextAction = 'practice_again';
+            nextActionLabel = {
+                en: 'Practice this again',
+                ru: 'Повторить практику',
+                es: 'Practicar de nuevo',
+            }[lang];
+        }
+
+        return { verdict, label, message, nextAction, nextActionLabel, focusTag: normalizedFocus };
+    }
+
+    // Render Focus Recap card for talk summary
+    function renderFocusRecap(focusTag, corrections, lang = 'en') {
+        if (!isCoach()) return '';
+        const outcome = evaluateFocusOutcome(focusTag, corrections, lang);
+        if (!outcome) return '';
+
+        const verdictConfig = {
+            improved: { icon: '✅', color: '#10B981', bg: 'rgba(16,185,129,0.06)', border: 'rgba(16,185,129,0.15)' },
+            improving: { icon: '📈', color: '#F59E0B', bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.15)' },
+            still_working: { icon: '🔄', color: '#7C6CF6', bg: 'rgba(124,108,246,0.06)', border: 'rgba(124,108,246,0.15)' },
+        };
+        const vc = verdictConfig[outcome.verdict] || verdictConfig.still_working;
+
+        const verdictLabels = {
+            improved: { en: 'Improved', ru: 'Улучшилось', es: 'Mejorado' },
+            improving: { en: 'Getting better', ru: 'Улучшается', es: 'Mejorando' },
+            still_working: { en: 'Needs more practice', ru: 'Нужно ещё поработать', es: 'Necesita más práctica' },
+        };
+
+        return `
+        <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+            background:${vc.bg}; border:1px solid ${vc.border};
+            animation:fadeInUp 0.5s var(--ease-out) 0.35s both;">
+
+            <!-- Header: Focused Practice Result -->
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-3);">
+                <span style="font-size:18px;">${LangyIcons.target}</span>
+                <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--text);">
+                    ${{ en: 'Focused Practice Result', ru: 'Результат фокусной практики', es: 'Resultado de práctica enfocada' }[lang]}
+                </span>
+            </div>
+
+            <!-- What you practiced -->
+            <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3);
+                background:var(--bg-card); border-radius:var(--radius-sm); margin-bottom:var(--sp-3);">
+                <div style="flex:1;">
+                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:2px;">
+                        ${{ en: 'Focus area', ru: 'Фокус', es: 'Área de enfoque' }[lang]}
+                    </div>
+                    <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--text);">
+                        ${outcome.label}
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:18px; margin-bottom:2px;">${vc.icon}</div>
+                    <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:${vc.color};">
+                        ${verdictLabels[outcome.verdict][lang]}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coaching message -->
+            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-3); line-height:1.5;">
+                ${outcome.message}
+            </p>
+
+            <!-- Next action -->
+            <button class="btn btn--full btn--sm" id="coach-focus-next"
+                style="background:${vc.color}; color:white; border:none; display:flex; align-items:center; justify-content:center; gap:6px;"
+                data-action="${outcome.nextAction}" data-focus="${outcome.focusTag}">
+                ${outcome.nextAction === 'practice_again' ? LangyIcons.refreshCw : LangyIcons.mic}
+                ${outcome.nextActionLabel}
+            </button>
+        </div>`;
     }
 
     // ─── Coach Notes card for profile ───
@@ -318,5 +452,7 @@ const CoachIntel = (() => {
         renderCoachNotes,
         renderSummaryMemory,
         launchFocusPractice,
+        evaluateFocusOutcome,
+        renderFocusRecap,
     };
 })();
