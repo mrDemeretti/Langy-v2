@@ -464,8 +464,18 @@ CRITICAL RULES FOR CONVERSATION:
                   currentSession.pronunciationScores.length
                 : null;
 
-        const prompt = `You are an English teacher reviewing a student's conversation practice.
-The student is at ${LangyState?.user?.level || 'B1'} level.
+        const isCoach = ['coach', 'pro', 'premium'].includes(LangyState?.subscription?.plan);
+        const level = LangyState?.user?.level || 'B1';
+
+        // Coach gets deeper analysis: pattern tags, category, recurring awareness
+        const coachExtra = isCoach ? `
+Also include for each correction a "tag" field: a short category like "tense", "articles", "word_order", "vocabulary", "preposition", "agreement", "pronunciation".
+Add a "pattern" field: a 1-sentence observation about any recurring tendency you notice in the student's speech (or null if nothing stands out).` : '';
+
+        const maxCorrections = isCoach ? 4 : 2;
+
+        const prompt = `You are a language coach reviewing a student's conversation practice.
+The student is at ${level} level.
 Here are the phrases the student said during the conversation:
 
 ${userPhrases}
@@ -476,15 +486,15 @@ Respond with a JSON object only (no markdown, no code fences):
 {
   "praise": "One specific thing they did well (1 sentence)",
   "corrections": [
-    {"said": "what they said wrong", "better": "the corrected version", "why": "brief explanation (5 words max)"}
+    {"said": "what they said wrong", "better": "the corrected version", "why": "brief explanation (5 words max)"${isCoach ? ', "tag": "category"' : ''}}
   ],
-  "tip": "One actionable tip for next time (1 sentence)"
+  "tip": "One actionable tip for next time (1 sentence)"${isCoach ? ',\n  "pattern": "recurring tendency observation or null"' : ''}
 }
 
 Rules:
-- Maximum 2 corrections. If they spoke perfectly, use an empty array [].
+- Maximum ${maxCorrections} corrections. If they spoke perfectly, use an empty array [].
 - Be encouraging and specific. Reference actual phrases they used.
-- Keep "why" very short: e.g. "past tense needed", "article missing", "word order".`;
+- Keep "why" very short: e.g. "past tense needed", "article missing", "word order".${coachExtra}`;
 
         try {
             const response = await fetch(LangyAI.API_URL, {
@@ -493,7 +503,7 @@ Rules:
                 body: JSON.stringify({
                     model: LangyAI.MODEL,
                     messages: [{ role: 'user', content: prompt }],
-                    max_tokens: 250,
+                    max_tokens: isCoach ? 400 : 250,
                     temperature: 0.6,
                 }),
             });
@@ -508,12 +518,20 @@ Rules:
                 const parsed = JSON.parse(cleaned);
                 // Validate structure
                 if (parsed.praise && typeof parsed.praise === 'string') {
-                    return {
+                    const result = {
                         _structured: true,
                         praise: parsed.praise,
-                        corrections: Array.isArray(parsed.corrections) ? parsed.corrections.slice(0, 2) : [],
+                        corrections: Array.isArray(parsed.corrections) ? parsed.corrections.slice(0, maxCorrections) : [],
                         tip: parsed.tip || '',
+                        pattern: parsed.pattern || null,
                     };
+
+                    // Coach: persist mistake patterns for cross-session intelligence
+                    if (isCoach && result.corrections.length > 0) {
+                        _updateMistakePatterns(result.corrections);
+                    }
+
+                    return result;
                 }
             } catch (_jsonErr) {
                 // JSON parse failed — fall back to plain text
@@ -524,6 +542,31 @@ Rules:
         } catch (e) {
             return null;
         }
+    }
+
+    // ─── MISTAKE PATTERN TRACKING (Coach) ───
+    function _updateMistakePatterns(corrections) {
+        if (!LangyState.coachData) LangyState.coachData = { mistakePatterns: [] };
+        if (!LangyState.coachData.mistakePatterns) LangyState.coachData.mistakePatterns = [];
+
+        const patterns = LangyState.coachData.mistakePatterns;
+        const today = new Date().toISOString().split('T')[0];
+
+        for (const c of corrections) {
+            const tag = (c.tag || c.why || 'general').toLowerCase().replace(/\s+/g, '_');
+            const existing = patterns.find(p => p.tag === tag);
+            if (existing) {
+                existing.count++;
+                existing.lastSeen = today;
+                existing.example = c.said || existing.example;
+            } else {
+                patterns.push({ tag, count: 1, lastSeen: today, example: c.said || '' });
+            }
+        }
+
+        // Keep top 20 patterns by count
+        patterns.sort((a, b) => b.count - a.count);
+        LangyState.coachData.mistakePatterns = patterns.slice(0, 20);
     }
 
     // ─── SESSION MANAGEMENT ───

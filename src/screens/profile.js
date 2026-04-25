@@ -138,20 +138,24 @@ function renderProfile(container) {
                 </div>
             </div>
 
-            <!-- Premium Banner -->
-            ${
-                LangyState.subscription.plan !== 'premium'
-                    ? `
+            <!-- Coach Banner -->
+            ${(() => {
+                const _isCoach = ['coach', 'pro', 'premium'].includes(LangyState.subscription?.plan);
+                if (_isCoach) return '';
+                const _sc = (LangyState.talkHistory || []).length;
+                const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                const _sub = _sc >= 3
+                    ? { en: `You've practiced ${_sc} times. Coach would remember every correction.`, ru: `Ты поговорил ${_sc} раз. Coach запомнил бы все исправления.`, es: `Has practicado ${_sc} veces. Coach recordaría cada corrección.` }[_lang]
+                    : { en: 'AI that remembers your mistakes and helps you fix them.', ru: 'ИИ, который запоминает ошибки и помогает их исправить.', es: 'IA que recuerda tus errores y te ayuda a corregirlos.' }[_lang];
+                return `
             <div class="profile__premium-banner" id="prof-premium-banner">
                 <div>
-                    <h3 style="margin:0; font-size:var(--fs-lg);">Langy Pro ${LangyIcons.crown}</h3>
-                    <p style="margin:0; font-size:var(--fs-xs); opacity:0.9;">Unlock all premium features</p>
+                    <h3 style="margin:0; font-size:var(--fs-lg);">Langy Coach ${LangyIcons.brain}</h3>
+                    <p style="margin:0; font-size:var(--fs-xs); opacity:0.9;">${_sub}</p>
                 </div>
-                <button class="btn" style="background:white; color:#b45309; padding:4px 12px; font-weight:var(--fw-bold); border-radius:var(--radius-full);">GET</button>
-            </div>
-            `
-                    : ''
-            }
+                <button class="btn" style="background:white; color:#b45309; padding:4px 12px; font-weight:var(--fw-bold); border-radius:var(--radius-full);">${{ en: 'Learn more', ru: 'Подробнее', es: 'Más info' }[_lang]}</button>
+            </div>`;
+            })()}
 
             <!-- Settings Sections -->
             <div class="profile__sections">
@@ -774,8 +778,8 @@ function showHelp() {
                     <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">A streak requires you to meet your active daily learning goal. Missing a day resets the count.</p>
                 </div>
                 <div class="card" style="padding:var(--sp-4);">
-                    <strong style="color:var(--text); font-size:var(--fs-md);">Subscription Benefits?</strong>
-                    <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">Premium members get no ads, unlimited duels, and exclusive avatar items in the Shop.</p>
+                    <strong style="color:var(--text); font-size:var(--fs-md);">What is Langy Coach?</strong>
+                    <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">Coach members get AI that remembers mistakes across sessions, detects recurring patterns, and creates targeted practice to improve faster.</p>
                 </div>
                 <button class="btn btn--secondary" onclick="this.closest('.overlay').remove();">Got it</button>
             </div>
@@ -966,28 +970,34 @@ function showCertificate(code, name, color, date) {
 }
 
 function showSubscription() {
+    const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     overlay.innerHTML = `
         <div class="overlay__sheet" style="padding-bottom:var(--sp-6); text-align:center;">
             <div class="overlay__handle"></div>
-            <div style="font-size: 50px; margin-bottom:var(--sp-2);">${LangyIcons.star}</div>
-            <h2 style="margin-bottom:var(--sp-2);">Langy Premium</h2>
-            <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-bottom:var(--sp-4);">Unlock limitless learning.</p>
+            <div style="font-size: 50px; margin-bottom:var(--sp-2);">${LangyIcons.brain}</div>
+            <h2 style="margin-bottom:var(--sp-2);">Langy Coach</h2>
+            <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-bottom:var(--sp-4); line-height:1.5; max-width:280px; margin-left:auto; margin-right:auto;">
+                ${{ en: 'Improve faster with AI that learns you.', ru: 'Прогрессируй быстрее с ИИ, который учится на тебе.', es: 'Mejora más rápido con IA que te aprende.' }[_lang]}
+            </p>
             
-            <div class="card" style="text-align:left; padding:var(--sp-4); margin-bottom:var(--sp-4); border: 2px solid var(--reward-gold);">
-                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-2);">Includes:</div>
-                <ul style="color:var(--text-secondary); font-size:var(--fs-sm); padding-left: var(--sp-4); line-height:1.6;">
-                    <li>No Ads</li>
-                    <li>Infinite Duel Energy</li>
-                    <li>Exclusive Mascot Items</li>
-                    <li>AI Grammar Assistant</li>
-                </ul>
+            <div class="card" style="text-align:left; padding:var(--sp-4); margin-bottom:var(--sp-4); border: 2px solid var(--primary);">
+                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; color:var(--primary);">
+                    ${{ en: 'How Coach works', ru: 'Как работает Coach', es: 'Cómo funciona Coach' }[_lang]}
+                </div>
+                <div style="color:var(--text-secondary); font-size:var(--fs-sm); line-height:1.8;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Remembers your mistakes across sessions', ru: 'Запоминает ошибки между сессиями', es: 'Recuerda tus errores entre sesiones' }[_lang]}</div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Spots recurring patterns in your speaking', ru: 'Находит повторяющиеся паттерны в речи', es: 'Detecta patrones recurrentes al hablar' }[_lang]}</div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Creates practice from your real errors', ru: 'Создаёт практику из реальных ошибок', es: 'Crea práctica de tus errores reales' }[_lang]}</div>
+                    <div style="display:flex; align-items:center; gap:8px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Tracks what improves and what needs work', ru: 'Отслеживает, что улучшается, а что нет', es: 'Muestra qué mejora y qué necesita trabajo' }[_lang]}</div>
+                </div>
             </div>
             
-            <button class="btn btn--primary btn--full" id="activate-premium-btn" style="background:var(--reward-gold); color:white; border:none; box-shadow:0 4px 0 #b47306;">
-                Subscribe for $9.99/mo
+            <button class="btn btn--primary btn--full" id="activate-premium-btn">
+                ${{ en: 'Start Coaching · $12/mo', ru: 'Начать коучинг · $12/мес', es: 'Empezar Coaching · $12/mes' }[_lang]}
             </button>
+            <p style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">${LangyIcons.lock} ${{ en: 'Cancel anytime', ru: 'Отмена в любой момент', es: 'Cancela cuando quieras' }[_lang]}</p>
         </div>
     `;
     document.body.appendChild(overlay);
@@ -1003,9 +1013,9 @@ function showSubscription() {
     });
 
     overlay.querySelector('#activate-premium-btn').addEventListener('click', () => {
-        LangyState.subscription.plan = 'premium';
+        LangyState.subscription.plan = 'coach';
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
-        Anim.showToast(`Premium Activated! You are amazing. ${LangyIcons.sparkles}`);
+        Anim.showToast(`${{ en: 'Coach activated!', ru: 'Coach активирован!', es: '¡Coach activado!' }[_lang]} ${LangyIcons.sparkles}`);
 
         // Remove the banner from the profile screen
         const banner = document.getElementById('prof-premium-banner');

@@ -866,6 +866,62 @@ function renderTalkSummary(container) {
                     </p>
                 </div>
 
+                ${(() => {
+                    const _isCoach = ['coach', 'pro', 'premium'].includes(LangyState.subscription?.plan);
+                    // Coach: show pattern insight if detected
+                    if (_isCoach && feedback?.pattern) {
+                        return `
+                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+                    background:linear-gradient(135deg, rgba(124,108,246,0.06), rgba(124,108,246,0.02));
+                    border:1px solid rgba(124,108,246,0.15);
+                    animation:fadeInUp 0.5s var(--ease-out) 0.45s both;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-2);">
+                        <span style="color:#7C6CF6; font-size:16px;">${LangyIcons.barChart}</span>
+                        <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:#7C6CF6;">
+                            ${{ en: 'Coach insight', ru: 'Наблюдение Coach', es: 'Observación del Coach' }[lang]}
+                        </span>
+                    </div>
+                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
+                        ${escapeHTML(feedback.pattern)}
+                    </p>
+                </div>`;
+                    }
+                    // Free: soft coach prompt on session 2+ only
+                    if (!_isCoach && !isFirstSession && sessionCount >= 2 && qualified) {
+                        const firstWhy = corrections.length > 0 && corrections[0].why ? corrections[0].why : null;
+                        const _promptText = firstWhy
+                            ? {
+                                en: `You made corrections in ${firstWhy} today. With Coach, your AI would track this across sessions and build targeted practice.`,
+                                ru: `Сегодня были исправления: ${firstWhy}. С Coach твой ИИ будет отслеживать это между сессиями и создавать целенаправленную практику.`,
+                                es: `Hoy hubo correcciones en ${firstWhy}. Con Coach, tu IA rastreará esto entre sesiones y creará práctica enfocada.`,
+                            }[lang]
+                            : {
+                                en: `You've completed ${sessionCount} sessions. With Coach, your AI would remember all of them and help you improve faster.`,
+                                ru: `Ты завершил ${sessionCount} сессий. С Coach твой ИИ запомнит их все и поможет прогрессировать быстрее.`,
+                                es: `Has completado ${sessionCount} sesiones. Con Coach, tu IA recordaría todas y te ayudaría a mejorar más rápido.`,
+                            }[lang];
+                        return `
+                <div id="coach-upsell" style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+                    background:var(--bg-card); border-left:3px solid var(--primary);
+                    animation:fadeInUp 0.5s var(--ease-out) 0.45s both; cursor:pointer;"
+                    onclick="Router.navigate('subscription')">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-2);">
+                        <span style="color:var(--primary); font-size:16px;">${LangyIcons.brain}</span>
+                        <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--primary);">
+                            ${{ en: 'Session insight', ru: 'Наблюдение', es: 'Observación' }[lang]}
+                        </span>
+                    </div>
+                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-2); line-height:1.5;">
+                        ${_promptText}
+                    </p>
+                    <span style="font-size:var(--fs-xs); color:var(--primary); font-weight:var(--fw-bold);">
+                        ${{ en: 'Learn more →', ru: 'Подробнее →', es: 'Más info →' }[lang]}
+                    </span>
+                </div>`;
+                    }
+                    return '';
+                })()}
+
                 <!-- Actions -->
                 <div style="display:flex; gap:var(--sp-2); margin-bottom:var(--sp-3);">
                     <button class="btn btn--primary btn--full" id="talk-again">

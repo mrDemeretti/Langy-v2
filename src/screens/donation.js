@@ -4,11 +4,12 @@
 
 function renderDonation(container) {
     const params = Router.getParams();
-    const planId = params.plan || 'pro';
+    const planId = params.plan || 'coach';
 
     const plans = {
-        pro: { name: 'Pro Plan', price: '$25', period: '/month', type: 'sub' },
-        premium: { name: 'Premium Plan', price: '$70', period: '/month', type: 'sub' },
+        coach: { name: 'Langy Coach', price: '$12', period: '/month', type: 'sub' },
+        pro: { name: 'Pro Plan (Legacy)', price: '$25', period: '/month', type: 'sub' },
+        premium: { name: 'Premium Plan (Legacy)', price: '$70', period: '/month', type: 'sub' },
         langy_pack: {
             name: '1000 Langy',
             price: '$50',

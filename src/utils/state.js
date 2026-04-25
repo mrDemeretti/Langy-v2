@@ -34,9 +34,14 @@ const LangyState = {
         },
     },
 
-    // Subscription
+    // Subscription — 2-tier: free (null/'free') | coach ('coach', legacy: 'pro','premium')
     subscription: {
-        plan: null, // 'free', 'pro', 'premium'
+        plan: null, // null|'free' = free tier, 'coach' = paid coaching, 'pro'|'premium' = legacy→coach
+    },
+
+    // Coach data — cross-session coaching intelligence
+    coachData: {
+        mistakePatterns: [], // [{ tag: 'past_tense', count: 3, lastSeen: '2026-04-25', example: 'I go yesterday' }]
     },
 
     // Streak data

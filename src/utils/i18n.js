@@ -118,7 +118,7 @@ const LangyI18n = {
         'profile.badges': { en: 'CEFR Badges', ru: 'Бейджи CEFR', es: 'Insignias CEFR' },
         'profile.certificates': { en: 'Certificates', ru: 'Сертификаты', es: 'Certificados' },
         'profile.textbooks': { en: 'Textbooks', ru: 'Учебники', es: 'Libros de Texto' },
-        'profile.subscription': { en: 'Premium', ru: 'Премиум', es: 'Premium' },
+        'profile.subscription': { en: 'Langy Coach', ru: 'Langy Coach', es: 'Langy Coach' },
         'profile.reminder': { en: 'Daily Reminder', ru: 'Напоминание', es: 'Recordatorio Diario' },
         'profile.save_changes': { en: 'Save Changes', ru: 'Сохранить изменения', es: 'Guardar Cambios' },
 
@@ -209,7 +209,7 @@ const LangyI18n = {
         'shop.owned': { en: 'Owned', ru: 'Куплено', es: 'Comprado' },
 
         // ─── Subscription ───
-        'sub.title': { en: 'Go Premium', ru: 'Премиум подписка', es: 'Hazte Premium' },
+        'sub.title': { en: 'Langy Coach', ru: 'Langy Coach', es: 'Langy Coach' },
         'sub.monthly': { en: 'Monthly', ru: 'Месячная', es: 'Mensual' },
         'sub.yearly': { en: 'Yearly', ru: 'Годовая', es: 'Anual' },
         'sub.best_value': { en: 'Best Value', ru: 'Лучшая цена', es: 'Mejor Valor' },
