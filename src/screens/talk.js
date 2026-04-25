@@ -868,23 +868,9 @@ function renderTalkSummary(container) {
 
                 ${(() => {
                     const _isCoach = ['coach', 'pro', 'premium'].includes(LangyState.subscription?.plan);
-                    // Coach: show pattern insight if detected
-                    if (_isCoach && feedback?.pattern) {
-                        return `
-                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
-                    background:linear-gradient(135deg, rgba(124,108,246,0.06), rgba(124,108,246,0.02));
-                    border:1px solid rgba(124,108,246,0.15);
-                    animation:fadeInUp 0.5s var(--ease-out) 0.45s both;">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-2);">
-                        <span style="color:#7C6CF6; font-size:16px;">${LangyIcons.barChart}</span>
-                        <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:#7C6CF6;">
-                            ${{ en: 'Coach insight', ru: 'Наблюдение Coach', es: 'Observación del Coach' }[lang]}
-                        </span>
-                    </div>
-                    <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.5;">
-                        ${escapeHTML(feedback.pattern)}
-                    </p>
-                </div>`;
+                    // Coach: rich memory card via CoachIntel
+                    if (_isCoach && typeof CoachIntel !== 'undefined') {
+                        return CoachIntel.renderSummaryMemory(corrections, lang);
                     }
                     // Free: soft coach prompt on session 2+ only
                     if (!_isCoach && !isFirstSession && sessionCount >= 2 && qualified) {

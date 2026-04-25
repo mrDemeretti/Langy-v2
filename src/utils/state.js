@@ -41,7 +41,8 @@ const LangyState = {
 
     // Coach data — cross-session coaching intelligence
     coachData: {
-        mistakePatterns: [], // [{ tag: 'past_tense', count: 3, lastSeen: '2026-04-25', example: 'I go yesterday' }]
+        mistakePatterns: [], // [{ tag, count, firstSeen, lastSeen, example, prevCount }]
+        sessionLog: [],      // [{ date, tags: ['tense','articles'], sessionIndex }] — last 20 sessions
     },
 
     // Streak data

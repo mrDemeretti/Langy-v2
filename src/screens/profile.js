@@ -157,6 +157,11 @@ function renderProfile(container) {
             </div>`;
             })()}
 
+            ${(() => {
+                const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                return typeof CoachIntel !== 'undefined' ? CoachIntel.renderCoachNotes(_lang) : '';
+            })()}
+
             <!-- Settings Sections -->
             <div class="profile__sections">
 

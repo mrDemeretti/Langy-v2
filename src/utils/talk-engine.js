@@ -546,27 +546,45 @@ Rules:
 
     // ─── MISTAKE PATTERN TRACKING (Coach) ───
     function _updateMistakePatterns(corrections) {
-        if (!LangyState.coachData) LangyState.coachData = { mistakePatterns: [] };
+        if (!LangyState.coachData) LangyState.coachData = { mistakePatterns: [], sessionLog: [] };
         if (!LangyState.coachData.mistakePatterns) LangyState.coachData.mistakePatterns = [];
+        if (!LangyState.coachData.sessionLog) LangyState.coachData.sessionLog = [];
 
         const patterns = LangyState.coachData.mistakePatterns;
         const today = new Date().toISOString().split('T')[0];
+        const sessionTags = [];
 
         for (const c of corrections) {
             const tag = (c.tag || c.why || 'general').toLowerCase().replace(/\s+/g, '_');
+            sessionTags.push(tag);
             const existing = patterns.find(p => p.tag === tag);
             if (existing) {
+                existing.prevCount = existing.count; // snapshot before increment for trend detection
                 existing.count++;
                 existing.lastSeen = today;
                 existing.example = c.said || existing.example;
             } else {
-                patterns.push({ tag, count: 1, lastSeen: today, example: c.said || '' });
+                patterns.push({
+                    tag,
+                    count: 1,
+                    prevCount: 0,
+                    firstSeen: today,
+                    lastSeen: today,
+                    example: c.said || '',
+                });
             }
         }
 
         // Keep top 20 patterns by count
         patterns.sort((a, b) => b.count - a.count);
         LangyState.coachData.mistakePatterns = patterns.slice(0, 20);
+
+        // Session log: track which tags appeared per session
+        const sessionIndex = (LangyState.talkHistory || []).length;
+        LangyState.coachData.sessionLog.push({ date: today, tags: sessionTags, sessionIndex });
+        if (LangyState.coachData.sessionLog.length > 20) {
+            LangyState.coachData.sessionLog = LangyState.coachData.sessionLog.slice(-20);
+        }
     }
 
     // ─── SESSION MANAGEMENT ───

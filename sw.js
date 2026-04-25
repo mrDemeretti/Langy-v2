@@ -1,4 +1,4 @@
-const CACHE_NAME = 'langy-ai-v20';
+const CACHE_NAME = 'langy-ai-v21';
 const urlsToCache = [
   './',
   './index.html',
@@ -19,7 +19,8 @@ const urlsToCache = [
   './src/utils/widgets.js',
   './src/data/curriculum.js',
   './src/screens/calendar.js',
-  './src/utils/daily-speaking.js'
+  './src/utils/daily-speaking.js',
+  './src/utils/coach-intel.js'
 ];
 
 // Install: pre-cache critical assets & skip waiting
