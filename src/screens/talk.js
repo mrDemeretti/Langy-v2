@@ -130,72 +130,84 @@ function renderTalkSelect(container) {
                 <div style="width:36px;"></div>
             </div>
 
-            <div style="padding: var(--sp-4) var(--sp-5); overflow-y:auto; flex:1;">
+            <div style="overflow-y:auto; flex:1;">
 
-                <!-- Hero -->
-                <div style="text-align:center; margin-bottom:var(--sp-4);">
-                    <div style="font-size:36px; margin-bottom:var(--sp-2); color:var(--primary); opacity:0.8;">${LangyIcons.mic}</div>
-                    <h2 style="font-size:var(--fs-xl);">${i18n('talk.hero_title')}</h2>
-                    <p style="color:var(--text-tertiary); font-size:var(--fs-sm); margin-top:var(--sp-1);">${i18n('talk.hero_desc')}</p>
-                </div>
-
-                <!-- Mascot Selection -->
-                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px; font-size:var(--fs-sm); color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; font-weight:var(--fw-bold);">
-                    <span style="color:var(--primary);">${LangyIcons.users}</span> ${i18n('talk.choose_partner')}
-                </h4>
-                <div class="talk-mascots" id="talk-mascots">
-                    ${mascots
-                        .map(([id, m]) => {
-                            const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
+                <!-- Session Stage -->
+                <div class="talk-stage">
+                    <!-- Selected Mascot Hero -->
+                    <div class="talk-stage__mascot">
+                        ${(() => {
+                            const selId = ScreenState.get('talkMascot') ?? mascotId;
                             const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
-                            const isSelected = parseInt(id) === (ScreenState.get('talkMascot') ?? mascotId);
+                            const m = TalkEngine.personas[selId];
                             return `
-                            <div class="talk-mascot ${isSelected ? 'talk-mascot--active' : ''}" 
-                                 data-id="${id}" style="--mascot-color: ${colors[id]};">
-                                <div class="talk-mascot__avatar">
-                                    <img src="assets/mascots/${imgs[id]}.png" alt="${m.name}" 
-                                         onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:28px>${m.name[0]}</span>';">
-                                </div>
-                                <div class="talk-mascot__name">${m.name}</div>
-                                <div class="talk-mascot__style">${m.style}</div>
-                                ${isSelected ? `<div class="talk-mascot__check">${LangyIcons.check}</div>` : ''}
-                            </div>
-                        `;
-                        })
-                        .join('')}
+                                <img src="assets/mascots/${imgs[selId]}.png" alt="${m.name}"
+                                     style="width:100%; height:100%; object-fit:contain; animation: mascotIdle 4s ease-in-out infinite;"
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=font-size:48px;color:var(--primary)>${LangyIcons.mic}</div>';">
+                            `;
+                        })()}
+                    </div>
+                    <div style="text-align:center; margin-top:var(--sp-2);">
+                        <h2 style="font-size:var(--fs-xl); margin-bottom:2px;">${i18n('talk.hero_title')}</h2>
+                        <p style="color:var(--text-tertiary); font-size:var(--fs-sm);">${i18n('talk.hero_desc')}</p>
+                    </div>
                 </div>
 
-                <!-- Scenario Selection -->
-                <h4 style="margin:var(--sp-4) 0 var(--sp-3); display:flex; align-items:center; gap:8px; font-size:var(--fs-sm); color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; font-weight:var(--fw-bold);">
-                    <span style="color:var(--accent-dark);">${LangyIcons.map}</span> ${i18n('talk.choose_scenario')}
-                </h4>
-                <div class="talk-scenarios" id="talk-scenarios">
-                    ${scenarios
-                        .map((s, i) => {
-                            const isSelected = ScreenState.get('talkScenario', 'free') === s.id;
-                            return `
-                            <div class="talk-scenario ${isSelected ? 'talk-scenario--active' : ''}" data-id="${s.id}">
-                                <span class="talk-scenario__icon" style="color:${s.color};">${LangyIcons[s.icon] || LangyIcons.messageCircle}</span>
-                                <div class="talk-scenario__info">
-                                    <div class="talk-scenario__title">${s.title}</div>
-                                    <div class="talk-scenario__desc">${s.desc}</div>
-                                </div>
-                                ${isSelected ? `<span style="color:var(--primary);">${LangyIcons.check}</span>` : ''}
-                            </div>
-                        `;
-                        })
-                        .join('')}
-                </div>
+                <div style="padding: 0 var(--sp-5);">
 
-                <!-- Start Button -->
-                <div style="margin-top:var(--sp-5); padding-bottom:var(--sp-6);">
-                    <button class="btn btn--primary btn--xl btn--full" id="talk-start" 
-                            style="font-size:var(--fs-lg); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
-                        ${LangyIcons.mic} ${i18n('talk.start')}
-                    </button>
-                    <p style="text-align:center; font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
-                        ${i18n('talk.mic_hint')} · Works in Chrome/Edge/Safari
-                    </p>
+                    <!-- Partner Strip -->
+                    <div class="talk-partner-strip">
+                        ${mascots
+                            .map(([id, m]) => {
+                                const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
+                                const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+                                const isSelected = parseInt(id) === (ScreenState.get('talkMascot') ?? mascotId);
+                                return `
+                                <div class="talk-partner ${isSelected ? 'talk-partner--active' : ''}" 
+                                     data-id="${id}" style="--mascot-color: ${colors[id]};">
+                                    <div class="talk-partner__avatar">
+                                        <img src="assets/mascots/${imgs[id]}.png" alt="${m.name}" 
+                                             onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:16px>${m.name[0]}</span>';">
+                                    </div>
+                                    <span class="talk-partner__name">${m.name}</span>
+                                </div>
+                            `;
+                            })
+                            .join('')}
+                    </div>
+
+                    <!-- Scenario Selection -->
+                    <h4 style="margin:var(--sp-4) 0 var(--sp-2); font-size:var(--fs-xs); color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.5px; font-weight:var(--fw-bold);">
+                        ${LangyIcons.map} ${i18n('talk.choose_scenario')}
+                    </h4>
+                    <div class="talk-scenarios" id="talk-scenarios">
+                        ${scenarios
+                            .map((s, i) => {
+                                const isSelected = ScreenState.get('talkScenario', 'free') === s.id;
+                                return `
+                                <div class="talk-scenario ${isSelected ? 'talk-scenario--active' : ''}" data-id="${s.id}">
+                                    <span class="talk-scenario__icon" style="color:${s.color};">${LangyIcons[s.icon] || LangyIcons.messageCircle}</span>
+                                    <div class="talk-scenario__info">
+                                        <div class="talk-scenario__title">${s.title}</div>
+                                        <div class="talk-scenario__desc">${s.desc}</div>
+                                    </div>
+                                    ${isSelected ? `<span style="color:var(--primary);">${LangyIcons.check}</span>` : ''}
+                                </div>
+                            `;
+                            })
+                            .join('')}
+                    </div>
+
+                    <!-- Start Button -->
+                    <div style="margin-top:var(--sp-5); padding-bottom:var(--sp-6);">
+                        <button class="btn btn--primary btn--xl btn--full" id="talk-start" 
+                                style="font-size:var(--fs-lg); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
+                            ${LangyIcons.mic} ${i18n('talk.start')}
+                        </button>
+                        <p style="text-align:center; font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
+                            ${i18n('talk.mic_hint')} · Works in Chrome/Edge/Safari
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -207,7 +219,7 @@ function renderTalkSelect(container) {
         Router.navigate('home');
     });
 
-    container.querySelectorAll('.talk-mascot').forEach(el => {
+    container.querySelectorAll('.talk-partner').forEach(el => {
         el.addEventListener('click', () => {
             ScreenState.set('talkMascot', parseInt(el.dataset.id));
             if (typeof AudioUtils !== 'undefined') AudioUtils.playPop();
@@ -228,7 +240,7 @@ function renderTalkSelect(container) {
         renderTalk(container);
     });
 
-    setTimeout(() => Anim.staggerChildren(container, '.talk-mascot'), 50);
+    setTimeout(() => Anim.staggerChildren(container, '.talk-partner'), 50);
     setTimeout(() => Anim.staggerChildren(container, '.talk-scenario'), 100);
 }
 

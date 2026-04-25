@@ -58,6 +58,31 @@ function buildWeekProgress() {
     return Math.round((completed / 7) * 100);
 }
 
+// Compact streak dots for inline row
+function buildWeekDots() {
+    const today = new Date();
+    const activeDays = LangyState.streakData.activeDays || [];
+    const todayISO = today.toISOString().split('T')[0];
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        const isDone = activeDays.includes(iso);
+        const isToday = iso === todayISO;
+
+        let bg = 'var(--border-light)';
+        if (isDone) bg = 'var(--primary)';
+        else if (isToday) bg = 'var(--danger)';
+
+        html += `<span style="width:8px; height:8px; border-radius:50%; background:${bg};${isToday && !isDone ? ' box-shadow:0 0 0 2px rgba(239,68,68,0.2);' : ''}"></span>`;
+    }
+    return html;
+}
+
 function renderHome(container) {
     const { currencies, streakData, user } = LangyState;
 
@@ -82,20 +107,10 @@ function renderHome(container) {
             </div>
             </div>
 
-            <!-- Center Area with Mascot and Side Icons -->
-            <div class="home__center">
-                <!-- Left Side Icons -->
-                <div class="home__side-icons home__side-icons--left">
-                    <div class="circle-btn" id="nav-inventory" title="Inventory" style="color:#F59E0B;">
-                        ${LangyIcons.briefcase}
-                    </div>
-                    <div class="circle-btn" id="nav-events" title="Events" style="color:#8B5CF6;">
-                        ${LangyIcons.sparkles}
-                    </div>
-                </div>
-
-                <!-- Mascot Area (Dynamic PNG fallback) -->
-                <div class="home__mascot-area" id="home-mascot" style="position:relative; display:flex; justify-content:center; align-items:center;">
+            <!-- Hero Stage -->
+            <div class="home__stage">
+                <!-- Mascot Stage -->
+                <div class="home__mascot-stage" id="home-mascot">
                     <img 
                         id="mascot-img"
                         src="assets/mascots/${['zendaya', 'travis', 'matthew', 'omar'][LangyState.mascot.selected || 0]}.png" 
@@ -106,52 +121,35 @@ function renderHome(container) {
                     <div class="mascot-bubble" id="mascot-bubble" style="display:none;">
                         <span id="mascot-bubble-text"></span>
                     </div>
-                    <!-- Transparent overlay to safely capture clicks -->
+                    <!-- Tap zone -->
                     <div style="position:absolute; inset:0; z-index:10; cursor:pointer;" title="Tap to Talk!" id="mascot-tap-zone"></div>
                 </div>
 
-                <!-- Right Side Icons -->
-                <div class="home__side-icons home__side-icons--right">
-                    <div class="circle-btn" id="nav-duels" title="Duels" style="color:#EF4444;">
-                        ${LangyIcons.swords}
+                <!-- Streak Row (minimal) -->
+                <div class="home__streak-row" id="home-streak">
+                    <span class="fire-animated ${streakData.days > 0 ? 'fire-animated--active' : 'fire-animated--inactive'}" style="font-size:18px;">${LangyIcons.flame}</span>
+                    <span style="font-weight:var(--fw-black); font-size:var(--fs-md);">${streakData.days > 0 ? streakData.days : '0'}</span>
+                    <div class="home__streak-dots">
+                        ${buildWeekDots()}
                     </div>
-                    <div class="circle-btn" id="nav-shop" title="Shop" style="color:#3B82F6;">
-                        ${LangyIcons.shoppingBag}
-                    </div>
+                    <span style="color:var(--text-tertiary); font-size:var(--fs-xs); margin-left:auto;">${LangyIcons.arrow}</span>
                 </div>
             </div>
 
-            <!-- Streak Block -->
-            <div class="home__streak" id="home-streak">
-                <div class="home__streak-top">
-                    <div class="home__streak-header">
-                        <span class="fire-animated ${streakData.days > 0 ? 'fire-animated--active' : 'fire-animated--inactive'}">${LangyIcons.flame}</span>
-                        <span style="font-size: var(--fs-lg); font-weight: var(--fw-black);">${streakData.days > 0 ? streakData.days + ' ' + i18n('home.streak') : i18n('general.start') + '!'}</span>
-                    </div>
-                    <div class="badge badge--accent">${i18n('general.details')} ${LangyIcons.arrow}</div>
-                </div>
-                
-                <div class="streak-week">
-                    <div class="streak-week__track">
-                        <div class="streak-week__fill" style="width: ${buildWeekProgress()}%;"></div>
-                    </div>
-                    <div class="streak-week__days">
-                        ${buildWeekDays()}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Daily Speaking Ritual -->
+            <!-- Next Action Zone -->
+            <div class="home__next-action">
+                <!-- Daily Speaking (if active) -->
                 ${typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
 
-            <!-- Main CTA -->
-            <div class="home__main-cta" style="padding: 0 var(--sp-5) var(--sp-2);">
-                <button id="nav-learning" class="btn btn--primary btn--xl btn--full" style="font-size: var(--fs-lg); display: flex; align-items: center; justify-content: center; gap: var(--sp-2); flex-direction: ${user.hasCompletedPlacement ? 'column' : 'row'}; padding: ${user.hasCompletedPlacement ? '14px 24px' : ''};">
-                    ${!user.hasCompletedPlacement ? i18n('learn.title') + ' ' + LangyIcons.fileText : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`}
-                </button>
+                <!-- Main CTA -->
+                <div style="padding: 0 var(--sp-5) var(--sp-2);">
+                    <button id="nav-learning" class="btn btn--primary btn--xl btn--full" style="font-size: var(--fs-lg); display: flex; align-items: center; justify-content: center; gap: var(--sp-2); flex-direction: ${user.hasCompletedPlacement ? 'column' : 'row'}; padding: ${user.hasCompletedPlacement ? '14px 24px' : ''};">
+                        ${!user.hasCompletedPlacement ? i18n('learn.title') + ' ' + LangyIcons.fileText : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`}
+                    </button>
+                </div>
             </div>
 
-            <!-- Action Buttons -->
+            <!-- Action Grid -->
             <div class="home__actions ${!user.hasCompletedPlacement ? 'home__actions--locked' : ''}">
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
                     <div class="action-card__icon action-card__icon--purple">${LangyIcons.book}</div>
@@ -173,6 +171,16 @@ function renderHome(container) {
                     <div class="action-card__title">${i18n('home.daily')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
                     <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : i18n('home.events_desc')}</div>
                 </div>
+                <div class="action-card" id="nav-inventory">
+                    <div class="action-card__icon action-card__icon--gold">${LangyIcons.briefcase}</div>
+                    <div class="action-card__title">Inventory</div>
+                    <div class="action-card__desc">Your items</div>
+                </div>
+                <div class="action-card" id="nav-shop">
+                    <div class="action-card__icon action-card__icon--blue">${LangyIcons.shoppingBag}</div>
+                    <div class="action-card__title">Shop</div>
+                    <div class="action-card__desc">Get rewards</div>
+                </div>
             </div>
         </div>
     `;
@@ -184,8 +192,6 @@ function renderHome(container) {
         'nav-results': 'results',
         'nav-daily': 'daily',
         'nav-inventory': 'inventory',
-        'nav-duels': 'duels',
-        'nav-events': 'events',
         'nav-shop': 'shop',
         'home-profile': 'profile',
     };
@@ -196,9 +202,8 @@ function renderHome(container) {
         if (!user.hasCompletedPlacement) {
             Router.navigate('placement-test');
         } else {
-            const sideIcons = container.querySelectorAll('.circle-btn');
-            const actionCards = container.querySelectorAll('.action-card, .home__main-cta');
-            Anim.flyOut([...sideIcons, ...actionCards]);
+            const actionCards = container.querySelectorAll('.action-card');
+            Anim.flyOut([...actionCards]);
             setTimeout(() => Router.navigate('learning'), 500);
         }
     });
@@ -310,16 +315,15 @@ function renderHome(container) {
             mascotTapCount = 0;
             ScreenState.set('talkMascot', mascotId); // Pre-select current mascot
             ScreenState.remove('talkView'); // Start at selection screen
-            const sideIcons = container.querySelectorAll('.circle-btn');
             const actionCards = container.querySelectorAll('.action-card');
-            Anim.flyOut([...sideIcons, ...actionCards]);
+            Anim.flyOut([...actionCards]);
             setTimeout(() => Router.navigate('talk'), 500);
         }
     });
 
     // Animate entry
     setTimeout(() => {
-        Anim.staggerChildren(container, '.action-card, .circle-btn', 80);
+        Anim.staggerChildren(container, '.action-card', 80);
     }, 100);
 
     // Pull-to-refresh

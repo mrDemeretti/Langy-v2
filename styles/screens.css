@@ -254,29 +254,29 @@
     gap: var(--sp-2);
 }
 
-.home__center {
+/* ─── Hero Stage ─── */
+.home__stage {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding: var(--sp-12) var(--sp-6) var(--sp-4);
-    min-height: 420px;
-    justify-content: flex-end;
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, var(--bg) 100%),
+    padding: 60px var(--sp-6) var(--sp-3);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.04) 0%, var(--bg) 70%),
                 url('../assets/cartoon_england_bg.png');
     background-size: cover;
     background-position: center bottom;
-    border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
 }
 
-.home__mascot-area {
-    width: 250px;
-    height: 320px;
+/* ─── Mascot Stage Container ─── */
+.home__mascot-stage {
+    width: 220px;
+    height: 280px;
     position: relative;
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Future 3D model will drop into this container */
 }
 
 /* Mascot Idle Animation — gentle breathing + sway */
@@ -339,135 +339,101 @@
     100% { transform: translateX(-50%) scale(0.8) translateY(-10px); opacity: 0; }
 }
 
-.home__side-icons {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-4);
-    z-index: 3;
-}
-
-.home__side-icons--left {
-    left: 8px;
-}
-
-.home__side-icons--right {
-    right: 8px;
-}
-
-.home__streak {
-    margin: var(--sp-3) var(--sp-5);
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    padding: var(--sp-3) var(--sp-4);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-light);
-    cursor: pointer;
-    transition: all var(--duration-normal) var(--ease-out);
-}
-.home__streak:active { transform: scale(0.98); }
-
-.home__streak-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--sp-2);
-}
-
-.home__streak-header {
+/* ─── Streak Row (compact) ─── */
+.home__streak-row {
     display: flex;
     align-items: center;
     gap: var(--sp-2);
-}
-
-/* ── Streak Week ── */
-.streak-week {
-    position: relative;
-    padding: var(--sp-2) 0 0;
-}
-
-.streak-week__track {
-    position: absolute;
-    top: calc(var(--sp-2) + 10px);
-    left: 16px;
-    right: 16px;
-    height: 2px;
-    background: var(--border-light);
+    width: 100%;
+    max-width: 340px;
+    padding: var(--sp-2) var(--sp-4);
+    background: var(--surface);
     border-radius: var(--radius-full);
-    z-index: 0;
+    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-out);
+    margin-top: var(--sp-2);
 }
+.home__streak-row:active { transform: scale(0.97); }
 
-.streak-week__fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--primary-light));
-    border-radius: var(--radius-full);
-    transition: width 1s var(--ease-out);
-}
-
-.streak-week__days {
+.home__streak-dots {
     display: flex;
-    justify-content: space-between;
-    position: relative;
-    z-index: 1;
+    gap: 4px;
+    align-items: center;
 }
 
-.streak-day {
+/* ─── Next Action Zone ─── */
+.home__next-action {
+    padding: var(--sp-3) 0 var(--sp-1);
+}
+
+/* ─── Action Grid ─── */
+.home__actions {
+    padding: var(--sp-2) var(--sp-5) var(--sp-6);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-2);
+}
+
+.action-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--sp-3);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    text-align: center;
+    gap: var(--sp-1);
+    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
 }
+.action-card:active { transform: scale(0.96); }
+.action-card:hover { box-shadow: var(--shadow-sm); border-color: var(--border); }
 
-.streak-day__dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 2px solid var(--border-light);
+.action-card__icon {
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0;
-    transition: all 0.3s;
+    border-radius: var(--radius-sm);
 }
+.action-card__icon--purple { background: rgba(124, 108, 246, 0.08); color: #7C6CF6; }
+.action-card__icon--green  { background: rgba(34, 197, 94, 0.08); color: #22C55E; }
+.action-card__icon--gold   { background: rgba(245, 158, 11, 0.08); color: #F59E0B; }
+.action-card__icon--blue   { background: rgba(59, 130, 246, 0.08); color: #3B82F6; }
 
-.streak-day span {
-    font-size: 9px;
-    color: var(--text-tertiary);
+.action-card__title {
+    font-size: var(--fs-xs);
     font-weight: var(--fw-bold);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    line-height: 1.3;
 }
 
-/* Done */
-.streak-day--done .streak-day__dot {
-    background: var(--primary);
-    border-color: var(--primary);
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
-}
-.streak-day--done span { color: var(--primary); }
-
-/* Active today */
-.streak-day--active .streak-day__dot {
-    background: var(--danger);
-    border-color: var(--danger);
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
-    animation: dotPulse 2s infinite;
-}
-.streak-day--active span { color: var(--danger); font-weight: var(--fw-black); }
-
-@keyframes dotPulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12); }
-    50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.04); }
+.action-card__desc {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    line-height: 1.3;
+    display: none; /* Compact mode: hide desc */
 }
 
-/* Reward (Sunday) */
-.streak-day--reward .streak-day__dot {
-    background: var(--reward-gold-bg);
-    border-color: var(--reward-gold);
-    font-size: 11px;
+/* Locked states */
+.action-card--locked {
+    opacity: 0.4;
+    background: var(--bg-alt);
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+.action-card--locked:active {
+    transform: none;
+}
+
+.home__actions--locked {
+    position: relative;
 }
 
 @keyframes pulseGlow {
@@ -480,70 +446,6 @@
     animation: streakFire 1.5s ease-in-out infinite;
     display: inline-block;
     font-size: 24px;
-}
-
-.home__actions {
-    padding: var(--sp-2) var(--sp-5) var(--sp-6);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--sp-3);
-}
-
-.action-card {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    padding: var(--sp-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
-    box-shadow: var(--shadow-xs);
-    border: 1px solid var(--border-light);
-    cursor: pointer;
-    transition: all var(--duration-normal) var(--ease-out);
-    -webkit-tap-highlight-color: transparent;
-}
-.action-card:active { transform: scale(0.97); }
-.action-card:hover { box-shadow: var(--shadow-sm); border-color: var(--border); }
-
-.action-card__icon {
-    font-size: 24px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-md);
-}
-.action-card__icon--purple { background: rgba(124, 108, 246, 0.08); color: #7C6CF6; }
-.action-card__icon--green  { background: rgba(34, 197, 94, 0.08); color: #22C55E; }
-.action-card__icon--gold   { background: rgba(245, 158, 11, 0.08); color: #F59E0B; }
-.action-card__icon--blue   { background: rgba(59, 130, 246, 0.08); color: #3B82F6; }
-
-.action-card__title {
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-bold);
-}
-
-.action-card__desc {
-    font-size: var(--fs-xs);
-    color: var(--text-tertiary);
-    line-height: 1.4;
-}
-
-/* Locked states */
-.action-card--locked {
-    opacity: 0.5;
-    background: var(--bg-alt);
-    border-style: dashed;
-    cursor: not-allowed;
-    filter: grayscale(0.4);
-}
-.action-card--locked:active {
-    transform: none;
-}
-
-.home__actions--locked {
-    position: relative;
 }
 
 /* ========== PLACEMENT TEST EXPANSION ========== */
@@ -4578,7 +4480,76 @@
    LANGY TALK — Voice Conversation UI
    ============================================ */
 
-/* ─── Mascot Selection Grid ─── */
+/* ─── Talk Stage (session-entry hero) ─── */
+.talk-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--sp-4) var(--sp-6) var(--sp-3);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.04) 0%, var(--bg) 80%);
+}
+
+.talk-stage__mascot {
+    width: 140px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Future 3D model will drop into this container */
+}
+
+/* ─── Partner Strip ─── */
+.talk-partner-strip {
+    display: flex;
+    gap: var(--sp-2);
+    padding: var(--sp-3) 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.talk-partner-strip::-webkit-scrollbar { display: none; }
+
+.talk-partner {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    min-width: 0;
+}
+.talk-partner:active { transform: scale(0.95); }
+.talk-partner--active {
+    border-color: var(--mascot-color);
+    background: color-mix(in srgb, var(--mascot-color) 6%, var(--surface));
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--mascot-color) 15%, transparent);
+}
+
+.talk-partner__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.talk-partner__avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.talk-partner__name {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+}
+
+/* ─── Scenario List ─── */
 .talk-mascots {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
