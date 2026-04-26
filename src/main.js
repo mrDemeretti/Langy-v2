@@ -3,6 +3,9 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof LangyMetrics !== 'undefined') {
+        LangyMetrics.init();
+    }
 
     // Initialize i18n
     if (typeof LangyI18n !== 'undefined') {
@@ -154,7 +157,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                     LangyCurriculum.restoreFromState();
                 }
 
-                startRoute = 'home';
+                if (typeof LangyState.user.firstSessionCompleted !== 'boolean') {
+                    LangyState.user.firstSessionCompleted = (LangyState.talkHistory || []).length > 0;
+                }
+                if (typeof LangyState.user.firstSpeakingScenarioStarted !== 'boolean') {
+                    LangyState.user.firstSpeakingScenarioStarted = LangyState.user.firstSessionCompleted;
+                }
+                if (!LangyState.user.firstSpeakingScenarioId) {
+                    LangyState.user.firstSpeakingScenarioId = 'coffee';
+                }
+
+                const isFirstJourney =
+                    LangyState.user?.hasCompletedOnboarding && LangyState.user?.firstSessionCompleted === false;
+
+                if (isFirstJourney) {
+                    const scenario = LangyState.user.firstSpeakingScenarioId || 'coffee';
+                    ScreenState.set('talkMascot', LangyState.mascot.selected || 0);
+                    ScreenState.set('talkScenario', scenario);
+                    ScreenState.set('firstTalkSession', !LangyState.user.firstSpeakingScenarioStarted);
+                    ScreenState.set('talkView', 'call');
+                    startRoute = 'talk';
+                } else {
+                    startRoute = 'home';
+                }
             }
         } catch (e) {
             console.error('DB init error:', e);

@@ -440,6 +440,9 @@ function renderOnboarding(container) {
             // For absolute beginners, use the friendliest scenario
             const scenario = userConfidence === 'zero' ? 'roommate' : (scenarioMap[userGoal] || 'coffee');
 
+            LangyState.user.firstSessionCompleted = false;
+            LangyState.user.firstSpeakingScenarioStarted = true;
+            LangyState.user.firstSpeakingScenarioId = scenario;
             ScreenState.set('talkMascot', selectedMascot);
             ScreenState.set('talkScenario', scenario);
             ScreenState.set('firstTalkSession', true);

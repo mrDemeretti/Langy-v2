@@ -10,11 +10,26 @@
 
 export default {
   async fetch(request, env) {
-    // CORS: разрешаем запросы с любого домена (для MVP)
+    const allowedOrigins = (env.ALLOWED_ORIGINS || 'https://langy.app,http://localhost:5173,http://127.0.0.1:5173')
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+    const origin = request.headers.get('Origin') || '';
+    const isAllowedOrigin = !origin || allowedOrigins.includes(origin);
+
+    if (!isAllowedOrigin) {
+      return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // CORS: разрешаем запросы только из allowlist
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': origin || allowedOrigins[0],
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Vary': 'Origin',
     };
 
     // Preflight запрос (браузер отправляет перед POST)
@@ -33,6 +48,12 @@ export default {
     try {
       // Читаем тело запроса от фронтенда
       const body = await request.json();
+      if (!body || typeof body !== 'object' || !Array.isArray(body.messages)) {
+        return new Response(JSON.stringify({ error: 'Invalid payload' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
       // Проксируем в OpenRouter, добавляя наш секретный ключ
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {

@@ -73,21 +73,51 @@ const LangyDB = {
 
     /* ========== PASSWORD HASHING ========== */
 
-    async hashPassword(password) {
-        const salted = password + '_langy_salt_2026';
-        // Web Crypto API (requires HTTPS or localhost)
-        if (window.crypto && window.crypto.subtle) {
+    _randomSalt(bytes = 16) {
+        if (window.crypto?.getRandomValues) {
+            const arr = new Uint8Array(bytes);
+            window.crypto.getRandomValues(arr);
+            return Array.from(arr)
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+        return `${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`;
+    },
+
+    async hashPassword(password, salt) {
+        const userSalt = salt || '_legacy_langy_salt_2026';
+
+        // PBKDF2 (preferred)
+        if (window.crypto?.subtle) {
             try {
-                const encoded = new TextEncoder().encode(salted);
-                const buffer = await crypto.subtle.digest('SHA-256', encoded);
-                return Array.from(new Uint8Array(buffer))
+                const enc = new TextEncoder();
+                const keyMaterial = await window.crypto.subtle.importKey(
+                    'raw',
+                    enc.encode(password),
+                    { name: 'PBKDF2' },
+                    false,
+                    ['deriveBits']
+                );
+                const bits = await window.crypto.subtle.deriveBits(
+                    {
+                        name: 'PBKDF2',
+                        hash: 'SHA-256',
+                        salt: enc.encode(userSalt),
+                        iterations: 150000,
+                    },
+                    keyMaterial,
+                    256
+                );
+                return Array.from(new Uint8Array(bits))
                     .map(b => b.toString(16).padStart(2, '0'))
                     .join('');
             } catch (e) {
                 /* fallback below */
             }
         }
-        // Fallback for file:// protocol
+
+        // Fallback for limited environments
+        const salted = `${password}::${userSalt}`;
         let hash = 0;
         for (let i = 0; i < salted.length; i++) {
             hash = (hash << 5) - hash + salted.charCodeAt(i);
@@ -108,11 +138,13 @@ const LangyDB = {
         if (!email || !email.trim()) throw new Error('Введите email');
         if (!password || password.length < 6) throw new Error('Пароль — минимум 6 символов');
 
-        const passwordHash = await this.hashPassword(password);
+        const passwordSalt = this._randomSalt();
+        const passwordHash = await this.hashPassword(password, passwordSalt);
         const user = {
             email: email.trim().toLowerCase(),
             name: name.trim(),
             passwordHash,
+            passwordSalt,
             avatar: null,
             hasCompletedPlacement: false,
             level: 'Testing...',
@@ -164,8 +196,20 @@ const LangyDB = {
         const user = await this._req('users', 'readonly', s => s.get(cleanEmail));
         if (!user) throw new Error('Пользователь не найден');
 
-        const passwordHash = await this.hashPassword(password);
-        if (user.passwordHash !== passwordHash) throw new Error('Неверный пароль');
+        const passwordHash = await this.hashPassword(password, user.passwordSalt);
+
+        // Legacy compatibility: users created before per-user salt migration
+        if (user.passwordHash !== passwordHash) {
+            const legacyHash = await this.hashPassword(password, '_langy_salt_2026');
+            if (user.passwordHash !== legacyHash) throw new Error('Неверный пароль');
+
+            // Transparent migration to per-user salt
+            const nextSalt = this._randomSalt();
+            const nextHash = await this.hashPassword(password, nextSalt);
+            user.passwordSalt = nextSalt;
+            user.passwordHash = nextHash;
+            await this._req('users', 'readwrite', s => s.put(user));
+        }
 
         await this._setSession(cleanEmail);
         this.currentUser = user;
@@ -299,10 +343,12 @@ const LangyDB = {
             return doc.body.textContent || '';
         }
 
-        // PDF (requires pdf.js CDN)
-        if (fmt === 'pdf' && typeof pdfjsLib !== 'undefined') {
+        // PDF (lazy-load pdf.js)
+        if (fmt === 'pdf') {
+            const pdfLib = await this._loadPdfJs();
+            if (!pdfLib) return '';
             const arrayBuf = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+            const pdf = await pdfLib.getDocument({ data: arrayBuf }).promise;
             let text = '';
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
@@ -312,17 +358,21 @@ const LangyDB = {
             return text;
         }
 
-        // DOCX (requires mammoth.js CDN)
-        if (fmt === 'docx' && typeof mammoth !== 'undefined') {
+        // DOCX (lazy-load mammoth.js)
+        if (fmt === 'docx') {
+            const mammothLib = await this._loadMammoth();
+            if (!mammothLib) return '';
             const arrayBuf = await file.arrayBuffer();
-            const result = await mammoth.extractRawText({ arrayBuffer: arrayBuf });
+            const result = await mammothLib.extractRawText({ arrayBuffer: arrayBuf });
             return result.value || '';
         }
 
-        // EPUB (requires JSZip CDN)
-        if (fmt === 'epub' && typeof JSZip !== 'undefined') {
+        // EPUB (lazy-load JSZip)
+        if (fmt === 'epub') {
+            const jszipLib = await this._loadJSZip();
+            if (!jszipLib) return '';
             const arrayBuf = await file.arrayBuffer();
-            const zip = await JSZip.loadAsync(arrayBuf);
+            const zip = await jszipLib.loadAsync(arrayBuf);
             let text = '';
             const htmlFiles = Object.keys(zip.files).filter(
                 p => p.endsWith('.html') || p.endsWith('.xhtml') || p.endsWith('.htm')
@@ -337,6 +387,44 @@ const LangyDB = {
 
         // Images & unsupported — no text extraction
         return '';
+    },
+
+    async _ensureScript(src, globalName) {
+        if (typeof window[globalName] !== 'undefined') return window[globalName];
+        if (document.querySelector(`script[data-langy-lib="${globalName}"]`)) {
+            return new Promise(resolve => {
+                const wait = () => {
+                    if (typeof window[globalName] !== 'undefined') return resolve(window[globalName]);
+                    setTimeout(wait, 30);
+                };
+                wait();
+            });
+        }
+        return new Promise(resolve => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.dataset.langyLib = globalName;
+            script.onload = () => resolve(window[globalName]);
+            script.onerror = () => resolve(undefined);
+            document.head.appendChild(script);
+        });
+    },
+
+    async _loadPdfJs() {
+        const lib = await this._ensureScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', 'pdfjsLib');
+        if (lib?.GlobalWorkerOptions) {
+            lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+        return lib;
+    },
+
+    async _loadMammoth() {
+        return this._ensureScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js', 'mammoth');
+    },
+
+    async _loadJSZip() {
+        return this._ensureScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', 'JSZip');
     },
 
     /* ========== AUTO-SAVE ========== */
@@ -365,8 +453,3 @@ const LangyDB = {
         }
     },
 };
-
-// Configure PDF.js worker (if loaded)
-if (typeof pdfjsLib !== 'undefined') {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-}

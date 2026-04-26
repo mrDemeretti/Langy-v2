@@ -250,6 +250,12 @@ function renderTalkSelect(container) {
 function renderTalkCall(container) {
     const mascotId = ScreenState.get('talkMascot') ?? LangyState.mascot?.selected ?? 0;
     const scenarioId = ScreenState.get('talkScenario', 'free');
+    if (!LangyState.user.firstSpeakingScenarioStarted) {
+        LangyState.user.firstSpeakingScenarioStarted = true;
+        if (!LangyState.user.firstSpeakingScenarioId) {
+            LangyState.user.firstSpeakingScenarioId = scenarioId;
+        }
+    }
     const session = TalkEngine.startSession(mascotId, scenarioId);
     const persona = session.persona;
     const scenario = session.scenario;
@@ -664,6 +670,12 @@ function renderTalkSummary(container) {
     const summary = ScreenState.get('talkSummary', {});
     const feedback = ScreenState.get('talkAIFeedback', null);
     const qualified = summary.qualifiedForRewards;
+    if (qualified && !LangyState.user.firstSessionCompleted) {
+        LangyState.user.firstSessionCompleted = true;
+        if (typeof LangyDB !== 'undefined' && LangyDB.currentUser) {
+            LangyDB.saveProgress().catch(() => {});
+        }
+    }
     const mins = Math.floor((summary.duration || 0) / 60);
     const secs = (summary.duration || 0) % 60;
     const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';

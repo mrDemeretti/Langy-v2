@@ -236,6 +236,33 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
         }
     },
 
+    async chatWithRetry(message, options = {}) {
+        const retries = Number.isInteger(options.retries) ? options.retries : 1;
+        let lastError = null;
+        for (let attempt = 0; attempt <= retries; attempt++) {
+            try {
+                return await this.chat(message, options.systemOverride || null, options.onChunk || null);
+            } catch (err) {
+                lastError = err;
+                if (typeof options.onRetry === 'function' && attempt < retries) {
+                    options.onRetry(attempt + 1, err);
+                }
+            }
+        }
+        throw lastError || new Error('AI temporarily unavailable');
+    },
+
+    async safeChat(message, options = {}) {
+        try {
+            return await this.chatWithRetry(message, options);
+        } catch (err) {
+            const fallback =
+                options.fallbackMessage ||
+                'Извините, сейчас есть проблемы с AI-сервисом. Попробуйте ещё раз через минуту.';
+            return fallback;
+        }
+    },
+
     // ─── GRADE HOMEWORK ───
     async gradeHomework(taskPrompt, userSubmission) {
         const gradingPrompt = `You are a strict English examiner. Grade this homework.
