@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Langy — AI-powered English learning with your personal mascot teacher. Gamified, adaptive, and fun.">
+    <meta name="theme-color" content="#10B981">
+    <title>Langy — AI English Teacher</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="manifest" href="/assets/manifest-BLz7fvfY.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon_32-Cm8M4wpm.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon_180-BdfvJASl.png">
+
+    <!-- Heavy textbook parsers are lazy-loaded on demand in src/utils/db.js -->
+  <link rel="stylesheet" crossorigin href="/assets/index-SG9QRUIg.css">
+</head>
+<body>
+    <div id="app">
+        <div id="screen-container"></div>
+    </div>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(reg => {
+                    console.log('SW registered!', reg);
+                }).catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
+
+    <!-- Core Utilities (must load first) -->
+    <script src="src/utils/config.js"></script>
+    <script src="src/utils/core.js"></script>
+    <script src="src/utils/metrics.js"></script>
+    <!-- Utilities -->
+    <script src="src/utils/icons.js"></script>
+    <script src="src/utils/i18n.js"></script>
+    <script src="src/utils/state.js"></script>
+    <script src="src/utils/db.js"></script>
+    <script src="src/utils/audio.js"></script>
+    <script src="src/utils/animations.js"></script>
+    <script src="src/data/curriculum.js"></script>
+    <script src="src/data/vocab-banks.js"></script>
+    <script src="src/data/grammar-banks.js"></script>
+    <script src="src/data/exercise-generator.js"></script>
+    <script src="src/utils/ai.js"></script>
+    <script src="src/utils/tutor.js"></script>
+    <script src="src/utils/widgets.js"></script>
+    <script src="src/utils/router.js"></script>
+
+    <!-- Screens -->
+    <script src="src/screens/auth.js"></script>
+    <script src="src/screens/mascot-select.js"></script>
+    <script src="src/screens/subscription.js"></script>
+    <script src="src/screens/interests.js"></script>
+    <script src="src/screens/onboarding.js"></script>
+    <script src="src/screens/placement-test.js"></script>
+    <script src="src/screens/home.js"></script>
+    <script src="src/screens/learning.js"></script>
+    <script src="src/screens/homework.js"></script>
+    <script src="src/screens/tests.js"></script>
+    <script src="src/screens/results.js"></script>
+    <script src="src/screens/daily.js"></script>
+    <script src="src/screens/shop.js"></script>
+    <script src="src/screens/inventory.js"></script>
+    <script src="src/screens/duels.js"></script>
+    <script src="src/screens/events.js"></script>
+    <script src="src/screens/profile.js"></script>
+    <script src="src/screens/streak.js"></script>
+    <script src="src/screens/calendar.js"></script>
+    <script src="src/screens/donation.js"></script>
+    <script src="src/utils/talk-engine.js"></script>
+    <script src="src/utils/daily-speaking.js"></script>
+    <script src="src/utils/coach-intel.js"></script>
+    <script src="src/screens/talk.js"></script>
+
+    <!-- Main Entry -->
+    <script src="src/main.js"></script>
+</body>
+</html>
