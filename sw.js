@@ -45,32 +45,69 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch: NETWORK FIRST strategy
-// Always try the network; fall back to cache only if offline
+const STATIC_EXT_RE = /\.(?:css|js|png|jpg|jpeg|gif|svg|webp|ico|woff2?|ttf)$/i;
+const NETWORK_TIMEOUT_MS = 3500;
+
+function withTimeout(promise, timeoutMs) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs)),
+  ]);
+}
+
+// Fetch strategy:
+// - HTML: network-first with timeout fallback
+// - Static assets: cache-first with background refresh
+// - Other GET: network-first fallback to cache
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   // Skip API calls entirely
-  if (event.request.url.includes('openrouter.ai')) return;
+  if (event.request.url.includes('openrouter.ai') || event.request.url.includes('workers.dev')) return;
+
+  const accept = event.request.headers.get('accept') || '';
+  const isHTML = accept.includes('text/html');
+  const isStatic = STATIC_EXT_RE.test(new URL(event.request.url).pathname);
+
+  if (isHTML) {
+    event.respondWith(
+      withTimeout(fetch(event.request), NETWORK_TIMEOUT_MS)
+        .then(networkRes => {
+          const clone = networkRes.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return networkRes;
+        })
+        .catch(() =>
+          caches.match(event.request).then(cachedRes => cachedRes || caches.match('./index.html'))
+        )
+    );
+    return;
+  }
+
+  if (isStatic) {
+    event.respondWith(
+      caches.match(event.request).then(cachedRes => {
+        const refresh = fetch(event.request)
+          .then(networkRes => {
+            const clone = networkRes.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+            return networkRes;
+          })
+          .catch(() => cachedRes);
+        return cachedRes || refresh;
+      })
+    );
+    return;
+  }
 
   event.respondWith(
     fetch(event.request)
       .then(networkRes => {
-        // Got a fresh response — update the cache
         const clone = networkRes.clone();
         caches.open(CACHE_NAME).then(cache => {
           cache.put(event.request, clone);
         });
         return networkRes;
       })
-      .catch(() => {
-        // Offline — serve from cache
-        return caches.match(event.request).then(cachedRes => {
-          if (cachedRes) return cachedRes;
-          // If HTML request, fallback to index
-          if (event.request.headers.get('accept')?.includes('text/html')) {
-            return caches.match('./index.html');
-          }
-        });
-      })
+      .catch(() => caches.match(event.request))
   );
 });

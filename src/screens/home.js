@@ -85,6 +85,17 @@ function buildWeekDots() {
 
 function renderHome(container) {
     const { currencies, streakData, user } = LangyState;
+    if (typeof user.firstSessionCompleted !== 'boolean') {
+        user.firstSessionCompleted = (LangyState.talkHistory || []).length > 0;
+    }
+    if (typeof user.firstSpeakingScenarioStarted !== 'boolean') {
+        user.firstSpeakingScenarioStarted = user.firstSessionCompleted;
+    }
+    if (!user.firstSpeakingScenarioId) {
+        user.firstSpeakingScenarioId = 'coffee';
+    }
+    const isFirstJourney = !!user.hasCompletedOnboarding && !user.firstSessionCompleted;
+    const firstScenario = user.firstSpeakingScenarioId || 'coffee';
 
     container.innerHTML = `
         <div class="screen screen--no-pad home">
@@ -139,17 +150,27 @@ function renderHome(container) {
             <!-- Next Action Zone -->
             <div class="home__next-action">
                 <!-- Daily Speaking (if active) -->
-                ${typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
+                ${!isFirstJourney && typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
 
                 <!-- Main CTA -->
                 <div style="padding: 0 var(--sp-5) var(--sp-2);">
                     <button id="nav-learning" class="btn btn--primary btn--xl btn--full" style="font-size: var(--fs-lg); display: flex; align-items: center; justify-content: center; gap: var(--sp-2); flex-direction: ${user.hasCompletedPlacement ? 'column' : 'row'}; padding: ${user.hasCompletedPlacement ? '14px 24px' : ''};">
-                        ${!user.hasCompletedPlacement ? i18n('learn.title') + ' ' + LangyIcons.fileText : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`}
+                        ${
+                            isFirstJourney
+                                ? `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.mic}</span> ${typeof i18n !== 'undefined' ? i18n('talk.start') : 'Start speaking'}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${typeof i18n !== 'undefined' ? i18n('talk.choose_scenario') : 'Guided scenario'}: ${firstScenario}</div>`
+                                : !user.hasCompletedPlacement
+                                ? i18n('learn.title') + ' ' + LangyIcons.fileText
+                                : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`
+                        }
                     </button>
                 </div>
             </div>
 
             <!-- Action Grid -->
+            ${
+                isFirstJourney
+                    ? ''
+                    : `
             <div class="home__actions ${!user.hasCompletedPlacement ? 'home__actions--locked' : ''}">
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
                     <div class="action-card__icon action-card__icon--purple">${LangyIcons.book}</div>
@@ -182,6 +203,8 @@ function renderHome(container) {
                     <div class="action-card__desc">Get rewards</div>
                 </div>
             </div>
+            `
+            }
         </div>
     `;
 
@@ -199,6 +222,14 @@ function renderHome(container) {
     // Main CTA button
     container.querySelector('#nav-learning')?.addEventListener('click', e => {
         Anim.ripple(e);
+        if (isFirstJourney) {
+            ScreenState.set('talkMascot', LangyState.mascot.selected || 0);
+            ScreenState.set('talkScenario', firstScenario);
+            ScreenState.set('firstTalkSession', !user.firstSpeakingScenarioStarted);
+            ScreenState.set('talkView', 'call');
+            Router.navigate('talk');
+            return;
+        }
         if (!user.hasCompletedPlacement) {
             Router.navigate('placement-test');
         } else {
