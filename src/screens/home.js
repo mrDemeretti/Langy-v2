@@ -206,13 +206,6 @@ function renderHome(container) {
                             : !user.hasCompletedPlacement
                               ? i18n('learn.title') + ' ' + LangyIcons.fileText
                               : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`}
-                        ${
-                            isFirstJourney
-                                ? `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.mic}</span> ${typeof i18n !== 'undefined' ? i18n('talk.start') : 'Start speaking'}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${typeof i18n !== 'undefined' ? i18n('talk.choose_scenario') : 'Guided scenario'}: ${firstScenario}</div>`
-                                : !user.hasCompletedPlacement
-                                ? i18n('learn.title') + ' ' + LangyIcons.fileText
-                                : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`
-                        }
                     </button>
                 </div>
             </div>
@@ -288,15 +281,6 @@ function renderHome(container) {
             }
             Router.navigate('talk');
         } else if (!user.hasCompletedPlacement) {
-        if (isFirstJourney) {
-            ScreenState.set('talkMascot', LangyState.mascot.selected || 0);
-            ScreenState.set('talkScenario', firstScenario);
-            ScreenState.set('firstTalkSession', !user.firstSpeakingScenarioStarted);
-            ScreenState.set('talkView', 'call');
-            Router.navigate('talk');
-            return;
-        }
-        if (!user.hasCompletedPlacement) {
             Router.navigate('placement-test');
         } else {
             const actionCards = container.querySelectorAll('.action-card');
