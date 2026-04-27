@@ -109,7 +109,6 @@ function renderHome(container) {
     const recommendedScenario = isBeforeFirstSession
         ? firstScenario
         : nextScenarioByGoal[user.goal] || 'coffee';
-    const isFirstJourney = !!user.hasCompletedOnboarding && !user.firstSessionCompleted;
     const firstScenario = user.firstSpeakingScenarioId || 'coffee';
 
     container.innerHTML = `
