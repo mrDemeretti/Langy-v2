@@ -85,9 +85,21 @@ function buildWeekDots() {
 
 function renderHome(container) {
     const { currencies, streakData, user } = LangyState;
+    if (typeof user.firstSessionCompleted !== 'boolean') {
+        user.firstSessionCompleted = (LangyState.talkHistory || []).length > 0;
+    }
+    if (typeof user.firstSpeakingScenarioStarted !== 'boolean') {
+        user.firstSpeakingScenarioStarted = user.firstSessionCompleted;
+    }
+    if (!user.firstSpeakingScenarioId) {
+        user.firstSpeakingScenarioId = 'coffee';
+    }
+
     const talkSessions = (LangyState.talkHistory || []).length;
+    const isFirstJourney = !user.hasCompletedOnboarding && !user.firstSessionCompleted;
     const isBeforeFirstSession = !user.firstSessionCompleted;
-    const isEarlyJourney = isBeforeFirstSession || talkSessions < 3;
+    const isEarlyJourney = isFirstJourney || isBeforeFirstSession || talkSessions < 3;
+    const firstScenario = user.firstSpeakingScenarioId || 'coffee';
     const nextScenarioByGoal = {
         speak: 'coffee',
         work: 'interview',
@@ -95,7 +107,7 @@ function renderHome(container) {
         exam: 'free',
     };
     const recommendedScenario = isBeforeFirstSession
-        ? LangyState.user.firstSpeakingScenarioId || 'coffee'
+        ? firstScenario
         : nextScenarioByGoal[user.goal] || 'coffee';
 
     container.innerHTML = `
@@ -173,7 +185,7 @@ function renderHome(container) {
                 `
                         : `
                 <!-- Daily Speaking (if active) -->
-                ${typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
+                ${!isFirstJourney && typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
                 `
                 }
 
