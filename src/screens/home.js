@@ -94,14 +94,28 @@ function renderHome(container) {
     if (!user.firstSpeakingScenarioId) {
         user.firstSpeakingScenarioId = 'coffee';
     }
-    const isFirstJourney = !!user.hasCompletedOnboarding && !user.firstSessionCompleted;
+
+    const talkSessions = (LangyState.talkHistory || []).length;
+    const isFirstJourney = !user.hasCompletedOnboarding && !user.firstSessionCompleted;
+    const isBeforeFirstSession = !user.firstSessionCompleted;
+    const isEarlyJourney = isFirstJourney || isBeforeFirstSession || talkSessions < 3;
+    const firstScenario = user.firstSpeakingScenarioId || 'coffee';
+    const nextScenarioByGoal = {
+        speak: 'coffee',
+        work: 'interview',
+        travel: 'airport',
+        exam: 'free',
+    };
+    const recommendedScenario = isBeforeFirstSession
+        ? firstScenario
+        : nextScenarioByGoal[user.goal] || 'coffee';
     const firstScenario = user.firstSpeakingScenarioId || 'coffee';
 
     container.innerHTML = `
         <div class="screen screen--no-pad home">
             <!-- Top Bar -->
             <div class="home__topbar">
-                <div class="home__coins">
+                <div class="home__coins" style="${isEarlyJourney ? 'opacity:0.6;' : ''}">
                     <div class="coin" id="coin-langy" style="cursor:pointer; transition:transform 0.2s;" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">
                         <div class="coin__icon coin__icon--gold" style="color:white; font-size:12px;">${LangyIcons.coins}</div>
                         <span id="langy-count">${currencies.langy}</span>
@@ -149,12 +163,50 @@ function renderHome(container) {
 
             <!-- Next Action Zone -->
             <div class="home__next-action">
+                ${
+                    isEarlyJourney
+                        ? `
+                <div class="card" style="margin:0 var(--sp-5) var(--sp-3); padding:var(--sp-3) var(--sp-4); border:1px solid var(--border); background:var(--bg-card);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);">
+                        <div>
+                            <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">
+                                ${isBeforeFirstSession
+                                    ? ({ en: 'First speaking session', ru: 'Первая разговорная сессия', es: 'Primera sesión de speaking' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])
+                                    : ({ en: 'First-week momentum', ru: 'Фокус первой недели', es: 'Impulso de la primera semana' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])}
+                            </div>
+                            <div style="font-weight:var(--fw-bold);">
+                                ${isBeforeFirstSession
+                                    ? ({ en: 'Step 1/3', ru: 'Шаг 1/3', es: 'Paso 1/3' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])
+                                    : ({ en: `Session ${Math.max(1, talkSessions + 1)} of 3`, ru: `Сессия ${Math.max(1, talkSessions + 1)} из 3`, es: `Sesión ${Math.max(1, talkSessions + 1)} de 3` }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])}
+                            </div>
+                        </div>
+                        <span style="font-size:var(--fs-xs); color:var(--text-tertiary);">${LangyIcons.target}</span>
+                    </div>
+                </div>
+                `
+                        : `
                 <!-- Daily Speaking (if active) -->
                 ${!isFirstJourney && typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
+                `
+                }
 
                 <!-- Main CTA -->
                 <div style="padding: 0 var(--sp-5) var(--sp-2);">
                     <button id="nav-learning" class="btn btn--primary btn--xl btn--full" style="font-size: var(--fs-lg); display: flex; align-items: center; justify-content: center; gap: var(--sp-2); flex-direction: ${user.hasCompletedPlacement ? 'column' : 'row'}; padding: ${user.hasCompletedPlacement ? '14px 24px' : ''};">
+                        ${isEarlyJourney
+                            ? `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.mic}</span> ${
+                                  isBeforeFirstSession
+                                      ? ({ en: 'Start guided speaking', ru: 'Начать guided speaking', es: 'Iniciar speaking guiado' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])
+                                      : ({ en: 'Do your next speaking session', ru: 'Сделать следующую разговорную сессию', es: 'Haz tu siguiente sesión de speaking' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])
+                              }</div>
+                               <div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${
+                                   isBeforeFirstSession
+                                       ? ({ en: 'Short guided path', ru: 'Короткий guided путь', es: 'Ruta guiada corta' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])
+                                       : ({ en: 'Keep momentum with one focused talk', ru: 'Сохрани темп: одна фокусная сессия', es: 'Mantén el ritmo con una sesión enfocada' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'])
+                               }</div>`
+                            : !user.hasCompletedPlacement
+                              ? i18n('learn.title') + ' ' + LangyIcons.fileText
+                              : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`}
                         ${
                             isFirstJourney
                                 ? `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.mic}</span> ${typeof i18n !== 'undefined' ? i18n('talk.start') : 'Start speaking'}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${typeof i18n !== 'undefined' ? i18n('talk.choose_scenario') : 'Guided scenario'}: ${firstScenario}</div>`
@@ -167,6 +219,7 @@ function renderHome(container) {
             </div>
 
             <!-- Action Grid -->
+            ${isEarlyJourney ? '' : `
             ${
                 isFirstJourney
                     ? ''
@@ -202,6 +255,7 @@ function renderHome(container) {
                     <div class="action-card__title">Shop</div>
                     <div class="action-card__desc">Get rewards</div>
                 </div>
+            </div>`}
             </div>
             `
             }
@@ -222,6 +276,19 @@ function renderHome(container) {
     // Main CTA button
     container.querySelector('#nav-learning')?.addEventListener('click', e => {
         Anim.ripple(e);
+        if (isEarlyJourney) {
+            ScreenState.set('talkScenario', recommendedScenario);
+            ScreenState.set('talkMascot', LangyState.mascot.selected || 0);
+            if (isBeforeFirstSession) {
+                ScreenState.set('firstTalkSession', true);
+                ScreenState.remove('firstTalkStep');
+                ScreenState.remove('firstTalkResponses');
+            } else {
+                ScreenState.remove('firstTalkSession');
+                ScreenState.set('talkView', 'call');
+            }
+            Router.navigate('talk');
+        } else if (!user.hasCompletedPlacement) {
         if (isFirstJourney) {
             ScreenState.set('talkMascot', LangyState.mascot.selected || 0);
             ScreenState.set('talkScenario', firstScenario);
@@ -353,9 +420,11 @@ function renderHome(container) {
     });
 
     // Animate entry
-    setTimeout(() => {
-        Anim.staggerChildren(container, '.action-card', 80);
-    }, 100);
+    if (!isEarlyJourney) {
+        setTimeout(() => {
+            Anim.staggerChildren(container, '.action-card', 80);
+        }, 100);
+    }
 
     // Pull-to-refresh
     const homeScreen = container.querySelector('.home');
@@ -369,7 +438,7 @@ function renderHome(container) {
     }
 
     // ─── First-Time Onboarding Tooltips ───
-    if (!localStorage.getItem('langy_onboarding_done')) {
+    if (!isEarlyJourney && !localStorage.getItem('langy_onboarding_done')) {
         setTimeout(() => showOnboardingTooltips(container), 800);
     }
 }

@@ -698,6 +698,74 @@ function renderTalkSummary(container) {
     const pronLabels = { excellent: 'Excellent', good: 'Good', fair: 'Fair', needs_work: 'Needs Work' };
     const pronColors = { excellent: 'var(--primary)', good: '#4ADE80', fair: '#F59E0B', needs_work: '#EF4444' };
     const pronLevel = summary.pronunciationLevel || null;
+    const coachingFocus = ScreenState.get('coachLoopFocus', null);
+    const isCoachingRetrySession = !!ScreenState.get('coachLoopActive', false) && !!coachingFocus;
+
+    function detectWeakSpot() {
+        if (!corrections.length && !plainFeedback) return null;
+        const source = (corrections[0]?.why || corrections[0]?.better || plainFeedback || '').toLowerCase();
+        const said = corrections[0]?.said || '';
+        const better = corrections[0]?.better || '';
+
+        if (source.includes('article') || /\b(a|an|the)\b/.test(said.toLowerCase())) {
+            return {
+                tag: 'articles',
+                label: { en: 'articles (a / an / the)', ru: 'артикли (a / an / the)', es: 'artículos (a / an / the)' }[lang],
+                prompt: better || 'I saw a movie and the story was great.',
+            };
+        }
+        if (source.includes('tense') || source.includes('past') || source.includes('present')) {
+            return {
+                tag: 'verb_tense',
+                label: { en: 'verb tense consistency', ru: 'согласование времен', es: 'consistencia de tiempos verbales' }[lang],
+                prompt: better || 'Yesterday I went to work and finished my tasks.',
+            };
+        }
+        if (source.includes('preposition')) {
+            return {
+                tag: 'prepositions',
+                label: { en: 'prepositions', ru: 'предлоги', es: 'preposiciones' }[lang],
+                prompt: better || 'I am interested in learning languages.',
+            };
+        }
+        return {
+            tag: 'sentence_clarity',
+            label: { en: 'clear sentence structure', ru: 'ясная структура фразы', es: 'estructura clara de la frase' }[lang],
+            prompt: better || 'I want to practice speaking every day.',
+        };
+    }
+
+    const detectedWeakSpot = detectWeakSpot();
+    const activeWeakSpot = coachingFocus || detectedWeakSpot;
+    const focusRelatedCorrections = activeWeakSpot
+        ? corrections.filter(c => {
+              const text = `${c?.why || ''} ${c?.said || ''} ${c?.better || ''}`.toLowerCase();
+              return text.includes(activeWeakSpot.tag.split('_')[0]);
+          })
+        : [];
+    const retryOutcome = isCoachingRetrySession
+        ? focusRelatedCorrections.length === 0
+            ? {
+                  title: { en: 'Nice improvement!', ru: 'Отличный прогресс!', es: '¡Buen progreso!' }[lang],
+                  text: {
+                      en: `You improved ${activeWeakSpot?.label}. Keep this pattern in your next conversation.`,
+                      ru: `Ты улучшил(а) ${activeWeakSpot?.label}. Сохрани этот паттерн в следующем разговоре.`,
+                      es: `Mejoraste ${activeWeakSpot?.label}. Mantén este patrón en tu próxima conversación.`,
+                  }[lang],
+                  icon: LangyIcons.check,
+                  color: 'var(--primary)',
+              }
+            : {
+                  title: { en: 'Good retry. One more short practice.', ru: 'Хорошая попытка. Ещё немного практики.', es: 'Buen intento. Una práctica más.' }[lang],
+                  text: {
+                      en: `Focus again on ${activeWeakSpot?.label} in one short sentence.`,
+                      ru: `Сфокусируйся ещё раз на ${activeWeakSpot?.label} в одной короткой фразе.`,
+                      es: `Concéntrate otra vez en ${activeWeakSpot?.label} en una frase corta.`,
+                  }[lang],
+                  icon: LangyIcons.target,
+                  color: '#F59E0B',
+              }
+        : null;
 
     // Coaching next-step (personalized, not generic)
     const goal = LangyState.user?.goal || 'speak';
@@ -794,6 +862,57 @@ function renderTalkSummary(container) {
                             <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0; line-height:1.6;">
                                 ${escapeHTML(praise)}
                             </p>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+
+                ${!isCoachingRetrySession && activeWeakSpot ? `
+                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+                    background:rgba(124,108,246,0.05); border:1px solid rgba(124,108,246,0.2);
+                    animation:fadeInUp 0.5s var(--ease-out) 0.15s both;">
+                    <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
+                        <div style="width:32px; height:32px; border-radius:50%; background:rgba(124,108,246,0.12);
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#7C6CF6;">
+                            ${LangyIcons.target}
+                        </div>
+                        <div style="flex:1;">
+                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:#7C6CF6; margin-bottom:6px;">
+                                ${{ en: 'Coach focus for now', ru: 'Фокус коуча на сейчас', es: 'Enfoque del coach ahora' }[lang]}
+                            </div>
+                            <p style="font-size:var(--fs-sm); color:var(--text-secondary); margin:0 0 var(--sp-2);">
+                                ${{
+                                    en: `Let's improve: ${activeWeakSpot.label}.`,
+                                    ru: `Давай улучшим: ${activeWeakSpot.label}.`,
+                                    es: `Vamos a mejorar: ${activeWeakSpot.label}.`,
+                                }[lang]}
+                            </p>
+                            <p style="font-size:var(--fs-xs); color:var(--text-tertiary); margin:0 0 var(--sp-3);">
+                                ${{
+                                    en: `Retry line: "${escapeHTML(activeWeakSpot.prompt)}"`,
+                                    ru: `Фраза для повтора: "${escapeHTML(activeWeakSpot.prompt)}"`,
+                                    es: `Frase para reintento: "${escapeHTML(activeWeakSpot.prompt)}"`,
+                                }[lang]}
+                            </p>
+                            <button class="btn btn--sm btn--primary" id="coach-retry-now">
+                                ${LangyIcons.refreshCw} ${{ en: 'Retry this now', ru: 'Повторить сейчас', es: 'Reintentar ahora' }[lang]}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+
+                ${retryOutcome ? `
+                <div style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
+                    background:${retryOutcome.color}10; border:1px solid ${retryOutcome.color}30;">
+                    <div style="display:flex; align-items:flex-start; gap:var(--sp-3);">
+                        <div style="width:32px; height:32px; border-radius:50%; background:${retryOutcome.color}20;
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0; color:${retryOutcome.color};">
+                            ${retryOutcome.icon}
+                        </div>
+                        <div>
+                            <div style="font-weight:var(--fw-bold); color:${retryOutcome.color}; margin-bottom:4px;">${retryOutcome.title}</div>
+                            <p style="margin:0; font-size:var(--fs-sm); color:var(--text-secondary);">${retryOutcome.text}</p>
                         </div>
                     </div>
                 </div>
@@ -983,6 +1102,8 @@ function renderTalkSummary(container) {
     container.querySelector('#talk-again')?.addEventListener('click', () => {
         ScreenState.remove('coachFocus');
         ScreenState.remove('coachFocusTag');
+        ScreenState.remove('coachLoopActive');
+        ScreenState.remove('coachLoopFocus');
         if (isFirstSession) {
             ScreenState.set('talkView', 'select');
         } else {
@@ -995,7 +1116,19 @@ function renderTalkSummary(container) {
         ScreenState.remove('talkView');
         ScreenState.remove('coachFocus');
         ScreenState.remove('coachFocusTag');
+        ScreenState.remove('coachLoopActive');
+        ScreenState.remove('coachLoopFocus');
         Router.navigate('home');
+    });
+
+    container.querySelector('#coach-retry-now')?.addEventListener('click', () => {
+        if (!activeWeakSpot) return;
+        ScreenState.set('coachLoopFocus', activeWeakSpot);
+        ScreenState.set('coachLoopActive', true);
+        ScreenState.set('coachFocus', activeWeakSpot.label);
+        ScreenState.set('coachFocusTag', activeWeakSpot.tag);
+        ScreenState.set('talkView', 'call');
+        renderTalk(container);
     });
 
     // Coach: wire 'Practice this now' button from summary memory card

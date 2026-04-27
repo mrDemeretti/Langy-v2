@@ -21,6 +21,8 @@
         "ScreenState": "writable",
         "DeepTutor": "readonly",
         "TalkEngine": "readonly",
+        "DailySpeaking": "readonly",
+        "CoachIntel": "readonly",
         "WidgetRenderer": "readonly",
         "LangyAI": "readonly",
         "escapeHTML": "readonly",
