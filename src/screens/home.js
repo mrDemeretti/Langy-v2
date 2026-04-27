@@ -114,7 +114,7 @@ function renderHome(container) {
         <div class="screen screen--no-pad home">
             <!-- Top Bar -->
             <div class="home__topbar">
-                <div class="home__coins" style="${isEarlyJourney ? 'opacity:0.6;' : ''}">
+                <div class="home__coins">
                     <div class="coin" id="coin-langy" style="cursor:pointer; transition:transform 0.2s;" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">
                         <div class="coin__icon coin__icon--gold" style="color:white; font-size:12px;">${LangyIcons.coins}</div>
                         <span id="langy-count">${currencies.langy}</span>
@@ -184,8 +184,7 @@ function renderHome(container) {
                 </div>
                 `
                         : `
-                <!-- Daily Speaking (if active) -->
-                ${!isFirstJourney && typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
+                ${typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
                 `
                 }
 
@@ -211,11 +210,6 @@ function renderHome(container) {
             </div>
 
             <!-- Action Grid -->
-            ${isEarlyJourney ? '' : `
-            ${
-                isFirstJourney
-                    ? ''
-                    : `
             <div class="home__actions ${!user.hasCompletedPlacement ? 'home__actions--locked' : ''}">
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
                     <div class="action-card__icon action-card__icon--purple">${LangyIcons.book}</div>
@@ -247,10 +241,7 @@ function renderHome(container) {
                     <div class="action-card__title">Shop</div>
                     <div class="action-card__desc">Get rewards</div>
                 </div>
-            </div>`}
             </div>
-            `
-            }
         </div>
     `;
 
