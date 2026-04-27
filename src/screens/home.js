@@ -109,7 +109,6 @@ function renderHome(container) {
     const recommendedScenario = isBeforeFirstSession
         ? firstScenario
         : nextScenarioByGoal[user.goal] || 'coffee';
-    const firstScenario = user.firstSpeakingScenarioId || 'coffee';
 
     container.innerHTML = `
         <div class="screen screen--no-pad home">
