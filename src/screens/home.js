@@ -109,6 +109,8 @@ function renderHome(container) {
     const recommendedScenario = isBeforeFirstSession
         ? firstScenario
         : nextScenarioByGoal[user.goal] || 'coffee';
+    const isFirstJourney = !!user.hasCompletedOnboarding && !user.firstSessionCompleted;
+    const firstScenario = user.firstSpeakingScenarioId || 'coffee';
 
     container.innerHTML = `
         <div class="screen screen--no-pad home">
@@ -206,12 +208,23 @@ function renderHome(container) {
                             : !user.hasCompletedPlacement
                               ? i18n('learn.title') + ' ' + LangyIcons.fileText
                               : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`}
+                        ${
+                            isFirstJourney
+                                ? `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.mic}</span> ${typeof i18n !== 'undefined' ? i18n('talk.start') : 'Start speaking'}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${typeof i18n !== 'undefined' ? i18n('talk.choose_scenario') : 'Guided scenario'}: ${firstScenario}</div>`
+                                : !user.hasCompletedPlacement
+                                ? i18n('learn.title') + ' ' + LangyIcons.fileText
+                                : `<div style="display:flex; align-items:center; gap:var(--sp-2);"><span style="font-size: 22px; display:flex;">${LangyIcons.rocket}</span> ${i18n('home.continue')}</div><div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">${LangyState.progress.currentUnit || i18n('learn.next_lesson')}</div>`
+                        }
                     </button>
                 </div>
             </div>
 
             <!-- Action Grid -->
             ${isEarlyJourney ? '' : `
+            ${
+                isFirstJourney
+                    ? ''
+                    : `
             <div class="home__actions ${!user.hasCompletedPlacement ? 'home__actions--locked' : ''}">
                 <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
                     <div class="action-card__icon action-card__icon--purple">${LangyIcons.book}</div>
@@ -244,6 +257,9 @@ function renderHome(container) {
                     <div class="action-card__desc">Get rewards</div>
                 </div>
             </div>`}
+            </div>
+            `
+            }
         </div>
     `;
 
@@ -274,6 +290,15 @@ function renderHome(container) {
             }
             Router.navigate('talk');
         } else if (!user.hasCompletedPlacement) {
+        if (isFirstJourney) {
+            ScreenState.set('talkMascot', LangyState.mascot.selected || 0);
+            ScreenState.set('talkScenario', firstScenario);
+            ScreenState.set('firstTalkSession', !user.firstSpeakingScenarioStarted);
+            ScreenState.set('talkView', 'call');
+            Router.navigate('talk');
+            return;
+        }
+        if (!user.hasCompletedPlacement) {
             Router.navigate('placement-test');
         } else {
             const actionCards = container.querySelectorAll('.action-card');

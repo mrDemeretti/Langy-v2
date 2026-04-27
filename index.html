@@ -18,13 +18,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon_32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon_180.png">
 
-    <!-- Text Extraction Libraries (optional, for textbook parsing) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-    <!-- 3D Model Viewer for Mascot -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <!-- Heavy textbook parsers are lazy-loaded on demand in src/utils/db.js -->
 </head>
 <body>
     <div id="app">
@@ -45,6 +39,7 @@
     <!-- Core Utilities (must load first) -->
     <script src="src/utils/config.js"></script>
     <script src="src/utils/core.js"></script>
+    <script src="src/utils/metrics.js"></script>
     <!-- Utilities -->
     <script src="src/utils/icons.js"></script>
     <script src="src/utils/i18n.js"></script>

@@ -17,5 +17,10 @@ function loadScript(relativePath) {
 // Load files in dependency order (mimicking index.html script order)
 loadScript('src/utils/config.js');
 loadScript('src/utils/core.js');
+loadScript('src/utils/metrics.js');
 loadScript('src/utils/icons.js');
 loadScript('src/utils/state.js');
+loadScript('src/utils/db.js');
+loadScript('src/utils/ai.js');
+loadScript('src/utils/router.js');
+loadScript('src/screens/auth.js');

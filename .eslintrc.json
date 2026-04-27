@@ -52,6 +52,9 @@
         "firebase": "readonly",
         "showOnboardingTooltips": "readonly",
         "LangyWidgets": "readonly",
+        "DailySpeaking": "readonly",
+        "CoachIntel": "readonly",
+        "LangyMetrics": "readonly",
         "module": "readonly"
     },
     "parserOptions": {

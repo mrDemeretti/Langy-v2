@@ -4,6 +4,10 @@
 
 function renderAuth(container) {
     const isLogin = ScreenState.get('authMode', 'login') !== 'signup';
+    const isDevHost =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname === '';
 
     container.innerHTML = `
         <div class="screen auth">
@@ -61,11 +65,17 @@ function renderAuth(container) {
                 </button>
             </div>
             
+            ${
+                isDevHost
+                    ? `
             <div style="margin-top:var(--sp-4);">
                 <button type="button" class="btn btn--outline" id="auth-dev-login" style="width:100%; border-color:var(--primary); color:var(--primary);">
                     ${LangyIcons.zap} DEV FAST LOGIN (Skip Tests)
                 </button>
             </div>
+            `
+                    : ''
+            }
 
             <p class="auth__footer">
                 ${

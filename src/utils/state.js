@@ -13,6 +13,10 @@ const LangyState = {
         joinDate: '2025-12-01',
         avatar: null,
         hasCompletedPlacement: true,
+        hasCompletedOnboarding: false,
+        firstSessionCompleted: false,
+        firstSpeakingScenarioStarted: false,
+        firstSpeakingScenarioId: null,
         interests: [],
     },
 

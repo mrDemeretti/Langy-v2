@@ -1,0 +1,7 @@
+name = "langy-ai-proxy"
+main = "worker.js"
+compatibility_date = "2026-04-26"
+
+[vars]
+# Configure in Cloudflare dashboard or via GitHub secrets:
+# OPENROUTER_API_KEY, ALLOWED_ORIGINS
