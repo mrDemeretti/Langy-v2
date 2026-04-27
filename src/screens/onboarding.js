@@ -1,15 +1,17 @@
 /* ============================================
-   SCREEN: ONBOARDING — Quick Intent Setup
-   Welcome → Goal → Confidence → Context → Teacher
-   Gets user speaking in under 60 seconds.
+   SCREEN: ONBOARDING — Minimal First Session Setup
+   Goal → Confidence → Start speaking
    ============================================ */
 
 function renderOnboarding(container) {
-    const step = ScreenState.get('onboardingStep', 0);
+    const rawStep = ScreenState.get('onboardingStep', 1);
+    const step = Math.min(Math.max(rawStep, 1), 3);
     const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
-    const TOTAL_STEPS = 4; // 0=welcome, 1=goal, 2=confidence, 3=context, 4=teacher
+    const TOTAL_STEPS = 3; // 1=goal, 2=confidence, 3=start
 
-    // ─── Shared pill-selector renderer ───
+    if (rawStep !== step) ScreenState.set('onboardingStep', step);
+
+    // ─── Shared option-step renderer ───
     function renderPillStep(config) {
         const selected = ScreenState.get(config.stateKey, null);
 
@@ -77,47 +79,6 @@ function renderOnboarding(container) {
     }
 
     // ═══════════════════════════════════════════
-    // STEP 0: Single Welcome Screen
-    // ═══════════════════════════════════════════
-    if (step === 0) {
-        container.innerHTML = `
-            <div class="screen onboarding">
-                <div class="onboarding__slide" style="animation: fadeInUp 0.5s ease-out; text-align:center; padding-top:var(--sp-8);">
-                    <div style="margin-bottom:var(--sp-6);">
-                        <img src="assets/logo.png" alt="Langy"
-                             style="width:80px; height:auto; margin:0 auto var(--sp-4); display:block;"
-                             onerror="this.style.display='none'">
-                    </div>
-                    <div class="onboarding__emoji" style="font-size:48px; margin-bottom:var(--sp-4);">${LangyIcons.messageCircle}</div>
-                    <h1 class="onboarding__title">${{
-                        en: "Let's get you speaking",
-                        ru: 'Начнём говорить',
-                        es: 'Empecemos a hablar',
-                    }[lang]}</h1>
-                    <p class="onboarding__subtitle" style="max-width:300px; margin:var(--sp-3) auto 0;">${{
-                        en: '4 quick questions to set up your AI English teacher. Takes 30 seconds.',
-                        ru: '4 быстрых вопроса для настройки AI-учителя. Займёт 30 секунд.',
-                        es: '4 preguntas rápidas para configurar tu profesor IA. 30 segundos.',
-                    }[lang]}</p>
-                </div>
-
-                <div class="onboarding__bottom" style="padding:0 var(--sp-4);">
-                    <button class="btn btn--primary btn--lg btn--full onboarding__btn" id="onboarding-next">
-                        ${{ en: "Let's go", ru: 'Поехали', es: 'Vamos' }[lang]} ${LangyIcons.rocket}
-                    </button>
-                </div>
-            </div>
-        `;
-
-        container.querySelector('#onboarding-next').addEventListener('click', () => {
-            ScreenState.set('onboardingStep', 1);
-            renderOnboarding(container);
-        });
-
-        return;
-    }
-
-    // ═══════════════════════════════════════════
     // STEP 1: What's your goal?
     // ═══════════════════════════════════════════
     if (step === 1) {
@@ -135,13 +96,13 @@ function renderOnboarding(container) {
                 {
                     id: 'speak',
                     icon: LangyIcons.mic,
-                    label: { en: 'Start speaking confidently', ru: 'Заговорить уверенно', es: 'Hablar con confianza' }[lang],
+                    label: { en: 'Speak confidently', ru: 'Заговорить уверенно', es: 'Hablar con confianza' }[lang],
                     desc: { en: 'Real conversations from day one', ru: 'Реальные разговоры с первого дня', es: 'Conversaciones reales desde el día uno' }[lang],
                 },
                 {
                     id: 'work',
                     icon: LangyIcons.clipboard,
-                    label: { en: 'English for work', ru: 'Английский для работы', es: 'Inglés para el trabajo' }[lang],
+                    label: { en: 'Language for work', ru: 'Язык для работы', es: 'Idioma para el trabajo' }[lang],
                     desc: { en: 'Meetings, emails, presentations', ru: 'Встречи, письма, презентации', es: 'Reuniones, emails, presentaciones' }[lang],
                 },
                 {
@@ -158,7 +119,7 @@ function renderOnboarding(container) {
                 },
             ],
             onNext(val) {
-                // Map goal to interests for personalization
+                // Map goal to interests for lightweight personalization
                 const goalToInterests = {
                     speak: ['social', 'movies'],
                     work: ['business', 'tech'],
@@ -173,17 +134,17 @@ function renderOnboarding(container) {
     }
 
     // ═══════════════════════════════════════════
-    // STEP 2: How confident are you?
+    // STEP 2: Confidence self-estimate
     // ═══════════════════════════════════════════
     if (step === 2) {
         renderPillStep({
             stepLabel: `2 / ${TOTAL_STEPS}`,
             stateKey: 'intentConfidence',
-            title: { en: 'How\'s your English?', ru: 'Как у тебя с английским?', es: '¿Cómo está tu inglés?' }[lang],
+            title: { en: 'How confident do you feel?', ru: 'Насколько ты уверен(а)?', es: '¿Qué tan seguro/a te sientes?' }[lang],
             subtitle: {
-                en: 'No test needed — just be honest',
-                ru: 'Тест не нужен — просто честно',
-                es: 'Sin examen — solo sé honesto',
+                en: 'No test needed — pick your current level',
+                ru: 'Без теста — просто выбери свой уровень',
+                es: 'Sin prueba — elige tu nivel actual',
             }[lang],
             nextStep: 3,
             options: [
@@ -242,208 +203,71 @@ function renderOnboarding(container) {
     }
 
     // ═══════════════════════════════════════════
-    // STEP 3: What context?
+    // STEP 3: Final start CTA
     // ═══════════════════════════════════════════
     if (step === 3) {
-        renderPillStep({
-            stepLabel: `3 / ${TOTAL_STEPS}`,
-            stateKey: 'intentContext',
-            title: { en: 'What do you enjoy?', ru: 'Что тебе нравится?', es: '¿Qué te gusta?' }[lang],
-            subtitle: {
-                en: 'We\'ll use this in your conversations',
-                ru: 'Используем это в разговорах',
-                es: 'Lo usaremos en tus conversaciones',
-            }[lang],
-            nextStep: 4,
-            options: [
-                {
-                    id: 'movies',
-                    icon: LangyIcons.play,
-                    label: { en: 'Movies & TV shows', ru: 'Кино и сериалы', es: 'Películas y series' }[lang],
-                },
-                {
-                    id: 'tech',
-                    icon: LangyIcons.globe,
-                    label: { en: 'Tech & startups', ru: 'Технологии и стартапы', es: 'Tecnología y startups' }[lang],
-                },
-                {
-                    id: 'daily',
-                    icon: LangyIcons.sun,
-                    label: { en: 'Daily life & culture', ru: 'Быт и культура', es: 'Vida diaria y cultura' }[lang],
-                },
-                {
-                    id: 'sports',
-                    icon: LangyIcons.award,
-                    label: { en: 'Sports & fitness', ru: 'Спорт и фитнес', es: 'Deportes y fitness' }[lang],
-                },
-                {
-                    id: 'music',
-                    icon: LangyIcons.volume,
-                    label: { en: 'Music & art', ru: 'Музыка и искусство', es: 'Música y arte' }[lang],
-                },
-            ],
-            onNext(val) {
-                // Append context interest to existing list
-                const existing = LangyState.user.interests || [];
-                if (!existing.includes(val)) existing.push(val);
-                LangyState.user.interests = existing;
-                LangyState.user.context = val;
-            },
-        });
-        return;
-    }
-
-    // ═══════════════════════════════════════════
-    // STEP 4: Choose your teacher (mascot)
-    // ═══════════════════════════════════════════
-    if (step === 4) {
-        const mascots = [
-            {
-                id: 0,
-                name: 'Zendaya',
-                emoji: LangyIcons.sparkles,
-                desc: {
-                    en: 'Bright & inspiring. Makes learning stylish!',
-                    ru: 'Яркая и вдохновляющая!',
-                    es: 'Brillante e inspiradora!',
-                }[lang],
-                style: { en: 'Trendy', ru: 'Модная', es: 'Moderna' }[lang],
-                file: 'zendaya',
-            },
-            {
-                id: 1,
-                name: 'Travis',
-                emoji: LangyIcons.zap,
-                desc: {
-                    en: 'Energetic & fun. Teaches through culture.',
-                    ru: 'Энергичный! Учит через культуру.',
-                    es: 'Energético! Enseña con cultura.',
-                }[lang],
-                style: { en: 'Creative', ru: 'Креативный', es: 'Creativo' }[lang],
-                file: 'travis',
-            },
-            {
-                id: 2,
-                name: 'Matthew',
-                emoji: LangyIcons.play,
-                desc: {
-                    en: 'Calm & clear. Explains everything patiently.',
-                    ru: 'Спокойный и чёткий. Терпеливо объясняет.',
-                    es: 'Tranquilo y claro. Explica con paciencia.',
-                }[lang],
-                style: { en: 'Classic', ru: 'Классический', es: 'Clásico' }[lang],
-                file: 'matthew',
-            },
-            {
-                id: 3,
-                name: 'Omar',
-                emoji: LangyIcons.user,
-                desc: {
-                    en: 'Wise & supportive. Teaches through stories.',
-                    ru: 'Мудрый и поддерживающий. Учит через истории.',
-                    es: 'Sabio y motivador. Enseña con historias.',
-                }[lang],
-                style: { en: 'Wise', ru: 'Мудрый', es: 'Sabio' }[lang],
-                file: 'omar',
-            },
-        ];
-
-        const selectedMascot = ScreenState.get('selectedMascot', null);
-
         container.innerHTML = `
             <div class="screen onboarding">
-                <div class="onboarding__header">
-                    <div class="onboarding__step-badge">4 / ${TOTAL_STEPS}</div>
-                    <h2 class="onboarding__title" style="font-size: var(--fs-2xl);">${{
-                        en: 'Pick your teacher',
-                        ru: 'Выбери учителя',
-                        es: 'Elige tu profesor',
+                <div class="onboarding__slide" style="animation: fadeInUp 0.5s ease-out; text-align:center; padding-top:var(--sp-8);">
+                    <div style="margin-bottom:var(--sp-6);">
+                        <img src="assets/logo.png" alt="Langy"
+                             style="width:80px; height:auto; margin:0 auto var(--sp-4); display:block;"
+                             onerror="this.style.display='none'">
+                    </div>
+                    <div class="onboarding__step-badge" style="margin:0 auto var(--sp-3); width:max-content;">3 / ${TOTAL_STEPS}</div>
+                    <div class="onboarding__emoji" style="font-size:48px; margin-bottom:var(--sp-4);">${LangyIcons.messageCircle}</div>
+                    <h2 class="onboarding__title">${{
+                        en: 'Ready for your first guided speaking session?',
+                        ru: 'Готов(а) к первой разговорной сессии?',
+                        es: '¿Listo/a para tu primera sesión guiada?',
                     }[lang]}</h2>
-                    <p class="onboarding__desc">${{
-                        en: 'They\'ll guide all your conversations',
-                        ru: 'Они будут вести все твои разговоры',
-                        es: 'Guiarán todas tus conversaciones',
+                    <p class="onboarding__subtitle" style="max-width:340px; margin:var(--sp-3) auto 0;">${{
+                        en: 'Your coach will be selected automatically. You can change it later.',
+                        ru: 'Коуч будет выбран автоматически. Позже можно сменить.',
+                        es: 'Tu coach se elegirá automáticamente. Podrás cambiarlo después.',
                     }[lang]}</p>
                 </div>
 
-                <div class="onboarding__mascots" id="mascot-grid">
-                    ${mascots
-                        .map(
-                            m => `
-                        <div class="mascot-card ${selectedMascot === m.id ? 'mascot-card--selected' : ''}" data-id="${m.id}">
-                            <div class="mascot-card__avatar">
-                                <img src="assets/mascots/${m.file}.png" 
-                                     alt="${m.name}"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                     style="width:80px; height:80px; object-fit:contain;">
-                                <div class="mascot-card__emoji" style="display:none; font-size:48px; justify-content:center; align-items:center;">${m.emoji}</div>
-                            </div>
-                            <div class="mascot-card__info">
-                                <div class="mascot-card__name">${m.name}</div>
-                                <div class="mascot-card__style">${m.style}</div>
-                                <div class="mascot-card__desc">${m.desc}</div>
-                            </div>
-                            ${selectedMascot === m.id ? '<div class="mascot-card__check">' + LangyIcons.check + '</div>' : ''}
-                        </div>
-                    `
-                        )
-                        .join('')}
-                </div>
-
                 <div class="onboarding__bottom">
-                    <button class="btn btn--primary btn--lg btn--full onboarding__btn ${selectedMascot === null ? 'btn--disabled' : ''}"
-                            id="onboarding-finish" ${selectedMascot === null ? 'disabled' : ''}>
-                        ${{ en: 'Start learning', ru: 'Начать обучение', es: 'Empezar a aprender' }[lang]} ${LangyIcons.rocket}
+                    <button class="btn btn--primary btn--lg btn--full onboarding__btn" id="onboarding-finish">
+                        ${{ en: 'Start guided speaking', ru: 'Начать разговорную сессию', es: 'Iniciar sesión guiada' }[lang]} ${LangyIcons.rocket}
                     </button>
                 </div>
             </div>
         `;
 
-        container.querySelectorAll('.mascot-card').forEach(card => {
-            card.addEventListener('click', () => {
-                ScreenState.set('selectedMascot', parseInt(card.dataset.id));
-                renderOnboarding(container);
-            });
-        });
-
         container.querySelector('#onboarding-finish').addEventListener('click', () => {
-            LangyState.mascot.selected = selectedMascot;
-
             // Capture user context before clearing ScreenState
             const userGoal = ScreenState.get('intentGoal', 'speak');
             const userConfidence = ScreenState.get('intentConfidence', 'intermediate');
+            const defaultMascot = LangyState.mascot.selected ?? 0;
 
             // Clean up temp state
             ScreenState.clear();
 
             // Mark onboarding as done
             LangyState.user.hasCompletedOnboarding = true;
+            LangyState.mascot.selected = defaultMascot;
 
             // Save progress
             if (typeof LangyDB !== 'undefined') {
                 LangyDB.saveProgress().catch(() => {});
             }
 
-            const teacherName = ['Zendaya', 'Travis', 'Matthew', 'Omar'][selectedMascot];
-            Anim.showToast(
-                `${teacherName} ${{ en: 'is your teacher', ru: 'теперь твой учитель', es: 'es tu profesor' }[lang]}! ${LangyIcons.sparkles}`
-            );
+            Anim.showToast(`${{ en: 'Coach is ready!', ru: 'Коуч готов!', es: '¡Tu coach está listo!' }[lang]} ${LangyIcons.sparkles}`);
 
             // ─── SPEAKING-FIRST: Go directly into first talk session ───
             // Pre-configure the talk screen to skip the picker and start immediately
             const scenarioMap = {
-                speak: 'coffee',      // casual & approachable
-                work: 'interview',    // professional context
-                travel: 'airport',    // travel scenario
-                exam: 'free',         // flexible practice
+                speak: 'coffee', // casual & approachable
+                work: 'interview', // professional context
+                travel: 'airport', // travel scenario
+                exam: 'free', // flexible practice
             };
             // For absolute beginners, use the friendliest scenario
-            const scenario = userConfidence === 'zero' ? 'roommate' : (scenarioMap[userGoal] || 'coffee');
+            const scenario = userConfidence === 'zero' ? 'roommate' : scenarioMap[userGoal] || 'coffee';
 
-            LangyState.user.firstSessionCompleted = false;
-            LangyState.user.firstSpeakingScenarioStarted = true;
-            LangyState.user.firstSpeakingScenarioId = scenario;
-            ScreenState.set('talkMascot', selectedMascot);
+            ScreenState.set('talkMascot', defaultMascot);
             ScreenState.set('talkScenario', scenario);
             ScreenState.set('firstTalkSession', true);
             ScreenState.set('talkView', 'call');
@@ -451,7 +275,6 @@ function renderOnboarding(container) {
             setTimeout(() => Router.navigate('talk'), 600);
         });
 
-        setTimeout(() => Anim.staggerChildren(container, '.mascot-card'), 80);
         return;
     }
 }
