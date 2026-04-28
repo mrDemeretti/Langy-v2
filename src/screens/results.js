@@ -90,7 +90,7 @@ function renderResults(container) {
             label: { en: 'Listening', ru: 'Аудирование', es: 'Escuchar' },
             color: '#10B981', gradient: 'linear-gradient(135deg, #10B98122, #10B98108)',
             border: 'rgba(16,185,129,0.15)',
-            route: 'learning',
+            route: 'listening',
             subtitle: { en: 'Comprehension & dictation', ru: 'Понимание речи и диктанты', es: 'Comprensión y dictados' },
             detail: { en: `${listenCount} listen exercises in ${currentUnitCefr}`, ru: `${listenCount} аудио-упражнений (${currentUnitCefr})`, es: `${listenCount} ejercicios de escucha (${currentUnitCefr})` },
             cta: { en: 'Practice listening', ru: 'Тренировать слух', es: 'Practicar escucha' },
