@@ -501,9 +501,11 @@ const LangyWidgets = {
 
         const fb = document.createElement('div');
         fb.className = `widget__feedback widget__feedback--${isCorrect ? 'correct' : 'wrong'} animate-in`;
+        const personaCorrect = typeof MascotPersona !== 'undefined' ? MascotPersona.tone('correct') : i18n('widget.correct');
+        const personaIncorrect = typeof MascotPersona !== 'undefined' ? MascotPersona.tone('incorrect') : '';
         fb.innerHTML = isCorrect
-            ? `<span class="widget__feedback-icon">${LangyIcons.checkCircle}</span> <span>${i18n('widget.correct')}</span>`
-            : `<span class="widget__feedback-icon">${LangyIcons.x}</span> <span>${i18n('widget.answer_was')}: <strong>${correctAnswer}</strong></span>`;
+            ? `<span class="widget__feedback-icon">${LangyIcons.checkCircle}</span> <span>${personaCorrect}</span>`
+            : `<span class="widget__feedback-icon">${LangyIcons.x}</span> <span>${personaIncorrect ? personaIncorrect + ' ' : ''}${i18n('widget.answer_was')}: <strong>${correctAnswer}</strong></span>`;
         widgetEl.appendChild(fb);
 
         if (!isCorrect && widgetEl.animate) {

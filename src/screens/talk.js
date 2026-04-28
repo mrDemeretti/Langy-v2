@@ -842,6 +842,7 @@ function renderTalkSummary(container) {
                     <p style="color:var(--text-tertiary); font-size:var(--fs-sm);">
                         ${mins}:${secs.toString().padStart(2, '0')} · ${summary.turns || 0} ${{ en: 'exchanges', ru: 'реплик', es: 'intercambios' }[lang]}
                     </p>
+                    ${typeof MascotPersona !== 'undefined' ? `<p style="font-style:italic; color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">"${qualified ? MascotPersona.tone('lessonComplete', mascotId) : MascotPersona.tone('encouragement', mascotId)}"</p>` : ''}
                 </div>
 
                 ${praise ? `
