@@ -436,6 +436,45 @@
     position: relative;
 }
 
+/* ─── Ecosystem Sections ─── */
+.home__ecosystem {
+    padding: 0 var(--sp-5) var(--sp-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+}
+
+.home__section {
+    animation: fadeInUp 0.4s var(--ease-out) both;
+}
+.home__section:nth-child(1) { animation-delay: 0.05s; }
+.home__section:nth-child(2) { animation-delay: 0.12s; }
+.home__section:nth-child(3) { animation-delay: 0.19s; }
+
+.home__section-label {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    font-size: 11px;
+    font-weight: var(--fw-bold);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0 var(--sp-1) var(--sp-1);
+}
+.home__section-label svg {
+    width: 12px;
+    height: 12px;
+}
+
+.home__actions--two {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* Extra icon colors */
+.action-card__icon--red    { background: rgba(239, 68, 68, 0.08); color: #EF4444; }
+.action-card__icon--violet { background: rgba(139, 92, 246, 0.08); color: #8B5CF6; }
+
 @keyframes pulseGlow {
     0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
     70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }

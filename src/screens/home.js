@@ -209,37 +209,59 @@ function renderHome(container) {
                 </div>
             </div>
 
-            <!-- Action Grid -->
-            <div class="home__actions ${!user.hasCompletedPlacement ? 'home__actions--locked' : ''}">
-                <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
-                    <div class="action-card__icon action-card__icon--purple">${LangyIcons.book}</div>
-                    <div class="action-card__title">${i18n('home.homework')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : i18n('home.homework_desc')}</div>
+            <!-- Ecosystem Grid -->
+            <div class="home__ecosystem">
+                <!-- Learn Section -->
+                <div class="home__section">
+                    <div class="home__section-label">${LangyIcons.bookOpen} ${{ en: 'Learn', ru: 'Учиться', es: 'Aprender' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                    <div class="home__actions">
+                        <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-homework">
+                            <div class="action-card__icon action-card__icon--purple">${LangyIcons.book}</div>
+                            <div class="action-card__title">${i18n('home.homework')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                        </div>
+                        <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-tests">
+                            <div class="action-card__icon action-card__icon--green">${LangyIcons.fileText}</div>
+                            <div class="action-card__title">${i18n('home.tests')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                        </div>
+                        <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-results">
+                            <div class="action-card__icon action-card__icon--blue">${LangyIcons.barChart}</div>
+                            <div class="action-card__title">Results ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-tests">
-                    <div class="action-card__icon action-card__icon--green">${LangyIcons.fileText}</div>
-                    <div class="action-card__title">${i18n('home.tests')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : i18n('home.tests_desc')}</div>
+
+                <!-- Activities Section -->
+                <div class="home__section">
+                    <div class="home__section-label">${LangyIcons.zap} ${{ en: 'Activities', ru: 'Активности', es: 'Actividades' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                    <div class="home__actions">
+                        <div class="action-card" id="nav-duels">
+                            <div class="action-card__icon action-card__icon--red">${LangyIcons.swords}</div>
+                            <div class="action-card__title">Duels</div>
+                        </div>
+                        <div class="action-card" id="nav-events">
+                            <div class="action-card__icon action-card__icon--violet">${LangyIcons.sparkles}</div>
+                            <div class="action-card__title">Events</div>
+                        </div>
+                        <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-daily">
+                            <div class="action-card__icon action-card__icon--gold">${LangyIcons.target}</div>
+                            <div class="action-card__title">${i18n('home.daily')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-results">
-                    <div class="action-card__icon action-card__icon--blue">${LangyIcons.barChart}</div>
-                    <div class="action-card__title">Results ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : 'Course progress'}</div>
-                </div>
-                <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-daily">
-                    <div class="action-card__icon action-card__icon--gold">${LangyIcons.target}</div>
-                    <div class="action-card__title">${i18n('home.daily')} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
-                    <div class="action-card__desc">${!user.hasCompletedPlacement ? LangyIcons.lock : i18n('home.events_desc')}</div>
-                </div>
-                <div class="action-card" id="nav-inventory">
-                    <div class="action-card__icon action-card__icon--gold">${LangyIcons.briefcase}</div>
-                    <div class="action-card__title">Inventory</div>
-                    <div class="action-card__desc">Your items</div>
-                </div>
-                <div class="action-card" id="nav-shop">
-                    <div class="action-card__icon action-card__icon--blue">${LangyIcons.shoppingBag}</div>
-                    <div class="action-card__title">Shop</div>
-                    <div class="action-card__desc">Get rewards</div>
+
+                <!-- Rewards Section -->
+                <div class="home__section">
+                    <div class="home__section-label">${LangyIcons.trophy} ${{ en: 'Rewards', ru: 'Награды', es: 'Recompensas' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                    <div class="home__actions home__actions--two">
+                        <div class="action-card" id="nav-inventory">
+                            <div class="action-card__icon action-card__icon--gold">${LangyIcons.briefcase}</div>
+                            <div class="action-card__title">Inventory</div>
+                        </div>
+                        <div class="action-card" id="nav-shop">
+                            <div class="action-card__icon action-card__icon--blue">${LangyIcons.shoppingBag}</div>
+                            <div class="action-card__title">Shop</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -251,6 +273,8 @@ function renderHome(container) {
         'nav-tests': 'tests',
         'nav-results': 'results',
         'nav-daily': 'daily',
+        'nav-duels': 'duels',
+        'nav-events': 'events',
         'nav-inventory': 'inventory',
         'nav-shop': 'shop',
         'home-profile': 'profile',
