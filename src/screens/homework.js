@@ -438,55 +438,86 @@ Be encouraging but honest. Keep feedback concise.`;
 }
 
 // ═══════════════════════════════════════
-// HANDWRITING TAB — Photo upload + Gemini Vision
+// HANDWRITING TAB — Task-Driven Photo Review
 // ═══════════════════════════════════════
+const HW_WRITING_TASKS = {
+    A1: [
+        { en: 'Write 3 sentences about yourself: your name, age, and where you live.', ru: 'Напишите 3 предложения о себе: имя, возраст и где живёте.', es: 'Escribe 3 frases sobre ti: nombre, edad y dónde vives.' },
+        { en: 'Write 5 things you can see in your room right now.', ru: 'Напишите 5 вещей, которые видите в комнате.', es: 'Escribe 5 cosas que ves en tu habitación.' },
+    ],
+    A2: [
+        { en: 'Describe what you did yesterday in 4-5 sentences.', ru: 'Опишите, что вы делали вчера, в 4-5 предложениях.', es: 'Describe lo que hiciste ayer en 4-5 frases.' },
+        { en: 'Write a short message to a friend inviting them to dinner.', ru: 'Напишите короткое приглашение другу на ужин.', es: 'Escribe un mensaje corto invitando a un amigo a cenar.' },
+    ],
+    B1: [
+        { en: 'Write a paragraph about your favorite hobby and why you enjoy it.', ru: 'Напишите абзац о своём любимом хобби и почему оно вам нравится.', es: 'Escribe un párrafo sobre tu pasatiempo favorito y por qué lo disfrutas.' },
+        { en: 'Describe a memorable trip you have taken. Use past tenses.', ru: 'Опишите запоминающуюся поездку. Используйте прошедшее время.', es: 'Describe un viaje memorable. Usa tiempos pasados.' },
+    ],
+    B2: [
+        { en: 'Write your opinion on whether social media helps or hurts communication. Give reasons.', ru: 'Напишите мнение о том, помогают ли соцсети общению. Приведите аргументы.', es: 'Escribe tu opinión sobre si las redes sociales ayudan o perjudican la comunicación.' },
+        { en: 'Write a formal email requesting information about a language course.', ru: 'Напишите формальное письмо с запросом информации о языковом курсе.', es: 'Escribe un correo formal pidiendo información sobre un curso de idiomas.' },
+    ],
+    C1: [
+        { en: 'Write a short essay discussing the advantages and disadvantages of remote work.', ru: 'Напишите короткое эссе о преимуществах и недостатках удалённой работы.', es: 'Escribe un ensayo corto sobre las ventajas y desventajas del trabajo remoto.' },
+    ],
+};
+
 function renderHandwritingTab() {
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const userLevel = (LangyState?.user?.level || 'B1').substring(0, 2);
+    const tasks = HW_WRITING_TASKS[userLevel] || HW_WRITING_TASKS.B1;
+    const task = tasks[Math.floor(Math.random() * tasks.length)];
+    // Store current task so analysis can reference it
+    if (typeof ScreenState !== 'undefined') ScreenState.set('hwTask', task.en);
+
     return `
         <div style="padding: var(--sp-4) var(--sp-5);">
-
             <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
-                <span style="color:#F59E0B;">${LangyIcons.pencil}</span> Handwriting Check
+                <span style="color:#F59E0B;">${LangyIcons.pencil}</span> ${{ en: 'Handwriting Review', ru: 'Проверка почерка', es: 'Revisión de escritura' }[lang]}
             </h4>
-            <p style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-bottom:var(--sp-4);">
-                Upload a photo of your handwritten English text and get AI feedback on both content and penmanship.
+            <p style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-bottom:var(--sp-3);">
+                ${{ en: 'Complete the writing task by hand, then upload a photo for AI tutor review.', ru: 'Выполните задание от руки, затем загрузите фото для проверки ИИ-репетитором.', es: 'Completa la tarea a mano y sube una foto para revisión del tutor IA.' }[lang]}
             </p>
+
+            <!-- Writing Task Card -->
+            <div class="card" style="padding:var(--sp-4); border-left:3px solid var(--primary); background:rgba(59,130,246,0.03); margin-bottom:var(--sp-4);">
+                <div style="font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin-bottom:var(--sp-1); display:flex; align-items:center; gap:4px;">
+                    ${LangyIcons.fileText} ${{ en: 'Your Task', ru: 'Ваше задание', es: 'Tu tarea' }[lang]} · ${userLevel}
+                </div>
+                <div style="font-size:var(--fs-sm); color:var(--text-primary); line-height:1.6;">${task[lang]}</div>
+            </div>
 
             <!-- Upload Area -->
             <div class="hw-upload" id="hw-upload-zone">
                 <input type="file" id="hw-file-input" accept="image/*" capture="environment" style="display:none;">
                 <div id="hw-upload-content">
                     <div style="font-size:32px; color:var(--primary); margin-bottom:var(--sp-2);">${LangyIcons.upload}</div>
-                    <div style="font-weight:var(--fw-semibold); margin-bottom:var(--sp-1);">Tap to upload a photo</div>
-                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">Take a photo of your handwritten text</div>
+                    <div style="font-weight:var(--fw-semibold); margin-bottom:var(--sp-1);">${{ en: 'Upload your handwritten answer', ru: 'Загрузите фото ответа', es: 'Sube tu respuesta escrita' }[lang]}</div>
+                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">${{ en: 'Tap to take or choose a photo', ru: 'Нажмите, чтобы сделать или выбрать фото', es: 'Toca para tomar o elegir una foto' }[lang]}</div>
                 </div>
             </div>
 
-            <!-- Preview (hidden by default) -->
             <div id="hw-preview-area" style="display:none; margin-top:var(--sp-4); text-align:center;">
                 <img id="hw-preview-img" class="hw-upload__preview" alt="Your handwriting">
                 <div style="margin-top:var(--sp-3); display:flex; gap:var(--sp-2);">
                     <button class="btn btn--primary btn--full" id="hw-analyze" style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                        ${LangyIcons.brain} Analyze Handwriting
+                        ${LangyIcons.brain} ${{ en: 'Get Review', ru: 'Получить проверку', es: 'Obtener revisión' }[lang]}
                     </button>
-                    <button class="btn btn--ghost" id="hw-retake" style="display:flex; align-items:center; gap:6px;">
-                        ${LangyIcons.refreshCw}
-                    </button>
+                    <button class="btn btn--ghost" id="hw-retake">${LangyIcons.refreshCw}</button>
                 </div>
             </div>
 
-            <!-- AI Feedback (shown after analysis) -->
             <div id="hw-feedback-area"></div>
 
-            <!-- Tips card -->
             <div class="card" style="padding:var(--sp-4); margin-top:var(--sp-5); border:1px solid rgba(16,185,129,0.15); background:rgba(16,185,129,0.03);">
                 <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">
-                    <span style="color:var(--primary);">${LangyIcons.zap}</span> Tips for Best Results
+                    <span style="color:var(--primary);">${LangyIcons.zap}</span> ${{ en: 'Tips', ru: 'Советы', es: 'Consejos' }[lang]}
                 </h4>
                 <ul style="font-size:var(--fs-xs); color:var(--text-secondary); line-height:1.8; padding-left:var(--sp-4); margin:0;">
-                    <li>Write on white/lined paper with good lighting</li>
-                    <li>Use a dark pen or pencil for better contrast</li>
-                    <li>Keep the photo straight and focused</li>
-                    <li>Write at least 2-3 sentences for meaningful feedback</li>
+                    <li>${{ en: 'Write on white/lined paper with good lighting', ru: 'Пишите на белой/линованной бумаге при хорошем свете', es: 'Escribe en papel blanco/rayado con buena luz' }[lang]}</li>
+                    <li>${{ en: 'Use a dark pen for better contrast', ru: 'Используйте тёмную ручку для контраста', es: 'Usa un bolígrafo oscuro para mejor contraste' }[lang]}</li>
+                    <li>${{ en: 'Keep the photo straight and focused', ru: 'Фото должно быть ровным и чётким', es: 'Mantén la foto recta y enfocada' }[lang]}</li>
+                    <li>${{ en: 'Write at least 2-3 sentences', ru: 'Напишите минимум 2-3 предложения', es: 'Escribe al menos 2-3 oraciones' }[lang]}</li>
                 </ul>
             </div>
         </div>
@@ -551,84 +582,132 @@ function setupHandwritingTab(container) {
     // Analyze
     container.querySelector('#hw-analyze')?.addEventListener('click', async () => {
         if (!imageBase64) return;
+        const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+        const taskText = ScreenState.get('hwTask') || 'Free writing';
 
         if (feedbackArea) {
             feedbackArea.innerHTML = `
                 <div class="hw-feedback__loading" style="margin-top:var(--sp-4);">
                     <span></span><span></span><span></span>
-                    <span style="animation:none; width:auto; height:auto; background:none; margin-left:var(--sp-2);">Analyzing your handwriting...</span>
+                    <span style="animation:none; width:auto; height:auto; background:none; margin-left:var(--sp-2);">${{ en: 'Your tutor is reviewing...', ru: 'Репетитор проверяет...', es: 'Tu tutor está revisando...' }[lang]}</span>
                 </div>
             `;
         }
 
         try {
             const level = LangyState?.user?.level || 'B1';
-
-            // Extract base64 data (remove data:image/...;base64, prefix)
             const base64Data = imageBase64.split(',')[1];
             const mimeType = imageBase64.match(/data:(.*?);/)?.[1] || 'image/jpeg';
 
-            const prompt = `You are an expert English teacher and handwriting analyst.
-A student at ${level} level has submitted a photo of their handwritten English text.
+            const prompt = `You are an expert English tutor reviewing a student's handwritten work.
+Student level: ${level}
+Writing task: "${taskText}"
 
-Analyze BOTH the content AND the quality of handwriting. Provide feedback in this format (plain text, no markdown):
+Analyze the photo of their handwritten answer. Return ONLY valid JSON (no markdown, no backticks):
+{
+  "transcription": "what you can read from the handwriting",
+  "score": 75,
+  "strengths": ["strength 1", "strength 2"],
+  "issues": [{"problem": "description", "correction": "how to fix it"}],
+  "corrected": "the text rewritten correctly",
+  "legibility": 7,
+  "nextStep": "one concrete thing to practice next",
+  "summary": "2-sentence overall assessment"
+}
 
-TRANSCRIPTION:
-[What you can read from the handwriting]
-
-CONTENT ANALYSIS:
-- Grammar: [errors and corrections]
-- Spelling: [misspelled words with corrections]
-- Vocabulary: [level assessment]
-- Sentence structure: [feedback]
-
-HANDWRITING QUALITY:
-- Legibility: [how easy to read, 1-10 scale]
-- Letter formation: [specific issues with letters]
-- Spacing: [word and letter spacing feedback]
-- Consistency: [size consistency, baseline]
-- Overall grade: [A/B/C/D]
-
-TIPS TO IMPROVE:
-- [2-3 specific, actionable tips for better handwriting]
-- [1-2 tips for better English writing]
-
-CORRECTED VERSION:
-[The text rewritten correctly]
-
-Be encouraging but specific. If you cannot read some parts, mention that.`;
+Score 0-100 based on task completion, grammar, spelling, and handwriting clarity.
+Be encouraging but specific. If you cannot read parts, mention that in issues.`;
 
             const response = await fetch(LangyAI.API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     model: LangyAI.MODEL,
-                    messages: [
-                        {
-                            role: 'user',
-                            content: [
-                                { type: 'text', text: prompt },
-                                { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Data}` } },
-                            ],
-                        },
-                    ],
+                    messages: [{ role: 'user', content: [
+                        { type: 'text', text: prompt },
+                        { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Data}` } },
+                    ] }],
                     max_tokens: 800,
-                    temperature: 0.5,
+                    temperature: 0.4,
                 }),
             });
 
             if (!response.ok) throw new Error('AI unavailable');
             const data = await response.json();
-            const feedback =
-                data.choices?.[0]?.message?.content || 'Could not analyze the image. Try again with a clearer photo.';
+            const raw = data.choices?.[0]?.message?.content || '';
 
-            if (feedbackArea) {
+            // Try JSON parse, fallback to raw text
+            let review;
+            try {
+                const jsonStr = raw.replace(/```json\s*/g, '').replace(/```/g, '').trim();
+                review = JSON.parse(jsonStr);
+            } catch { review = null; }
+
+            if (review && feedbackArea) {
+                const scoreColor = review.score >= 80 ? 'var(--accent-dark)' : review.score >= 50 ? '#F59E0B' : 'var(--danger)';
+                feedbackArea.innerHTML = `
+                    <div style="margin-top:var(--sp-5); display:flex; flex-direction:column; gap:var(--sp-3);">
+                        <h4 style="display:flex; align-items:center; gap:8px;">
+                            <span style="color:#F59E0B;">${LangyIcons.brain}</span>
+                            ${{ en: 'Tutor Review', ru: 'Проверка репетитора', es: 'Revisión del tutor' }[lang]}
+                        </h4>
+
+                        <!-- Score + Summary -->
+                        <div class="card" style="padding:var(--sp-4); text-align:center; border-top:3px solid ${scoreColor};">
+                            <div style="font-size:36px; font-weight:var(--fw-bold); color:${scoreColor};">${review.score}/100</div>
+                            <div style="font-size:var(--fs-xs); color:var(--text-secondary); margin-top:var(--sp-1);">${escapeHTML(review.summary || '')}</div>
+                            ${review.legibility ? `<div class="badge" style="margin-top:var(--sp-2);">${LangyIcons.eye || '👁'} ${{ en: 'Legibility', ru: 'Читаемость', es: 'Legibilidad' }[lang]}: ${review.legibility}/10</div>` : ''}
+                        </div>
+
+                        <!-- Transcription -->
+                        ${review.transcription ? `
+                        <div class="card card--flat" style="padding:var(--sp-3); border-left:3px solid var(--primary);">
+                            <div style="font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin-bottom:var(--sp-1);">${{ en: 'What we read', ru: 'Что мы прочитали', es: 'Lo que leímos' }[lang]}</div>
+                            <div style="font-size:var(--fs-sm); font-style:italic; color:var(--text-secondary);">${escapeHTML(review.transcription)}</div>
+                        </div>` : ''}
+
+                        <!-- Strengths -->
+                        ${review.strengths?.length ? `
+                        <div class="card card--flat" style="padding:var(--sp-3); border-left:3px solid var(--accent-dark);">
+                            <div style="font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--accent-dark); margin-bottom:var(--sp-2);">${LangyIcons.check} ${{ en: 'Strengths', ru: 'Сильные стороны', es: 'Puntos fuertes' }[lang]}</div>
+                            ${review.strengths.map(s => `<div style="font-size:var(--fs-sm); color:var(--text-secondary); padding:2px 0;">✓ ${escapeHTML(s)}</div>`).join('')}
+                        </div>` : ''}
+
+                        <!-- Issues -->
+                        ${review.issues?.length ? `
+                        <div class="card card--flat" style="padding:var(--sp-3); border-left:3px solid var(--danger);">
+                            <div style="font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--danger); margin-bottom:var(--sp-2);">${LangyIcons.alertTriangle} ${{ en: 'Issues Found', ru: 'Найденные ошибки', es: 'Problemas encontrados' }[lang]}</div>
+                            ${review.issues.map(i => `
+                                <div style="font-size:var(--fs-sm); color:var(--text-secondary); padding:4px 0; border-bottom:1px solid rgba(0,0,0,0.05);">
+                                    <div style="color:var(--danger);">✗ ${escapeHTML(i.problem)}</div>
+                                    <div style="color:var(--accent-dark); margin-top:2px;">→ ${escapeHTML(i.correction)}</div>
+                                </div>
+                            `).join('')}
+                        </div>` : ''}
+
+                        <!-- Corrected -->
+                        ${review.corrected ? `
+                        <div class="card card--flat" style="padding:var(--sp-3); border-left:3px solid #3B82F6;">
+                            <div style="font-size:9px; text-transform:uppercase; letter-spacing:1px; color:#3B82F6; margin-bottom:var(--sp-1);">${{ en: 'Corrected Version', ru: 'Исправленная версия', es: 'Versión corregida' }[lang]}</div>
+                            <div style="font-size:var(--fs-sm); color:var(--text-primary); line-height:1.6;">${escapeHTML(review.corrected)}</div>
+                        </div>` : ''}
+
+                        <!-- Next Step -->
+                        ${review.nextStep ? `
+                        <div class="card" style="padding:var(--sp-3); border:1px solid rgba(59,130,246,0.15); background:rgba(59,130,246,0.03);">
+                            <div style="font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--primary); margin-bottom:var(--sp-1);">${LangyIcons.arrowRight} ${{ en: 'Next Step', ru: 'Следующий шаг', es: 'Siguiente paso' }[lang]}</div>
+                            <div style="font-size:var(--fs-sm); color:var(--text-secondary);">${escapeHTML(review.nextStep)}</div>
+                        </div>` : ''}
+                    </div>
+                `;
+            } else if (feedbackArea) {
+                // Fallback: render raw text
                 feedbackArea.innerHTML = `
                     <div class="hw-feedback" style="margin-top:var(--sp-4);">
                         <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">
-                            <span style="color:#F59E0B;">${LangyIcons.brain}</span> Handwriting Analysis
+                            <span style="color:#F59E0B;">${LangyIcons.brain}</span> ${{ en: 'Tutor Review', ru: 'Проверка', es: 'Revisión' }[lang]}
                         </h4>
-                        <div style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.8; white-space:pre-line;">${escapeHTML(feedback)}</div>
+                        <div style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.8; white-space:pre-line;">${escapeHTML(raw)}</div>
                     </div>
                 `;
             }
@@ -638,10 +717,10 @@ Be encouraging but specific. If you cannot read some parts, mention that.`;
                 LangyState.user.xp += 30;
                 LangyState.progress.skills.writing = Math.min(100, (LangyState.progress.skills.writing || 0) + 3);
                 if (typeof recordSession === 'function') {
-                    recordSession({ duration: 2, wordsLearned: 0, accuracy: 80, category: 'writing' });
+                    recordSession({ duration: 2, wordsLearned: 0, accuracy: review?.score || 80, category: 'writing' });
                 }
                 if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
-                Anim.showToast(`+30 XP ${{ en: 'for handwriting practice', ru: 'за практику почерка', es: 'por práctica de caligrafía' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}!`);
+                Anim.showToast(`+30 XP ${{ en: 'for handwriting review', ru: 'за проверку почерка', es: 'por revisión de escritura' }[lang]}!`);
             }
         } catch (err) {
             console.error('Handwriting analysis error:', err);
@@ -649,8 +728,7 @@ Be encouraging but specific. If you cannot read some parts, mention that.`;
                 feedbackArea.innerHTML = `
                     <div class="hw-feedback" style="border-color:var(--danger);">
                         <p style="color:var(--danger); font-size:var(--fs-sm);">
-                            Could not analyze your handwriting. This feature requires a vision-capable AI model.
-                            Please check your connection and try again.
+                            ${{ en: 'Could not analyze your handwriting. Please check your connection and try again.', ru: 'Не удалось проанализировать. Проверьте подключение и попробуйте снова.', es: 'No se pudo analizar. Comprueba tu conexión e inténtalo de nuevo.' }[lang]}
                         </p>
                     </div>
                 `;
