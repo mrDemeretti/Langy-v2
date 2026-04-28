@@ -165,6 +165,18 @@ function renderProfile(container) {
             <!-- Settings Sections -->
             <div class="profile__sections">
 
+                <!-- My Progress -->
+                <div class="profile__section">
+                    <div class="profile__option" id="prof-progress" style="cursor:pointer;">
+                        <div class="profile__option-icon" style="background:rgba(16,185,129,0.1); color:#10B981;">${LangyIcons.barChart}</div>
+                        <div class="profile__option-text">
+                            <div class="profile__option-label">${{ en: 'My Progress', ru: 'Мой прогресс', es: 'Mi progreso' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                            <div class="profile__option-desc">${{ en: 'Skills, activity & growth', ru: 'Навыки, активность и рост', es: 'Habilidades, actividad y crecimiento' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                        </div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
+                    </div>
+                </div>
+
                 <!-- Mini Achievements -->
                 <div class="profile__section">
                     <div class="profile__section-title">${LangyIcons.sparkles} ${i18n('profile.achievements')}</div>
@@ -329,6 +341,7 @@ function renderProfile(container) {
 
     // Back
     container.querySelector('#profile-back')?.addEventListener('click', () => Router.navigate('home'));
+    container.querySelector('#prof-progress')?.addEventListener('click', () => Router.navigate('progress'));
 
     // Toggles
     function setupToggle(id, key) {
