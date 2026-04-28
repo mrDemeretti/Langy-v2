@@ -83,6 +83,98 @@ function buildWeekDots() {
     return html;
 }
 
+// ─── Session Continuity Card ───
+function buildContinuityCard() {
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const { progress, streakData } = LangyState;
+    const history = progress.lessonHistory || [];
+    const skills = progress.skills || {};
+    const talkCount = (LangyState.talkHistory || []).length;
+
+    // Need at least some activity to show continuity
+    if (history.length === 0 && talkCount === 0) return '';
+
+    // Last session info
+    const last = history[history.length - 1];
+    const lastDate = last?.date || '';
+    const lastScore = last?.score || 0;
+    const lastTitle = last?.title || last?.unitId || '';
+
+    // Skill analysis: find weakest and strongest
+    const dims = [
+        { key: 'speaking', label: { en: 'Speaking', ru: 'Говорение', es: 'Hablar' }, icon: '🎙', route: 'talk' },
+        { key: 'listening', label: { en: 'Listening', ru: 'Аудирование', es: 'Escucha' }, icon: '🎧', route: 'listening' },
+        { key: 'writing', label: { en: 'Writing', ru: 'Письмо', es: 'Escritura' }, icon: '✍️', route: 'homework' },
+        { key: 'grammar', label: { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }, icon: '📖', route: 'grammar' },
+        { key: 'vocabulary', label: { en: 'Vocabulary', ru: 'Словарь', es: 'Vocabulario' }, icon: '🧠', route: 'learning' },
+    ];
+    const sorted = [...dims].sort((a, b) => (skills[a.key] || 0) - (skills[b.key] || 0));
+    const weakest = sorted[0];
+    const weakVal = skills[weakest.key] || 0;
+
+    // Check for improving skills (any skill > 10 and higher than average)
+    const avg = dims.reduce((s, d) => s + (skills[d.key] || 0), 0) / dims.length;
+    const improving = dims.filter(d => (skills[d.key] || 0) > avg && (skills[d.key] || 0) > 5);
+
+    // Coach weak spots (available for all, not just coach subscribers)
+    const weakSpots = (LangyState.coachData?.mistakePatterns || []).slice(0, 2);
+
+    // Build the card
+    let html = `<div class="card" style="margin:0 var(--sp-5) var(--sp-3); padding:var(--sp-4); border:1px solid var(--border); background:var(--bg-card);">`;
+
+    // Header
+    html += `<div style="display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-3);">
+        <span style="color:var(--primary); font-size:16px;">${LangyIcons.clock}</span>
+        <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm);">${{ en: 'Welcome back', ru: 'С возвращением', es: 'Bienvenido de nuevo' }[lang]}</span>
+    </div>`;
+
+    // Last session recap
+    if (last) {
+        const scoreColor = lastScore >= 80 ? 'var(--accent-dark)' : lastScore >= 50 ? '#F59E0B' : 'var(--danger)';
+        html += `<div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-2) 0; margin-bottom:var(--sp-2); border-bottom:1px solid rgba(0,0,0,0.05);">
+            <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-tertiary);">${{ en: 'Last session', ru: 'Последняя сессия', es: 'Última sesión' }[lang]}</div>
+            <div style="flex:1; font-size:var(--fs-xs); font-weight:var(--fw-semibold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(lastTitle)}</div>
+            <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:${scoreColor};">${lastScore}%</div>
+        </div>`;
+    }
+
+    // Weak spots from mistake patterns
+    if (weakSpots.length > 0) {
+        const spotLabels = weakSpots.map(p => {
+            const label = p.tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            return `<span style="display:inline-flex; align-items:center; gap:3px; font-size:var(--fs-xs); padding:2px 8px; background:rgba(239,68,68,0.08); border-radius:var(--radius-full); color:var(--danger);">✗ ${label}</span>`;
+        }).join(' ');
+        html += `<div style="margin-bottom:var(--sp-2);">
+            <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-tertiary); margin-bottom:4px;">${{ en: 'Watch out for', ru: 'Обрати внимание', es: 'Ten cuidado con' }[lang]}</div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px;">${spotLabels}</div>
+        </div>`;
+    }
+
+    // Improving skills
+    if (improving.length > 0) {
+        const impLabels = improving.slice(0, 2).map(d =>
+            `<span style="display:inline-flex; align-items:center; gap:3px; font-size:var(--fs-xs); padding:2px 8px; background:rgba(16,185,129,0.08); border-radius:var(--radius-full); color:var(--accent-dark);">✓ ${d.label[lang]}</span>`
+        ).join(' ');
+        html += `<div style="margin-bottom:var(--sp-2);">
+            <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-tertiary); margin-bottom:4px;">${{ en: 'Getting stronger', ru: 'Улучшается', es: 'Mejorando' }[lang]}</div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px;">${impLabels}</div>
+        </div>`;
+    }
+
+    // Recommended next action
+    html += `<div class="cont-recommend" data-route="${weakest.route}" style="display:flex; align-items:center; gap:var(--sp-2); padding:var(--sp-2) var(--sp-3); margin-top:var(--sp-2); background:rgba(59,130,246,0.04); border-radius:var(--radius-sm); cursor:pointer;">
+        <span style="font-size:16px;">${weakest.icon}</span>
+        <div style="flex:1;">
+            <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary);">${LangyIcons.arrowRight} ${{ en: 'Suggested next', ru: 'Рекомендуем', es: 'Recomendado' }[lang]}</div>
+            <div style="font-size:var(--fs-xs); font-weight:var(--fw-semibold);">${{ en: `Practice ${weakest.label.en}`, ru: `Практикуйте ${weakest.label.ru}`, es: `Practica ${weakest.label.es}` }[lang]} (${weakVal}%)</div>
+        </div>
+        <span style="color:var(--text-tertiary); font-size:12px;">${LangyIcons.arrowRight}</span>
+    </div>`;
+
+    html += `</div>`;
+    return html;
+}
+
 function renderHome(container) {
     const { currencies, streakData, user } = LangyState;
     if (typeof user.firstSessionCompleted !== 'boolean') {
@@ -187,6 +279,8 @@ function renderHome(container) {
                 ${typeof DailySpeaking !== 'undefined' && user.hasCompletedPlacement ? DailySpeaking.renderCard() : ''}
                 `
                 }
+
+                ${!isEarlyJourney && user.hasCompletedPlacement ? buildContinuityCard() : ''}
 
                 <!-- Main CTA -->
                 <div style="padding: 0 var(--sp-5) var(--sp-2);">
@@ -317,6 +411,12 @@ function renderHome(container) {
                 Router.navigate(route);
             });
         }
+    });
+
+    // Continuity card recommendation
+    container.querySelector('.cont-recommend')?.addEventListener('click', () => {
+        const route = container.querySelector('.cont-recommend')?.dataset.route;
+        if (route) Router.navigate(route);
     });
 
     // Daily Speaking card → launch talk
