@@ -151,10 +151,12 @@ function renderLearning(container) {
 
     // ─── INTRO CARD ───
     function renderIntro(target) {
+        const mascotGreeting = typeof MascotPersona !== 'undefined' ? MascotPersona.tone('greeting') : '';
         target.innerHTML = `
             <div class="lesson-intro animate-in">
                 <div class="lesson-intro__icon">${LangyIcons.book}</div>
                 <h2 class="lesson-intro__title">${unit.title}</h2>
+                ${mascotGreeting ? `<div style="font-size:var(--fs-sm); color:var(--text-secondary); font-style:italic; text-align:center; margin:var(--sp-1) 0 var(--sp-2);">"${mascotGreeting}" — ${typeof MascotPersona !== 'undefined' ? MascotPersona.name() : ''}</div>` : ''}
                 <div class="lesson-intro__meta">
                     <div class="lesson-intro__tag">${LangyIcons.fileText} ${unit.grammar?.join(', ') || 'Grammar'}</div>
                     <div class="lesson-intro__tag">${LangyIcons.bookOpen} ${unit.vocabulary?.join(', ') || 'Vocabulary'}</div>
@@ -612,7 +614,9 @@ function renderLearning(container) {
             <div class="lesson-summary animate-in">
                 <div class="lesson-summary__icon">${score >= LangyConfig.PASS_THRESHOLD ? LangyIcons.sparkles : LangyIcons.flame}</div>
                 <h2 class="lesson-summary__title">
-                    ${score >= LangyConfig.PASS_THRESHOLD ? i18n('learn.excellent') : i18n('learn.good_try')}
+                    ${typeof MascotPersona !== 'undefined'
+                        ? (score >= LangyConfig.PASS_THRESHOLD ? MascotPersona.tone('lessonComplete') : MascotPersona.tone('lessonFailed'))
+                        : (score >= LangyConfig.PASS_THRESHOLD ? i18n('learn.excellent') : i18n('learn.good_try'))}
                 </h2>
 
                 <div class="lesson-summary__stats">
@@ -640,7 +644,7 @@ function renderLearning(container) {
                 <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
                     ${LangyIcons.home} ${i18n('results.home')}
                 </button>
-                ${score < LangyConfig.PASS_THRESHOLD ? `<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.refresh} ${i18n('learn.try_again')}</button>` : ''}
+                ${score < LangyConfig.PASS_THRESHOLD ? `<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.refresh} ${typeof MascotPersona !== 'undefined' ? MascotPersona.tone('retry') : i18n('learn.try_again')}</button>` : ''}
             </div>
         `;
 
@@ -716,8 +720,11 @@ function renderLearning(container) {
         // AI feedback after lesson
         if (typeof DeepTutor !== 'undefined') {
             DeepTutor.setEmotion(score >= LangyConfig.PASS_THRESHOLD ? 'happy' : 'encouraging');
+            const personaMsg = typeof MascotPersona !== 'undefined'
+                ? (score >= LangyConfig.PASS_THRESHOLD ? MascotPersona.tone('encouragement') : MascotPersona.tone('encouragement'))
+                : (score >= LangyConfig.PASS_THRESHOLD ? 'Great job!' : 'Need more practice.');
             DeepTutor.handleSend(
-                `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${score >= LangyConfig.PASS_THRESHOLD ? 'Great job!' : 'Need more practice.'}`,
+                `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${personaMsg}`,
                 true
             );
         }
