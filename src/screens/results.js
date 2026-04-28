@@ -112,7 +112,7 @@ function renderResults(container) {
             label: { en: 'Grammar & Rules', ru: 'Грамматика', es: 'Gramática' },
             color: '#3B82F6', gradient: 'linear-gradient(135deg, #3B82F622, #3B82F608)',
             border: 'rgba(59,130,246,0.15)',
-            route: 'learning',
+            route: 'grammar',
             subtitle: { en: 'Structures, tenses & patterns', ru: 'Структуры, времена и паттерны', es: 'Estructuras, tiempos y patrones' },
             detail: grammarTopics.length > 0
                 ? { en: grammarTopics.join(', '), ru: grammarTopics.join(', '), es: grammarTopics.join(', ') }
