@@ -1,4 +1,4 @@
-const CACHE_NAME = 'langy-ai-v25';
+const CACHE_NAME = 'langy-ai-v26';
 const urlsToCache = [
   './',
   './index.html',
@@ -18,6 +18,9 @@ const urlsToCache = [
   './src/utils/tutor.js',
   './src/utils/widgets.js',
   './src/data/curriculum.js',
+  './src/screens/home.js',
+  './src/screens/talk.js',
+  './src/screens/onboarding.js',
   './src/screens/calendar.js',
   './src/utils/daily-speaking.js',
   './src/utils/coach-intel.js'

@@ -236,6 +236,16 @@ function renderHome(container) {
                     <div class="action-card__title">Inventory</div>
                     <div class="action-card__desc">Your items</div>
                 </div>
+                <div class="action-card" id="nav-duels">
+                    <div class="action-card__icon" style="background:rgba(239,68,68,0.08); color:#EF4444;">${LangyIcons.swords}</div>
+                    <div class="action-card__title">Duels</div>
+                    <div class="action-card__desc">Compete</div>
+                </div>
+                <div class="action-card" id="nav-events">
+                    <div class="action-card__icon" style="background:rgba(139,92,246,0.08); color:#8B5CF6;">${LangyIcons.sparkles}</div>
+                    <div class="action-card__title">Events</div>
+                    <div class="action-card__desc">Challenges</div>
+                </div>
                 <div class="action-card" id="nav-shop">
                     <div class="action-card__icon action-card__icon--blue">${LangyIcons.shoppingBag}</div>
                     <div class="action-card__title">Shop</div>
@@ -252,6 +262,8 @@ function renderHome(container) {
         'nav-results': 'results',
         'nav-daily': 'daily',
         'nav-inventory': 'inventory',
+        'nav-duels': 'duels',
+        'nav-events': 'events',
         'nav-shop': 'shop',
         'home-profile': 'profile',
     };
