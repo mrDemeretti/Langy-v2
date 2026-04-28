@@ -1,0 +1,183 @@
+/* ============================================
+   SCREEN: PROGRESS — Unified Language Growth Dashboard
+   Shows all skill dimensions, recent activity,
+   CEFR progress, and recommended next steps.
+   ============================================ */
+
+function renderProgress(container) {
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const { progress, streakData, user } = LangyState;
+    const skills = progress.skills || {};
+    const userLevel = (user?.level || 'B1').substring(0, 2);
+
+    // Skill dimensions with metadata
+    const dimensions = [
+        { key: 'speaking',   icon: LangyIcons.mic,        color: '#EF4444', label: { en: 'Speaking', ru: 'Говорение', es: 'Hablar' }, route: 'talk' },
+        { key: 'listening',  icon: LangyIcons.headphones,  color: '#10B981', label: { en: 'Listening', ru: 'Аудирование', es: 'Escucha' }, route: 'listening' },
+        { key: 'writing',    icon: LangyIcons.penTool,     color: '#3B82F6', label: { en: 'Writing', ru: 'Письмо', es: 'Escritura' }, route: 'homework' },
+        { key: 'grammar',    icon: LangyIcons.book,        color: '#8B5CF6', label: { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }, route: 'grammar' },
+        { key: 'vocabulary', icon: LangyIcons.brain,       color: '#F59E0B', label: { en: 'Vocabulary', ru: 'Словарный запас', es: 'Vocabulario' }, route: 'learning' },
+        { key: 'reading',    icon: LangyIcons.fileText,    color: '#06B6D4', label: { en: 'Reading', ru: 'Чтение', es: 'Lectura' }, route: 'learning' },
+    ];
+
+    // Overall score = average of all skills
+    const skillValues = dimensions.map(d => skills[d.key] || 0);
+    const overall = skillValues.length ? Math.round(skillValues.reduce((a, b) => a + b, 0) / skillValues.length) : 0;
+
+    // Find strongest and weakest
+    const sorted = [...dimensions].sort((a, b) => (skills[b.key] || 0) - (skills[a.key] || 0));
+    const strongest = sorted[0];
+    const weakest = sorted[sorted.length - 1];
+
+    // Recent activity from lesson history
+    const recent = (progress.lessonHistory || []).slice(-5).reverse();
+
+    // CEFR progress
+    let cefrPct = 0;
+    if (typeof LangyCurriculum !== 'undefined') {
+        const tb = LangyCurriculum.getByLevel(userLevel);
+        if (tb) {
+            const mastery = progress.mastery || {};
+            const passed = tb.units.filter(u => { const k = tb.id + ':' + u.id; return mastery[k] && mastery[k].passed; }).length;
+            cefrPct = Math.round((passed / tb.units.length) * 100);
+        }
+    }
+
+    container.innerHTML = `
+        <div class="screen screen--no-pad">
+            <div class="nav-header">
+                <div class="nav-header__back" id="prog-back">${LangyIcons.back}</div>
+                <div class="nav-header__title">${{ en: 'My Progress', ru: 'Мой прогресс', es: 'Mi progreso' }[lang]}</div>
+                <div style="width:36px;"></div>
+            </div>
+
+            <!-- Overall Score -->
+            <div style="padding: var(--sp-4) var(--sp-5) var(--sp-2); text-align:center;">
+                <div style="position:relative; width:100px; height:100px; margin:0 auto var(--sp-2);">
+                    <svg viewBox="0 0 36 36" style="width:100px; height:100px; transform:rotate(-90deg);">
+                        <circle cx="18" cy="18" r="15.91" fill="none" stroke="rgba(128,128,128,0.1)" stroke-width="3"/>
+                        <circle cx="18" cy="18" r="15.91" fill="none" stroke="var(--primary)" stroke-width="3"
+                            stroke-dasharray="${overall} ${100 - overall}" stroke-linecap="round"/>
+                    </svg>
+                    <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                        <div style="font-size:24px; font-weight:var(--fw-bold); color:var(--text);">${overall}%</div>
+                        <div style="font-size:8px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-tertiary);">${{ en: 'Overall', ru: 'Всего', es: 'Total' }[lang]}</div>
+                    </div>
+                </div>
+                <div class="badge badge--primary">${userLevel} · ${{ en: `${cefrPct}% complete`, ru: `${cefrPct}% пройдено`, es: `${cefrPct}% completado` }[lang]}</div>
+            </div>
+
+            <!-- Skill Bars -->
+            <div style="padding: var(--sp-4) var(--sp-5);">
+                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; font-size:var(--fs-sm);">
+                    ${LangyIcons.barChart} ${{ en: 'Skill Breakdown', ru: 'Навыки по направлениям', es: 'Desglose de habilidades' }[lang]}
+                </h4>
+                <div style="display:flex; flex-direction:column; gap:var(--sp-3);">
+                    ${dimensions.map(d => {
+                        const val = skills[d.key] || 0;
+                        return `
+                        <div class="prog-skill" data-route="${d.route}" style="cursor:pointer;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                                <div style="display:flex; align-items:center; gap:6px; font-size:var(--fs-xs);">
+                                    <span style="color:${d.color};">${d.icon}</span>
+                                    <span style="font-weight:var(--fw-semibold);">${d.label[lang]}</span>
+                                </div>
+                                <span style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:${d.color};">${val}%</span>
+                            </div>
+                            <div style="height:6px; background:rgba(128,128,128,0.1); border-radius:3px; overflow:hidden;">
+                                <div style="height:100%; width:${val}%; background:${d.color}; border-radius:3px; transition:width 0.6s ease;"></div>
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+
+            <!-- Insights -->
+            <div style="padding: 0 var(--sp-5) var(--sp-4); display:flex; gap:var(--sp-3);">
+                <div class="card card--flat" style="flex:1; padding:var(--sp-3); border-left:3px solid ${strongest.color};">
+                    <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:${strongest.color}; margin-bottom:2px;">${LangyIcons.check} ${{ en: 'Strongest', ru: 'Лучший', es: 'Más fuerte' }[lang]}</div>
+                    <div style="font-size:var(--fs-sm); font-weight:var(--fw-semibold);">${strongest.label[lang]}</div>
+                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">${skills[strongest.key] || 0}%</div>
+                </div>
+                <div class="card card--flat" style="flex:1; padding:var(--sp-3); border-left:3px solid ${weakest.color};">
+                    <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:${weakest.color}; margin-bottom:2px;">${LangyIcons.target} ${{ en: 'Focus Area', ru: 'Зона роста', es: 'Área de enfoque' }[lang]}</div>
+                    <div style="font-size:var(--fs-sm); font-weight:var(--fw-semibold);">${weakest.label[lang]}</div>
+                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">${skills[weakest.key] || 0}%</div>
+                </div>
+            </div>
+
+            <!-- Recommended Next -->
+            <div style="padding: 0 var(--sp-5) var(--sp-4);">
+                <div class="card" style="padding:var(--sp-4); border:1px solid rgba(59,130,246,0.15); background:rgba(59,130,246,0.03); cursor:pointer;" id="prog-recommend">
+                    <div style="display:flex; align-items:center; gap:var(--sp-3);">
+                        <div style="width:40px; height:40px; border-radius:50%; background:${weakest.color}11; display:flex; align-items:center; justify-content:center; color:${weakest.color}; font-size:18px;">${weakest.icon}</div>
+                        <div style="flex:1;">
+                            <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-bottom:2px;">${LangyIcons.zap} ${{ en: 'Recommended', ru: 'Рекомендация', es: 'Recomendado' }[lang]}</div>
+                            <div style="font-size:var(--fs-sm); font-weight:var(--fw-semibold);">${{ en: `Practice ${weakest.label.en} to balance your skills`, ru: `Практикуйте ${weakest.label.ru} для баланса навыков`, es: `Practica ${weakest.label.es} para equilibrar tus habilidades` }[lang]}</div>
+                        </div>
+                        <div style="color:var(--text-tertiary);">${LangyIcons.arrowRight}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Stats -->
+            <div style="padding: 0 var(--sp-5) var(--sp-4);">
+                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; font-size:var(--fs-sm);">
+                    ${LangyIcons.activity} ${{ en: 'Activity', ru: 'Активность', es: 'Actividad' }[lang]}
+                </h4>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp-2);">
+                    <div class="card card--flat" style="padding:var(--sp-3); text-align:center;">
+                        <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:var(--primary);">${streakData.days}</div>
+                        <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase;">${{ en: 'Streak', ru: 'Дни', es: 'Racha' }[lang]}</div>
+                    </div>
+                    <div class="card card--flat" style="padding:var(--sp-3); text-align:center;">
+                        <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:#F59E0B;">${streakData.wordsLearned}</div>
+                        <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase;">${{ en: 'Words', ru: 'Слова', es: 'Palabras' }[lang]}</div>
+                    </div>
+                    <div class="card card--flat" style="padding:var(--sp-3); text-align:center;">
+                        <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:#3B82F6;">${Math.round(streakData.totalMinutes / 60)}h</div>
+                        <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase;">${{ en: 'Study', ru: 'Учёба', es: 'Estudio' }[lang]}</div>
+                    </div>
+                    <div class="card card--flat" style="padding:var(--sp-3); text-align:center;">
+                        <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:#10B981;">${streakData.accuracy}%</div>
+                        <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase;">${{ en: 'Accuracy', ru: 'Точность', es: 'Precisión' }[lang]}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Lessons -->
+            ${recent.length ? `
+            <div style="padding: 0 var(--sp-5) var(--sp-8);">
+                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; font-size:var(--fs-sm);">
+                    ${LangyIcons.clock} ${{ en: 'Recent Activity', ru: 'Последняя активность', es: 'Actividad reciente' }[lang]}
+                </h4>
+                <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
+                    ${recent.map(r => {
+                        const sc = r.score || 0;
+                        const scColor = sc >= 80 ? 'var(--accent-dark)' : sc >= 50 ? '#F59E0B' : 'var(--danger)';
+                        return `
+                        <div class="card card--flat" style="padding:var(--sp-3); display:flex; align-items:center; gap:var(--sp-3);">
+                            <div style="font-size:var(--fs-sm); font-weight:var(--fw-bold); color:${scColor}; min-width:36px;">${sc}%</div>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-size:var(--fs-xs); font-weight:var(--fw-semibold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(r.title || r.unitId || 'Lesson')}</div>
+                                <div style="font-size:9px; color:var(--text-tertiary);">${r.date || ''}</div>
+                            </div>
+                            ${r.grade ? `<div class="badge" style="font-size:9px;">${r.grade}</div>` : ''}
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>` : ''}
+        </div>
+    `;
+
+    // Event listeners
+    container.querySelector('#prog-back')?.addEventListener('click', () => Router.navigate('home'));
+    container.querySelectorAll('.prog-skill').forEach(el => {
+        el.addEventListener('click', () => Router.navigate(el.dataset.route));
+    });
+    container.querySelector('#prog-recommend')?.addEventListener('click', () => Router.navigate(weakest.route));
+
+    setTimeout(() => Anim.staggerChildren(container, '.prog-skill'), 80);
+}
+
+Router.register('progress', renderProgress);
