@@ -56,6 +56,7 @@ function getActiveEvents() {
             current: weekWords,
             unit: 'words',
             endsLabel: `Resets ${getDaysUntilMonday()} days`,
+            skillTag: { en: 'Vocabulary', ru: 'Словарный запас', es: 'Vocabulario' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'],
         },
         {
             id: 'lesson_sprint',
@@ -73,6 +74,7 @@ function getActiveEvents() {
             current: weekLessons,
             unit: 'lessons',
             endsLabel: `Resets ${getDaysUntilMonday()} days`,
+            skillTag: { en: 'All Skills', ru: 'Все навыки', es: 'Todas las habilidades' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'],
         },
         {
             id: 'time_commitment',
@@ -90,6 +92,7 @@ function getActiveEvents() {
             current: weekMinutes,
             unit: 'min',
             endsLabel: `Resets ${getDaysUntilMonday()} days`,
+            skillTag: { en: 'Dedication', ru: 'Упорство', es: 'Dedicación' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'],
         },
 
         // ─── STREAK CHALLENGE ───
@@ -107,6 +110,7 @@ function getActiveEvents() {
             current: sd.days || 0,
             unit: 'days',
             endsLabel: 'Ongoing',
+            skillTag: { en: 'Consistency', ru: 'Постоянство', es: 'Consistencia' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'],
         },
 
         // ─── SPEED SPRINT (daily mini-game) ───
@@ -127,6 +131,7 @@ function getActiveEvents() {
             unit: 'correct',
             endsLabel: 'Play anytime',
             action: 'sprint',
+            skillTag: { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'],
         },
 
         // ─── PERFECTION CHALLENGE ───
@@ -146,6 +151,7 @@ function getActiveEvents() {
             current: weekPerfect,
             unit: 'perfect',
             endsLabel: `Resets ${getDaysUntilMonday()} days`,
+            skillTag: { en: 'Accuracy', ru: 'Точность', es: 'Precisión' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en'],
         },
     ];
 
@@ -182,7 +188,7 @@ function renderEvents(container) {
 
             <div style="padding: var(--sp-4) var(--sp-5); text-align:center;">
                 <h3 style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.sparkles} ${i18n('events.active')}</h3>
-                <p class="text-secondary text-sm" style="margin-top:var(--sp-1);">${i18n('events.complete_to_earn')}</p>
+                <p class="text-secondary text-sm" style="margin-top:var(--sp-1);">${{ en: 'Build real skills while earning rewards', ru: 'Развивайте навыки и получайте награды', es: 'Desarrolla habilidades reales y gana recompensas' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</p>
             </div>
 
             <div style="padding:0 var(--sp-4) var(--sp-8); display:flex; flex-direction:column; gap:var(--sp-4);">
@@ -236,6 +242,7 @@ function renderEventCard(event) {
                 <div class="event-card-v2__info">
                     <div class="event-card-v2__title">${event.title}</div>
                     <div class="event-card-v2__desc">${event.desc}</div>
+                    ${event.skillTag ? `<div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.8; margin-top:2px;">${LangyIcons.target} ${event.skillTag}</div>` : ''}
                 </div>
                 <div class="event-card-v2__badge">${event.endsLabel}</div>
             </div>
@@ -394,6 +401,18 @@ function startSpeedSprint(container) {
         LangyState.user.xp += xpEarned;
         LangyState.currencies.dangy += score * 3;
         if (typeof checkLevelUp === 'function') checkLevelUp(oldXp, LangyState.user.xp);
+
+        // Record sprint as a grammar practice session
+        const sprintDuration = Math.max(1, Math.round((TOTAL_TIME - timeLeft) / 60));
+        if (typeof recordSession === 'function') {
+            recordSession({
+                duration: sprintDuration,
+                wordsLearned: 0,
+                accuracy: TOTAL_QUESTIONS > 0 ? Math.round((score / TOTAL_QUESTIONS) * 100) : 0,
+                category: 'grammar',
+            });
+        }
+
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
 
         const passed = score >= TOTAL_QUESTIONS;
