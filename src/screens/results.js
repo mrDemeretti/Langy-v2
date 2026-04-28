@@ -49,15 +49,83 @@ function renderResults(container) {
         locked: { label: 'Locked', icon: LangyIcons.lock, color: 'var(--text-tertiary)', bg: 'var(--bg-card)' },
     };
 
+    // Skill data for cards
+    const skills = progress.skills || {};
+    const skillAreas = [
+        { key: 'speaking', icon: LangyIcons.mic, label: { en: 'Speaking', ru: 'Говорение', es: 'Hablar' }, color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', route: 'talk', desc: { en: 'Practice conversations', ru: 'Практика разговоров', es: 'Practica conversaciones' } },
+        { key: 'listening', icon: LangyIcons.headphones, label: { en: 'Listening', ru: 'Аудирование', es: 'Escuchar' }, color: '#10B981', bg: 'rgba(16,185,129,0.08)', route: 'learning', desc: { en: 'Understand native speech', ru: 'Понимание речи', es: 'Comprensión auditiva' } },
+        { key: 'writing', icon: LangyIcons.penTool, label: { en: 'Writing', ru: 'Письмо', es: 'Escritura' }, color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', route: 'homework', desc: { en: 'Express ideas clearly', ru: 'Выражение мыслей', es: 'Expresión escrita' } },
+        { key: 'grammar', icon: LangyIcons.pencil, label: { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)', route: 'learning', desc: { en: 'Rules & structures', ru: 'Правила и структуры', es: 'Reglas y estructuras' } },
+    ];
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+
+    // Check for pending homework
+    const hwUnits = activeTb ? activeTb.units.filter(u => u.homework && !progress.lessonHistory.find(l => l.unitId === u.id && l.mode === 'homework' && l.status === 'done')) : [];
+    const pendingHw = hwUnits.length > 0 ? hwUnits[0] : null;
+
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="results-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">${{ en: 'My Progress', ru: 'Мой прогресс', es: 'Mi Progreso' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                <div class="nav-header__title">${{ en: 'Learn', ru: 'Учиться', es: 'Aprender' }[lang]}</div>
                 <div style="width:36px;"></div>
             </div>
 
             <div class="results__content">
+                <!-- ═══ RECOMMENDED NEXT ACTION ═══ -->
+                <div class="learn-hub__next" id="learn-next-action">
+                    <div class="learn-hub__next-label">${LangyIcons.rocket} ${{ en: 'Continue learning', ru: 'Продолжить обучение', es: 'Continuar aprendiendo' }[lang]}</div>
+                    <div class="learn-hub__next-unit">${currentUnitName}</div>
+                    <div class="learn-hub__next-meta">
+                        <span>${LangyIcons.book} ${currentUnitCefr}</span>
+                        <span>${LangyIcons.barChart} ${progress.overall}%</span>
+                    </div>
+                    <button class="btn btn--primary btn--full btn--lg" id="learn-continue" style="margin-top:var(--sp-3); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
+                        ${LangyIcons.arrowRight} ${{ en: 'Start lesson', ru: 'Начать урок', es: 'Iniciar lección' }[lang]}
+                    </button>
+                </div>
+
+                <!-- ═══ SKILL AREAS ═══ -->
+                <div class="learn-hub__section">
+                    <div class="learn-hub__section-title">${LangyIcons.target} ${{ en: 'Skill Areas', ru: 'Навыки', es: 'Áreas de habilidad' }[lang]}</div>
+                    <div class="learn-hub__skills">
+                        ${skillAreas.map(s => `
+                        <div class="learn-skill" id="learn-skill-${s.key}" data-route="${s.route}">
+                            <div class="learn-skill__header">
+                                <div class="learn-skill__icon" style="background:${s.bg}; color:${s.color};">${s.icon}</div>
+                                <div class="learn-skill__info">
+                                    <div class="learn-skill__name">${s.label[lang]}</div>
+                                    <div class="learn-skill__desc">${s.desc[lang]}</div>
+                                </div>
+                                <div class="learn-skill__pct" style="color:${s.color};">${skills[s.key] || 0}%</div>
+                            </div>
+                            <div class="progress" style="height:4px;">
+                                <div class="progress__fill" style="width:${skills[s.key] || 0}%; background:${s.color};"></div>
+                            </div>
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                ${pendingHw ? `
+                <!-- ═══ HOMEWORK ═══ -->
+                <div class="learn-hub__section">
+                    <div class="learn-hub__section-title">${LangyIcons.fileText} ${{ en: 'Homework', ru: 'Домашнее задание', es: 'Tarea' }[lang]}</div>
+                    <div class="card" id="learn-hw-card" style="cursor:pointer; display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-4);">
+                        <div style="width:40px; height:40px; border-radius:var(--radius-sm); background:rgba(124,108,246,0.08); display:flex; align-items:center; justify-content:center; color:#7C6CF6; font-size:20px; flex-shrink:0;">${LangyIcons.edit}</div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm);">${pendingHw.title}</div>
+                            <div style="font-size:var(--fs-xs); color:var(--text-tertiary);">${pendingHw.homework?.prompt?.substring(0, 60) || 'Write about this topic'}...</div>
+                        </div>
+                        <span style="color:var(--primary);">${LangyIcons.arrowRight}</span>
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- ═══ OVERALL PROGRESS ═══ -->
+                <div class="learn-hub__section">
+                    <div class="learn-hub__section-title">${LangyIcons.barChart2} ${{ en: 'Progress', ru: 'Прогресс', es: 'Progreso' }[lang]}</div>
+
                 <!-- Overall Level Card -->
                 <div class="results__overall">
                     <div style="font-size:var(--fs-sm); opacity:0.8;">Current Level</div>
@@ -77,14 +145,6 @@ function renderResults(container) {
                         <div><span style="font-size:var(--fs-xl); font-weight:var(--fw-black);">${user.xp}</span><br><span style="font-size:var(--fs-xs); opacity:0.7;">XP Earned</span></div>
                     </div>
                 </div>
-
-                <!-- Fixed Current Unit Card -->
-                <div class="card">
-                    <div style="font-size:var(--fs-xs); color:var(--text-secondary); font-weight:var(--fw-semibold); text-transform:uppercase; letter-spacing:0.5px;">Current Unit</div>
-                    <div style="font-weight:var(--fw-bold); margin-top:var(--sp-1);">${currentUnitName}</div>
-                    <div style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-1); display:flex; align-items:center; gap:4px;">
-                        ${LangyIcons.book} ${currentUnitCefr} — ${activeTb ? activeTb.title : 'Langy Course'}
-                    </div>
                 </div>
 
                 <!-- ═══════════════════════════════════ -->
@@ -281,6 +341,24 @@ function renderResults(container) {
 
     // ── Back button ──
     container.querySelector('#results-back')?.addEventListener('click', () => Router.navigate('home'));
+
+    // ── Learn Hub: Continue lesson ──
+    container.querySelector('#learn-continue')?.addEventListener('click', () => {
+        Router.navigate('learning');
+    });
+
+    // ── Learn Hub: Skill area cards ──
+    container.querySelectorAll('.learn-skill').forEach(card => {
+        card.addEventListener('click', () => {
+            const route = card.dataset.route;
+            if (route) Router.navigate(route);
+        });
+    });
+
+    // ── Learn Hub: Homework card ──
+    container.querySelector('#learn-hw-card')?.addEventListener('click', () => {
+        Router.navigate('homework');
+    });
 
     // ── Review Weak Units ──
     container.querySelector('#review-weak')?.addEventListener('click', () => {
