@@ -49,20 +49,77 @@ function renderResults(container) {
         locked: { label: 'Locked', icon: LangyIcons.lock, color: 'var(--text-tertiary)', bg: 'var(--bg-card)' },
     };
 
-    // Skill data for cards
-    const skills = progress.skills || {};
-    const skillAreas = [
-        { key: 'speaking', icon: LangyIcons.mic, label: { en: 'Speaking', ru: 'Говорение', es: 'Hablar' }, color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', route: 'talk', desc: { en: 'Practice conversations', ru: 'Практика разговоров', es: 'Practica conversaciones' } },
-        { key: 'listening', icon: LangyIcons.headphones, label: { en: 'Listening', ru: 'Аудирование', es: 'Escuchar' }, color: '#10B981', bg: 'rgba(16,185,129,0.08)', route: 'learning', desc: { en: 'Understand native speech', ru: 'Понимание речи', es: 'Comprensión auditiva' } },
-        { key: 'writing', icon: LangyIcons.penTool, label: { en: 'Writing', ru: 'Письмо', es: 'Escritura' }, color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', route: 'homework', desc: { en: 'Express ideas clearly', ru: 'Выражение мыслей', es: 'Expresión escrita' } },
-        { key: 'grammar', icon: LangyIcons.pencil, label: { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)', route: 'learning', desc: { en: 'Rules & structures', ru: 'Правила и структуры', es: 'Reglas y estructuras' } },
-    ];
+    // Skill data for cards — enriched with exercise counts and descriptions
     const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const skills = progress.skills || {};
+    const talkHistory = LangyState.talkHistory || [];
+    const lastSpoke = talkHistory.length > 0 ? talkHistory[0].date : null;
+    const lastSpokeLabel = lastSpoke ? new Date(lastSpoke).toLocaleDateString(lang === 'ru' ? 'ru-RU' : lang === 'es' ? 'es-ES' : 'en-US', { month: 'short', day: 'numeric' }) : null;
+
+    // Count exercises by type in current textbook
+    const allExercises = activeTb ? activeTb.units.flatMap(u => u.exercises || []) : [];
+    const listenCount = allExercises.filter(e => e.type === 'listen-type').length;
+    const writeCount = allExercises.filter(e => e.type === 'type-translation' || e.type === 'read-answer').length;
+    const grammarCount = allExercises.filter(e => e.type === 'fill-bubble').length;
+    const speakCount = allExercises.filter(e => e.type === 'speak-aloud').length;
+
+    // Current grammar topics at user's CEFR level
+    const grammarTopics = activeTb && activeTb.units
+        ? [...new Set(activeTb.units.flatMap(u => u.grammar || []))].slice(0, 4)
+        : [];
 
     // Check for pending homework
     const hwUnits = activeTb ? activeTb.units.filter(u => u.homework && !progress.lessonHistory.find(l => l.unitId === u.id && l.mode === 'homework' && l.status === 'done')) : [];
     const pendingHw = hwUnits.length > 0 ? hwUnits[0] : null;
 
+    const skillModules = [
+        {
+            key: 'speaking', icon: LangyIcons.mic,
+            label: { en: 'Speaking', ru: 'Говорение', es: 'Hablar' },
+            color: '#F59E0B', gradient: 'linear-gradient(135deg, #F59E0B22, #F59E0B08)',
+            border: 'rgba(245,158,11,0.15)',
+            route: 'talk',
+            subtitle: { en: 'Conversations & pronunciation', ru: 'Разговоры и произношение', es: 'Conversaciones y pronunciación' },
+            detail: lastSpokeLabel
+                ? { en: `Last practiced ${lastSpokeLabel}`, ru: `Последний раз ${lastSpokeLabel}`, es: `Última vez ${lastSpokeLabel}` }
+                : { en: `${speakCount}+ exercises available`, ru: `${speakCount}+ упражнений`, es: `${speakCount}+ ejercicios` },
+            cta: { en: 'Start talking', ru: 'Начать говорить', es: 'Empezar a hablar' },
+        },
+        {
+            key: 'listening', icon: LangyIcons.headphones,
+            label: { en: 'Listening', ru: 'Аудирование', es: 'Escuchar' },
+            color: '#10B981', gradient: 'linear-gradient(135deg, #10B98122, #10B98108)',
+            border: 'rgba(16,185,129,0.15)',
+            route: 'learning',
+            subtitle: { en: 'Comprehension & dictation', ru: 'Понимание речи и диктанты', es: 'Comprensión y dictados' },
+            detail: { en: `${listenCount} listen exercises in ${currentUnitCefr}`, ru: `${listenCount} аудио-упражнений (${currentUnitCefr})`, es: `${listenCount} ejercicios de escucha (${currentUnitCefr})` },
+            cta: { en: 'Practice listening', ru: 'Тренировать слух', es: 'Practicar escucha' },
+        },
+        {
+            key: 'writing', icon: LangyIcons.penTool,
+            label: { en: 'Writing', ru: 'Письмо', es: 'Escritura' },
+            color: '#8B5CF6', gradient: 'linear-gradient(135deg, #8B5CF622, #8B5CF608)',
+            border: 'rgba(139,92,246,0.15)',
+            route: 'homework',
+            subtitle: { en: 'Translation & composition', ru: 'Переводы и сочинения', es: 'Traducción y composición' },
+            detail: pendingHw
+                ? { en: 'Homework pending!', ru: 'Есть домашнее задание!', es: '¡Tarea pendiente!' }
+                : { en: `${writeCount} writing exercises in course`, ru: `${writeCount} письменных упражнений`, es: `${writeCount} ejercicios de escritura` },
+            cta: { en: 'Write now', ru: 'Начать писать', es: 'Escribir ahora' },
+        },
+        {
+            key: 'grammar', icon: LangyIcons.bookOpen,
+            label: { en: 'Grammar & Rules', ru: 'Грамматика', es: 'Gramática' },
+            color: '#3B82F6', gradient: 'linear-gradient(135deg, #3B82F622, #3B82F608)',
+            border: 'rgba(59,130,246,0.15)',
+            route: 'learning',
+            subtitle: { en: 'Structures, tenses & patterns', ru: 'Структуры, времена и паттерны', es: 'Estructuras, tiempos y patrones' },
+            detail: grammarTopics.length > 0
+                ? { en: grammarTopics.join(', '), ru: grammarTopics.join(', '), es: grammarTopics.join(', ') }
+                : { en: `${grammarCount} grammar drills available`, ru: `${grammarCount} грамматических упражнений`, es: `${grammarCount} ejercicios de gramática` },
+            cta: { en: 'Study grammar', ru: 'Изучать грамматику', es: 'Estudiar gramática' },
+        },
+    ];
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
@@ -85,22 +142,21 @@ function renderResults(container) {
                     </button>
                 </div>
 
-                <!-- ═══ SKILL AREAS ═══ -->
+                <!-- ═══ SKILL DIMENSIONS (2×2) ═══ -->
                 <div class="learn-hub__section">
-                    <div class="learn-hub__section-title">${LangyIcons.target} ${{ en: 'Skill Areas', ru: 'Навыки', es: 'Áreas de habilidad' }[lang]}</div>
-                    <div class="learn-hub__skills">
-                        ${skillAreas.map(s => `
-                        <div class="learn-skill" id="learn-skill-${s.key}" data-route="${s.route}">
-                            <div class="learn-skill__header">
-                                <div class="learn-skill__icon" style="background:${s.bg}; color:${s.color};">${s.icon}</div>
-                                <div class="learn-skill__info">
-                                    <div class="learn-skill__name">${s.label[lang]}</div>
-                                    <div class="learn-skill__desc">${s.desc[lang]}</div>
-                                </div>
-                                <div class="learn-skill__pct" style="color:${s.color};">${skills[s.key] || 0}%</div>
+                    <div class="learn-hub__section-title">${LangyIcons.target} ${{ en: 'Study Areas', ru: 'Области изучения', es: 'Áreas de estudio' }[lang]}</div>
+                    <div class="learn-dim__grid">
+                        ${skillModules.map(m => `
+                        <div class="learn-dim" id="learn-dim-${m.key}" data-route="${m.route}" style="background:${m.gradient}; border-color:${m.border};">
+                            <div class="learn-dim__top">
+                                <div class="learn-dim__icon" style="background:${m.color};">${m.icon}</div>
+                                <div class="learn-dim__pct" style="color:${m.color};">${skills[m.key] || 0}%</div>
                             </div>
-                            <div class="progress" style="height:4px;">
-                                <div class="progress__fill" style="width:${skills[s.key] || 0}%; background:${s.color};"></div>
+                            <div class="learn-dim__name">${m.label[lang]}</div>
+                            <div class="learn-dim__sub">${m.subtitle[lang]}</div>
+                            <div class="learn-dim__detail">${m.detail[lang]}</div>
+                            <div class="progress" style="height:3px; margin-top:auto;">
+                                <div class="progress__fill" style="width:${skills[m.key] || 0}%; background:${m.color};"></div>
                             </div>
                         </div>
                         `).join('')}
@@ -128,11 +184,11 @@ function renderResults(container) {
 
                 <!-- Overall Level Card -->
                 <div class="results__overall">
-                    <div style="font-size:var(--fs-sm); opacity:0.8;">Current Level</div>
+                    <div style="font-size:var(--fs-sm); opacity:0.8;">${{ en: 'Current Level', ru: 'Текущий уровень', es: 'Nivel actual' }[lang]}</div>
                     <div class="results__level">${user.level}</div>
                     <div style="margin-top:var(--sp-3);">
                         <div style="display:flex; justify-content:space-between; font-size:var(--fs-xs); margin-bottom:var(--sp-1); opacity:0.8;">
-                            <span>Overall Progress</span>
+                            <span>${{ en: 'Overall Progress', ru: 'Общий прогресс', es: 'Progreso general' }[lang]}</span>
                             <span>${progress.overall}%</span>
                         </div>
                         <div class="progress" style="background:rgba(255,255,255,0.2);">
@@ -140,9 +196,9 @@ function renderResults(container) {
                         </div>
                     </div>
                     <div style="display:flex; justify-content:center; gap:var(--sp-8); margin-top:var(--sp-4);">
-                        <div><span style="font-size:var(--fs-xl); font-weight:var(--fw-black);">${completedLessons.length}</span><br><span style="font-size:var(--fs-xs); opacity:0.7;">Lessons Done</span></div>
-                        <div><span style="font-size:var(--fs-xl); font-weight:var(--fw-black);">${totalUnits}</span><br><span style="font-size:var(--fs-xs); opacity:0.7;">Total Units</span></div>
-                        <div><span style="font-size:var(--fs-xl); font-weight:var(--fw-black);">${user.xp}</span><br><span style="font-size:var(--fs-xs); opacity:0.7;">XP Earned</span></div>
+                        <div><span style="font-size:var(--fs-xl); font-weight:var(--fw-black);">${completedLessons.length}</span><br><span style="font-size:var(--fs-xs); opacity:0.7;">${{ en: 'Lessons', ru: 'Уроков', es: 'Lecciones' }[lang]}</span></div>
+                        <div><span style="font-size:var(--fs-xl); font-weight:var(--fw-black);">${totalUnits}</span><br><span style="font-size:var(--fs-xs); opacity:0.7;">${{ en: 'Units', ru: 'Модулей', es: 'Unidades' }[lang]}</span></div>
+                        <div><span style="font-size:var(--fs-xl); font-weight:var(--fw-black);">${user.xp}</span><br><span style="font-size:var(--fs-xs); opacity:0.7;">XP</span></div>
                     </div>
                 </div>
                 </div>
@@ -207,44 +263,6 @@ function renderResults(container) {
                     <div style="margin-left:auto; text-align:right;">
                         <div style="color:var(--accent-dark); font-weight:var(--fw-bold); display:flex; align-items:center; gap:4px;">${completedLessons.length} ${LangyIcons.check}</div>
                         <div style="color:var(--danger); font-size:var(--fs-xs);">${failedLessons.length} needs review</div>
-                    </div>
-                </div>
-
-                <!-- Skills Breakdown -->
-                <div>
-                    <h4 style="margin-bottom:var(--sp-3); padding-left: var(--sp-1);">Skills Breakdown</h4>
-                    <div class="results__skills">
-                        ${Object.entries(progress.skills)
-                            .map(([skill, value]) => {
-                                const icons = {
-                                    vocabulary: LangyIcons.book,
-                                    grammar: LangyIcons.pencil,
-                                    listening: LangyIcons.headphones,
-                                    speaking: LangyIcons.mic,
-                                    writing: LangyIcons.fileText,
-                                    reading: LangyIcons.bookOpen,
-                                };
-                                const colors = {
-                                    vocabulary: 'var(--primary)',
-                                    grammar: 'var(--info)',
-                                    listening: 'var(--accent-dark)',
-                                    speaking: 'var(--reward-gold)',
-                                    writing: 'var(--warning)',
-                                    reading: 'var(--primary-dark)',
-                                };
-                                return `
-                                <div class="skill-bar">
-                                    <div class="skill-bar__header">
-                                        <span style="display:flex;align-items:center;gap:8px;">${icons[skill] || LangyIcons.barChart} ${skill.charAt(0).toUpperCase() + skill.slice(1)}</span>
-                                        <span style="color:${colors[skill]}; font-weight:var(--fw-bold);">${value}%</span>
-                                    </div>
-                                    <div class="progress">
-                                        <div class="progress__fill" style="width:${value}%; background:${colors[skill]};"></div>
-                                    </div>
-                                </div>
-                            `;
-                            })
-                            .join('')}
                     </div>
                 </div>
 
@@ -347,8 +365,8 @@ function renderResults(container) {
         Router.navigate('learning');
     });
 
-    // ── Learn Hub: Skill area cards ──
-    container.querySelectorAll('.learn-skill').forEach(card => {
+    // ── Learn Hub: Skill dimension cards ──
+    container.querySelectorAll('.learn-dim').forEach(card => {
         card.addEventListener('click', () => {
             const route = card.dataset.route;
             if (route) Router.navigate(route);
