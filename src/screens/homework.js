@@ -1,17 +1,29 @@
 /* ============================================
-   SCREEN: HOMEWORK v2 — Writing & Handwriting
+   SCREEN: HOMEWORK v3 — Structured Daily Practice
    Includes: lesson review, writing assignments,
-   handwriting photo analysis via Gemini Vision
+   handwriting photo analysis via Gemini Vision,
+   coach-driven weak-spot practice
    ============================================ */
 
 function renderHomework(container) {
     const { homework, progress } = LangyState;
     const activeTab = ScreenState.get('homeworkTab', 'current');
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
 
     // Auto-generate homework if empty and lessons have been done
     if (homework.current.length === 0 && progress.lessonHistory.length > 0) {
         autoGenerateHomework();
     }
+
+    // Coach insights from weak areas
+    const weakSpots = (LangyState.coachData?.mistakePatterns || []).slice(0, 3);
+    const hasWeakSpots = weakSpots.length > 0;
+    const tabLabels = {
+        practice: { en: `Practice (${homework.current.length})`, ru: `Задания (${homework.current.length})`, es: `Práctica (${homework.current.length})` },
+        writing: { en: 'Writing', ru: 'Письмо', es: 'Escritura' },
+        handwriting: { en: 'Handwriting', ru: 'Почерк', es: 'Caligrafía' },
+        done: { en: 'Done', ru: 'Готово', es: 'Hecho' },
+    };
 
     container.innerHTML = `
         <div class="screen screen--no-pad">
@@ -21,24 +33,31 @@ function renderHomework(container) {
                 <div style="width:36px;"></div>
             </div>
 
+            <!-- Daily Practice Header -->
+            <div style="padding: var(--sp-3) var(--sp-6) var(--sp-2); text-align:center;">
+                <p class="text-secondary text-sm">
+                    ${{ en: 'Strengthen your skills with focused practice', ru: 'Укрепляйте навыки целенаправленной практикой', es: 'Fortalece tus habilidades con práctica enfocada' }[lang]}
+                </p>
+            </div>
+
             <div style="padding: 0 var(--sp-6) var(--sp-4);">
                 <div class="tabs" id="homework-tabs">
-                    <button class="tabs__tab ${activeTab === 'current' ? 'tabs__tab--active' : ''}" data-tab="current">Tasks (${homework.current.length})</button>
-                    <button class="tabs__tab ${activeTab === 'writing' ? 'tabs__tab--active' : ''}" data-tab="writing">Writing</button>
-                    <button class="tabs__tab ${activeTab === 'handwriting' ? 'tabs__tab--active' : ''}" data-tab="handwriting">Handwriting</button>
-                    <button class="tabs__tab ${activeTab === 'completed' ? 'tabs__tab--active' : ''}" data-tab="completed">Done</button>
+                    <button class="tabs__tab ${activeTab === 'current' ? 'tabs__tab--active' : ''}" data-tab="current">${tabLabels.practice[lang]}</button>
+                    <button class="tabs__tab ${activeTab === 'writing' ? 'tabs__tab--active' : ''}" data-tab="writing">${tabLabels.writing[lang]}</button>
+                    <button class="tabs__tab ${activeTab === 'handwriting' ? 'tabs__tab--active' : ''}" data-tab="handwriting">${tabLabels.handwriting[lang]}</button>
+                    <button class="tabs__tab ${activeTab === 'completed' ? 'tabs__tab--active' : ''}" data-tab="completed">${tabLabels.done[lang]}</button>
                 </div>
             </div>
 
             <div class="homework__list" id="homework-list">
                 ${
                     activeTab === 'current'
-                        ? renderCurrentHomework(homework.current)
+                        ? renderCurrentHomework(homework.current, hasWeakSpots, weakSpots, lang)
                         : activeTab === 'writing'
                           ? renderWritingTab()
                           : activeTab === 'handwriting'
                             ? renderHandwritingTab()
-                            : renderCompletedHomework(progress.lessonHistory)
+                            : renderCompletedHomework(progress.lessonHistory, lang)
                 }
             </div>
         </div>
@@ -55,14 +74,14 @@ function renderHomework(container) {
     container.querySelector('#homework-back')?.addEventListener('click', () => Router.navigate('home'));
 
     // Click on homework card
-    container.querySelectorAll('.homework-card').forEach(card => {
+    container.querySelectorAll('.homework-card[data-status]').forEach(card => {
         card.addEventListener('click', () => {
             const status = card.dataset.status;
             const unitId = card.dataset.unitId;
             const id = card.dataset.id;
 
             if (status === 'pending') {
-                Anim.showToast(`Starting Homework with DeepTutor... ${LangyIcons.book}`);
+                Anim.showToast(`${{ en: 'Starting Homework with DeepTutor...', ru: 'Запуск домашки с DeepTutor...', es: 'Iniciando tarea con DeepTutor...' }[lang]} ${LangyIcons.book}`);
                 setTimeout(
                     () => Router.navigate('learning', { mode: 'homework', active: true, unitId: parseInt(unitId) }),
                     600
@@ -113,36 +132,71 @@ function autoGenerateHomework() {
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
 }
 
-function renderCurrentHomework(items) {
+function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
+    lang = lang || (typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en');
+
+    // Weak spots section from coach data
+    let weakSection = '';
+    if (hasWeakSpots && weakSpots.length > 0) {
+        weakSection = `
+            <div style="padding: 0 var(--sp-5) var(--sp-4);">
+                <div class="card" style="padding:var(--sp-3) var(--sp-4); border-left:3px solid var(--warning); background:rgba(245,158,11,0.04);">
+                    <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--warning); margin-bottom:var(--sp-1); display:flex; align-items:center; gap:6px;">
+                        ${LangyIcons.alertTriangle} ${{ en: 'Areas to Review', ru: 'Области для повторения', es: 'Áreas para repasar' }[lang]}
+                    </div>
+                    <div style="font-size:var(--fs-xs); color:var(--text-secondary); line-height:1.5;">
+                        ${weakSpots.map(w => `<span style="display:inline-block; background:var(--bg-alt); padding:2px 8px; border-radius:var(--radius-sm); margin:2px 4px 2px 0; font-size:10px;">${w.tag} (${w.count}×)</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     if (!items.length) {
-        return `<div class="empty-state">
+        return `${weakSection}<div class="empty-state">
             <div class="empty-state__icon">${LangyIcons.sparkles}</div>
-            <div class="empty-state__title">All Done!</div>
-            <div class="empty-state__text">No homework right now. Complete more lessons to get assignments!</div>
+            <div class="empty-state__title">${{ en: 'All caught up!', ru: 'Всё сделано!', es: '¡Todo al día!' }[lang]}</div>
+            <div class="empty-state__text">${{ en: 'Try a writing exercise or complete more lessons to get new assignments.', ru: 'Попробуйте письменное упражнение или пройдите больше уроков.', es: 'Prueba un ejercicio de escritura o completa más lecciones.' }[lang]}</div>
+            <button class="btn btn--primary btn--sm" onclick="ScreenState.set('homeworkTab','writing'); renderHomework(this.closest('.homework__list').parentElement);" style="margin-top:var(--sp-3);">
+                ${LangyIcons.pencil} ${{ en: 'Try Writing', ru: 'Попробовать письмо', es: 'Probar escritura' }[lang]}
+            </button>
         </div>`;
     }
-    return items
+
+    // Determine skill tag for each item
+    const getSkillTag = (item) => {
+        const grammar = item.desc?.toLowerCase();
+        if (grammar?.includes('grammar') || grammar?.includes('tense') || grammar?.includes('грамматик')) return { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }[lang];
+        if (grammar?.includes('listen') || grammar?.includes('аудир') || grammar?.includes('escuch')) return { en: 'Listening', ru: 'Аудирование', es: 'Escucha' }[lang];
+        if (grammar?.includes('speak') || grammar?.includes('говор') || grammar?.includes('habl')) return { en: 'Speaking', ru: 'Говорение', es: 'Hablar' }[lang];
+        if (grammar?.includes('writ') || grammar?.includes('пис') || grammar?.includes('escr')) return { en: 'Writing', ru: 'Письмо', es: 'Escritura' }[lang];
+        return { en: 'Review', ru: 'Повторение', es: 'Repaso' }[lang];
+    };
+
+    return weakSection + items
         .map(
             item => `
         <div class="homework-card" data-id="${item.id}" data-status="pending" data-unit-id="${item.unitId}">
             <div class="homework-card__icon" style="background: var(--primary-bg);">${item.icon || LangyIcons.fileText}</div>
             <div class="homework-card__info">
                 <div class="homework-card__title">${item.title}</div>
-                <div class="homework-card__meta">${item.desc || 'Review the previous lesson.'}</div>
+                <div class="homework-card__meta">${item.desc || { en: 'Review the previous lesson.', ru: 'Повторите предыдущий урок.', es: 'Repasa la lección anterior.' }[lang]}</div>
+                <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-top:2px; display:flex; align-items:center; gap:4px;">${LangyIcons.target} ${getSkillTag(item)}</div>
             </div>
-            <div class="homework-card__status homework-card__status--pending">Start ${LangyIcons.arrowRight}</div>
+            <div class="homework-card__status homework-card__status--pending">${{ en: 'Start', ru: 'Начать', es: 'Iniciar' }[lang]} ${LangyIcons.arrowRight}</div>
         </div>
     `
         )
         .join('');
 }
 
-function renderCompletedHomework(items) {
+function renderCompletedHomework(items, lang) {
+    lang = lang || (typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en');
     if (!items.length) {
         return `<div class="empty-state">
             <div class="empty-state__icon">${LangyIcons.inbox}</div>
-            <div class="empty-state__title">No completed tasks yet</div>
-            <div class="empty-state__text">Complete lessons and homework to see results here</div>
+            <div class="empty-state__title">${{ en: 'No completed tasks yet', ru: 'Нет выполненных заданий', es: 'Aún no hay tareas completadas' }[lang]}</div>
+            <div class="empty-state__text">${{ en: 'Complete lessons and homework to see results here', ru: 'Выполняйте уроки и задания, чтобы видеть результаты', es: 'Completa lecciones y tareas para ver resultados aquí' }[lang]}</div>
         </div>`;
     }
     return items
@@ -154,10 +208,10 @@ function renderCompletedHomework(items) {
             <div class="homework-card__icon" style="background: ${item.status === 'error' ? 'var(--danger-bg)' : 'var(--accent-bg)'};">${item.icon || LangyIcons.fileText}</div>
             <div class="homework-card__info">
                 <div class="homework-card__title">${item.title}</div>
-                <div class="homework-card__meta">Score: ${item.score}% · ${item.date || ''} ${item.errors > 0 ? `· ${item.errors} error${item.errors !== 1 ? 's' : ''}` : ''}</div>
+                <div class="homework-card__meta">${{ en: 'Score', ru: 'Балл', es: 'Puntuación' }[lang]}: ${item.score}% · ${item.date || ''} ${item.errors > 0 ? `· ${item.errors} ${{ en: 'errors', ru: 'ошибок', es: 'errores' }[lang]}` : ''}</div>
             </div>
             <div class="homework-card__status homework-card__status--${item.status}">
-                ${item.status === 'error' ? `<span style="display:flex;align-items:center;gap:4px;">Review ${LangyIcons.alertTriangle}</span>` : `<span style="display:flex;align-items:center;gap:4px;">Done ${LangyIcons.check}</span>`}
+                ${item.status === 'error' ? `<span style="display:flex;align-items:center;gap:4px;">${{ en: 'Review', ru: 'Повторить', es: 'Repasar' }[lang]} ${LangyIcons.alertTriangle}</span>` : `<span style="display:flex;align-items:center;gap:4px;">${{ en: 'Done', ru: 'Готово', es: 'Hecho' }[lang]} ${LangyIcons.check}</span>`}
             </div>
         </div>
     `
@@ -361,14 +415,17 @@ Be encouraging but honest. Keep feedback concise.`;
                 </div>
             `;
 
-            // Award XP for completing writing
+            // Award XP and record session for writing
             if (typeof LangyState !== 'undefined') {
                 const words = text.split(/\s+/).length;
                 const xp = Math.min(80, Math.floor(words / 5) * 5);
                 LangyState.user.xp += xp;
                 LangyState.progress.skills.writing = Math.min(100, (LangyState.progress.skills.writing || 0) + 5);
+                if (typeof recordSession === 'function') {
+                    recordSession({ duration: Math.max(1, Math.round(words / 30)), wordsLearned: Math.floor(words / 10), accuracy: 85, category: 'writing' });
+                }
                 if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
-                Anim.showToast(`+${xp} XP for writing!`);
+                Anim.showToast(`+${xp} XP ${{ en: 'for writing', ru: 'за письмо', es: 'por escritura' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}!`);
             }
         } catch (err) {
             feedbackEl.innerHTML = `
@@ -576,12 +633,15 @@ Be encouraging but specific. If you cannot read some parts, mention that.`;
                 `;
             }
 
-            // Award XP
+            // Award XP and record session
             if (typeof LangyState !== 'undefined') {
                 LangyState.user.xp += 30;
                 LangyState.progress.skills.writing = Math.min(100, (LangyState.progress.skills.writing || 0) + 3);
+                if (typeof recordSession === 'function') {
+                    recordSession({ duration: 2, wordsLearned: 0, accuracy: 80, category: 'writing' });
+                }
                 if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
-                Anim.showToast('+30 XP for handwriting practice!');
+                Anim.showToast(`+30 XP ${{ en: 'for handwriting practice', ru: 'за практику почерка', es: 'por práctica de caligrafía' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}!`);
             }
         } catch (err) {
             console.error('Handwriting analysis error:', err);
