@@ -225,13 +225,13 @@ function renderHome(container) {
 
             <!-- Hero Stage -->
             <div class="home__stage">
-                <!-- Mascot Stage -->
-                <div class="home__mascot-stage" id="home-mascot">
+                <!-- Mascot Stage (3D-ready container) -->
+                <div class="home__mascot-stage" id="home-mascot" style="--mascot-color: ${['#7C6CF6','#4ADE80','#F59E0B','#06B6D4'][LangyState.mascot.selected || 0]};">
                     <img 
                         id="mascot-img"
                         src="assets/mascots/${['zendaya', 'travis', 'matthew', 'omar'][LangyState.mascot.selected || 0]}.png" 
                         alt="Langy Mascot" 
-                        style="width: 100%; height: 100%; object-fit: contain; transform: scale(1.1); animation: mascotIdle 4s ease-in-out infinite;"
+                        class="home__mascot-img"
                     >
                     <!-- Speech Bubble -->
                     <div class="mascot-bubble" id="mascot-bubble" style="display:none;">
@@ -239,6 +239,16 @@ function renderHome(container) {
                     </div>
                     <!-- Tap zone -->
                     <div style="position:absolute; inset:0; z-index:10; cursor:pointer;" title="Tap to Talk!" id="mascot-tap-zone"></div>
+                </div>
+                <!-- Mascot identity -->
+                <div class="home__mascot-name">
+                    ${['Zendaya','Travis','Matthew','Omar'][LangyState.mascot.selected || 0]}
+                    <span class="home__mascot-trait">${[
+                        { en: 'Cheerful', ru: 'Весёлая', es: 'Alegre' },
+                        { en: 'Creative', ru: 'Креативный', es: 'Creativo' },
+                        { en: 'Structured', ru: 'Системный', es: 'Estructurado' },
+                        { en: 'Supportive', ru: 'Чуткий', es: 'Comprensivo' },
+                    ][LangyState.mascot.selected || 0][lang]}</span>
                 </div>
 
                 <!-- Streak Row (minimal) -->
