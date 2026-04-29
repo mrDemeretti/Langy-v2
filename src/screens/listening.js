@@ -155,7 +155,7 @@ function speakText(text, rate) {
     } else if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'en-US'; u.rate = rate || 1;
+        u.lang = typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US'; u.rate = rate || 1;
         window.speechSynthesis.speak(u);
     }
 }

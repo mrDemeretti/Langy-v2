@@ -23,7 +23,7 @@ const LangyVoice = (() => {
         }
     }
 
-    // ─── Find best English voice ───
+    // ─── Find best voice for target language ───
     function _findVoice(prefs, accent) {
         const key = (prefs || []).join(',') + accent;
         if (_cache[key]) return _cache[key];
@@ -31,19 +31,20 @@ const LangyVoice = (() => {
         const voices = window.speechSynthesis?.getVoices() || [];
         if (!voices.length) return null;
 
-        const langPrefix = (accent || 'en-US').substring(0, 2);
-        const english = voices.filter(v => v.lang.startsWith(langPrefix));
-        const allEn = voices.filter(v => v.lang.startsWith('en'));
+        const defaultLang = typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US';
+        const langPrefix = (accent || defaultLang).substring(0, 2);
+        const langMatches = voices.filter(v => v.lang.startsWith(langPrefix));
+        const allFallback = voices.filter(v => v.lang.startsWith('en'));
 
         // Try preference list first
         for (const pref of (prefs || [])) {
-            const found = english.find(v => v.name.toLowerCase().includes(pref)) ||
-                          allEn.find(v => v.name.toLowerCase().includes(pref));
+            const found = langMatches.find(v => v.name.toLowerCase().includes(pref)) ||
+                          allFallback.find(v => v.name.toLowerCase().includes(pref));
             if (found) { _cache[key] = found; return found; }
         }
 
-        // Fallback to any English voice
-        const pick = english[0] || allEn[0] || voices[0];
+        // Fallback to any matching voice
+        const pick = langMatches[0] || allFallback[0] || voices[0];
         _cache[key] = pick;
         return pick;
     }
@@ -51,7 +52,7 @@ const LangyVoice = (() => {
     // ─── Default teacher voice (used outside Talk) ───
     const TEACHER = {
         name: 'Teacher',
-        accent: 'en-US',
+        accent: typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US',
         pitch: 1.05,
         rate: 0.92,
         voicePrefs: ['samantha', 'google us english female', 'microsoft zira', 'female', 'fiona', 'karen'],
@@ -83,7 +84,8 @@ const LangyVoice = (() => {
 
         const persona = opts.persona || TEACHER;
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = persona.accent || 'en-US';
+        const defaultAccent = typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US';
+        u.lang = persona.accent || defaultAccent;
         u.pitch = persona.pitch || 1.05;
         u.rate = opts.slow ? (persona.rate || 0.92) * 0.65 : (persona.rate || 0.92);
 
