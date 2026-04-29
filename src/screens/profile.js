@@ -143,10 +143,17 @@ function renderProfile(container) {
                 const _isCoach = ['coach', 'pro', 'premium'].includes(LangyState.subscription?.plan);
                 if (_isCoach) return '';
                 const _sc = (LangyState.talkHistory || []).length;
+                const _mistakes = LangyState.coachData?.mistakePatterns?.length || 0;
                 const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
-                const _sub = _sc >= 3
-                    ? { en: `You've practiced ${_sc} times. Coach would remember every correction.`, ru: `Ты поговорил ${_sc} раз. Coach запомнил бы все исправления.`, es: `Has practicado ${_sc} veces. Coach recordaría cada corrección.` }[_lang]
-                    : { en: 'AI that remembers your mistakes and helps you fix them.', ru: 'ИИ, который запоминает ошибки и помогает их исправить.', es: 'IA que recuerda tus errores y te ayuda a corregirlos.' }[_lang];
+                // Outcome-driven subtitle based on user context
+                let _sub;
+                if (_sc >= 5 && _mistakes > 0) {
+                    _sub = { en: `${_sc} sessions done. Coach would track your ${_mistakes} recurring patterns and build practice around them.`, ru: `${_sc} сессий. Coach отслеживал бы ${_mistakes} повторяющихся паттернов и строил практику.`, es: `${_sc} sesiones hechas. Coach rastrearía tus ${_mistakes} patrones recurrentes.` }[_lang];
+                } else if (_sc >= 3) {
+                    _sub = { en: `${_sc} conversations and counting. Coach would make each one smarter than the last.`, ru: `${_sc} разговоров. Coach сделал бы каждый следующий умнее предыдущего.`, es: `${_sc} conversaciones. Coach haría cada una más inteligente que la anterior.` }[_lang];
+                } else {
+                    _sub = { en: 'Deeper feedback, pattern tracking, faster results.', ru: 'Глубокий фидбэк, отслеживание паттернов, быстрый результат.', es: 'Feedback profundo, seguimiento de patrones, resultados más rápidos.' }[_lang];
+                }
                 return `
             <div class="profile__premium-banner" id="prof-premium-banner">
                 <div>
@@ -998,33 +1005,68 @@ function showCertificate(code, name, color, date) {
 
 function showSubscription() {
     const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+    const _sc = (LangyState.talkHistory || []).length;
+
+    // Transformation framing: without Coach → with Coach
+    const transformations = {
+        en: [
+            { without: 'Feedback resets every session', with: 'AI remembers your patterns across sessions', icon: 'brain', color: '#3B82F6' },
+            { without: 'Same generic corrections each time', with: 'Targeted practice built from your real mistakes', icon: 'target', color: '#7C6CF6' },
+            { without: 'You guess what to work on next', with: 'Coach shows exactly what needs attention', icon: 'trendingUp', color: '#10B981' },
+            { without: 'Each session starts from zero', with: 'Every session builds on the last one', icon: 'refresh', color: '#F59E0B' },
+        ],
+        ru: [
+            { without: 'Фидбэк сбрасывается каждую сессию', with: 'ИИ помнит паттерны между сессиями', icon: 'brain', color: '#3B82F6' },
+            { without: 'Одинаковые исправления каждый раз', with: 'Практика из твоих реальных ошибок', icon: 'target', color: '#7C6CF6' },
+            { without: 'Сам гадаешь, что учить дальше', with: 'Coach показывает, что требует внимания', icon: 'trendingUp', color: '#10B981' },
+            { without: 'Каждая сессия начинается с нуля', with: 'Каждая сессия продолжает предыдущую', icon: 'refresh', color: '#F59E0B' },
+        ],
+        es: [
+            { without: 'El feedback se reinicia cada sesión', with: 'La IA recuerda tus patrones entre sesiones', icon: 'brain', color: '#3B82F6' },
+            { without: 'Las mismas correcciones genéricas', with: 'Práctica enfocada en tus errores reales', icon: 'target', color: '#7C6CF6' },
+            { without: 'Adivinas qué practicar después', with: 'Coach muestra exactamente qué necesitas', icon: 'trendingUp', color: '#10B981' },
+            { without: 'Cada sesión empieza de cero', with: 'Cada sesión se construye sobre la anterior', icon: 'refresh', color: '#F59E0B' },
+        ],
+    }[_lang];
+
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     overlay.innerHTML = `
-        <div class="overlay__sheet" style="padding-bottom:var(--sp-6); text-align:center;">
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6); text-align:center; max-height:85vh; overflow-y:auto;">
             <div class="overlay__handle"></div>
             <div style="font-size: 50px; margin-bottom:var(--sp-2);">${LangyIcons.brain}</div>
-            <h2 style="margin-bottom:var(--sp-2);">Langy Coach</h2>
+            <h2 style="margin-bottom:var(--sp-1);">Langy Coach</h2>
             <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-bottom:var(--sp-4); line-height:1.5; max-width:280px; margin-left:auto; margin-right:auto;">
-                ${{ en: 'Improve faster with AI that learns you.', ru: 'Прогрессируй быстрее с ИИ, который учится на тебе.', es: 'Mejora más rápido con IA que te aprende.' }[_lang]}
+                ${{ en: 'The difference between practicing and actually improving.', ru: 'Разница между «практиковать» и «реально прогрессировать».', es: 'La diferencia entre practicar y realmente mejorar.' }[_lang]}
             </p>
-            
-            <div class="card" style="text-align:left; padding:var(--sp-4); margin-bottom:var(--sp-4); border: 2px solid var(--primary);">
-                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; color:var(--primary);">
-                    ${{ en: 'How Coach works', ru: 'Как работает Coach', es: 'Cómo funciona Coach' }[_lang]}
-                </div>
-                <div style="color:var(--text-secondary); font-size:var(--fs-sm); line-height:1.8;">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Remembers your mistakes across sessions', ru: 'Запоминает ошибки между сессиями', es: 'Recuerda tus errores entre sesiones' }[_lang]}</div>
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Spots recurring patterns in your speaking', ru: 'Находит повторяющиеся паттерны в речи', es: 'Detecta patrones recurrentes al hablar' }[_lang]}</div>
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Creates practice from your real errors', ru: 'Создаёт практику из реальных ошибок', es: 'Crea práctica de tus errores reales' }[_lang]}</div>
-                    <div style="display:flex; align-items:center; gap:8px;"><span style="color:var(--primary);">${LangyIcons.check}</span> ${{ en: 'Tracks what improves and what needs work', ru: 'Отслеживает, что улучшается, а что нет', es: 'Muestra qué mejora y qué necesita trabajo' }[_lang]}</div>
+
+            ${_sc >= 3 ? `
+            <div style="background:rgba(59,130,246,0.06); border-radius:var(--radius-md); padding:var(--sp-3); margin-bottom:var(--sp-4); border-left:3px solid var(--primary);">
+                <div style="font-size:var(--fs-xs); color:var(--text-secondary); line-height:1.5; font-style:italic;">
+                    ${{ en: `You've had ${_sc} conversations. With Coach, every one of them would have made the next one smarter.`, ru: `У тебя ${_sc} разговоров. С Coach каждый из них сделал бы следующий умнее.`, es: `Has tenido ${_sc} conversaciones. Con Coach, cada una habría mejorado la siguiente.` }[_lang]}
                 </div>
             </div>
-            
+            ` : ''}
+
+            <!-- Transformation: without → with -->
+            <div style="text-align:left; margin-bottom:var(--sp-4);">
+                ${transformations.map(t => `
+                <div style="display:flex; gap:10px; padding:var(--sp-2) 0; align-items:flex-start;">
+                    <div style="width:28px; height:28px; border-radius:var(--radius-md); background:${t.color}11; color:${t.color}; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; margin-top:2px;">
+                        ${LangyIcons[t.icon] || LangyIcons.check}
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:var(--fs-xs); color:var(--text-tertiary); text-decoration:line-through; margin-bottom:2px;">${t.without}</div>
+                        <div style="font-size:var(--fs-sm); color:var(--text); font-weight:var(--fw-medium);">${t.with}</div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+
             <button class="btn btn--primary btn--full" id="activate-premium-btn">
-                ${{ en: 'Start Coaching · $12/mo', ru: 'Начать коучинг · $12/мес', es: 'Empezar Coaching · $12/mes' }[_lang]}
+                ${{ en: 'Start learning faster · $12/mo', ru: 'Учиться быстрее · $12/мес', es: 'Aprende más rápido · $12/mes' }[_lang]}
             </button>
-            <p style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">${LangyIcons.lock} ${{ en: 'Cancel anytime', ru: 'Отмена в любой момент', es: 'Cancela cuando quieras' }[_lang]}</p>
+            <p style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">${LangyIcons.shield} ${{ en: 'Cancel anytime · No commitment', ru: 'Отмена в любой момент · Без обязательств', es: 'Cancela cuando quieras · Sin compromiso' }[_lang]}</p>
         </div>
     `;
     document.body.appendChild(overlay);
