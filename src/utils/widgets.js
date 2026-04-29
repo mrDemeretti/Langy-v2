@@ -234,7 +234,7 @@ const LangyWidgets = {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 utterance = new SpeechSynthesisUtterance(data.text);
-                utterance.lang = 'en-US';
+                utterance.lang = typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US';
                 utterance.rate = rate;
                 window.speechSynthesis.speak(utterance);
                 playBtn.classList.add('listen-btn--playing');
@@ -355,7 +355,7 @@ const LangyWidgets = {
         listenBtn.onclick = () => {
             if ('speechSynthesis' in window) {
                 const utt = new SpeechSynthesisUtterance(data.phrase);
-                utt.lang = 'en-US';
+                utt.lang = typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US';
                 utt.rate = 0.85;
                 window.speechSynthesis.speak(utt);
             }
@@ -373,7 +373,7 @@ const LangyWidgets = {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRec();
             recognition.continuous = false;
-            recognition.lang = 'en-US';
+            recognition.lang = typeof LangyTarget !== 'undefined' ? LangyTarget.sttLang : 'en-US';
 
             recognition.onstart = () => {
                 recordBtn.classList.add('speak-record-btn--active');

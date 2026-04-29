@@ -232,7 +232,7 @@ You occasionally share useful phrases and explain when/why to use them.`,
         recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = true;
-        recognition.lang = 'en-US';
+        recognition.lang = typeof LangyTarget !== 'undefined' ? LangyTarget.sttLang : 'en-US';
         recognition.maxAlternatives = 1;
         return true;
     }

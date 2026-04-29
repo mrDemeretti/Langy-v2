@@ -337,7 +337,7 @@ function renderLearning(container) {
             } else if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(fullText);
-                utterance.lang = 'en-US';
+                utterance.lang = typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US';
                 utterance.rate = 0.9;
                 utterance.pitch = 1.0;
                 window.speechSynthesis.speak(utterance);

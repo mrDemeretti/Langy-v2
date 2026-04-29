@@ -3,6 +3,9 @@
    ============================================ */
 
 const LangyState = {
+    // Target language being studied (read by LangyTarget)
+    targetLanguage: 'en',
+
     // User
     user: {
         name: 'Alex',
