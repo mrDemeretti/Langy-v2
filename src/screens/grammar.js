@@ -184,7 +184,8 @@ function renderGrammarTopic(container, topicKey, level, lang) {
                     </h4>
                     <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
                         ${topic.examples.map(ex => `
-                            <div class="card card--flat" style="padding:var(--sp-3); border-left:3px solid rgba(245,158,11,0.3);">
+                            <div class="card card--flat grammar-ex" data-text="${escapeHTML(ex)}" style="padding:var(--sp-3); border-left:3px solid rgba(245,158,11,0.3); cursor:pointer; display:flex; align-items:center; gap:var(--sp-2);">
+                                <span style="color:#F59E0B; font-size:14px; flex-shrink:0;">${LangyIcons.volume}</span>
                                 <div style="font-size:var(--fs-sm); font-style:italic; color:var(--text-primary);">${ex}</div>
                             </div>
                         `).join('')}
@@ -260,6 +261,18 @@ function renderGrammarTopic(container, topicKey, level, lang) {
             if (fb) fb.innerHTML = isCorrect
                 ? `<span style="color:var(--accent-dark);">${LangyIcons.check} ${{ en: 'Correct!', ru: 'Правильно!', es: '¡Correcto!' }[lang]}</span>`
                 : `<span style="color:var(--danger);">${LangyIcons.x} ${{ en: 'The answer is:', ru: 'Ответ:', es: 'La respuesta es:' }[lang]} <strong>${sampleExercise.answer}</strong></span>`;
+            // Voice: speak the completed sentence with the correct answer
+            if (typeof LangyVoice !== 'undefined') {
+                const fullSentence = sampleExercise.template.replace(/_{2,}|\.\.\./g, sampleExercise.answer);
+                LangyVoice.speakCorrection(fullSentence, 400);
+            }
+        });
+    });
+
+    // Grammar examples: tap to hear
+    container.querySelectorAll('.grammar-ex').forEach(el => {
+        el.addEventListener('click', () => {
+            if (typeof LangyVoice !== 'undefined') LangyVoice.sayTeacher(el.dataset.text);
         });
     });
 
