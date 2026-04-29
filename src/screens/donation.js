@@ -46,7 +46,20 @@ function renderDonation(container) {
                 <div class="donation__plan-summary">
                     <div class="donation__plan-name">${plan.name}</div>
                     <div class="donation__plan-price">${plan.price}<span style="font-size:var(--fs-base); font-weight:var(--fw-regular);">${plan.period}</span></div>
-                    <p style="font-size:var(--fs-sm); opacity:0.8;">Full access to all features</p>
+                    ${plan.type === 'sub' ? `
+                    <p style="font-size:var(--fs-sm); opacity:0.95; margin-bottom:var(--sp-2);">${{
+                        en: 'Deeper coaching · Smarter practice · Faster results',
+                        ru: 'Глубокий коучинг · Умная практика · Быстрый результат',
+                        es: 'Coaching profundo · Práctica inteligente · Resultados más rápidos'
+                    }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</p>
+                    <div style="font-size:var(--fs-xs); opacity:0.7; display:flex; flex-wrap:wrap; gap:var(--sp-2); justify-content:center;">
+                        <span>${LangyIcons.brain} ${{ en: 'Pattern tracking', ru: 'Паттерны', es: 'Patrones' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
+                        <span>·</span>
+                        <span>${LangyIcons.trendingUp} ${{ en: 'Progress insights', ru: 'Аналитика', es: 'Análisis' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
+                        <span>·</span>
+                        <span>${LangyIcons.mic} ${{ en: 'Targeted review', ru: 'Обзор', es: 'Revisión' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
+                    </div>
+                    ` : `<p style="font-size:var(--fs-sm); opacity:0.8;">${plan.amount ? plan.amount + ' ' + (plan.currency === 'langy' ? 'Langy' : 'Dangy') + ' coins' : ''}</p>`}
                 </div>
 
                 <!-- Payment Methods -->
