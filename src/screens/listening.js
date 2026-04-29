@@ -146,7 +146,13 @@ function renderListeningDrill(container, modeId, lang) {
 }
 
 function speakText(text, rate) {
-    if ('speechSynthesis' in window) {
+    if (typeof LangyVoice !== 'undefined') {
+        if (rate && rate < 0.8) {
+            LangyVoice.saySlow(text);
+        } else {
+            LangyVoice.sayTeacher(text);
+        }
+    } else if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'en-US'; u.rate = rate || 1;
@@ -196,6 +202,8 @@ function renderDictation(container, sentence, item, state, mode, lang) {
         if (fb) fb.innerHTML = isCorrect
             ? `<div style="color:var(--accent-dark);">${LangyIcons.check} ${{ en: 'Correct!', ru: 'Правильно!', es: '¡Correcto!' }[lang]}</div>`
             : `<div style="color:var(--danger);">${LangyIcons.x} <strong>${sentence}</strong></div>`;
+        // Speak correct answer slowly after wrong answer
+        if (!isCorrect && typeof LangyVoice !== 'undefined') LangyVoice.speakCorrection(sentence, 500);
     });
 }
 

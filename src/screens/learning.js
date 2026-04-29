@@ -327,9 +327,14 @@ function renderLearning(container) {
             }
         };
 
-        // TTS — Google built-in Web Speech API
+        // TTS — Mascot-aware voice via LangyVoice
         speakBtn.onclick = () => {
-            if ('speechSynthesis' in window) {
+            if (typeof LangyVoice !== 'undefined') {
+                speakBtn.innerHTML = `${LangyIcons.volume} Playing...`;
+                LangyVoice.sayAs(chosenIdx, fullText, () => {
+                    speakBtn.innerHTML = `${LangyIcons.volume} Озвучить / Listen`;
+                });
+            } else if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(fullText);
                 utterance.lang = 'en-US';
