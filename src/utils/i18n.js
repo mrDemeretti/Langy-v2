@@ -32,7 +32,7 @@ const LangyI18n = {
         'general.level': { en: 'Level', ru: 'Уровень', es: 'Nivel' },
 
         // ─── Auth ───
-        'auth.title': { en: 'Learn English', ru: 'Учите Английский', es: 'Aprende Inglés' },
+        'auth.title': { en: 'Learn a Language', ru: 'Учите языки', es: 'Aprende un idioma' },
         'auth.subtitle': {
             en: 'Your AI-powered language journey',
             ru: 'Ваш ИИ-помощник в изучении языка',
@@ -231,9 +231,9 @@ const LangyI18n = {
         // ─── Onboarding ───
         'onboard.select_lang': { en: 'Interface Language', ru: 'Язык интерфейса', es: 'Idioma de Interfaz' },
         'onboard.why_learn': {
-            en: 'Why are you learning English?',
-            ru: 'Почему вы учите английский?',
-            es: '¿Por qué aprendes inglés?',
+            en: 'Why are you learning?',
+            ru: 'Зачем вы учите язык?',
+            es: '¿Por qué estás aprendiendo?',
         },
         'onboard.travel': { en: 'Travel', ru: 'Путешествия', es: 'Viajes' },
         'onboard.work': { en: 'Work & Career', ru: 'Работа и карьера', es: 'Trabajo y Carrera' },

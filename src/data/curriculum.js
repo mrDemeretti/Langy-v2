@@ -2533,6 +2533,14 @@ const LangyCurriculum = {
     },
 
     getByLevel(cefrLevel) {
+        const lang = this.targetLanguage || 'en';
+        // First try to find a textbook for the current target language at this level
+        const langMatch = this.textbooks.find(tb => (tb.language || 'en') === lang && tb.cefr === cefrLevel);
+        if (langMatch) return langMatch;
+        // Fallback: first textbook for this language (any level)
+        const anyLang = this.textbooks.find(tb => (tb.language || 'en') === lang);
+        if (anyLang) return anyLang;
+        // Last resort: any textbook at this level
         return this.textbooks.find(tb => tb.cefr === cefrLevel);
     },
 
