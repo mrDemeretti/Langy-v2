@@ -94,13 +94,19 @@ const ExerciseGenerator = {
     },
 
     // 2. MATCH-PAIRS — Vocabulary matching
-    generateMatchPairs(level) {
+    generateMatchPairs(level, unitId) {
         const effectiveLevel = this._getLevelWithReview(level);
-        const vocabLevel = LangyVocabBank[effectiveLevel];
-        if (!vocabLevel) return this._fallbackMatchPairs();
 
-        // Get random words from the level
-        const words = vocabLevel.getAllWords();
+        // Unit-scoped vocab if available, otherwise full level
+        let words;
+        if (unitId && typeof LangyVocabBank !== 'undefined' && LangyVocabBank.getForUnit) {
+            words = LangyVocabBank.getForUnit(effectiveLevel, unitId);
+        }
+        if (!words || words.length < 4) {
+            const vocabLevel = LangyVocabBank[effectiveLevel];
+            if (!vocabLevel) return this._fallbackMatchPairs();
+            words = vocabLevel.getAllWords();
+        }
         if (words.length < 4) return this._fallbackMatchPairs();
 
         const selected = this._pick(words, Math.min(5, words.length));
@@ -478,9 +484,10 @@ const ExerciseGenerator = {
      * Generate a single random exercise for a given CEFR level
      * @param {string} level - CEFR level (A1, A2, B1, B2, C1, C2)
      * @param {string} [type] - Optional specific type
+     * @param {number} [unitId] - Optional unit ID for unit-scoped vocabulary
      * @returns {Object} Exercise object with type and data
      */
-    generate(level = 'A1', type = null) {
+    generate(level = 'A1', type = null, unitId = null) {
         const types = [
             'fill-bubble',
             'match-pairs',
@@ -496,7 +503,7 @@ const ExerciseGenerator = {
 
         switch (chosenType) {
             case 'fill-bubble': return this.generateFillBubble(level);
-            case 'match-pairs': return this.generateMatchPairs(level);
+            case 'match-pairs': return this.generateMatchPairs(level, unitId);
             case 'word-shuffle': return this.generateWordShuffle(level);
             case 'type-translation': return this.generateTypeTranslation(level);
             case 'image-choice': return this.generateImageChoice(level);
@@ -511,7 +518,7 @@ const ExerciseGenerator = {
      * Generate a batch of exercises
      * @param {string} level - CEFR level
      * @param {number} count - Number of exercises to generate
-     * @param {Object} [options] - Options: { types: string[], noRepeatTypes: boolean }
+     * @param {Object} [options] - Options: { types: string[], noRepeatTypes: boolean, unitId: number }
      * @returns {Array} Array of exercise objects
      */
     generateBatch(level = 'A1', count = 5, options = {}) {
@@ -521,15 +528,16 @@ const ExerciseGenerator = {
             'type-translation', 'image-choice', 'listen-type',
             'speak-aloud', 'read-answer'
         ];
+        const unitId = options.unitId || null;
 
         // If noRepeatTypes, cycle through types
         if (options.noRepeatTypes && count <= types.length) {
             const shuffledTypes = this._shuffle(types).slice(0, count);
-            shuffledTypes.forEach(t => exercises.push(this.generate(level, t)));
+            shuffledTypes.forEach(t => exercises.push(this.generate(level, t, unitId)));
         } else {
             for (let i = 0; i < count; i++) {
                 const type = types[i % types.length];
-                exercises.push(this.generate(level, type));
+                exercises.push(this.generate(level, type, unitId));
             }
         }
 

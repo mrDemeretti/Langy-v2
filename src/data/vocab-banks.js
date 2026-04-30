@@ -1,8 +1,10 @@
 /* ============================================
-   LANGY — VOCABULARY BANKS (EXPANDED)
+   LANGY — VOCABULARY BACKBONE
    ~5000+ words across CEFR levels A1-C2
    Cumulative: A1=800, A2=1600, B1=2800,
    B2=4200, C1=5600, C2=6200+
+   Unit-to-category mapping for curriculum-scoped
+   vocabulary exercises, tracking, and review
    ============================================ */
 
 const LangyVocabBank = {
@@ -2412,7 +2414,138 @@ advanced_collocations: [
 getAllWords(){let a=[];Object.keys(this).forEach(c=>{if(Array.isArray(this[c]))a=a.concat(this[c])});return a}
 },
 
-// ─── HELPERS ───
+// ═══════════════════════════════════════════════════
+// VOCABULARY BACKBONE — Unit-to-Category Mapping
+// Maps every English curriculum unit to its relevant
+// vocab bank categories for unit-scoped exercises,
+// tracking, review, and AI guidance.
+// ═══════════════════════════════════════════════════
+
+/** @type {Object<string, Object<number, string[]>>} level → unitId → category keys */
+unitVocabMap: {
+    // ─── Pre-A1 ───
+    'Pre-A1': {
+        1: ['greetings'],                          // The English Alphabet
+        2: ['greetings'],                          // Hello & Goodbye
+        3: ['numbers'],                            // Numbers 1–10
+        4: ['colors'],                             // Colors
+        5: ['objects', 'common'],                   // Everyday Objects
+        6: ['greetings', 'numbers', 'colors', 'objects'], // Review
+    },
+    // ─── A1 ───
+    'A1': {
+        1:  ['greetings', 'numbers', 'countries'],  // Verb BE
+        2:  ['family', 'adjectives'],               // Adjectives + possessives
+        3:  ['jobs', 'places'],                     // Present Simple positive
+        4:  ['daily_routines', 'time'],             // Present Simple neg/q
+        5:  ['greetings', 'family', 'jobs'],        // Checkpoint 1
+        6:  ['food', 'common'],                     // Countable/uncountable
+        7:  ['objects', 'places_a1'],               // There is/are
+        8:  ['verbs', 'daily_routines'],            // Present Continuous
+        9:  ['food', 'shopping'],                   // At the café
+        10: ['food', 'objects', 'verbs'],           // Checkpoint 2
+        11: ['verbs', 'time_expressions'],          // Past Simple regular
+        12: ['verbs', 'time_expressions'],          // Past Simple irregular
+        13: ['verbs', 'common'],                    // Can/can't
+        14: ['places_a1', 'common'],                // Directions
+        15: ['common', 'verbs'],                    // Checkpoint 3
+        16: ['body', 'weather', 'animals'],         // Pronunciation clinic
+        17: ['places_a1', 'common'],                // At the hotel
+        18: ['greetings', 'verbs', 'food', 'places_a1'], // Final checkpoint
+    },
+    // ─── A2 ───
+    'A2': {
+        1:  ['travel', 'personality'],              // BE review + adjective order
+        2:  ['personality', 'appearance'],           // Object pronouns + possessives
+        3:  ['activities', 'travel'],               // Past Simple mastery
+        4:  ['shopping', 'appearance'],             // Comparatives/superlatives
+        5:  ['travel', 'personality', 'shopping'],  // Checkpoint 1
+        6:  ['food_extended', 'shopping'],          // Countable/uncountable + much/many
+        7:  ['activities', 'travel'],               // Future: be going to
+        8:  ['travel', 'activities'],               // Will vs going to
+        9:  ['activities', 'hobbies_extended'],     // Present Perfect intro
+        10: ['food_extended', 'activities'],        // Checkpoint 2
+        11: ['health_basic', 'body_actions'],       // Should/shouldn't
+        12: ['shopping', 'communication'],          // Would like
+        13: ['descriptions', 'weather_extended'],   // Pronunciation: stress
+        14: ['shopping', 'food_extended'],          // At the restaurant
+        15: ['health_basic', 'body_actions'],       // At the doctor
+        16: ['travel', 'shopping', 'health_basic'], // Final checkpoint
+    },
+    // ─── B1 ───
+    'B1': {
+        1:  ['emotions', 'abstract_b1'],            // Present Perfect: yet/already/just
+        2:  ['events', 'daily_routines'],            // PP vs Past Simple
+        3:  ['verbs_b1', 'abstract_b1'],            // Infinitive vs gerund
+        4:  ['events', 'crime'],                    // Past Continuous + Past Simple
+        5:  ['emotions', 'events'],                 // Checkpoint 1
+        6:  ['technology', 'environment'],          // First Conditional
+        7:  ['money', 'work'],                      // Second Conditional
+        8:  ['work', 'technology'],                 // Passive voice
+        9:  ['cooking', 'materials'],               // Past Perfect
+        10: ['work', 'technology'],                 // Checkpoint 2
+        11: ['media', 'communication'],             // Reported speech
+        12: ['social_issues', 'relationships'],     // Must/have to
+        13: ['connectors', 'debate'],               // Connected speech
+        14: ['work', 'jobs_extended'],              // Job interview
+        15: ['media', 'social_issues'],             // News retelling
+        16: ['emotions', 'work', 'media'],          // Final checkpoint
+    },
+    // ─── B2 ───
+    'B2': {
+        1:  ['academic', 'business'],               // All question types
+        2:  ['idioms', 'history'],                  // Narrative tenses
+        3:  ['science', 'society'],                 // Future forms overview
+        4:  ['business', 'writing'],                // Formal communications
+        5:  ['academic', 'business'],               // Checkpoint 1
+        6:  ['society', 'psychology'],              // Conditionals 2nd/3rd/mixed
+        7:  ['psychology', 'adjectives_advanced'],  // Wish + Past
+        8:  ['adjectives_advanced', 'verbs_b2'],    // Gerund vs infinitive advanced
+        9:  ['society', 'environment_advanced'],    // Used to vs be/get used to
+        10: ['psychology', 'society'],              // Checkpoint 2
+        11: ['business', 'law'],                    // Reported speech advanced
+        12: ['architecture', 'science'],            // Articles mastery
+        13: ['science', 'music'],                   // Relative clauses
+        14: ['business', 'phrasal_verbs_b2'],       // Advanced interview
+    },
+    // ─── C1 ───
+    'C1': {
+        1:  ['advanced_vocab', 'collocations'],      // Discourse markers
+        2:  ['advanced_vocab', 'diplomacy'],         // Causative forms
+        3:  ['advanced_vocab', 'legal_advanced'],    // Modals of deduction
+        4:  ['advanced_vocab', 'academia'],          // Advanced modals
+        5:  ['collocations', 'advanced_vocab'],      // Checkpoint 1
+        6:  ['advanced_vocab', 'philosophy'],        // Cleft sentences & inversion
+        7:  ['diplomacy', 'politics_advanced'],      // Hedging & distancing
+        8:  ['collocations', 'economics'],           // Noun clauses & ellipsis
+        9:  ['advanced_vocab', 'diplomacy'],         // Public speaking
+        10: ['philosophy', 'politics_advanced'],     // Checkpoint 2
+        11: ['advanced_vocab', 'phrasal_verbs_c1'],  // Mixed conditionals
+        12: ['science_advanced', 'medicine'],        // Advanced passives
+        13: ['philosophy', 'economics', 'society_c1'], // The Debate
+    },
+    // ─── C2 ───
+    'C2': {
+        1:  ['literary', 'rare_advanced'],           // Tense matrix
+        2:  ['rare_advanced', 'advanced_verbs'],     // Complex verb patterns
+        3:  ['formal_register', 'rhetoric'],         // Subjunctive & inversion
+        4:  ['rare_advanced', 'academic_writing'],   // Concessive clauses
+        5:  ['literary', 'rare_advanced'],           // Checkpoint 1
+        6:  ['academic_writing', 'linguistics'],     // Nominalization
+        7:  ['literary', 'archaic_english'],         // Participle clauses
+        8:  ['proverbs', 'rare_words'],              // Pragmatics & sarcasm
+        9:  ['rhetoric', 'geopolitics'],             // The Negotiation
+        10: ['academic_writing', 'rare_advanced'],   // Checkpoint 2
+        11: ['proverbs', 'advanced_collocations'],   // Fixed phrases & binomials
+        12: ['formal_register', 'arts_culture', 'rare_words'], // Register shifting
+    },
+},
+
+// ═══════════════════════════════════════════════════
+// HELPERS — Basic level-scoped access
+// ═══════════════════════════════════════════════════
+
+/** Get all words cumulatively up to and including a level */
 getWordsForLevel(level) {
     const order = ['A1','A2','B1','B2','C1','C2'];
     const idx = order.indexOf(level);
@@ -2422,18 +2555,163 @@ getWordsForLevel(level) {
     }
     return words;
 },
+
+/** Get a specific category array from a level */
 getCategory(level, category) { return this[level]?.[category] || []; },
+
+/** Get random words from a level */
 getRandom(level, count = 4) {
     const words = this[level]?.getAllWords() || [];
     const shuffled = [...words].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, count);
 },
+
+/** Total word count across all levels */
 getTotalCount() {
     let total = 0;
     ['A1','A2','B1','B2','C1','C2'].forEach(l => {
         if (this[l]?.getAllWords) total += this[l].getAllWords().length;
     });
     return total;
+},
+
+// ═══════════════════════════════════════════════════
+// VOCABULARY BACKBONE — Unit-aware access
+// ═══════════════════════════════════════════════════
+
+/**
+ * Get vocabulary words for a specific curriculum unit.
+ * Returns concrete word objects from the vocab bank categories
+ * mapped to that unit via unitVocabMap.
+ * @param {string} level - CEFR level ('A1', 'A2', etc.)
+ * @param {number} unitId - Unit ID within that level
+ * @returns {Array<{en:string, ru:string, ...}>}
+ */
+getForUnit(level, unitId) {
+    const categories = this.unitVocabMap[level]?.[unitId];
+    if (!categories || !this[level]) return [];
+    let words = [];
+    const seen = new Set();
+    categories.forEach(cat => {
+        const arr = this[level]?.[cat];
+        if (Array.isArray(arr)) {
+            arr.forEach(w => {
+                const key = w.en || w;
+                if (!seen.has(key)) { seen.add(key); words.push(w); }
+            });
+        }
+    });
+    return words;
+},
+
+/**
+ * Get unit vocab count (how many words a unit covers).
+ * @param {string} level
+ * @param {number} unitId
+ * @returns {number}
+ */
+getUnitWordCount(level, unitId) {
+    return this.getForUnit(level, unitId).length;
+},
+
+/**
+ * Get the category keys mapped to a unit.
+ * @param {string} level
+ * @param {number} unitId
+ * @returns {string[]}
+ */
+getUnitCategories(level, unitId) {
+    return this.unitVocabMap[level]?.[unitId] || [];
+},
+
+/**
+ * Get a summary of all categories and their word counts for a level.
+ * Useful for progress screens and curriculum overview.
+ * @param {string} level
+ * @returns {Array<{category:string, count:number}>}
+ */
+getLevelSummary(level) {
+    const bank = this[level];
+    if (!bank) return [];
+    return Object.keys(bank)
+        .filter(k => Array.isArray(bank[k]))
+        .map(k => ({ category: k, count: bank[k].length }))
+        .sort((a, b) => b.count - a.count);
+},
+
+/**
+ * Get all categories available for a level.
+ * @param {string} level
+ * @returns {string[]}
+ */
+getCategoriesForLevel(level) {
+    const bank = this[level];
+    if (!bank) return [];
+    return Object.keys(bank).filter(k => Array.isArray(bank[k]));
+},
+
+/**
+ * Search for a word across all levels.
+ * Returns {level, category, word} for each match.
+ * @param {string} query - Word to search (en or ru)
+ * @param {Object} [opts] - { maxResults: number, lang: 'en'|'ru' }
+ * @returns {Array<{level:string, category:string, word:Object}>}
+ */
+searchWords(query, opts = {}) {
+    const max = opts.maxResults || 20;
+    const lang = opts.lang || 'en';
+    const q = query.toLowerCase();
+    const results = [];
+    for (const level of ['A1','A2','B1','B2','C1','C2']) {
+        const bank = this[level];
+        if (!bank) continue;
+        for (const cat of Object.keys(bank)) {
+            if (!Array.isArray(bank[cat])) continue;
+            for (const w of bank[cat]) {
+                const val = (w[lang] || '').toLowerCase();
+                if (val.includes(q)) {
+                    results.push({ level, category: cat, word: w });
+                    if (results.length >= max) return results;
+                }
+            }
+        }
+    }
+    return results;
+},
+
+/**
+ * Get random unit-scoped words for exercises.
+ * Falls back to level-wide random if unit mapping is missing.
+ * @param {string} level
+ * @param {number} unitId
+ * @param {number} count
+ * @returns {Array}
+ */
+getRandomForUnit(level, unitId, count = 4) {
+    let pool = this.getForUnit(level, unitId);
+    if (pool.length < count) {
+        // Fall back to full level
+        pool = this[level]?.getAllWords?.() || [];
+    }
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+},
+
+/**
+ * Get vocabulary progress data for a level (unit-by-unit breakdown).
+ * Returns unit IDs, category names, and word counts.
+ * Useful for progress tracking UI.
+ * @param {string} level
+ * @returns {Array<{unitId:number, categories:string[], wordCount:number}>}
+ */
+getProgressMap(level) {
+    const map = this.unitVocabMap[level];
+    if (!map) return [];
+    return Object.entries(map).map(([uid, cats]) => ({
+        unitId: parseInt(uid),
+        categories: cats,
+        wordCount: this.getForUnit(level, parseInt(uid)).length,
+    })).sort((a, b) => a.unitId - b.unitId);
 }
 };
 
