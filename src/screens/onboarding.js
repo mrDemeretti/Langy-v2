@@ -91,9 +91,9 @@ function renderOnboarding(container) {
             const backbone = cfg.academicBackbone || {};
             const subtitleMap = {
                 en: {
-                    en: 'Oxford-style academic English',
-                    ru: 'Академический английский по Оксфорду',
-                    es: 'Inglés académico estilo Oxford',
+                    en: 'CEFR-aligned academic English',
+                    ru: 'Академический английский по CEFR',
+                    es: 'Inglés académico alineado con MCER',
                 },
                 es: {
                     en: 'Cervantes Institute Spanish',

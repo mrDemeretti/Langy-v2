@@ -21,13 +21,14 @@ const LangyTarget = {
             aiTeacherRole: 'English language teacher',
             aiExaminerRole: 'English examiner',
             curriculumId: 'en',
-            // Academic backbone reference — drives AI context and curriculum credibility
+            // Academic backbone — drives AI context and curriculum credibility
             academicBackbone: {
                 framework: 'CEFR (Common European Framework of Reference)',
-                reference: 'Oxford English File / Headway-style progression',
+                reference: 'CEFR-aligned communicative progression (original Langy curriculum)',
                 methodology: 'Communicative Language Teaching (CLT) with grammar-translation support',
                 phonetics: 'IPA-based pronunciation with minimal pairs',
                 writingSystem: 'Latin',
+                vocabTarget: '~6000 words across Pre-A1–C2 (aligned with CEFR vocabulary expectations)',
             },
             // Which mascots are available for this language
             mascotRoster: [0, 1, 2, 3], // Zendaya, Travis, Matthew, Omar

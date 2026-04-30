@@ -1,7 +1,10 @@
 /* ============================================
-   LANGY — FULL CURRICULUM DATA v2
-   Optimized: 89 units across A1-C2
+   LANGY — FULL CURRICULUM DATA v3
+   CEFR-aligned original curriculum: Pre-A1 → C2
+   ~95 units across 7 levels · ~600+ exercises
    Types: 📗 Grammar · 🗣️ Situational · 🎤 Pronunciation · 🔄 Review
+   Each level includes: CEFR can-do statements, learning objectives,
+   structured units with teachSlides, exercises, and homework
    ============================================ */
 
 const LangyCurriculum = {
@@ -19,7 +22,22 @@ const LangyCurriculum = {
         title: 'Pre-A1 — Starter',
         level: 'Pre-A1',
         cefr: 'Pre-A1',
-        methodology: 'For absolute beginners. The alphabet, basic words, colors, numbers 1-10. Visual learning with native language support.',
+        methodology: 'Foundational literacy for absolute beginners. Alphabet recognition, basic sight words, numbers 1-10, colors. Heavy visual and native-language scaffolding.',
+        canDo: [
+            'Can recognise the 26 letters of the English alphabet',
+            'Can say and respond to basic greetings (hello, goodbye, please, thank you)',
+            'Can count from 1 to 10',
+            'Can name basic colors',
+            'Can identify common everyday objects by name',
+            'Can form very simple sentences with "I am..." and "You are..."',
+        ],
+        objectives: [
+            'Alphabet recognition and letter-sound correspondence',
+            'Survival greetings and politeness formulas',
+            'Number literacy (1-10)',
+            'Basic color and object vocabulary (~50 words)',
+            'First exposure to verb BE (am/is/are)',
+        ],
         units: [
             {
                 id: 1, title: 'The English Alphabet', desc: 'Learn the 26 letters, their sounds, and how to spell your name.',
@@ -146,7 +164,28 @@ const LangyCurriculum = {
         title: 'A1 — Beginner',
         level: 'A1',
         cefr: 'A1',
-        methodology: 'Introduction to English. Basic greetings, verb BE, Present Simple, Past Simple. Focus on survival English.',
+        methodology: 'CEFR A1 Breakthrough. Core grammar (BE, Present Simple, Past Simple, can), survival situations (café, hotel, directions), foundational pronunciation. ~800 target vocabulary.',
+        canDo: [
+            'Can understand and use familiar everyday expressions and very basic phrases',
+            'Can introduce themselves and others and ask/answer questions about personal details',
+            'Can interact in a simple way provided the other person talks slowly and clearly',
+            'Can order food and drinks in a café',
+            'Can ask for and give simple directions',
+            'Can describe daily routines using Present Simple',
+            'Can talk about past events using basic Past Simple',
+            'Can express ability with can/can\'t',
+        ],
+        objectives: [
+            'Verb BE in all forms (positive, negative, questions)',
+            'Present Simple for habits and routines (I/you/we/they + he/she/it)',
+            'Past Simple (regular + irregular verbs)',
+            'Present Continuous for actions happening now',
+            'Can/can\'t for ability and permission',
+            'Articles a/an, plurals, possessives, demonstratives',
+            'There is/are + prepositions of place',
+            'Key pronunciation: /θ/, /ð/, /w/, /v/, minimal pairs',
+            'Situational English: café, hotel, introductions, directions',
+        ],
         units: [
             // ── Unit 1: Verb BE ──
             {
@@ -1168,7 +1207,30 @@ const LangyCurriculum = {
         title: 'A2 — Elementary',
         level: 'A2',
         cefr: 'A2',
-        methodology: 'Consolidation of basics. Comparatives, future tenses, Present Perfect introduction.',
+        methodology: 'CEFR A2 Waystage. Consolidation of A1 grammar, comparatives/superlatives, future tenses (going to, will), Present Perfect introduction. Functional English for shopping, health, travel. ~1600 cumulative vocabulary.',
+        canDo: [
+            'Can understand sentences and frequently used expressions related to areas of most immediate relevance',
+            'Can communicate in simple and routine tasks requiring direct exchange of information',
+            'Can describe in simple terms aspects of background, immediate environment, and matters of immediate need',
+            'Can compare things using comparatives and superlatives',
+            'Can talk about future plans and intentions',
+            'Can describe past experiences using Present Perfect',
+            'Can give and understand simple advice (should/shouldn\'t)',
+            'Can make polite requests (would like)',
+        ],
+        objectives: [
+            'Full review and consolidation of BE + Present Simple',
+            'Possessives and object pronouns',
+            'Past Simple: full mastery (regular, irregular, questions, negatives)',
+            'Comparatives and superlatives (-er/more, the -est/most)',
+            'Countable/uncountable nouns + much/many/some/any',
+            'Future: be going to + will vs be going to',
+            'Present Perfect: introduction (experience, ever/never)',
+            'Should/shouldn\'t for advice',
+            'Would like for polite requests',
+            'Word stress and natural speech rhythm',
+            'Situational: shopping, doctor, restaurant',
+        ],
         units: [
             // ── A2 Unit 1 ──
             {
@@ -1517,7 +1579,31 @@ const LangyCurriculum = {
         title: 'B1 — Pre-Intermediate',
         level: 'B1',
         cefr: 'B1',
-        methodology: 'Present Perfect mastery. Conditionals. Passive voice. Connected speech.',
+        methodology: 'CEFR B1 Threshold. Present Perfect mastery (yet/already/just, for/since, PP vs PS). First and Second Conditionals. Passive voice. Reported speech. Modals of obligation. ~2800 cumulative vocabulary.',
+        canDo: [
+            'Can understand the main points of clear standard input on familiar matters',
+            'Can deal with most situations likely to arise whilst travelling',
+            'Can produce simple connected text on topics which are familiar or of personal interest',
+            'Can describe experiences, events, dreams, hopes, and ambitions',
+            'Can briefly give reasons and explanations for opinions and plans',
+            'Can use conditionals to discuss real and hypothetical situations',
+            'Can use passive voice to describe processes and events',
+            'Can report what others have said',
+            'Can express obligation and prohibition (must/have to)',
+        ],
+        objectives: [
+            'Present Perfect: yet/already/just, for/since',
+            'Present Perfect vs Past Simple: when to use which',
+            'Infinitive vs gerund after different verbs',
+            'Past Continuous + Past Simple for storytelling',
+            'First Conditional (real possibilities)',
+            'Second Conditional (unreal/hypothetical)',
+            'Passive voice: present and past',
+            'Past Perfect for sequence of past events',
+            'Reported speech with backshift',
+            'Modals: must/have to/don\'t have to/mustn\'t',
+            'Situational: job interviews, retelling news',
+        ],
         units: [
             // ── B1 Unit 1 ──
             {
@@ -1627,7 +1713,30 @@ const LangyCurriculum = {
         title: 'B2 — Upper-Intermediate',
         level: 'B2',
         cefr: 'B2',
-        methodology: 'Advanced tenses, conditionals, articles, wish. Business English.',
+        methodology: 'CEFR B2 Vantage. Advanced question types, narrative tenses, mixed conditionals, wish/regret, advanced gerund/infinitive, used to vs get used to. Formal register and business communication. ~4200 cumulative vocabulary.',
+        canDo: [
+            'Can understand the main ideas of complex text on both concrete and abstract topics',
+            'Can interact with a degree of fluency and spontaneity that makes regular interaction with native speakers possible',
+            'Can produce clear, detailed text on a wide range of subjects',
+            'Can explain a viewpoint on a topical issue giving advantages and disadvantages',
+            'Can use indirect and tag questions for politeness and emphasis',
+            'Can use all conditional forms including mixed conditionals',
+            'Can express wishes and regrets about the present and past',
+            'Can write formal emails and business communications',
+        ],
+        objectives: [
+            'Indirect, tag, and subject questions',
+            'Narrative tenses for storytelling',
+            'Future forms: full overview and precision',
+            'Second, Third, and Mixed Conditionals',
+            'Wish + Past / Past Perfect for regrets',
+            'Gerund vs infinitive: advanced meaning changes',
+            'Used to vs be/get used to',
+            'Advanced reported speech with reporting verbs',
+            'Articles (a/the/zero): mastering exceptions',
+            'Formal vs informal register',
+            'Situational: formal communications, debates, presentations',
+        ],
         units: [
             // ── B2 Unit 1 ──
             {
@@ -1905,7 +2014,27 @@ const LangyCurriculum = {
         title: 'C1 — Advanced',
         level: 'C1',
         cefr: 'C1',
-        methodology: 'Discourse markers, modals for speculation, emphasis, advanced passives.',
+        methodology: 'CEFR C1 Effective Operational Proficiency. Discourse markers, modal verbs for speculation, cleft sentences for emphasis, advanced passives, mixed conditionals in context, relative clauses, academic vocabulary. ~5600 cumulative vocabulary.',
+        canDo: [
+            'Can understand a wide range of demanding, longer texts and recognise implicit meaning',
+            'Can express ideas fluently and spontaneously without much obvious searching for expressions',
+            'Can use language flexibly and effectively for social, academic, and professional purposes',
+            'Can produce clear, well-structured, detailed text on complex subjects',
+            'Can use discourse markers to organise extended speech and writing',
+            'Can speculate about the past and present using advanced modals',
+            'Can use emphasis structures (cleft sentences, inversion) for impact',
+            'Can handle nuanced academic and professional register',
+        ],
+        objectives: [
+            'Discourse markers: however, moreover, nevertheless, whereas, etc.',
+            'Modal verbs for speculation (must have, might have, can\'t have)',
+            'Cleft sentences for emphasis (It was... that/who...)',
+            'Advanced passive structures (have something done, reporting passives)',
+            'Relative clauses: defining vs non-defining, reduced forms',
+            'Word formation: prefixes, suffixes, nominalisation',
+            'Collocation patterns and academic vocabulary',
+            'Situational: academic writing, professional negotiations',
+        ],
         units: [
             // ── C1 Unit 1 ──
             {
@@ -2157,7 +2286,27 @@ const LangyCurriculum = {
         title: 'C2 — Proficiency',
         level: 'C2',
         cefr: 'C2',
-        methodology: 'Near-native fluency. Rhetoric, pragmatics, register shifting, academic writing, idioms.',
+        methodology: 'CEFR C2 Mastery. Near-native fluency across all registers. Rhetoric, pragmatics, register shifting, academic writing, advanced idioms and figurative language. Full tense synthesis and native-level nuance. ~6200+ cumulative vocabulary.',
+        canDo: [
+            'Can understand with ease virtually everything heard or read',
+            'Can summarise information from different spoken and written sources, reconstructing arguments in a coherent presentation',
+            'Can express themselves spontaneously, very fluently, and precisely',
+            'Can differentiate finer shades of meaning even in the most complex situations',
+            'Can write complex reports, articles, or essays with an effective logical structure',
+            'Can shift register seamlessly between formal, informal, and academic contexts',
+            'Can use rhetoric and persuasion effectively in speech and writing',
+            'Can understand and use idioms, figurative language, and cultural references naturally',
+        ],
+        objectives: [
+            'Full tense synthesis: seamless weaving of all tenses',
+            'Pragmatics: implicature, indirectness, hedging',
+            'Register shifting: formal ↔ informal ↔ academic',
+            'Advanced idioms, collocations, and figurative language',
+            'Academic and professional writing at native level',
+            'Rhetoric and persuasion techniques',
+            'Error analysis and self-correction strategies',
+            'Cultural fluency and cross-cultural communication',
+        ],
         units: [
             // ── C2 Unit 1 ──
             {
@@ -2765,9 +2914,31 @@ const LangyCurriculum = {
         const bbStr = lang && lang.academicBackbone
             ? `\nAcademic Framework: ${lang.academicBackbone.framework}\nReference: ${lang.academicBackbone.reference}\nMethodology: ${lang.academicBackbone.methodology}`
             : '';
+        const canDoStr = tb.canDo && tb.canDo.length
+            ? `\nCEFR Can-Do Statements:\n${tb.canDo.map(s => '- ' + s).join('\n')}`
+            : '';
+        const objStr = tb.objectives && tb.objectives.length
+            ? `\nLearning Objectives:\n${tb.objectives.map(s => '- ' + s).join('\n')}`
+            : '';
         return `Current textbook: ${tb.title} (${tb.cefr})
 Language: ${tb.language || 'en'}
-Methodology: ${tb.methodology || ''}${bbStr}`;
+Methodology: ${tb.methodology || ''}${bbStr}${canDoStr}${objStr}`;
+    },
+
+    /** Get can-do statements for a specific textbook */
+    getCanDoStatements(textbookId) {
+        const tb = textbookId
+            ? this.textbooks.find(t => t.id === textbookId)
+            : this.getActive();
+        return tb && tb.canDo ? tb.canDo : [];
+    },
+
+    /** Get learning objectives for a specific textbook */
+    getLearningObjectives(textbookId) {
+        const tb = textbookId
+            ? this.textbooks.find(t => t.id === textbookId)
+            : this.getActive();
+        return tb && tb.objectives ? tb.objectives : [];
     }
 };
 
