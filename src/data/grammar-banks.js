@@ -448,6 +448,96 @@ const LangyGrammarBank = {
             Object.keys(this).forEach(cat => { if (Array.isArray(this[cat])) all = all.concat(this[cat]); });
             return all;
         }
+    },
+
+    /* ─── Language identifier (default = English) ─── */
+    language: 'en',
+
+    /** Get grammar bank for a specific language + level */
+    getForLanguage(langCode, cefrLevel) {
+        if (!langCode || langCode === 'en') {
+            return cefrLevel && this[cefrLevel] ? this[cefrLevel] : this;
+        }
+        const langBanks = this._langBanks || {};
+        const langBank = langBanks[langCode];
+        if (!langBank) return null;
+        return cefrLevel && langBank[cefrLevel] ? langBank[cefrLevel] : langBank;
+    },
+
+    /** Registry of non-English grammar banks */
+    _langBanks: {
+        // ═══════════════════════════════════════════
+        // SPANISH GRAMMAR BANK (Starter A1)
+        // ═══════════════════════════════════════════
+        es: {
+            A1: {
+                ser_estar: [
+                    { template: 'Yo ___ estudiante.', answer: 'soy', options: ['soy', 'estoy', 'es'], skill: 'grammar', rule: 'ser (identity)' },
+                    { template: 'Ella ___ en Madrid.', answer: 'está', options: ['es', 'está', 'son'], skill: 'grammar', rule: 'estar (location)' },
+                    { template: 'Nosotros ___ de México.', answer: 'somos', options: ['somos', 'estamos', 'son'], skill: 'grammar', rule: 'ser (origin)' },
+                    { template: 'Yo ___ contento.', answer: 'estoy', options: ['soy', 'estoy', 'es'], skill: 'grammar', rule: 'estar (emotion)' },
+                    { template: 'Él ___ doctor.', answer: 'es', options: ['es', 'está', 'soy'], skill: 'grammar', rule: 'ser (profession)' },
+                    { template: 'Ellos ___ en la escuela.', answer: 'están', options: ['son', 'están', 'es'], skill: 'grammar', rule: 'estar (location)' },
+                    { template: 'Tú ___ muy inteligente.', answer: 'eres', options: ['eres', 'estás', 'es'], skill: 'grammar', rule: 'ser (characteristic)' },
+                    { template: 'La comida ___ lista.', answer: 'está', options: ['es', 'está', 'son'], skill: 'grammar', rule: 'estar (state)' },
+                ],
+                articulos: [
+                    { template: '___ libro es interesante.', answer: 'El', options: ['El', 'La', 'Un'], skill: 'grammar', rule: 'definite article masculine' },
+                    { template: '___ casa es grande.', answer: 'La', options: ['El', 'La', 'Una'], skill: 'grammar', rule: 'definite article feminine' },
+                    { template: 'Tengo ___ perro.', answer: 'un', options: ['un', 'una', 'el'], skill: 'grammar', rule: 'indefinite article masculine' },
+                    { template: 'Hay ___ mesa aquí.', answer: 'una', options: ['un', 'una', 'la'], skill: 'grammar', rule: 'indefinite article feminine' },
+                    { template: '___ niños están jugando.', answer: 'Los', options: ['Los', 'Las', 'Unos'], skill: 'grammar', rule: 'definite article plural masculine' },
+                    { template: '___ flores son bonitas.', answer: 'Las', options: ['Los', 'Las', 'Unas'], skill: 'grammar', rule: 'definite article plural feminine' },
+                ],
+                presente: [
+                    { template: 'Yo ___ español.', answer: 'hablo', options: ['hablo', 'hablas', 'habla'], skill: 'grammar', rule: 'present tense -ar' },
+                    { template: 'Tú ___ en Madrid.', answer: 'vives', options: ['vivo', 'vives', 'vive'], skill: 'grammar', rule: 'present tense -er' },
+                    { template: 'Ella ___ mucho.', answer: 'escribe', options: ['escribo', 'escribes', 'escribe'], skill: 'grammar', rule: 'present tense -ir' },
+                    { template: 'Nosotros ___ café.', answer: 'bebemos', options: ['bebo', 'bebes', 'bebemos'], skill: 'grammar', rule: 'present tense -er' },
+                ],
+                translations: [
+                    { es: 'Yo soy de Rusia.', en: 'I am from Russia.' },
+                    { es: 'Ella está en casa.', en: 'She is at home.' },
+                    { es: 'Nosotros somos amigos.', en: 'We are friends.' },
+                    { es: '¿Cómo te llamas?', en: 'What is your name?' },
+                    { es: 'Yo quiero un café.', en: 'I want a coffee.' },
+                    { es: '¿Cuánto cuesta?', en: 'How much does it cost?' },
+                ],
+                getAllPatterns() {
+                    let all = [];
+                    Object.keys(this).forEach(cat => { if (Array.isArray(this[cat])) all = all.concat(this[cat]); });
+                    return all;
+                }
+            }
+        },
+
+        // ═══════════════════════════════════════════
+        // ARABIC GRAMMAR BANK (Starter A1)
+        // ═══════════════════════════════════════════
+        ar: {
+            A1: {
+                pronouns: [
+                    { template: '___ طالب (I am a student)', answer: 'أنا', options: ['أنا', 'أنتَ', 'هو'], skill: 'grammar', rule: 'personal pronouns' },
+                    { template: '___ من مصر (He is from Egypt)', answer: 'هو', options: ['أنا', 'هو', 'هي'], skill: 'grammar', rule: 'personal pronouns' },
+                    { template: '___ طبيبة (She is a doctor)', answer: 'هي', options: ['هو', 'هي', 'أنتِ'], skill: 'grammar', rule: 'personal pronouns' },
+                    { template: '___ من أين؟ (Where are you from?)', answer: 'أنتَ', options: ['أنا', 'أنتَ', 'هو'], skill: 'grammar', rule: 'personal pronouns' },
+                ],
+                greetings: [
+                    { template: 'The reply to السلام عليكم is:', answer: 'وعليكم السلام', options: ['مرحبا', 'وعليكم السلام', 'شكراً'], skill: 'culture', rule: 'Islamic greeting response' },
+                    { template: '"Thank you" in Arabic:', answer: 'شكراً', options: ['مرحبا', 'شكراً', 'من فضلك'], skill: 'vocabulary', rule: 'basic phrases' },
+                    { template: '"Please" in Arabic:', answer: 'من فضلك', options: ['شكراً', 'من فضلك', 'لا'], skill: 'vocabulary', rule: 'basic phrases' },
+                ],
+                numbers: [
+                    { template: 'واحد + واحد = ?', answer: 'اثنان', options: ['واحد', 'اثنان', 'ثلاثة'], skill: 'grammar', rule: 'numbers' },
+                    { template: 'ثلاثة + اثنان = ?', answer: 'خمسة', options: ['أربعة', 'خمسة', 'ستة'], skill: 'grammar', rule: 'numbers' },
+                ],
+                getAllPatterns() {
+                    let all = [];
+                    Object.keys(this).forEach(cat => { if (Array.isArray(this[cat])) all = all.concat(this[cat]); });
+                    return all;
+                }
+            }
+        }
     }
 };
 

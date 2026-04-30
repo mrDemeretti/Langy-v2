@@ -12,6 +12,7 @@ const MascotPersona = (function () {
         // Zendaya — cheerful, warm, best-friend energy
         0: {
             name: 'Zendaya',
+            languages: ['en', 'es', 'ar'],
             correct: [
                 'Yes! You nailed it! 💅',
                 'Slay! That\'s perfect!',
@@ -63,6 +64,7 @@ const MascotPersona = (function () {
         // Travis — creative, playful, hype energy
         1: {
             name: 'Travis',
+            languages: ['en', 'es'],
             correct: [
                 'That\'s fire! 🔥',
                 'Straight up correct!',
@@ -114,6 +116,7 @@ const MascotPersona = (function () {
         // Matthew — calm, intellectual, precise
         2: {
             name: 'Matthew',
+            languages: ['en'],
             correct: [
                 'Precisely right. Well done.',
                 'Excellent. That\'s exactly correct.',
@@ -165,6 +168,7 @@ const MascotPersona = (function () {
         // Omar — warm, wise, patient mentor
         3: {
             name: 'Omar',
+            languages: ['en', 'es', 'ar'],
             correct: [
                 'Beautiful! That\'s exactly right!',
                 'Yella! Perfect answer!',
@@ -266,6 +270,16 @@ const MascotPersona = (function () {
         getProfile,
         getActiveId,
         tones,
+        /** Get mascot IDs available for a specific language */
+        getMascotsForLanguage(langCode) {
+            const code = langCode || (typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en');
+            return Object.keys(tones)
+                .map(Number)
+                .filter(id => {
+                    const profile = tones[id];
+                    return !profile.languages || profile.languages.includes(code);
+                });
+        },
     };
 })();
 
