@@ -177,6 +177,7 @@ function buildContinuityCard() {
 
 function renderHome(container) {
     const { currencies, streakData, user } = LangyState;
+    const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
     if (typeof user.firstSessionCompleted !== 'boolean') {
         user.firstSessionCompleted = (LangyState.talkHistory || []).length > 0;
     }
