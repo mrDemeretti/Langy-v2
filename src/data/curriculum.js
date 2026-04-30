@@ -15,6 +15,7 @@ const LangyCurriculum = {
     // ═══════════════════════════════════════════
     {
         id: 'pre_a1_starter',
+        language: 'en',
         title: 'Pre-A1 — Starter',
         level: 'Pre-A1',
         cefr: 'Pre-A1',
@@ -141,6 +142,7 @@ const LangyCurriculum = {
     // ═══════════════════════════════════════════
     {
         id: 'a1_beginner',
+        language: 'en',
         title: 'A1 — Beginner',
         level: 'A1',
         cefr: 'A1',
@@ -1162,6 +1164,7 @@ const LangyCurriculum = {
     // ═══════════════════════════════════════════
     {
         id: 'a2_elementary',
+        language: 'en',
         title: 'A2 — Elementary',
         level: 'A2',
         cefr: 'A2',
@@ -1510,6 +1513,7 @@ const LangyCurriculum = {
     // ═══════════════════════════════════════════
     {
         id: 'b1_preintermediate',
+        language: 'en',
         title: 'B1 — Pre-Intermediate',
         level: 'B1',
         cefr: 'B1',
@@ -1619,6 +1623,7 @@ const LangyCurriculum = {
     // ═══════════════════════════════════════════
     {
         id: 'b2_upper',
+        language: 'en',
         title: 'B2 — Upper-Intermediate',
         level: 'B2',
         cefr: 'B2',
@@ -1896,6 +1901,7 @@ const LangyCurriculum = {
     // ═══════════════════════════════════════════
     {
         id: 'c1_advanced',
+        language: 'en',
         title: 'C1 — Advanced',
         level: 'C1',
         cefr: 'C1',
@@ -2147,6 +2153,7 @@ const LangyCurriculum = {
     // ═══════════════════════════════════════════
     {
         id: 'c2_proficiency',
+        language: 'en',
         title: 'C2 — Proficiency',
         level: 'C2',
         cefr: 'C2',
@@ -2365,13 +2372,164 @@ const LangyCurriculum = {
                 ]
             }
         ]
+    },
+
+    // ═══════════════════════════════════════════
+    // SPANISH — A1 Starter (Seed curriculum)
+    // Based on PCIC / Aula Internacional progression
+    // ═══════════════════════════════════════════
+    {
+        id: 'es_a1_beginner',
+        language: 'es',
+        title: 'A1 — Principiante',
+        level: 'A1',
+        cefr: 'A1',
+        methodology: 'Introduction to Spanish. Greetings, ser/estar, present tense, basic conversation. Communicative + cultural approach.',
+        units: [
+            {
+                id: 1, title: 'El alfabeto y saludos', desc: 'The Spanish alphabet, pronunciation rules, and basic greetings.',
+                unitType: 'grammar', grammar: ['Spanish alphabet', 'pronunciation rules', 'basic greetings'],
+                vocab: ['hola', 'adiós', 'por favor', 'gracias', 'buenos días', 'buenas tardes', 'buenas noches'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "¡Bienvenido! Welcome to Spanish! The Spanish alphabet has 27 letters — one more than English: the letter Ñ. Spanish pronunciation is very regular — what you see is what you say!", mascotEmotion: 'happy' },
+                    { type: 'vocab-intro', mascotText: "Essential greetings:", mascotEmotion: 'happy',
+                      words: [{ en: 'Hola', ru: 'Привет' }, { en: 'Buenos días', ru: 'Доброе утро' }, { en: 'Buenas tardes', ru: 'Добрый день' }, { en: 'Buenas noches', ru: 'Добрый вечер' }, { en: 'Adiós', ru: 'До свидания' }, { en: 'Gracias', ru: 'Спасибо' }, { en: 'Por favor', ru: 'Пожалуйста' }] },
+                    { type: 'tip', mascotText: "In Spanish, vowels always sound the same: A=/a/, E=/e/, I=/i/, O=/o/, U=/u/. No surprises!", mascotEmotion: 'happy', tipText: "A=ah · E=eh · I=ee · O=oh · U=oo — always!" }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match Spanish to translation', pairs: [{ left: 'Hola', right: 'Hello' }, { left: 'Adiós', right: 'Goodbye' }, { left: 'Gracias', right: 'Thank you' }, { left: 'Por favor', right: 'Please' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'Morning greeting:', sentence: 'Buenos ___', options: ['días', 'tardes', 'noches'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Evening greeting:', sentence: 'Buenas ___', options: ['días', 'tardes', 'noches'], correct: 2 } },
+                    { type: 'speak-aloud', data: { instruction: 'Say these greetings:', phrase: '¡Hola! Buenos días. ¿Cómo estás? Gracias. Adiós.' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'Hola', hint: 'A simple greeting' } }
+                ]
+            },
+            {
+                id: 2, title: 'Ser y Estar: to be', desc: 'The two Spanish verbs for "to be". When to use ser vs estar.',
+                unitType: 'grammar', grammar: ['ser (identity, origin)', 'estar (state, location)'],
+                vocab: ['soy', 'eres', 'es', 'estoy', 'estás', 'está', 'nacionalidades'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "Spanish has TWO verbs for 'to be': SER and ESTAR. This is the #1 thing English speakers struggle with. SER = permanent identity. ESTAR = temporary state or location.", mascotEmotion: 'happy' },
+                    { type: 'compare', mascotText: "SER vs ESTAR:", mascotEmotion: 'thinking',
+                      left: { label: 'SER (identity)', items: ['Yo soy Anna', 'Él es doctor', 'Ella es española', 'Nosotros somos amigos'] },
+                      right: { label: 'ESTAR (state/place)', items: ['Yo estoy bien', 'Él está en casa', 'Ella está cansada', 'Nosotros estamos aquí'] }
+                    },
+                    { type: 'tip', mascotText: "Memory trick: SER = 'Doctor PLACE' — Description, Origin, Characteristics, Time, Occupation, Relationship, PLace... wait, no! Place = ESTAR! ESTAR = Location, Emotion, Condition, Action.", mascotEmotion: 'happy', tipText: "SER = who you ARE · ESTAR = how you FEEL / where you ARE" }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Identity = ser', sentence: 'Yo ___ estudiante.', options: ['soy', 'estoy', 'es'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Location = estar', sentence: 'Ella ___ en Madrid.', options: ['es', 'está', 'son'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Origin = ser', sentence: 'Nosotros ___ de México.', options: ['somos', 'estamos', 'son'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Emotion = estar', sentence: 'Yo ___ contento.', options: ['soy', 'estoy', 'es'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Match pronoun to ser form', pairs: [{ left: 'yo', right: 'soy' }, { left: 'tú', right: 'eres' }, { left: 'él/ella', right: 'es' }, { left: 'nosotros', right: 'somos' }] } },
+                    { type: 'speak-aloud', data: { instruction: 'Introduce yourself:', phrase: 'Hola. Yo soy Alex. Soy de Rusia. Estoy muy bien, gracias.' } }
+                ]
+            },
+            {
+                id: 3, title: '🗣️ En el café', desc: 'Ordering food and drinks in Spanish. Polite phrases.',
+                unitType: 'situational', grammar: ['quiero / quisiera', '¿Cuánto cuesta?'],
+                vocab: ['café', 'agua', 'cerveza', 'bocadillo', 'la cuenta', 'quiero', 'quisiera'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "¡Vamos al café! Let's learn to order in Spanish. The key phrases: 'Quiero...' (I want) or more politely 'Quisiera...' (I would like).", mascotEmotion: 'happy' },
+                    { type: 'examples', mascotText: "Key ordering phrases:", mascotEmotion: 'happy',
+                      items: [
+                        { base: 'Order', past: 'Quisiera un café, por favor.', highlight: 'Quisiera' },
+                        { base: 'Price', past: '¿Cuánto cuesta?', highlight: 'Cuánto' },
+                        { base: 'Bill', past: 'La cuenta, por favor.', highlight: 'La cuenta' },
+                        { base: 'Thanks', past: '¡Muchas gracias!', highlight: 'Muchas' }
+                      ] },
+                    { type: 'tip', mascotText: "'Quisiera' is more polite than 'Quiero'. Like 'I would like' vs 'I want'. Use 'quisiera' in restaurants!", mascotEmotion: 'happy', tipText: "Quiero = I want · Quisiera = I would like (polite)" }
+                ],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Complete the order', sentence: '___ un café, por favor.', options: ['Quisiera', 'Estoy', 'Soy'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Ask for the price', sentence: '¿___ cuesta?', options: ['Cuánto', 'Cómo', 'Dónde'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Match Spanish to English', pairs: [{ left: 'café', right: 'coffee' }, { left: 'agua', right: 'water' }, { left: 'la cuenta', right: 'the bill' }, { left: 'cerveza', right: 'beer' }] } },
+                    { type: 'speak-aloud', data: { instruction: 'Order at a café:', phrase: '¡Hola! Quisiera un café y un bocadillo, por favor. ¿Cuánto cuesta? Gracias.' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: 'Quisiera un café', hint: 'Polite request' } }
+                ]
+            }
+        ]
+    },
+
+    // ═══════════════════════════════════════════
+    // ARABIC — A1 Starter (Seed curriculum)
+    // Based on Al-Kitaab / MSA progression
+    // ═══════════════════════════════════════════
+    {
+        id: 'ar_a1_beginner',
+        language: 'ar',
+        title: 'A1 — مبتدئ',
+        level: 'A1',
+        cefr: 'A1',
+        methodology: 'Introduction to Arabic. Script learning, basic greetings, numbers, and simple sentences. MSA (Modern Standard Arabic) with awareness of spoken dialects.',
+        units: [
+            {
+                id: 1, title: 'الحروف العربية — The Arabic Alphabet', desc: 'Learn the 28 Arabic letters, their forms (initial, medial, final), and basic sounds.',
+                unitType: 'grammar', grammar: ['Arabic script basics', 'letter forms', 'short vowels'],
+                vocab: ['حروف', 'فتحة', 'ضمة', 'كسرة'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "مرحباً! Welcome to Arabic! Arabic has 28 letters. Each letter has up to 4 forms depending on position (isolated, initial, medial, final). Don't worry — we'll go step by step!", mascotEmotion: 'happy' },
+                    { type: 'compare', mascotText: "Arabic is written right-to-left. Vowels are shown as marks above/below letters:", mascotEmotion: 'thinking',
+                      left: { label: 'Short vowels', items: ['فَ = fa (fatḥa)', 'فُ = fu (ḍamma)', 'فِ = fi (kasra)'] },
+                      right: { label: 'Key letters', items: ['ا = alif', 'ب = bā', 'ت = tā', 'ث = thā'] }
+                    },
+                    { type: 'tip', mascotText: "Start with these 6 letters: ا ب ت ث ج ح — they cover many common words. Practice writing each one!", mascotEmotion: 'happy', tipText: "Practice right-to-left: start from the right side of the page!" }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match Arabic letter to sound', pairs: [{ left: 'ا', right: 'alif' }, { left: 'ب', right: 'bā' }, { left: 'ت', right: 'tā' }, { left: 'ث', right: 'thā' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'How many letters in Arabic?', sentence: 'Arabic has ___ letters.', options: ['26', '28', '33'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Arabic is written:', sentence: 'Arabic is written ___', options: ['left-to-right', 'right-to-left', 'top-to-bottom'], correct: 1 } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'marhaba', hint: 'A greeting' } }
+                ]
+            },
+            {
+                id: 2, title: 'التحيات — Greetings', desc: 'Essential Arabic greetings and self-introduction.',
+                unitType: 'situational', grammar: ['أنا (anā) = I', 'اسمي (ismī) = my name'],
+                vocab: ['مرحبا', 'السلام عليكم', 'شكراً', 'من فضلك', 'نعم', 'لا', 'مع السلامة'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "The most important Arabic greeting is 'السلام عليكم' (as-salāmu ʿalaykum) — 'Peace be upon you'. The reply is 'وعليكم السلام' (wa-ʿalaykum as-salām).", mascotEmotion: 'happy' },
+                    { type: 'vocab-intro', mascotText: "Essential Arabic greetings:", mascotEmotion: 'happy',
+                      words: [{ en: 'مرحبا (marḥaba)', ru: 'Привет' }, { en: 'السلام عليكم', ru: 'Мир вам' }, { en: 'شكراً (shukran)', ru: 'Спасибо' }, { en: 'من فضلك (min faḍlak)', ru: 'Пожалуйста' }, { en: 'نعم (naʿam)', ru: 'Да' }, { en: 'لا (lā)', ru: 'Нет' }, { en: 'مع السلامة (maʿ as-salāma)', ru: 'До свидания' }] },
+                    { type: 'tip', mascotText: "'Shukran' (شكراً) means 'thank you' and works everywhere in the Arab world. It's your most useful word!", mascotEmotion: 'happy', tipText: "شكراً = Thank you · عفواً = You're welcome" }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match Arabic to meaning', pairs: [{ left: 'مرحبا', right: 'Hello' }, { left: 'شكراً', right: 'Thank you' }, { left: 'نعم', right: 'Yes' }, { left: 'لا', right: 'No' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'Reply to السلام عليكم:', sentence: 'The reply is:', options: ['شكراً', 'وعليكم السلام', 'مرحبا'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'How to say "thank you":', sentence: 'Thank you = ___', options: ['مرحبا', 'شكراً', 'من فضلك'], correct: 1 } },
+                    { type: 'speak-aloud', data: { instruction: 'Say these greetings:', phrase: 'As-salāmu ʿalaykum. Marḥaba. Shukran. Maʿ as-salāma.' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'shukran', hint: 'Thank you' } }
+                ]
+            },
+            {
+                id: 3, title: 'الأرقام — Numbers 1-10', desc: 'Learn Arabic numerals 1-10 and basic counting.',
+                unitType: 'grammar', grammar: ['Arabic numerals 1-10', 'counting'],
+                vocab: ['واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة', 'عشرة'],
+                teachSlides: [
+                    { type: 'explain', mascotText: "Fun fact: the 'Arabic numerals' we use globally (1, 2, 3...) actually came from India through the Arab world! In Arabic text, you'll see both Western digits and Eastern Arabic digits (١٢٣).", mascotEmotion: 'happy' },
+                    { type: 'vocab-intro', mascotText: "Numbers 1-10:", mascotEmotion: 'happy',
+                      words: [{ en: '١ واحد (wāḥid)', ru: 'один' }, { en: '٢ اثنان (ithnān)', ru: 'два' }, { en: '٣ ثلاثة (thalātha)', ru: 'три' }, { en: '٤ أربعة (arbaʿa)', ru: 'четыре' }, { en: '٥ خمسة (khamsa)', ru: 'пять' }, { en: '٦ ستة (sitta)', ru: 'шесть' }, { en: '٧ سبعة (sabʿa)', ru: 'семь' }, { en: '٨ ثمانية (thamāniya)', ru: 'восемь' }, { en: '٩ تسعة (tisʿa)', ru: 'девять' }, { en: '١٠ عشرة (ʿashara)', ru: 'десять' }] },
+                    { type: 'tip', mascotText: "Arabic numbers in text go left-to-right, even though Arabic text goes right-to-left! This is a unique feature.", mascotEmotion: 'happy', tipText: "Text: right→left · Numbers: left→right" }
+                ],
+                exercises: [
+                    { type: 'match-pairs', data: { instruction: 'Match number to Arabic', pairs: [{ left: '1', right: 'واحد' }, { left: '3', right: 'ثلاثة' }, { left: '5', right: 'خمسة' }, { left: '7', right: 'سبعة' }] } },
+                    { type: 'fill-bubble', data: { instruction: 'What comes after 4?', sentence: '٤, ___', options: ['ثلاثة', 'خمسة', 'ستة'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: '٢ + ٣ = ?', sentence: 'اثنان + ثلاثة = ___', options: ['أربعة', 'خمسة', 'ستة'], correct: 1 } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'khamsa', hint: 'A number between 4 and 6' } },
+                    { type: 'speak-aloud', data: { instruction: 'Count in Arabic:', phrase: 'Wāḥid, ithnān, thalātha, arbaʿa, khamsa, sitta, sabʿa, thamāniya, tisʿa, ʿashara!' } }
+                ]
+            }
+        ]
     }
 
     ],
 
     // ─── HELPER METHODS ───
     getActive() {
-        return this.textbooks.find(tb => tb.id === this.activeTextbookId) || this.textbooks[0];
+        const tb = this.textbooks.find(tb => tb.id === this.activeTextbookId);
+        if (tb) return tb;
+        // Fallback: first textbook for current target language
+        const lang = this.targetLanguage || 'en';
+        return this.textbooks.find(tb => (tb.language || 'en') === lang) || this.textbooks[0];
     },
 
     getByLevel(cefrLevel) {
@@ -2544,6 +2702,64 @@ const LangyCurriculum = {
                 desc: u.desc
             };
         });
+    },
+
+    // ─── MULTI-LANGUAGE METHODS ───
+
+    /** Get all textbooks for a specific language */
+    getTextbooksForLanguage(langCode) {
+        const code = langCode || this.targetLanguage || 'en';
+        return this.textbooks.filter(tb => (tb.language || 'en') === code);
+    },
+
+    /** Get textbook by CEFR level for the current or specified language */
+    getByLevelForLanguage(cefrLevel, langCode) {
+        const code = langCode || this.targetLanguage || 'en';
+        return this.textbooks.find(tb => (tb.language || 'en') === code && tb.cefr === cefrLevel);
+    },
+
+    /** Get level list for the current target language */
+    getLevelListForLanguage(langCode) {
+        const tbs = this.getTextbooksForLanguage(langCode);
+        return tbs.map(tb => ({
+            id: tb.id,
+            level: tb.cefr,
+            title: tb.title,
+            unitCount: tb.units.length
+        }));
+    },
+
+    /** Get total units for the current target language */
+    getTotalUnitsForLanguage(langCode) {
+        return this.getTextbooksForLanguage(langCode).reduce((sum, tb) => sum + tb.units.length, 0);
+    },
+
+    /** Summary of curriculum coverage per language (for diagnostics / UI) */
+    getLanguageStats() {
+        const stats = {};
+        const langs = [...new Set(this.textbooks.map(tb => tb.language || 'en'))];
+        for (const lang of langs) {
+            const tbs = this.getTextbooksForLanguage(lang);
+            const levels = tbs.map(tb => tb.cefr);
+            const totalUnits = tbs.reduce((s, tb) => s + tb.units.length, 0);
+            const totalExercises = tbs.reduce((s, tb) =>
+                s + tb.units.reduce((us, u) => us + (u.exercises ? u.exercises.length : 0), 0), 0);
+            stats[lang] = { levels, textbookCount: tbs.length, totalUnits, totalExercises };
+        }
+        return stats;
+    },
+
+    /** Build AI-consumable context about the current curriculum position */
+    getAIContext() {
+        const tb = this.getActive();
+        if (!tb) return '';
+        const lang = typeof LangyTarget !== 'undefined' ? LangyTarget.current : null;
+        const bbStr = lang && lang.academicBackbone
+            ? `\nAcademic Framework: ${lang.academicBackbone.framework}\nReference: ${lang.academicBackbone.reference}\nMethodology: ${lang.academicBackbone.methodology}`
+            : '';
+        return `Current textbook: ${tb.title} (${tb.cefr})
+Language: ${tb.language || 'en'}
+Methodology: ${tb.methodology || ''}${bbStr}`;
     }
 };
 

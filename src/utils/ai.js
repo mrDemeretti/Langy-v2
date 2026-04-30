@@ -57,6 +57,7 @@ RESPONSE FORMAT:
 - Always end with a question or task for the student
 
 ${ctx ? `\nCURRENT CURRICULUM CONTEXT:\n${ctx}` : ''}
+${typeof LangyTarget !== 'undefined' && LangyTarget.getAcademicContext ? `\nACADEMIC BACKBONE:\n${LangyTarget.getAcademicContext()}` : ''}
 ${progress ? `\nSTUDENT PROGRESS:\n${progress}` : ''}
 ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakAreas.join(', ')}` : ''}`;
     },
