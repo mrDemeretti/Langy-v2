@@ -2519,8 +2519,12 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Resent', sentence: "I resent ___ treated like a child.", options: ['to be', 'being'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Perception (Part)', sentence: "As I walked past, I heard them ___ loudly.", options: ['argue', 'arguing'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Perception (Whole)', sentence: "I saw the thief ___ the bag and run.", options: ['snatch', 'snatching'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Dread', sentence: "She dreads ___ asked to speak in public.", options: ['to be', 'being'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Can\'t bear', sentence: "He can't bear ___ criticized unfairly.", options: ['to be', 'being'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Match verb to pattern', pairs: [{ left: 'resent', right: 'verb + -ing' }, { left: 'manage', right: 'verb + to + inf' }, { left: 'see (whole)', right: 'verb + bare inf' }, { left: 'hear (in progress)', right: 'verb + -ing' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Complementation', words: ['to', 'manage', 'persuade', 'how', 'did', 'you', 'her', 'stay'], correct: ['how', 'did', 'you', 'manage', 'to', 'persuade', 'her', 'to', 'stay'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Он не выносит, когда его прерывают.', fromLang: 'RU', toLang: 'EN', answer: 'He cant bear being interrupted' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I resented him trying to persuade me to abandon the project entirely.", hint: 'resent + object + -ing + to + infinitive' } },
                     { type: 'speak-aloud', data: { instruction: 'Complex chains:', phrase: "I resented him trying to persuade me to abandon the project." } }
                 ]
             },
@@ -2565,14 +2569,22 @@ const LangyCurriculum = {
             },
             // ── C2 Unit 5 ──
             {
-                id: 5, title: '🔄 Checkpoint 1', desc: 'Review C2 Units 1-4.', unitType: 'review',
+                id: 5, title: '🔄 Checkpoint 1', desc: 'Review C2 Units 1-4: tense matrix, verb patterns, subjunctive, concessives.', unitType: 'review',
                 grammar: ['matrix', 'complementation', 'subjunctive', 'concessives'], vocab: ['C2 review'],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Subjunctive', sentence: "It is imperative that she ___ present at the hearing.", options: ['is', 'be'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Albeit', sentence: "It was a fair, ___ difficult, compromise.", options: ['albeit', 'however'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Perception', sentence: "I heard the bomb ___ (the complete event).", options: ['explode', 'exploding'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: "Not until yesterday ___ the full truth.", options: ['I realized', 'did I realize'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я настаиваю, чтобы он извинился.', fromLang: 'RU', toLang: 'EN', answer: 'I insist that he apologize' } }
+                    { type: 'fill-bubble', data: { instruction: 'Tense matrix', sentence: "By the time they ___, we ___ for over an hour.", options: ['arrived / had been waiting', 'arrive / waited'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Concessive', sentence: "___ the considerable risks, they pressed ahead.", options: ['Notwithstanding', 'Although'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Complementation', sentence: "She resented ___ overlooked for the promotion.", options: ['to be', 'being'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Match C2 grammar', pairs: [{ left: 'Subjunctive', right: 'It is vital that he BE there' }, { left: 'Inversion', right: 'Never have I seen such chaos' }, { left: 'Albeit', right: 'A costly, albeit effective, solution' }, { left: 'Past Perf Continuous', right: 'Had been working for years' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Inversion', words: ['no', 'did', 'circumstances', 'under', 'he', 'reveal', 'the', 'truth'], correct: ['under', 'no', 'circumstances', 'did', 'he', 'reveal', 'the', 'truth'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я настаиваю, чтобы он извинился.', fromLang: 'RU', toLang: 'EN', answer: 'I insist that he apologize' } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Ни при каких обстоятельствах вы не должны разглашать эту информацию.', fromLang: 'RU', toLang: 'EN', answer: 'Under no circumstances should you disclose this information' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "It is essential that all delegates be present at the opening session.", hint: 'Subjunctive: bare infinitive after "that"' } },
+                    { type: 'speak-aloud', data: { instruction: 'C2 review:', phrase: "Notwithstanding the objections, and albeit reluctantly, the board insisted that the proposal be adopted immediately." } }
                 ]
             },
             // ── C2 Unit 6 ──
@@ -2628,7 +2640,12 @@ const LangyCurriculum = {
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Pragmatics', sentence: "When he said 'I've got a slight problem', it turned out the server had entirely crashed. 'Slight' here is:", options: ['understatement', 'exaggeration'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Sarcasm', sentence: "You spilled coffee all over my laptop. 'Oh, ___. Just what I needed.'", options: ['brilliant', 'terrible'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Implicature', sentence: "'I wouldn't say it was a complete failure.' This means:", options: ['It was mostly a failure', 'It was a great success'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'British understatement', sentence: "'It's not exactly ideal' means:", options: ['It is acceptable', 'It is terrible'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'What they say vs what they mean', pairs: [{ left: 'With the greatest respect', right: 'I think you are wrong' }, { left: 'Very interesting', right: 'I disagree completely' }, { left: 'I hear what you say', right: 'I will ignore this' }, { left: 'Not bad at all', right: 'Quite good actually' }] } },
                     { type: 'type-translation', data: { instruction: 'Pragmatic Translation (meaning)', sourceText: 'При всем должном уважении... (но я не согласен)', fromLang: 'RU', toLang: 'EN', answer: 'With all due respect' } },
+                    { type: 'type-translation', data: { instruction: 'Sarcastic tone', sourceText: 'О, замечательно! Именно то, чего мне не хватало. (сарказм)', fromLang: 'RU', toLang: 'EN', answer: 'Oh, wonderful! Just what I needed' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I wouldn't say it was entirely without its challenges.", hint: 'British understatement — means it was very difficult' } },
                     { type: 'speak-aloud', data: { instruction: 'Deliver sarcasm:', phrase: "Oh, fantastic! A flat tire in the middle of a thunderstorm. Could this day get any better?" } }
                 ]
             },
@@ -2645,7 +2662,12 @@ const LangyCurriculum = {
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Hypothetical', sentence: "___ we were to greenlight this, what guarantee do we have?", options: ['Supposing', 'Unless'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Soft Refusal', sentence: "That's going to be ___ difficult from our end.", options: ['highly', 'somewhat'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Hedging', sentence: "We ___ be in a position to reconsider, given certain conditions.", options: ['might', 'will'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Counter-offer', sentence: "___ that we can meet halfway, would you be willing to proceed?", options: ['Provided', 'Unless'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Negotiation register', pairs: [{ left: 'Give me a discount', right: 'Direct / aggressive' }, { left: 'What flexibility is there on price?', right: 'Strategic / diplomatic' }, { left: 'That won\'t work', right: 'Direct / blunt' }, { left: 'We might struggle to accommodate that', right: 'Hedged / polite' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Diplomatic refusal', words: ['position', 'we', 'not', 'a', 'are', 'in', 'to', 'accept', 'those', 'terms'], correct: ['we', 'are', 'not', 'in', 'a', 'position', 'to', 'accept', 'those', 'terms'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'При условии, что мы подпишем сегодня, вы дадите скидку?', fromLang: 'RU', toLang: 'EN', answer: 'Provided that we sign today, will you give a discount?' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "Were we to increase the order volume, what kind of flexibility might there be on pricing?", hint: 'Formal inversion: Were we to = If we were to' } },
                     { type: 'speak-aloud', data: { instruction: 'Negotiate:', phrase: "While your proposal is certainly intriguing, we would need to review the budget constraints before making any firm commitments." } }
                 ]
             },
@@ -2658,7 +2680,14 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Participle', sentence: "___ by the media, the politician resigned.", options: ['Hounding', 'Hounded'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Participle Perfect', sentence: "___ the first exam, he felt confident about the second.", options: ['Having passed', 'Passed'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Pragmatics (Understatement)', sentence: "Winning the lottery was not an entirely ___ experience.", options: ['awful', 'unpleasant'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Прочитав отчет, я был шокирован.', fromLang: 'RU', toLang: 'EN', answer: 'Having read the report, I was shocked' } }
+                    { type: 'fill-bubble', data: { instruction: 'Nominalization', sentence: "The government's ___ to act quickly was widely criticized.", options: ['failing', 'failure'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negotiation hedge', sentence: "We ___ be open to renegotiating, depending on the terms.", options: ['might', 'will'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Match verb to noun form', pairs: [{ left: 'investigate', right: 'investigation' }, { left: 'implement', right: 'implementation' }, { left: 'respond', right: 'response' }, { left: 'degrade', right: 'degradation' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Participle clause', words: ['having', 'exhausted', 'all', 'options', 'they', 'reluctantly', 'agreed'], correct: ['having', 'exhausted', 'all', 'options', 'they', 'reluctantly', 'agreed'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Прочитав отчет, я был шокирован.', fromLang: 'RU', toLang: 'EN', answer: 'Having read the report, I was shocked' } },
+                    { type: 'type-translation', data: { instruction: 'Nominalize', sourceText: 'Правительство не отреагировало вовремя. → Неспособность правительства...', fromLang: 'RU', toLang: 'EN', answer: "The government's failure to respond in a timely manner" } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "Overwhelmed by the sheer volume of evidence, the committee adjourned the hearing.", hint: 'Past participle clause at the start' } },
+                    { type: 'speak-aloud', data: { instruction: 'Academic register:', phrase: "Having reviewed all available evidence, and notwithstanding certain procedural irregularities, the committee concluded that the deployment was premature." } }
                 ]
             },
             // ── C2 Unit 11 ──
@@ -2675,8 +2704,11 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Binomial', sentence: "I just need some peace and ___.", options: ['quiet', 'silence'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Binomial', sentence: "He's the life and ___ of the party.", options: ['heart', 'soul'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Phrases', sentence: "It's a matter of life and ___.", options: ['death', 'dying'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Binomial', sentence: "I've been up and ___ since six this morning.", options: ['about', 'around'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Complete the binomial', pairs: [{ left: 'safe and', right: 'sound' }, { left: 'wear and', right: 'tear' }, { left: 'by and', right: 'large' }, { left: 'sick and', right: 'tired' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Binomials', words: ['large', 'and', 'project', 'the', 'by', 'successful', 'was'], correct: ['by', 'and', 'large', 'the', 'project', 'was', 'successful'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Мы добрались в целости и сохранности.', fromLang: 'RU', toLang: 'EN', answer: 'We arrived safe and sound' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "By and large, the project was a success despite some wear and tear.", hint: 'Two binomials in one sentence' } },
                     { type: 'speak-aloud', data: { instruction: 'Chunking:', phrase: "By and large, despite the wear and tear, we arrived safe and sound." } }
                 ]
             },
@@ -2694,7 +2726,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Formalize', sentence: "Find out if it's true. -> ___ the veracity of the claim.", options: ['Ascertain', 'Check'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Casualize', sentence: "I am exhausted. -> I am absolutely ___.", options: ['fatigued', 'shattered'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'C2 Vocabulary', sentence: "His behavior is completely ___ (impossible to excuse).", options: ['inexcusable', 'bad'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Formalize', sentence: "They got rid of the problem. -> They ___ the issue.", options: ['eliminated', 'removed'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Casualize', sentence: "The proposal was rejected. -> They ___ it down.", options: ['turned', 'shut'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Match register', pairs: [{ left: 'ascertain', right: 'find out' }, { left: 'commence', right: 'start / kick off' }, { left: 'elucidate', right: 'explain / break down' }, { left: 'proliferation', right: 'spread' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Formal register', words: ['the', 'proliferation', 'of', 'this', 'technology', 'is', 'inevitable'], correct: ['the', 'proliferation', 'of', 'this', 'technology', 'is', 'inevitable'] } },
                     { type: 'type-translation', data: { instruction: 'Final Boss', sourceText: 'Я считаю, что распространение этой технологии неизбежно.', fromLang: 'RU', toLang: 'EN', answer: 'I believe the proliferation of this technology is inevitable' } },
+                    { type: 'type-translation', data: { instruction: 'Casualize', sourceText: 'Необходимо установить достоверность этих утверждений. (просто)', fromLang: 'RU', toLang: 'EN', answer: 'We need to figure out if these claims are true' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "It is imperative that we ascertain the veracity of these claims prior to adjudication.", hint: 'Full academic register' } },
                     { type: 'speak-aloud', data: { instruction: 'Graduation Speech:', phrase: "Having traversed the complexities of the English language, I am profoundly grateful for the journey. Thank you, Langy." } }
                 ]
             }
