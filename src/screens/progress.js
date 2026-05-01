@@ -163,6 +163,74 @@ function renderProgress(container) {
                 </div>
             </div>
 
+            <!-- Learning Objectives & Can-Do Statements -->
+            ${(() => {
+                if (typeof LangyCurriculum === 'undefined') return '';
+                const tb = LangyCurriculum.getActive();
+                if (!tb) return '';
+                const canDo = tb.canDo || [];
+                const objectives = tb.objectives || [];
+                if (!canDo.length && !objectives.length) return '';
+
+                // Estimate can-do completion from skill averages
+                const avgSkill = overall;
+                const canDoCompleted = Math.max(0, Math.round(canDo.length * (avgSkill / 100)));
+
+                // Current unit for objective relevance
+                const unitId = LangyState.progress?.currentUnitId || 1;
+                const currentUnit = tb.units?.find(u => u.id === unitId);
+                const unitGrammar = currentUnit?.grammar || [];
+
+                // Mark objectives as relevant if they relate to current unit grammar
+                const tagObjective = (obj) => {
+                    const objLower = obj.toLowerCase();
+                    return unitGrammar.some(g => objLower.includes(g.split(' ')[0].toLowerCase()));
+                };
+
+                return `
+            <div style="padding: 0 var(--sp-5) var(--sp-4);">
+                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; font-size:var(--fs-sm);">
+                    ${LangyIcons.target} ${{ en: 'Learning Objectives', ru: 'Учебные цели', es: 'Objetivos de aprendizaje' }[lang]}
+                    <span class="badge" style="font-size:9px; margin-left:auto;">${tb.cefr}</span>
+                </h4>
+
+                <!-- Can-Do Outcomes -->
+                ${canDo.length ? `
+                <div class="card card--flat" style="padding:var(--sp-3); margin-bottom:var(--sp-3); border-left:3px solid #10B981;">
+                    <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:#10B981; margin-bottom:var(--sp-2); display:flex; align-items:center; gap:4px;">
+                        ${LangyIcons.check} ${{ en: 'I Can...', ru: 'Я могу...', es: 'Puedo...' }[lang]}
+                        <span style="margin-left:auto; font-weight:var(--fw-bold);">${canDoCompleted}/${canDo.length}</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        ${canDo.map((s, i) => {
+                            const done = i < canDoCompleted;
+                            return `<div style="display:flex; align-items:flex-start; gap:8px; font-size:var(--fs-xs); line-height:1.5; ${done ? 'opacity:0.7;' : ''}">
+                                <span style="flex-shrink:0; color:${done ? '#10B981' : 'var(--text-tertiary)'}; font-size:14px; line-height:1;">${done ? LangyIcons.check : '○'}</span>
+                                <span style="${done ? 'text-decoration:line-through; color:var(--text-tertiary);' : 'color:var(--text-secondary);'}">${s}</span>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>` : ''}
+
+                <!-- Learning Objectives -->
+                ${objectives.length ? `
+                <div class="card card--flat" style="padding:var(--sp-3); border-left:3px solid #8B5CF6;">
+                    <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:#8B5CF6; margin-bottom:var(--sp-2); display:flex; align-items:center; gap:4px;">
+                        ${LangyIcons.bookOpen} ${{ en: 'Level Objectives', ru: 'Цели уровня', es: 'Objetivos del nivel' }[lang]}
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        ${objectives.map(obj => {
+                            const isCurrentFocus = tagObjective(obj);
+                            return `<div style="display:flex; align-items:flex-start; gap:8px; font-size:var(--fs-xs); line-height:1.5;">
+                                <span style="flex-shrink:0; color:${isCurrentFocus ? '#8B5CF6' : 'var(--text-tertiary)'}; font-size:14px; line-height:1;">${isCurrentFocus ? LangyIcons.target : '·'}</span>
+                                <span style="color:var(--text-secondary); ${isCurrentFocus ? 'font-weight:var(--fw-semibold); color:#8B5CF6;' : ''}">${obj}${isCurrentFocus ? ` <span style="font-size:9px; padding:1px 5px; border-radius:var(--radius-full); background:rgba(139,92,246,0.08); color:#8B5CF6;">${{ en: 'current', ru: 'сейчас', es: 'actual' }[lang]}</span>` : ''}</span>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>` : ''}
+            </div>`;
+            })()}
+
             <!-- Recent Lessons -->
             ${recent.length ? `
             <div style="padding: 0 var(--sp-5) var(--sp-4);">

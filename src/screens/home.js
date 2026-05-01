@@ -324,6 +324,28 @@ function renderHome(container) {
                 </div>`;
             })()}
 
+            <!-- Current Learning Goal -->
+            ${(() => {
+                if (typeof LangyCurriculum === 'undefined' || typeof LangyTarget === 'undefined' || LangyTarget.getCode() !== 'en') return '';
+                const tb = LangyCurriculum.getActive();
+                if (!tb || !tb.canDo || !tb.canDo.length) return '';
+                const skills = LangyState.progress?.skills || {};
+                const skillVals = ['speaking','listening','writing','grammar','vocabulary','reading'].map(k => skills[k] || 0);
+                const avgPct = skillVals.length ? Math.round(skillVals.reduce((a,b) => a+b, 0) / skillVals.length) : 0;
+                const completed = Math.max(0, Math.round(tb.canDo.length * (avgPct / 100)));
+                const nextGoal = tb.canDo[Math.min(completed, tb.canDo.length - 1)];
+                if (!nextGoal) return '';
+                const l = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                return `<div style="margin:0 var(--sp-5) var(--sp-2); padding:var(--sp-2) var(--sp-3); background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.12); border-radius:var(--radius-md); display:flex; align-items:center; gap:8px; cursor:pointer;" id="home-cando-goal">
+                    <span style="color:#10B981; flex-shrink:0; font-size:14px;">${LangyIcons.target}</span>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#10B981; line-height:1;">${{ en: 'Next goal', ru: 'Следующая цель', es: 'Próxima meta' }[l]} · ${tb.cefr}</div>
+                        <div style="font-size:10px; color:var(--text-secondary); line-height:1.4; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${nextGoal}</div>
+                    </div>
+                    <span style="font-size:9px; color:var(--text-tertiary);">${completed}/${tb.canDo.length}</span>
+                </div>`;
+            })()}
+
             <!-- Next Action Zone -->
             <div class="home__next-action">
                 ${
@@ -444,6 +466,7 @@ function renderHome(container) {
         'nav-inventory': 'inventory',
         'nav-shop': 'shop',
         'home-profile': 'profile',
+        'home-cando-goal': 'progress',
     };
 
     // Main CTA button

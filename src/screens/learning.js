@@ -169,6 +169,22 @@ function renderLearning(container) {
                     })() : ''}
                     <div class="lesson-intro__tag">${LangyIcons.clock} ~15 ${i18n('learn.minutes')}</div>
                     <div class="lesson-intro__tag">${LangyIcons.target} ${totalExercises} ${i18n('learn.exercises')}</div>
+                    ${(() => {
+                        if (!activeTb?.canDo?.length) return '';
+                        const unitGrammar = (unit.grammar || []).map(g => g.toLowerCase());
+                        // Find a can-do that matches unit grammar, else use first unlearned
+                        const relCanDo = activeTb.canDo.find(s => unitGrammar.some(g => s.toLowerCase().includes(g.split(' ')[0])));
+                        const goalText = relCanDo || activeTb.canDo[0];
+                        if (!goalText) return '';
+                        const ll = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                        return `<div style="width:100%; margin-top:var(--sp-2); padding:var(--sp-2) var(--sp-3); background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.12); border-radius:var(--radius-md); display:flex; align-items:flex-start; gap:6px;">
+                            <span style="color:#10B981; flex-shrink:0; font-size:12px; line-height:1.4;">${LangyIcons.check}</span>
+                            <div>
+                                <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#10B981; line-height:1;">${{ en: 'After this lesson you can', ru: 'После этого урока вы сможете', es: 'Después de esta lección podrás' }[ll]}</div>
+                                <div style="font-size:10px; color:var(--text-secondary); line-height:1.4; margin-top:2px;">${goalText}</div>
+                            </div>
+                        </div>`;
+                    })()}
                 </div>
                 <button class="btn btn--primary btn--xl btn--full lesson-intro__start" id="start-lesson">
                     ${i18n('learn.start_lesson')} ${LangyIcons.arrowRight}
