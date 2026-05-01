@@ -506,4 +506,58 @@ Format as JSON:
         });
         return response;
     },
+
+    // ─── CURRICULUM-AWARE CORRECTION PROMPT ───
+    /**
+     * Build a structured correction prompt for the AI tutor.
+     * Used when a student gets an exercise wrong during English lessons.
+     * @param {Object} opts - { sentence, correctAnswer, rule, cefrLevel, unitTitle }
+     * @returns {string}
+     */
+    buildCorrectionPrompt(opts = {}) {
+        const { sentence, correctAnswer, rule, cefrLevel, unitTitle } = opts;
+        let prompt = `The student made an error.`;
+        if (sentence) prompt += ` Exercise: "${sentence}".`;
+        if (correctAnswer) prompt += ` Correct answer: "${correctAnswer}".`;
+        if (rule) prompt += ` Grammar rule: ${rule}.`;
+        if (cefrLevel) prompt += ` Student level: CEFR ${cefrLevel}.`;
+        if (unitTitle) prompt += ` Current unit: "${unitTitle}".`;
+        prompt += `\n\nProvide a focused correction:`;
+        prompt += `\n1. State the correct answer clearly.`;
+        prompt += `\n2. Explain the grammar rule in 1-2 sentences, appropriate for ${cefrLevel || 'this'} level.`;
+        prompt += `\n3. Give one similar example to reinforce the pattern.`;
+        prompt += `\nKeep it under 80 words. Do not give a full lesson.`;
+        return prompt;
+    },
+
+    // ─── CURRICULUM-AWARE REVIEW PROMPT ───
+    /**
+     * Build a structured lesson review prompt for the AI tutor.
+     * Used after lesson completion to provide meaningful feedback.
+     * @param {Object} opts - { unitTitle, score, cefrLevel, grammarTopics, canDo, weakRules, correctCount, totalCount }
+     * @returns {string}
+     */
+    buildReviewPrompt(opts = {}) {
+        const { unitTitle, score, cefrLevel, grammarTopics, canDo, weakRules, correctCount, totalCount } = opts;
+        let prompt = `Lesson review for "${unitTitle || 'current lesson'}".`;
+        prompt += ` Score: ${score || 0}% (${correctCount || 0}/${totalCount || 0}).`;
+        if (cefrLevel) prompt += ` Level: CEFR ${cefrLevel}.`;
+        if (grammarTopics?.length) prompt += ` Grammar covered: ${grammarTopics.join(', ')}.`;
+        if (canDo) prompt += ` Can-do target: "${canDo}".`;
+        if (weakRules?.length) prompt += ` Weak areas this session: ${weakRules.join(', ')}.`;
+
+        prompt += `\n\nProvide a structured review:`;
+        prompt += `\n1. **Result**: One sentence about the overall performance.`;
+        prompt += `\n2. **Strengths**: What the student did well (based on score and grammar covered).`;
+        if (weakRules?.length) {
+            prompt += `\n3. **Focus needed**: Specific grammar rules to review, with one example per rule.`;
+        }
+        if (canDo) {
+            prompt += `\n4. **Progress toward can-do**: How close is the student to achieving "${canDo}"?`;
+        }
+        prompt += `\n5. **Next step**: One concrete recommendation for what to practice next.`;
+        prompt += `\nKeep it under 200 words. Be specific, not generic.`;
+        return prompt;
+    },
 };
+

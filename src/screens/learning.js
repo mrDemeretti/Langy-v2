@@ -48,8 +48,10 @@ function renderLearning(container) {
         const shuffledStatic = [...staticExercises].sort(() => Math.random() - 0.5).slice(0, staticCount);
         exercises = shuffledStatic;
 
-        // Generate dynamic exercises for the rest
-        const dynamicExercises = ExerciseGenerator.generateBatch(activeTb.cefr, dynamicCount, { noRepeatTypes: true });
+        // Generate dynamic exercises — curriculum-aware for English
+        const dynamicExercises = (typeof ExerciseGenerator.generateForCurrentUnit === 'function')
+            ? ExerciseGenerator.generateForCurrentUnit(dynamicCount, { types: ['fill-bubble', 'match-pairs', 'word-shuffle', 'type-translation', 'listen-type'] })
+            : ExerciseGenerator.generateBatch(activeTb.cefr, dynamicCount, { noRepeatTypes: true });
         exercises = exercises.concat(dynamicExercises);
 
         // Shuffle all exercises together
@@ -440,7 +442,24 @@ function renderLearning(container) {
                         exercise.widgetData?.answer || ''
                     );
                 }
-                if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('encouraging');
+                if (typeof DeepTutor !== 'undefined') {
+                    DeepTutor.setEmotion('encouraging');
+                    // Send a curriculum-aware correction to DeepTutor for English
+                    const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+                    if (isEnglish) {
+                        const exSentence = exercise.widgetData?.sentence || exercise.data?.sentence || '';
+                        const exAnswer = exercise.widgetData?.answer || (exercise.data?.options ? exercise.data.options[exercise.data.correct] : '') || '';
+                        const exRule = exercise.widgetData?.rule || exercise.data?.rule || '';
+                        const cefrLvl = activeTb.cefr || '';
+                        if (exSentence && exAnswer) {
+                            let correctionMsg = `The student just got this wrong: "${exSentence}" — correct answer: "${exAnswer}".`;
+                            if (exRule) correctionMsg += ` Grammar rule: ${exRule}.`;
+                            if (cefrLvl) correctionMsg += ` Level: CEFR ${cefrLvl}.`;
+                            correctionMsg += ` Give a brief (2-3 sentence) explanation of why this answer is correct, appropriate for this CEFR level. Do not give a full lesson — just the key point.`;
+                            DeepTutor.handleSend(correctionMsg, true);
+                        }
+                    }
+                }
             }
 
             currentExerciseIdx++;
@@ -741,29 +760,42 @@ function renderLearning(container) {
             updateUI();
         });
 
-        // AI feedback after lesson — curriculum-aware for English
+        // AI feedback after lesson — curriculum-aware structured review
         if (typeof DeepTutor !== 'undefined') {
             DeepTutor.setEmotion(score >= LangyConfig.PASS_THRESHOLD ? 'happy' : 'encouraging');
-            const personaMsg = typeof MascotPersona !== 'undefined'
-                ? (score >= LangyConfig.PASS_THRESHOLD ? MascotPersona.tone('encouragement') : MascotPersona.tone('encouragement'))
-                : (score >= LangyConfig.PASS_THRESHOLD ? 'Great job!' : 'Need more practice.');
 
             const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
             const cefrLevel = activeTb.cefr || '';
-            const canDoHint = activeTb.canDo && activeTb.canDo.length ? ` Can-do target: "${activeTb.canDo[0]}".` : '';
-            const grammarDone = unit.grammar?.length ? ` Grammar covered: ${unit.grammar.join(', ')}.` : '';
 
-            let completeMsg = `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}).`;
-            if (isEnglish && cefrLevel) {
-                completeMsg += ` CEFR ${cefrLevel}.${canDoHint}${grammarDone}`;
-                completeMsg += score >= LangyConfig.PASS_THRESHOLD
-                    ? ` Summarize what the student demonstrated at this CEFR level and what to focus on next.`
-                    : ` Identify the specific ${cefrLevel}-level skills that need more work based on this score.`;
+            if (isEnglish && cefrLevel && typeof LangyAI !== 'undefined' && LangyAI.buildReviewPrompt) {
+                // Collect weak rules from failed exercises
+                const weakRules = [];
+                failedExerciseIndices.forEach(idx => {
+                    const ex = exercises[idx];
+                    const rule = ex?.widgetData?.rule || ex?.data?.rule;
+                    if (rule && !weakRules.includes(rule)) weakRules.push(rule);
+                });
+
+                const reviewPrompt = LangyAI.buildReviewPrompt({
+                    unitTitle: unit.title,
+                    score,
+                    cefrLevel,
+                    grammarTopics: unit.grammar || [],
+                    canDo: activeTb.canDo && activeTb.canDo.length ? activeTb.canDo[0] : '',
+                    weakRules,
+                    correctCount: correctAnswers,
+                    totalCount: totalExercises,
+                });
+                DeepTutor.handleSend(reviewPrompt, true);
             } else {
-                completeMsg += ` ${personaMsg}`;
+                const personaMsg = typeof MascotPersona !== 'undefined'
+                    ? MascotPersona.tone('encouragement')
+                    : (score >= LangyConfig.PASS_THRESHOLD ? 'Great job!' : 'Need more practice.');
+                DeepTutor.handleSend(
+                    `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${personaMsg}`,
+                    true
+                );
             }
-
-            DeepTutor.handleSend(completeMsg, true);
         }
     }
 

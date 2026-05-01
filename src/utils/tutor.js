@@ -82,6 +82,8 @@ const DeepTutor = {
         const history = LangyState.aiMemory.conversationContext;
         if (history.length === 0) {
             this.addMessage(this._getGreeting(), 'ai');
+            // Show curriculum-aware quick-prompt suggestions for English
+            this._showQuickPrompts();
         } else {
             history.forEach(m => this.addMessage(m.content, m.role, false));
         }
@@ -259,4 +261,75 @@ const DeepTutor = {
             es: 'Pregunta a tu tutor...',
         }[lang] || 'Ask your tutor anything...';
     },
+
+    /** Show quick-prompt suggestion chips after the greeting */
+    _showQuickPrompts() {
+        if (!this.messages) return;
+
+        const targetCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+        const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+        const suggestions = [];
+
+        if (targetCode === 'en' && typeof LangyCurriculum !== 'undefined') {
+            const tb = LangyCurriculum.getActive();
+            if (tb) {
+                const cefr = tb.cefr || '';
+                const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+                const unit = unitId && tb.units ? tb.units.find(u => u.id === unitId) : null;
+                const grammarTopic = unit?.grammar?.[0] || '';
+                const canDo = tb.canDo && tb.canDo.length ? tb.canDo[0] : '';
+                const weakAreas = typeof LangyAI !== 'undefined' ? LangyAI.getWeakAreas() : [];
+
+                // Grammar explanation for current unit
+                if (grammarTopic) {
+                    const label = lang === 'ru' ? `Объясни: ${grammarTopic}` : lang === 'es' ? `Explica: ${grammarTopic}` : `Explain: ${grammarTopic}`;
+                    suggestions.push({ label, prompt: `Explain the grammar rule "${grammarTopic}" for CEFR ${cefr} level. Give 2-3 examples.` });
+                }
+
+                // Can-do outcome question
+                if (canDo) {
+                    const label = lang === 'ru' ? `Что значит: «${canDo.substring(0, 30)}...»?` : `What does "${canDo.substring(0, 30)}..." mean for me?`;
+                    suggestions.push({ label, prompt: `I'm working toward this can-do outcome: "${canDo}". What specific skills do I need to practice at CEFR ${cefr}?` });
+                }
+
+                // Weak areas review
+                if (weakAreas.length > 0) {
+                    const label = lang === 'ru' ? 'Мои слабые места' : lang === 'es' ? 'Mis áreas débiles' : 'Review my weak areas';
+                    suggestions.push({ label, prompt: `My weak areas are: ${weakAreas.join(', ')}. Give me a focused review with 1 example exercise for each.` });
+                }
+
+                // Level-appropriate general prompt
+                const practiceLabel = lang === 'ru' ? `Упражнение на ${cefr}` : lang === 'es' ? `Ejercicio ${cefr}` : `Quick ${cefr} practice`;
+                suggestions.push({ label: practiceLabel, prompt: `Give me a quick grammar exercise appropriate for CEFR ${cefr}. Include the exercise, then wait for my answer before giving feedback.` });
+            }
+        } else {
+            // Non-English: generic suggestions
+            const s = {
+                en: [{ label: 'Explain today\'s topic', prompt: 'Explain the current grammar topic with examples.' }, { label: 'Give me an exercise', prompt: 'Give me a practice exercise for the current lesson.' }],
+                ru: [{ label: 'Объясни тему', prompt: 'Объясни текущую тему грамматики с примерами.' }, { label: 'Дай упражнение', prompt: 'Дай мне упражнение по текущему уроку.' }],
+                es: [{ label: 'Explica el tema', prompt: 'Explica el tema de gramática actual con ejemplos.' }, { label: 'Dame un ejercicio', prompt: 'Dame un ejercicio de práctica para la lección actual.' }],
+            };
+            (s[lang] || s.en).forEach(item => suggestions.push(item));
+        }
+
+        if (suggestions.length === 0) return;
+
+        // Render suggestion chips
+        const chipsContainer = document.createElement('div');
+        chipsContainer.className = 'tutor-quick-prompts';
+        chipsContainer.style.cssText = 'display:flex; flex-wrap:wrap; gap:6px; padding:8px 12px;';
+        suggestions.forEach(s => {
+            const chip = document.createElement('button');
+            chip.style.cssText = 'font-size:12px; padding:4px 10px; border-radius:12px; border:1px solid var(--border); background:var(--card-bg); color:var(--text-secondary); cursor:pointer; white-space:nowrap; transition:all 0.2s;';
+            chip.textContent = s.label;
+            chip.onclick = () => {
+                chipsContainer.remove(); // Remove chips after use
+                this.handleSend(s.prompt, false);
+            };
+            chipsContainer.appendChild(chip);
+        });
+        this.messages.appendChild(chipsContainer);
+        this.messages.scrollTop = this.messages.scrollHeight;
+    },
 };
+

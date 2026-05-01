@@ -71,7 +71,7 @@ const LangyWidgets = {
         checkBtn.textContent = i18n('widget.check');
         checkBtn.onclick = () => {
             const isCorrect = JSON.stringify(selected) === JSON.stringify(correctOrder);
-            this._showFeedback(el, isCorrect, correctOrder.join(' '));
+            this._showFeedback(el, isCorrect, correctOrder.join(' '), null);
             setTimeout(() => onComplete(isCorrect), 1200);
         };
         el.appendChild(checkBtn);
@@ -116,7 +116,7 @@ const LangyWidgets = {
                     el.querySelectorAll('.bubble-btn')[data.correct].classList.add('bubble-btn--correct');
                 }
 
-                this._showFeedback(el, isCorrect, data.options[data.correct]);
+                this._showFeedback(el, isCorrect, data.options[data.correct], data.rule);
                 setTimeout(() => onComplete(isCorrect), 1200);
             };
         });
@@ -495,7 +495,7 @@ const LangyWidgets = {
     },
 
     // ─── FEEDBACK ─────────────────────────────────────
-    _showFeedback(widgetEl, isCorrect, correctAnswer) {
+    _showFeedback(widgetEl, isCorrect, correctAnswer, ruleHint) {
         const existing = widgetEl.querySelector('.widget__feedback');
         if (existing) existing.remove();
 
@@ -503,9 +503,19 @@ const LangyWidgets = {
         fb.className = `widget__feedback widget__feedback--${isCorrect ? 'correct' : 'wrong'} animate-in`;
         const personaCorrect = typeof MascotPersona !== 'undefined' ? MascotPersona.tone('correct') : i18n('widget.correct');
         const personaIncorrect = typeof MascotPersona !== 'undefined' ? MascotPersona.tone('incorrect') : '';
-        fb.innerHTML = isCorrect
-            ? `<span class="widget__feedback-icon">${LangyIcons.checkCircle}</span> <span>${personaCorrect}</span>`
-            : `<span class="widget__feedback-icon">${LangyIcons.x}</span> <span>${personaIncorrect ? personaIncorrect + ' ' : ''}${i18n('widget.answer_was')}: <strong>${correctAnswer}</strong></span>`;
+
+        if (isCorrect) {
+            fb.innerHTML = `<span class="widget__feedback-icon">${LangyIcons.checkCircle}</span> <span>${personaCorrect}</span>`;
+        } else {
+            // Build curriculum-aware correction for English
+            let ruleExplanation = '';
+            if (ruleHint) {
+                ruleExplanation = `<div style="font-size:var(--fs-xs); color:var(--text-secondary); margin-top:4px;">Rule: <strong>${ruleHint}</strong></div>`;
+            }
+
+            fb.innerHTML = `<span class="widget__feedback-icon">${LangyIcons.x}</span> <span>${personaIncorrect ? personaIncorrect + ' ' : ''}${i18n('widget.answer_was')}: <strong>${correctAnswer}</strong>${ruleExplanation}</span>`;
+        }
+
         widgetEl.appendChild(fb);
 
         if (!isCorrect && widgetEl.animate) {
