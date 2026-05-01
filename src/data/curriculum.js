@@ -1919,12 +1919,13 @@ const LangyCurriculum = {
             // ── B2 Unit 1 ──
             {
                 id: 1, title: 'All question types', desc: 'Indirect, tag, and subject questions.', unitType: 'grammar',
-                grammar: ['indirect questions', 'tag questions'], vocab: ['inquiries', 'workplaces'],
+                grammar: ['indirect questions', 'tag questions', 'subject questions'], vocab: ['inquiries', 'workplaces', 'politeness'],
                 homework: { prompt: "Write 5 polite indirect questions for a job interview." },
                 teachSlides: [
                     { type: 'explain', mascotText: "Welcome to B2! We're starting with advanced questions. Indirect questions are much more polite: 'Could you tell me...' instead of a direct demand.", mascotEmotion: 'happy' },
-                    { type: 'compare', mascotText: "Notice the word order. Indirect questions DON'T use 'do/does/did'!", mascotEmotion: 'thinking', left: { label: 'Direct', items: ["Where is the station?", "When does it open?"] }, right: { label: 'Indirect', items: ["Do you know where the station is?", "Could you tell me when it opens?"] } },
-                    { type: 'explain', mascotText: "Tag questions are mini-questions at the end. They check if something is true. Positive sentence -> Negative tag.", mascotEmotion: 'happy' },
+                    { type: 'compare', mascotText: "Notice the word order. Indirect questions DON'T use 'do/does/did'!", mascotEmotion: 'thinking', left: { label: 'Direct', items: ["Where is the station?", "When does it open?", "What did she say?"] }, right: { label: 'Indirect', items: ["Do you know where the station is?", "Could you tell me when it opens?", "I wonder what she said."] } },
+                    { type: 'explain', mascotText: "Tag questions are mini-questions at the end. They check if something is true. Positive sentence -> Negative tag. Negative sentence -> Positive tag.", mascotEmotion: 'happy' },
+                    { type: 'explain', mascotText: "Subject questions don't need 'do/does/did' because the question word IS the subject! 'Who broke the window?' NOT 'Who did break the window?'", mascotEmotion: 'thinking' },
                     { type: 'quiz-check', mascotText: "'You like coffee, ___ you?'", mascotEmotion: 'thinking', options: ["don't", 'do', "aren't"], correct: 0 }
                 ],
                 exercises: [
@@ -1932,48 +1933,65 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Indirect', sentence: 'Could you tell me how ___?', options: ['this works', 'does this work'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Tag', sentence: "You've finished the report, ___ you?", options: ["haven't", "didn't", "don't"], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Tag', sentence: "They will arrive soon, ___ they?", options: ["won't", "aren't", "don't"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Tag', sentence: "She doesn't like sushi, ___ she?", options: ['does', "doesn't", 'is'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Subject Q', sentence: '___ invented the telephone?', options: ['Who did', 'Who'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Indirect', sentence: 'I was wondering ___ you could help me.', options: ['if', 'do'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Direct → Indirect', pairs: [{ left: 'Where is she?', right: 'Do you know where she is?' }, { left: 'What time is it?', right: 'Could you tell me what time it is?' }, { left: 'Does he work here?', right: 'Do you know if he works here?' }, { left: 'Who called?', right: 'Do you know who called?' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Indirect', words: ['me', 'could', 'how', 'tell', 'works', 'you', 'this'], correct: ['could', 'you', 'tell', 'me', 'how', 'this', 'works'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Ты не знаешь, где она живёт?', fromLang: 'RU', toLang: 'EN', answer: 'Do you know where she lives' } },
-                    { type: 'speak-aloud', data: { instruction: 'Polite inquiry:', phrase: "Excuse me, could you tell me where the nearest station is?" } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "Could you tell me where the nearest pharmacy is?", hint: 'Indirect question — no do/does' } },
+                    { type: 'speak-aloud', data: { instruction: 'Polite inquiry:', phrase: "Excuse me, could you tell me where the nearest station is? You work here, don't you?" } }
                 ]
             },
             // ── B2 Unit 2 ──
             {
                 id: 2, title: 'Narrative Tenses', desc: 'Telling stories like a native.', unitType: 'grammar',
-                grammar: ['past simple', 'past continuous', 'past perfect'], vocab: ['anecdotes', 'travel'],
+                grammar: ['past simple', 'past continuous', 'past perfect'], vocab: ['anecdotes', 'travel', 'sequencing'],
                 homework: { prompt: "Write a short story about a past trip using all three narrative tenses." },
                 teachSlides: [
                     { type: 'explain', mascotText: "To tell a great story, mix three past tenses: Past Simple (action), Past Continuous (background), Past Perfect (what happened earlier).", mascotEmotion: 'happy' },
                     { type: 'examples', mascotText: "Watch them work together in one sentence:", mascotEmotion: 'thinking', items: [{ base: 'Background', past: "The sun was shining.", highlight: 'Past Continuous' }, { base: 'Earlier event', past: "We had packed our bags.", highlight: 'Past Perfect' }, { base: 'Main action', past: "So we went to the beach.", highlight: 'Past Simple' }] },
+                    { type: 'compare', mascotText: "Each tense plays a different role in stories:", mascotEmotion: 'happy', left: { label: 'Tense', items: ['Past Simple', 'Past Continuous', 'Past Perfect'] }, right: { label: 'Story Role', items: ['Main events (what happened)', 'Background scene (atmosphere)', 'Earlier events (context)'] } },
+                    { type: 'tip', mascotText: "Native speakers START stories with Past Continuous for atmosphere: 'I was sitting in a café when...' — this pulls the listener into the scene.", mascotEmotion: 'happy', tipText: "Story opener: Past Continuous (scene) → Past Simple (action) → Past Perfect (backstory)" },
                     { type: 'quiz-check', mascotText: "'When we arrived, the movie ___.' (it started before we got there)", mascotEmotion: 'thinking', options: ['started', 'had started', 'was starting'], correct: 1 }
                 ],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Narrative', sentence: 'While I ___ home, I found a wallet.', options: ['was walking', 'walked', 'had walked'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Narrative', sentence: 'When we got to the station, the train ___ left.', options: ['has', 'had', 'was'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Narrative', sentence: 'I couldn\'t pay because I ___ my wallet at home.', options: ['left', 'had left', 'was leaving'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Background', sentence: 'It ___ heavily, so we decided to stay inside.', options: ['rained', 'was raining', 'had rained'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Sequence', sentence: 'She ___ dinner before the guests arrived.', options: ['cooked', 'had cooked', 'was cooking'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Tense → Story Role', pairs: [{ left: 'Past Simple', right: 'Main events' }, { left: 'Past Continuous', right: 'Background/atmosphere' }, { left: 'Past Perfect', right: 'Earlier events' }, { left: 'It was raining when...', right: 'Scene + interruption' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Story', words: ['had', 'started', 'arrived', 'the', 'already', 'we', 'when', 'game'], correct: ['when', 'we', 'arrived', 'the', 'game', 'had', 'already', 'started'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Шел дождь, когда я проснулся.', fromLang: 'RU', toLang: 'EN', answer: 'It was raining when I woke up' } },
-                    { type: 'speak-aloud', data: { instruction: 'Tell a story:', phrase: "I was sleeping peacefully when the phone rang. Someone had dialed the wrong number." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I was having dinner when someone knocked on the door.", hint: 'Past Continuous + Past Simple' } },
+                    { type: 'speak-aloud', data: { instruction: 'Tell a story:', phrase: "I was sleeping peacefully when the phone rang. Someone had dialed the wrong number. I was furious." } }
                 ]
             },
             // ── B2 Unit 3 ──
             {
                 id: 3, title: 'Future forms overview', desc: 'Precision in predicting the future.', unitType: 'grammar',
-                grammar: ['will', 'going to', 'future continuous', 'future perfect'], vocab: ['predictions', 'deadlines'],
+                grammar: ['will', 'going to', 'future continuous', 'future perfect'], vocab: ['predictions', 'deadlines', 'career planning'],
                 homework: { prompt: "Where will you be and what will you have achieved by 2030?" },
                 teachSlides: [
-                    { type: 'explain', mascotText: "Native speakers use many futures! 'Will' for sudden decisions/hopes. 'Going to' for plans. Let's look at advanced ones.", mascotEmotion: 'happy' },
-                    { type: 'compare', mascotText: "Future Continuous vs Future Perfect:", mascotEmotion: 'thinking', left: { label: 'Future Cont (in progress)', items: ["This time tomorrow, I will be flying to Paris."] }, right: { label: 'Future Perfect (finished by)', items: ["By next year, I will have finished my degree."] } },
-                    { type: 'quiz-check', mascotText: "'By 5 PM, I ___ my work.'", mascotEmotion: 'thinking', options: ['will finish', 'will have finished'], correct: 1 }
+                    { type: 'explain', mascotText: "Native speakers use many futures! 'Will' for sudden decisions/predictions. 'Going to' for evidence-based plans. Now let's add Future Continuous and Future Perfect.", mascotEmotion: 'happy' },
+                    { type: 'compare', mascotText: "All four future forms:", mascotEmotion: 'thinking', left: { label: 'Form', items: ['will + verb', 'going to + verb', 'will be + -ing', 'will have + V3'] }, right: { label: 'Use', items: ['Prediction / spontaneous decision', 'Planned intention / evidence', 'Action in progress at future time', 'Action completed before future deadline'] } },
+                    { type: 'examples', mascotText: "Future Continuous vs Future Perfect in real life:", mascotEmotion: 'happy', items: [{ base: 'In progress', past: "At 9 PM, I'll be watching the match.", highlight: 'will be + -ing' }, { base: 'Completed', past: "By 9 PM, I'll have finished dinner.", highlight: 'will have + V3' }, { base: 'Polite', past: "Will you be attending the meeting?", highlight: 'Polite future question' }] },
+                    { type: 'tip', mascotText: "Future Continuous is also used for POLITE questions in formal settings: 'Will you be joining us?' is softer than 'Are you coming?'", mascotEmotion: 'happy', tipText: "Polite: Will you be...? vs Direct: Are you going to...?" },
+                    { type: 'quiz-check', mascotText: "'By 5 PM, I ___ my work.'", mascotEmotion: 'thinking', options: ['will finish', 'will have finished', 'will be finishing'], correct: 1 }
                 ],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Prediction', sentence: "I think it ___ rain tomorrow.", options: ['will', 'is going to'], correct: 0 } },
-                    { type: 'fill-bubble', data: { instruction: 'Plan', sentence: "Look at those clouds! It ___ rain.", options: ['will', 'is going to'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Evidence', sentence: "Look at those clouds! It ___ rain.", options: ['will', 'is going to'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Future Cont', sentence: "This time tomorrow, I ___ on the beach.", options: ['will sit', 'will be sitting', 'will have sat'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Future Perf', sentence: "By Friday, I ___ written the report.", options: ['will', 'will have', 'will be'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Polite', sentence: '___ you be attending the conference next week?', options: ['Will', 'Do', 'Are'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Future Perf', sentence: 'By the time she arrives, we ___ already eaten.', options: ['will have', 'will be', 'are going to'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Future Form → Use', pairs: [{ left: 'will + verb', right: 'Prediction/decision' }, { left: 'going to', right: 'Plans/evidence' }, { left: 'will be + -ing', right: 'In progress at future time' }, { left: 'will have + V3', right: 'Completed before deadline' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Deadline', words: ['by', 'have', 'graduated', 'I', 'will', 'next', 'year'], correct: ['by', 'next', 'year', 'I', 'will', 'have', 'graduated'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'К завтрашнему дню я закончу эту книгу.', fromLang: 'RU', toLang: 'EN', answer: 'By tomorrow I will have finished this book' } },
-                    { type: 'speak-aloud', data: { instruction: 'Future goals:', phrase: "By next month, I will have completed this project. This time next week, I'll be celebrating." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "This time next month, I will be living in a new city.", hint: 'Future Continuous: will be + -ing' } },
+                    { type: 'speak-aloud', data: { instruction: 'Future goals:', phrase: "By next month, I will have completed this project. This time next week, I'll be celebrating my promotion." } }
                 ]
             },
             // ── B2 Unit 4 ──
@@ -1990,9 +2008,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Formal Vocab', sentence: "I am writing to ___ about the job opening.", options: ['ask', 'enquire'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Formal Request', sentence: "I would be ___ if you could send the details.", options: ['happy', 'grateful'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Linkers', sentence: "The service was excellent. ___, the price was reasonable.", options: ['Furthermore', 'Plus'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Closing', sentence: "I look forward to ___ from you.", options: ['hear', 'hearing'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Register', sentence: "I am writing to ___ my dissatisfaction with the service.", options: ['say about', 'express'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Informal → Formal', pairs: [{ left: 'I want to know...', right: 'I am writing to enquire...' }, { left: 'Can you help?', right: 'I would appreciate your assistance.' }, { left: 'Thanks', right: 'I am most grateful.' }, { left: 'Also,...', right: 'Furthermore,...' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Apology', words: ['the', 'for', 'apologize', 'inconvenience', 'we', 'caused'], correct: ['we', 'apologize', 'for', 'the', 'inconvenience', 'caused'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Пожалуйста, свяжитесь со мной для дальнейшей информации.', fromLang: 'RU', toLang: 'EN', answer: 'Please contact me for further information' } },
-                    { type: 'speak-aloud', data: { instruction: 'Professional:', phrase: "I look forward to hearing from you at your earliest convenience." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I would be grateful if you could forward the documents at your earliest convenience.", hint: 'Formal request structure' } },
+                    { type: 'speak-aloud', data: { instruction: 'Professional:', phrase: "Dear Sir or Madam, I am writing to enquire about the position advertised. I look forward to hearing from you." } }
                 ]
             },
             // ── B2 Unit 5 ──
@@ -2002,10 +2024,17 @@ const LangyCurriculum = {
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Indirect', sentence: "Do you know where ___?", options: ['is he', 'he is'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Tag', sentence: "You're ready, ___ you?", options: ["aren't", "don't"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Tag', sentence: "He can swim, ___ he?", options: ["can't", "doesn't"], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Narrative', sentence: "When I arrived, the meeting ___ finished.", options: ['has', 'had'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Narrative', sentence: "While they ___ dinner, the lights went out.", options: ['had', 'were having'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Future Perf', sentence: "By 2040, people ___ landed on Mars.", options: ['will', 'will have'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Future Cont', sentence: "This time tomorrow, we ___ across the Atlantic.", options: ['will fly', 'will be flying'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Formal', sentence: "I am writing to express my ___ with the service.", options: ['sadness', 'dissatisfaction'], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'К пятнице я закончу этот отчет.', fromLang: 'RU', toLang: 'EN', answer: 'By Friday I will have finished this report' } }
+                    { type: 'match-pairs', data: { instruction: 'Grammar → Example', pairs: [{ left: 'Indirect question', right: 'Do you know where he is?' }, { left: 'Tag question', right: "She's French, isn't she?" }, { left: 'Future Perfect', right: "By June, I'll have graduated." }, { left: 'Formal register', right: 'I would be grateful if...' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Indirect Q', words: ['tell', 'you', 'me', 'time', 'could', 'it', 'what', 'is'], correct: ['could', 'you', 'tell', 'me', 'what', 'time', 'it', 'is'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'К пятнице я закончу этот отчет.', fromLang: 'RU', toLang: 'EN', answer: 'By Friday I will have finished this report' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I was wondering if you could tell me where the conference room is.", hint: 'Indirect question with I was wondering' } },
+                    { type: 'speak-aloud', data: { instruction: 'B2 Review:', phrase: "Could you tell me when the meeting starts? By then, I will have prepared all the documents." } }
                 ]
             },
             // ── B2 Unit 6 ──
@@ -2016,15 +2045,21 @@ const LangyCurriculum = {
                 teachSlides: [
                     { type: 'explain', mascotText: "Second conditional = UNREAL Present. Third conditional = UNREAL Past (regrets). To form the 3rd: If + Past Perfect, ... would have + V3.", mascotEmotion: 'happy' },
                     { type: 'examples', mascotText: "Third conditional examples:", mascotEmotion: 'thinking', items: [{ base: 'Regret', past: "If I had studied, I would have passed.", highlight: 'had studied / would have passed' }, { base: 'Relief', past: "If we hadn't run, we would have missed the train.", highlight: "hadn't run / would have missed" }] },
+                    { type: 'explain', mascotText: "MIXED conditionals combine the tenses! If + Past Perfect, ... would + verb (no 'have'). 'If I had taken that job, I would be rich now.' Past condition → present result.", mascotEmotion: 'thinking' },
+                    { type: 'compare', mascotText: "3rd vs Mixed:", mascotEmotion: 'happy', left: { label: '3rd (past result)', items: ["If I had left earlier, I would have caught the train."] }, right: { label: 'Mixed (present result)', items: ["If I had left earlier, I wouldn't be so late now."] } },
                     { type: 'quiz-check', mascotText: "'If I ___ her address, I would have sent an invitation.'", mascotEmotion: 'thinking', options: ['knew', 'had known'], correct: 1 }
                 ],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: "If I ___ the alarm, I would have woken up.", options: ['heard', 'had heard'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: "She ___ passed the test if she had studied.", options: ['would', 'would have'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Mixed', sentence: "If I ___ (not/lose) my keys yesterday, I wouldn't be locked out now.", options: ["didn't lose", "hadn't lost"], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: "We ___ the game if we had practised more.", options: ['would win', 'would have won'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Mixed', sentence: "If she had accepted the offer, she ___ in Paris now.", options: ['would have lived', 'would be living'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Condition → Result', pairs: [{ left: 'If I had studied (3rd)', right: 'I would have passed' }, { left: 'If I had studied (mixed)', right: 'I would know the answer now' }, { left: 'If I were rich (2nd)', right: 'I would buy a yacht' }, { left: "If it hadn't rained", right: 'We would have had a picnic' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Regret', words: ['would', 'I', 'helped', 'have', 'I', 'if', 'known', 'had'], correct: ['I', 'would', 'have', 'helped', 'if', 'I', 'had', 'known'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я знал, я бы не пришел.', fromLang: 'RU', toLang: 'EN', answer: 'If I had known, I would not have come' } },
-                    { type: 'speak-aloud', data: { instruction: 'Regrets:', phrase: "If I had left earlier, I wouldn't have missed the flight. It was a big mistake." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "If we had booked earlier, we wouldn't be staying in this terrible hotel now.", hint: 'Mixed conditional: past condition → present result' } },
+                    { type: 'speak-aloud', data: { instruction: 'Regrets:', phrase: "If I had left earlier, I wouldn't have missed the flight. If I had studied abroad, I would speak French fluently now." } }
                 ]
             },
             // ── B2 Unit 7 ──
@@ -2034,16 +2069,21 @@ const LangyCurriculum = {
                 homework: { prompt: "Write 5 sentences starting with 'I wish...'" },
                 teachSlides: [
                     { type: 'explain', mascotText: "'I wish' works exactly like Conditionals! 'I wish I had a car' (I don't have one now). 'I wish I had studied' (I didn't study in the past).", mascotEmotion: 'happy' },
-                    { type: 'compare', mascotText: "Notice the tense shift:", mascotEmotion: 'thinking', left: { label: 'Current Reality', items: ["I am not tall.", "I didn't save money."] }, right: { label: 'The Wish', items: ["I wish I WERE tall.", "I wish I HAD SAVED money."] } },
+                    { type: 'compare', mascotText: "Notice the tense shift:", mascotEmotion: 'thinking', left: { label: 'Current Reality', items: ["I am not tall.", "I didn't save money.", "My neighbour plays loud music."] }, right: { label: 'The Wish', items: ["I wish I WERE tall.", "I wish I HAD SAVED money.", "I wish he WOULD stop."] } },
+                    { type: 'tip', mascotText: "Three wish patterns: (1) wish + Past Simple = unreal present, (2) wish + Past Perfect = past regret, (3) wish + would = annoying habits or complaints.", mascotEmotion: 'happy', tipText: "wish + Past = now | wish + Past Perfect = then | wish + would = complaint" },
                     { type: 'quiz-check', mascotText: "It's raining now. 'I wish it ___ raining.'", mascotEmotion: 'thinking', options: ['stops', 'stopped', 'would stop'], correct: 2 }
                 ],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Present wish', sentence: "I don't have time. I wish I ___ more time.", options: ['have', 'had', 'had had'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Past regret', sentence: "I failed the test. I wish I ___ harder.", options: ['studied', 'had studied'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Annoyance', sentence: "He's always late. I wish he ___ on time.", options: ['was', 'would be'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Present wish', sentence: "It's freezing. I wish I ___ a warmer coat.", options: ['have', 'had'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Past regret', sentence: "She missed the party. She wishes she ___ about it.", options: ['knew', 'had known'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Wish type → Example', pairs: [{ left: 'wish + Past Simple', right: 'I wish I were taller.' }, { left: 'wish + Past Perfect', right: 'I wish I had studied.' }, { left: 'wish + would', right: 'I wish it would stop raining.' }, { left: 'If only + Past', right: 'If only I could fly!' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Regret', words: ['wish', 'had', 'earlier', 'I', 'left', 'I'], correct: ['I', 'wish', 'I', 'had', 'left', 'earlier'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я бы хотел быть богатым.', fromLang: 'RU', toLang: 'EN', answer: 'I wish I were rich' } },
-                    { type: 'speak-aloud', data: { instruction: 'Express regrets:', phrase: "I wish I hadn't eaten so much cake. Now my stomach hurts." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I wish I hadn't said that. It was a terrible mistake.", hint: 'wish + Past Perfect for past regret' } },
+                    { type: 'speak-aloud', data: { instruction: 'Express regrets:', phrase: "I wish I hadn't eaten so much cake. Now my stomach hurts. I wish I were more careful." } }
                 ]
             },
             // ── B2 Unit 8 ──
@@ -2062,11 +2102,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Stop', sentence: "We drove for hours, so we stopped ___ a coffee.", options: ['having', 'to have'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Remember', sentence: "Did you remember ___ the milk?", options: ['buying', 'to buy'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Try', sentence: "I tried ___ the window, but it was stuck completely.", options: ['opening', 'to open'], correct: 1 } },
-                    { type: 'word-shuffle', data: { instruction: 'Memory', words: ['visiting', 'remember', 'clear', 'I', 'Paris', 'very'], correct: ['I', 'remember', 'visiting', 'Paris', 'very', 'clear'] } }, // "I remember visiting Paris very clearly", adjusted words: I remember visiting Paris very clearly. Just making sure array is valid. Let's fix the array to: ['I', 'remember', 'visiting', 'Paris']
-                    // Replaced with:
+                    { type: 'fill-bubble', data: { instruction: 'Forget', sentence: "I'll never forget ___ the Northern Lights for the first time.", options: ['to see', 'seeing'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Regret', sentence: "I regret ___ you that the position has been filled.", options: ['to inform', 'informing'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Verb + ING vs TO', pairs: [{ left: 'stop + ING', right: 'quit the action' }, { left: 'stop + TO', right: 'pause to do something' }, { left: 'remember + ING', right: 'memory of past' }, { left: 'remember + TO', right: "don't forget to do" }] } },
                     { type: 'word-shuffle', data: { instruction: 'Memory', words: ['visiting', 'remember', 'I', 'Paris'], correct: ['I', 'remember', 'visiting', 'Paris'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я перестал курить в прошлом году.', fromLang: 'RU', toLang: 'EN', answer: 'I stopped smoking last year' } },
-                    { type: 'speak-aloud', data: { instruction: 'Advice:', phrase: "Please remember to lock the door. I remember leaving it open once." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "Remember to lock the door before you leave tonight.", hint: "remember + TO = don't forget" } },
+                    { type: 'speak-aloud', data: { instruction: 'Advice:', phrase: "Please remember to lock the door. I remember leaving it open once, and someone broke in." } }
                 ]
             },
             // ── B2 Unit 9 ──
@@ -2084,9 +2126,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Accustomed', sentence: "He is a chef. He ___ cooking for 100 people.", options: ['used to', 'is used to'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Process', sentence: "The new software is hard, but I will ___ it.", options: ['use to', 'get used to'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Negative', sentence: "I ___ like spicy food, but now I love it.", options: ["didn't use to", "am not used to"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Accustomed', sentence: "After 3 years in Japan, I ___ eating with chopsticks.", options: ['used to', 'am used to'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Process', sentence: "It took me months to ___ working night shifts.", options: ['use to', 'get used to'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Form → Meaning', pairs: [{ left: 'used to + verb', right: 'Past habit (not anymore)' }, { left: 'be used to + -ing', right: 'Accustomed to (comfortable)' }, { left: 'get used to + -ing', right: 'Process of adapting' }, { left: "didn't use to", right: 'Past negative habit' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Habit', words: ['to', 'I', 'early', 'getting', 'am', 'used', 'waking', 'up'], correct: ['I', 'am', 'getting', 'used', 'to', 'waking', 'up', 'early'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я привык к этому климату.', fromLang: 'RU', toLang: 'EN', answer: 'I am used to this climate' } },
-                    { type: 'speak-aloud', data: { instruction: 'Adaptation:', phrase: "I used to hate coffee, but now I'm entirely used to drinking it every morning." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I didn't use to enjoy cooking, but now I'm completely used to making dinner every evening.", hint: 'used to (past) vs be used to (now)' } },
+                    { type: 'speak-aloud', data: { instruction: 'Adaptation:', phrase: "I used to hate coffee, but now I'm entirely used to drinking it every morning. It took me a while to get used to the bitter taste." } }
                 ]
             },
             // ── B2 Unit 10 ──
@@ -2095,11 +2141,18 @@ const LangyCurriculum = {
                 grammar: ['3rd conditional', 'wish', 'gerunds', 'used to'], vocab: ['B2 review'],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: "If she had called, I ___ answered.", options: ['would', 'would have'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: "If I ___ the alarm, I wouldn't have been late.", options: ['heard', 'had heard'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Wish', sentence: "I have no money. I wish I ___ rich.", options: ['am', 'were', 'had been'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Past regret', sentence: "I failed the test. I wish I ___ harder.", options: ['studied', 'had studied'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Stop', sentence: "He stopped ___ (quit) because it was bad for him.", options: ['smoking', 'to smoke'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Remember', sentence: "Remember ___ the lights when you leave.", options: ['turning off', 'to turn off'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Used to', sentence: "I can't sleep. I ___ the traffic noise.", options: ["didn't use to", "am not used to"], correct: 1 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я знал, я бы помог.', fromLang: 'RU', toLang: 'EN', answer: 'If I had known, I would have helped' } }
+                    { type: 'fill-bubble', data: { instruction: 'Past habit', sentence: "She ___ play tennis when she was younger.", options: ['used to', 'is used to'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Grammar → Meaning', pairs: [{ left: '3rd Conditional', right: 'Unreal past (regret)' }, { left: 'I wish + Past', right: 'Unreal present desire' }, { left: 'I wish + Past Perfect', right: 'Regret about past' }, { left: 'Used to + verb', right: 'Past habit (no longer)' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Regret', words: ['known', 'had', 'helped', 'I', 'would', 'if', 'have', 'I'], correct: ['if', 'I', 'had', 'known', 'I', 'would', 'have', 'helped'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я знал, я бы помог.', fromLang: 'RU', toLang: 'EN', answer: 'If I had known, I would have helped' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I wish I had studied harder when I was at university.", hint: 'Wish + Past Perfect for past regrets' } },
+                    { type: 'speak-aloud', data: { instruction: 'Express regret:', phrase: "If I had left earlier, I wouldn't have missed the flight. I wish I had checked the time." } }
                 ]
             },
             // ── B2 Unit 11 ──
@@ -2118,9 +2171,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Reported Yes/No', sentence: "He asked ___ I wanted coffee.", options: ['that', 'if'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Reporting Verb', sentence: "He ___ that he had stolen the money.", options: ['said', 'denied'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Command', sentence: "The police warned us ___ go there.", options: ["don't", 'not to'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Reporting Verb', sentence: "She ___ to help me with the project.", options: ['offered', 'said'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Reporting Verb', sentence: "The doctor ___ me to rest for a week.", options: ['said', 'advised'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Reporting Verb → Pattern', pairs: [{ left: 'promise', right: 'He promised to come.' }, { left: 'refuse', right: 'She refused to help.' }, { left: 'warn', right: 'They warned us not to go.' }, { left: 'deny', right: 'He denied stealing it.' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Report', words: ['she', 'me', 'time', 'was', 'what', 'it', 'asked'], correct: ['she', 'asked', 'me', 'what', 'time', 'it', 'was'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Он спросил меня, говорю ли я по-английски.', fromLang: 'RU', toLang: 'EN', answer: 'He asked me if I spoke English' } },
-                    { type: 'speak-aloud', data: { instruction: 'Reporting verbs:', phrase: "She promised to call me, but she refused to tell me where she was going." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "She asked me whether I would be free on Saturday.", hint: 'Reported Yes/No question with whether' } },
+                    { type: 'speak-aloud', data: { instruction: 'Reporting verbs:', phrase: "She promised to call me, but she refused to tell me where she was going. He denied being involved." } }
                 ]
             },
             // ── B2 Unit 12 ──
@@ -2138,9 +2195,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Geography', sentence: "London is on ___ River Thames.", options: ['the', '-'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'General', sentence: "___ love is the most important thing.", options: ['The', '-'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Specific', sentence: "___ love I have for her is endless.", options: ['The', '-'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Geography', sentence: "She visited ___ Philippines last summer.", options: ['the', '-'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Institution', sentence: "He was sent to ___ prison for fraud.", options: ['the', '-'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'THE or no article?', pairs: [{ left: 'The Nile', right: 'Rivers use THE' }, { left: 'Mount Everest', right: 'Single mountains: no article' }, { left: 'The Alps', right: 'Mountain ranges use THE' }, { left: 'Lake Victoria', right: 'Lakes: no article' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Articles', words: ['moon', 'shining', 'brightly', 'was', 'the'], correct: ['the', 'moon', 'was', 'shining', 'brightly'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Япония - прекрасная страна.', fromLang: 'RU', toLang: 'EN', answer: 'Japan is a beautiful country' } },
-                    { type: 'speak-aloud', data: { instruction: 'Geography:', phrase: "We traveled from the United States to France, crossed the Alps, and visited Lake Como." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "The United Kingdom is located in the north of Europe.", hint: 'THE with countries that have Kingdom/States/Republic' } },
+                    { type: 'speak-aloud', data: { instruction: 'Geography:', phrase: "We traveled from the United States to France, crossed the Alps, and visited Lake Como. The scenery was breathtaking." } }
                 ]
             },
             // ── B2 Unit 13 ──
@@ -2158,9 +2219,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Things', sentence: "The car, ___ was completely destroyed, was a Ferrari.", options: ['that', 'which'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Possession', sentence: "I met a man ___ brother works with you.", options: ['who', 'whose', 'which'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Place', sentence: "London is the city ___ I was born.", options: ['which', 'where'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Non-defining', sentence: "My manager, ___ is always busy, finally replied.", options: ['that', 'who'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Omission', sentence: "The book ___ you recommended was excellent.", options: ['which', 'that', 'both are correct'], correct: 2 } },
+                    { type: 'match-pairs', data: { instruction: 'Pronoun → Use', pairs: [{ left: 'who', right: 'People' }, { left: 'which', right: 'Things (+ non-defining)' }, { left: 'whose', right: 'Possession' }, { left: 'where', right: 'Places' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Relative', words: ['man', 'the', 'keys', 'who', 'found', 'my', 'is', 'here'], correct: ['the', 'man', 'who', 'found', 'my', 'keys', 'is', 'here'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Это книга, которую я вчера купил.', fromLang: 'RU', toLang: 'EN', answer: 'This is the book that I bought yesterday' } },
-                    { type: 'speak-aloud', data: { instruction: 'Describe:', phrase: "My colleague, whose office is next to mine, is the person who approved the project." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "My sister, who lives in Berlin, is coming to visit next month.", hint: 'Non-defining clause with commas' } },
+                    { type: 'speak-aloud', data: { instruction: 'Describe:', phrase: "My colleague, whose office is next to mine, is the person who approved the project which saved us thousands." } }
                 ]
             },
             // ── B2 Unit 14 ──
@@ -2171,13 +2236,47 @@ const LangyCurriculum = {
                 teachSlides: [
                     { type: 'explain', mascotText: "You are now at a B2 level. Your interview answers should use complex sentences, relative clauses, and perfect tenses to show your nuance.", mascotEmotion: 'happy' },
                     { type: 'examples', mascotText: "Elevating your answers:", mascotEmotion: 'thinking', items: [{ base: 'Basic (B1)', past: "I solved the problem.", highlight: 'Simple' }, { base: 'Advanced (B2)', past: "I managed to overcome the challenge, which ultimately saved the company time.", highlight: 'Relative clause + vocabulary' }] },
+                    { type: 'compare', mascotText: "Professional vocabulary upgrades:", mascotEmotion: 'happy', left: { label: 'Basic', items: ['I was the boss.', 'I fixed the problem.', 'The project was hard.', 'I made the team better.'] }, right: { label: 'B2 Professional', items: ['I managed / led the team.', 'I resolved the issue.', 'The project was challenging.', 'I enhanced team performance.'] } },
+                    { type: 'tip', mascotText: "The STAR method: Situation (context) → Task (your role) → Action (what you did) → Result (the outcome). Use Past Simple for events, Past Perfect for context, relative clauses for detail.", mascotEmotion: 'happy', tipText: "STAR: Situation → Task → Action → Result" },
                     { type: 'quiz-check', mascotText: "Which is more professional?", mascotEmotion: 'thinking', options: ["I didn't know what to do.", "Initially, the solution wasn't obvious, but I figured it out."], correct: 1 }
                 ],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Formal Vocab', sentence: "I ___ a team of 10 people.", options: ['bossed', 'managed'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Softening', sentence: "The project was ___, but we succeeded.", options: ['quite challenging', 'very bad'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Professional', sentence: "I ___ a solution that reduced costs by 20%.", options: ['made', 'implemented'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Relative', sentence: "The client, ___ had been dissatisfied, praised our work.", options: ['who', 'which'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: "If I ___ taken that opportunity, I wouldn't be where I am today.", options: ["hadn't", "didn't"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Formal', sentence: "I would describe my leadership style as ___.", options: ['collaborative', 'bossy'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Basic → Professional', pairs: [{ left: 'I worked with people', right: 'I collaborated with stakeholders' }, { left: 'I fixed the problem', right: 'I resolved the issue' }, { left: 'The project was hard', right: 'The project was challenging' }, { left: 'I got better results', right: 'I improved outcomes' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'STAR answer', words: ['the', 'which', 'challenge', 'overcome', 'to', 'I', 'managed', 'saved', 'us', 'time'], correct: ['I', 'managed', 'to', 'overcome', 'the', 'challenge', 'which', 'saved', 'us', 'time'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Моя главная сильная сторона - это способность быстро адаптироваться.', fromLang: 'RU', toLang: 'EN', answer: 'My main strength is the ability to adapt quickly' } },
-                    { type: 'speak-aloud', data: { instruction: 'Interview answer:', phrase: "If I hadn't taken that risk, I wouldn't have learned so much. It was an experience which truly shaped my career." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I successfully led a cross-functional team that delivered the project ahead of schedule.", hint: 'Professional vocabulary + relative clause' } },
+                    { type: 'speak-aloud', data: { instruction: 'Interview answer:', phrase: "If I hadn't taken that risk, I wouldn't have learned so much. It was an experience which truly shaped my career. I managed a team of twelve people." } }
+                ]
+            },
+            // ── B2 Unit 15 ──
+            {
+                id: 15, title: '🔄 Final Checkpoint B2', desc: 'Full B2 review — all grammar and skills.', unitType: 'review',
+                grammar: ['all B2 grammar'], vocab: ['all B2 vocab'],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Indirect Q', sentence: "Could you tell me what time ___?", options: ['does the shop close', 'the shop closes'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Tag Q', sentence: "They haven't arrived yet, ___ they?", options: ['have', "haven't"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Narrative', sentence: "I ___ for an hour when she finally called.", options: ['waited', 'had been waiting', 'was waiting'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Future Perf', sentence: "By this time next year, I ___ my degree.", options: ['will finish', 'will have finished'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: '3rd Cond', sentence: "If she ___ harder, she would have passed.", options: ['studied', 'had studied'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Mixed Cond', sentence: "If I ___ to bed earlier last night, I wouldn't be so tired now.", options: ['went', 'had gone'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Wish', sentence: "I wish I ___ speak Chinese. (I can't)", options: ['can', 'could'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Gerund/Inf', sentence: "I'll never forget ___ the Northern Lights.", options: ['to see', 'seeing'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Used to', sentence: "After a year abroad, she ___ living alone.", options: ['used to', 'got used to'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Reported', sentence: "He ___ me not to tell anyone.", options: ['said', 'warned'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Articles', sentence: "___ Nile is the longest river in Africa.", options: ['The', '-'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Relative', sentence: "The manager, ___ office is upstairs, wants to see you.", options: ['who', 'whose'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'B2 Grammar Review', pairs: [{ left: '3rd Conditional', right: "If I had known, I'd have helped." }, { left: 'Wish + Past', right: 'I wish I had more time.' }, { left: 'Future Perfect', right: "By June I'll have graduated." }, { left: 'Reporting verb', right: 'She promised to come.' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Mixed Conditional', words: ['gone', 'had', 'I', "wouldn't", 'tired', 'if', 'to', 'bed', 'earlier', 'be', 'I', 'so'], correct: ['if', 'I', 'had', 'gone', 'to', 'bed', 'earlier', 'I', "wouldn't", 'be', 'so', 'tired'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я не опоздал, я бы не пропустил рейс.', fromLang: 'RU', toLang: 'EN', answer: "If I hadn't been late, I wouldn't have missed the flight" } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Хотелось бы мне знать об этом раньше.', fromLang: 'RU', toLang: 'EN', answer: 'I wish I had known about this earlier' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "She asked me whether I would be attending the conference next week.", hint: 'Reported question with whether' } },
+                    { type: 'speak-aloud', data: { instruction: 'B2 graduation speech:', phrase: "I can discuss complex topics, express wishes and regrets, and communicate professionally. If I hadn't started this course, I wouldn't have reached this level." } }
                 ]
             }
         ]
