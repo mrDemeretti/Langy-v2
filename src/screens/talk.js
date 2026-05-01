@@ -1047,20 +1047,43 @@ function renderTalkSummary(container) {
                     if (_isCoach && typeof CoachIntel !== 'undefined') {
                         return CoachIntel.renderSummaryMemory(corrections, lang);
                     }
-                    // Free: soft coach prompt on session 2+ only
+                    // Free: soft coach prompt on session 2+ only — English-specific curriculum framing
                     if (!_isCoach && !isFirstSession && sessionCount >= 2 && qualified) {
+                        const _isEn = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+                        const _tb = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive() : null;
                         const firstWhy = corrections.length > 0 && corrections[0].why ? corrections[0].why : null;
-                        const _promptText = firstWhy
-                            ? {
+                        let _promptText;
+                        if (_isEn && _tb?.cefr && firstWhy) {
+                            // English + correction → tie to curriculum objective
+                            const _unitId = LangyState.progress?.currentUnitId || 1;
+                            const _unit = _tb.units?.find(u => u.id === _unitId);
+                            const _grammarHint = _unit?.grammar?.[0] || firstWhy;
+                            _promptText = {
+                                en: `You're working on ${_tb.cefr} (${_grammarHint}). Coach would track this correction across sessions and build drills until it sticks — so you actually master it.`,
+                                ru: `Ты работаешь над ${_tb.cefr} (${_grammarHint}). Coach отслеживал бы это исправление между сессиями и строил практику до полного освоения.`,
+                                es: `Estás trabajando en ${_tb.cefr} (${_grammarHint}). Coach rastrearía esta corrección entre sesiones y crearía práctica hasta dominarla.`,
+                            }[lang];
+                        } else if (_isEn && _tb?.cefr) {
+                            // English but no correction → tie to can-do goals
+                            const _nextGoal = _tb.canDo?.[0] || '';
+                            _promptText = {
+                                en: `${sessionCount} sessions toward ${_tb.cefr}.${_nextGoal ? ` Goal: "${_nextGoal.length > 50 ? _nextGoal.slice(0,47) + '...' : _nextGoal}".` : ''} Coach would connect every session to this goal.`,
+                                ru: `${sessionCount} сессий к ${_tb.cefr}. Coach связал бы каждую сессию с целями уровня.`,
+                                es: `${sessionCount} sesiones hacia ${_tb.cefr}. Coach conectaría cada sesión con tus objetivos.`,
+                            }[lang];
+                        } else if (firstWhy) {
+                            _promptText = {
                                 en: `You made corrections in ${firstWhy} today. With Coach, your AI would track this across sessions and build targeted practice.`,
-                                ru: `Сегодня были исправления: ${firstWhy}. С Coach твой ИИ будет отслеживать это между сессиями и создавать целенаправленную практику.`,
-                                es: `Hoy hubo correcciones en ${firstWhy}. Con Coach, tu IA rastreará esto entre sesiones y creará práctica enfocada.`,
-                            }[lang]
-                            : {
+                                ru: `Сегодня были исправления: ${firstWhy}. С Coach твой ИИ будет отслеживать это между сессиями.`,
+                                es: `Hoy hubo correcciones en ${firstWhy}. Con Coach, tu IA rastreará esto entre sesiones.`,
+                            }[lang];
+                        } else {
+                            _promptText = {
                                 en: `You've completed ${sessionCount} sessions. With Coach, your AI would remember all of them and help you improve faster.`,
                                 ru: `Ты завершил ${sessionCount} сессий. С Coach твой ИИ запомнит их все и поможет прогрессировать быстрее.`,
                                 es: `Has completado ${sessionCount} sesiones. Con Coach, tu IA recordaría todas y te ayudaría a mejorar más rápido.`,
                             }[lang];
+                        }
                         return `
                 <div id="coach-upsell" style="padding:var(--sp-4); margin-bottom:var(--sp-3); border-radius:var(--radius-md);
                     background:var(--bg-card); border-left:3px solid var(--primary);

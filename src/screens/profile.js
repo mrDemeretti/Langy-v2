@@ -145,9 +145,16 @@ function renderProfile(container) {
                 const _sc = (LangyState.talkHistory || []).length;
                 const _mistakes = LangyState.coachData?.mistakePatterns?.length || 0;
                 const _lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
-                // Outcome-driven subtitle based on user context
+                const _isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+                const _tb = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive() : null;
+                // Outcome-driven subtitle based on user context + English curriculum
                 let _sub;
-                if (_sc >= 5 && _mistakes > 0) {
+                if (_isEnglish && _tb?.cefr && _sc >= 3) {
+                    const _unitGrammar = _tb.units?.find(u => u.id === (LangyState.progress?.currentUnitId || 1))?.grammar?.join(', ') || '';
+                    _sub = { en: `${_tb.cefr} learner, ${_sc} sessions. Coach would track your ${_unitGrammar || 'grammar'} across every activity and build targeted review.`, ru: `${_tb.cefr}, ${_sc} сессий. Coach отслеживал бы ${_unitGrammar || 'грамматику'} во всех активностях.`, es: `${_tb.cefr}, ${_sc} sesiones. Coach rastrearía ${_unitGrammar || 'gramática'} en todas tus actividades.` }[_lang];
+                } else if (_isEnglish && _tb?.cefr) {
+                    _sub = { en: `Working on ${_tb.cefr}. Coach connects your grammar, vocabulary, and conversation into one path.`, ru: `Уровень ${_tb.cefr}. Coach связывает грамматику, словарь и разговоры в единый путь.`, es: `Nivel ${_tb.cefr}. Coach conecta tu gramática, vocabulario y conversación en un solo camino.` }[_lang];
+                } else if (_sc >= 5 && _mistakes > 0) {
                     _sub = { en: `${_sc} sessions done. Coach would track your ${_mistakes} recurring patterns and build practice around them.`, ru: `${_sc} сессий. Coach отслеживал бы ${_mistakes} повторяющихся паттернов и строил практику.`, es: `${_sc} sesiones hechas. Coach rastrearía tus ${_mistakes} patrones recurrentes.` }[_lang];
                 } else if (_sc >= 3) {
                     _sub = { en: `${_sc} conversations and counting. Coach would make each one smarter than the last.`, ru: `${_sc} разговоров. Coach сделал бы каждый следующий умнее предыдущего.`, es: `${_sc} conversaciones. Coach haría cada una más inteligente que la anterior.` }[_lang];

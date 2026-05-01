@@ -26,11 +26,24 @@ function renderSubscription(container) {
             ru: 'Арабский — один из наших самых глубоких треков. Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
             es: 'Árabe es una de nuestras pistas más profundas. Gratis te da práctica real. Coach hace que cada sesión cuente más.',
         },
-        en: {
-            en: 'Free gives you real practice. Coach makes every session count more.',
-            ru: 'Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
-            es: 'Gratis te da práctica real. Coach hace que cada sesión cuente más.',
-        },
+        en: (() => {
+            // English-specific: reference CEFR and curriculum context
+            const _tb = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive() : null;
+            const _cefr = _tb?.cefr || '';
+            const _canDo = _tb?.canDo?.[0] || '';
+            if (_cefr && _canDo) {
+                return {
+                    en: `You're working toward ${_cefr}. Free gives you real lessons. Coach helps you reach "${_canDo.length > 60 ? _canDo.slice(0,57) + '...' : _canDo}" faster.`,
+                    ru: `Вы работаете над ${_cefr}. Бесплатный план — реальные уроки. Coach поможет быстрее достичь целей уровня.`,
+                    es: `Estás trabajando en ${_cefr}. Gratis te da lecciones reales. Coach te ayuda a alcanzar tus objetivos más rápido.`,
+                };
+            }
+            return {
+                en: 'Free gives you real structured English lessons. Coach makes every session build toward your CEFR goals.',
+                ru: 'Бесплатный план — реальные уроки. Coach строит каждую сессию к целям CEFR.',
+                es: 'Gratis te da lecciones reales de inglés. Coach construye cada sesión hacia tus objetivos CEFR.',
+            };
+        })(),
         es: {
             en: 'Free gives you real practice. Coach makes every session count more.',
             ru: 'Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
@@ -81,9 +94,20 @@ function renderSubscription(container) {
         es: 'Tu tutor IA que mejora contigo.',
     }[lang];
 
-    // Personalized context line based on user data
+    // Personalized context line based on user data + English curriculum
     let personalLine = '';
-    if (talkCount >= 5) {
+    const _isEnglish = targetCode === 'en';
+    const _activeTb = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive() : null;
+    const _unitId = LangyState.progress?.currentUnitId || 1;
+    const _currentUnit = _activeTb?.units?.find(u => u.id === _unitId);
+    if (_isEnglish && _currentUnit && talkCount >= 3) {
+        const _grammarList = _currentUnit.grammar?.join(', ') || '';
+        personalLine = {
+            en: `You're on Unit ${_unitId}: ${_currentUnit.title}${_grammarList ? ` (${_grammarList})` : ''}. Coach would track how well you use this grammar across conversations and homework.`,
+            ru: `Ты на уроке ${_unitId}: ${_currentUnit.title}. Coach отслеживал бы, как ты используешь эту грамматику в разговорах и домашних заданиях.`,
+            es: `Estás en la Unidad ${_unitId}: ${_currentUnit.title}. Coach rastrearía cómo usas esta gramática en conversaciones y tareas.`,
+        }[lang];
+    } else if (talkCount >= 5) {
         personalLine = {
             en: `You've had ${talkCount} conversations. Coach would have been tracking your patterns across all of them.`,
             ru: `Ты провёл ${talkCount} разговоров. Coach отслеживал бы твои паттерны во всех.`,
@@ -97,30 +121,57 @@ function renderSubscription(container) {
         }[lang];
     }
 
-    // Coach outcomes (not features) — organized by learning dimension
-    const coachOutcomes = {
-        en: [
-            { dim: 'Speaking', outcome: 'Targeted correction that fixes your real speaking patterns', icon: 'mic', color: '#7C6CF6' },
-            { dim: 'Coaching', outcome: 'AI that remembers your weak spots and builds practice around them', icon: 'brain', color: '#3B82F6' },
-            { dim: 'Progress', outcome: 'See what\'s improving and what still needs work — across every skill', icon: 'trendingUp', color: '#10B981' },
-            { dim: 'Continuity', outcome: 'Every session starts smarter because it remembers the last one', icon: 'refresh', color: '#F59E0B' },
-            { dim: 'Review', outcome: 'Deeper feedback with pattern analysis, not just one-time corrections', icon: 'fileText', color: '#EC4899' },
-        ],
-        ru: [
-            { dim: 'Речь', outcome: 'Целевые исправления, которые работают над твоими реальными паттернами', icon: 'mic', color: '#7C6CF6' },
-            { dim: 'Коучинг', outcome: 'ИИ, который помнит слабые места и строит практику вокруг них', icon: 'brain', color: '#3B82F6' },
-            { dim: 'Прогресс', outcome: 'Видь, что улучшается, а что ещё требует работы — по всем навыкам', icon: 'trendingUp', color: '#10B981' },
-            { dim: 'Память', outcome: 'Каждая сессия начинается умнее, потому что помнит предыдущую', icon: 'refresh', color: '#F59E0B' },
-            { dim: 'Обзор', outcome: 'Глубокий фидбэк с анализом паттернов, а не одноразовые исправления', icon: 'fileText', color: '#EC4899' },
-        ],
-        es: [
-            { dim: 'Hablar', outcome: 'Corrección dirigida que arregla tus patrones reales al hablar', icon: 'mic', color: '#7C6CF6' },
-            { dim: 'Coaching', outcome: 'IA que recuerda tus puntos débiles y crea práctica enfocada', icon: 'brain', color: '#3B82F6' },
-            { dim: 'Progreso', outcome: 'Ve qué mejora y qué aún necesita trabajo — en cada habilidad', icon: 'trendingUp', color: '#10B981' },
-            { dim: 'Continuidad', outcome: 'Cada sesión empieza más inteligente porque recuerda la anterior', icon: 'refresh', color: '#F59E0B' },
-            { dim: 'Revisión', outcome: 'Feedback profundo con análisis de patrones, no solo correcciones', icon: 'fileText', color: '#EC4899' },
-        ],
-    }[lang];
+    // Coach outcomes — English-specific curriculum outcomes vs generic
+    const coachOutcomes = (() => {
+        if (_isEnglish) {
+            return {
+                en: [
+                    { dim: 'Grammar Mastery', outcome: 'Coach tracks which grammar rules you struggle with and creates focused drills until they stick', icon: 'book', color: '#8B5CF6' },
+                    { dim: 'CEFR Progress', outcome: `Reach your ${_activeTb?.cefr || 'next'} can-do goals faster with coaching that aligns to curriculum`, icon: 'target', color: '#10B981' },
+                    { dim: 'Speaking Accuracy', outcome: 'Every conversation feeds corrections into a pattern tracker — so the same mistake doesn\'t repeat', icon: 'mic', color: '#7C6CF6' },
+                    { dim: 'Vocabulary Depth', outcome: 'Coach ensures unit vocabulary appears in your speaking, writing, and review — not just flashcards', icon: 'brain', color: '#F59E0B' },
+                    { dim: 'Continuity', outcome: 'Your tutor remembers everything: last unit, weak grammar, vocab gaps. Every session starts smarter', icon: 'refresh', color: '#3B82F6' },
+                ],
+                ru: [
+                    { dim: 'Грамматика', outcome: 'Coach отслеживает, в каких правилах ты ошибаешься, и создаёт целенаправленные упражнения', icon: 'book', color: '#8B5CF6' },
+                    { dim: 'Прогресс CEFR', outcome: `Достигни целей ${_activeTb?.cefr || 'уровня'} быстрее с коучингом по учебной программе`, icon: 'target', color: '#10B981' },
+                    { dim: 'Точность речи', outcome: 'Каждый разговор подаёт ошибки в трекер паттернов — чтобы не повторять одно и то же', icon: 'mic', color: '#7C6CF6' },
+                    { dim: 'Словарный запас', outcome: 'Coach следит, чтобы слова урока появлялись в речи, письме и повторении', icon: 'brain', color: '#F59E0B' },
+                    { dim: 'Непрерывность', outcome: 'Репетитор помнит всё: последний урок, слабую грамматику, пробелы в словаре', icon: 'refresh', color: '#3B82F6' },
+                ],
+                es: [
+                    { dim: 'Gramática', outcome: 'Coach rastrea qué reglas te cuestan y crea ejercicios enfocados hasta dominarlas', icon: 'book', color: '#8B5CF6' },
+                    { dim: 'Progreso CEFR', outcome: `Alcanza tus objetivos ${_activeTb?.cefr || 'de nivel'} más rápido con coaching alineado al currículo`, icon: 'target', color: '#10B981' },
+                    { dim: 'Precisión oral', outcome: 'Cada conversación alimenta un rastreador de patrones — para no repetir errores', icon: 'mic', color: '#7C6CF6' },
+                    { dim: 'Vocabulario', outcome: 'Coach asegura que el vocabulario de la unidad aparezca en tu habla, escritura y repaso', icon: 'brain', color: '#F59E0B' },
+                    { dim: 'Continuidad', outcome: 'Tu tutor recuerda todo: última unidad, gramática débil, vocabulario pendiente', icon: 'refresh', color: '#3B82F6' },
+                ],
+            }[lang];
+        }
+        return {
+            en: [
+                { dim: 'Speaking', outcome: 'Targeted correction that fixes your real speaking patterns', icon: 'mic', color: '#7C6CF6' },
+                { dim: 'Coaching', outcome: 'AI that remembers your weak spots and builds practice around them', icon: 'brain', color: '#3B82F6' },
+                { dim: 'Progress', outcome: 'See what\'s improving and what still needs work — across every skill', icon: 'trendingUp', color: '#10B981' },
+                { dim: 'Continuity', outcome: 'Every session starts smarter because it remembers the last one', icon: 'refresh', color: '#F59E0B' },
+                { dim: 'Review', outcome: 'Deeper feedback with pattern analysis, not just one-time corrections', icon: 'fileText', color: '#EC4899' },
+            ],
+            ru: [
+                { dim: 'Речь', outcome: 'Целевые исправления, которые работают над твоими реальными паттернами', icon: 'mic', color: '#7C6CF6' },
+                { dim: 'Коучинг', outcome: 'ИИ, который помнит слабые места и строит практику вокруг них', icon: 'brain', color: '#3B82F6' },
+                { dim: 'Прогресс', outcome: 'Видь, что улучшается, а что ещё требует работы — по всем навыкам', icon: 'trendingUp', color: '#10B981' },
+                { dim: 'Память', outcome: 'Каждая сессия начинается умнее, потому что помнит предыдущую', icon: 'refresh', color: '#F59E0B' },
+                { dim: 'Обзор', outcome: 'Глубокий фидбэк с анализом паттернов, а не одноразовые исправления', icon: 'fileText', color: '#EC4899' },
+            ],
+            es: [
+                { dim: 'Hablar', outcome: 'Corrección dirigida que arregla tus patrones reales al hablar', icon: 'mic', color: '#7C6CF6' },
+                { dim: 'Coaching', outcome: 'IA que recuerda tus puntos débiles y crea práctica enfocada', icon: 'brain', color: '#3B82F6' },
+                { dim: 'Progreso', outcome: 'Ve qué mejora y qué aún necesita trabajo — en cada habilidad', icon: 'trendingUp', color: '#10B981' },
+                { dim: 'Continuidad', outcome: 'Cada sesión empieza más inteligente porque recuerda la anterior', icon: 'refresh', color: '#F59E0B' },
+                { dim: 'Revisión', outcome: 'Feedback profundo con análisis de patrones, no solo correcciones', icon: 'fileText', color: '#EC4899' },
+            ],
+        }[lang];
+    })();
 
     const freeCTA = { en: 'Continue with Free', ru: 'Продолжить бесплатно', es: 'Continuar con Free' }[lang];
     const coachCTA = { en: 'Start learning faster', ru: 'Начать учиться быстрее', es: 'Empieza a aprender más rápido' }[lang];
