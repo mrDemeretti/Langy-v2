@@ -1,8 +1,9 @@
 /* ============================================
-   SCREEN: HOMEWORK v3 — Structured Daily Practice
+   SCREEN: HOMEWORK v4 — Structured Daily Practice
    Includes: lesson review, writing assignments,
    handwriting photo analysis via Gemini Vision,
-   coach-driven weak-spot practice
+   coach-driven weak-spot practice,
+   weak-spot-to-homework continuity
    ============================================ */
 
 function renderHomework(container) {
@@ -105,14 +106,16 @@ function renderHomework(container) {
     setTimeout(() => Anim.staggerChildren(container, '.homework-card'), 80);
 }
 
-// ─── Auto-generate homework from completed lessons ───
+// ─── Auto-generate homework from completed lessons + weak spots ───
 function autoGenerateHomework() {
     const activeTb = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive() : null;
     if (!activeTb) return;
 
     const completedUnitIds = new Set(LangyState.progress.lessonHistory.map(l => l.unitId));
     const existingHwUnitIds = new Set(LangyState.homework.current.map(h => h.unitId));
+    const existingHwTags = new Set(LangyState.homework.current.filter(h => h.weakSpotTag).map(h => h.weakSpotTag));
 
+    // 1) Lesson-score-based homework (existing logic)
     activeTb.units.forEach(unit => {
         if (completedUnitIds.has(unit.id) && !existingHwUnitIds.has(unit.id)) {
             const lessonResult = LangyState.progress.lessonHistory.find(l => l.unitId === unit.id);
@@ -124,10 +127,40 @@ function autoGenerateHomework() {
                     desc: unit.homework?.prompt || `Review ${unit.grammar?.join(', ') || 'this lesson'}.`,
                     icon: LangyIcons.fileText,
                     createdAt: new Date().toISOString(),
+                    source: 'low_score',
+                    reason: { en: `Score was ${lessonResult.score}% — practice to improve`, ru: `Результат ${lessonResult.score}% — повтори для улучшения`, es: `Puntuación ${lessonResult.score}% — practica para mejorar` },
                 });
             }
         }
     });
+
+    // 2) Weak-spot-driven homework from CoachIntel
+    if (typeof CoachIntel !== 'undefined') {
+        const patterns = CoachIntel.topPatterns(3);
+        patterns.forEach(p => {
+            if (p.status === 'recurring' || p.status === 'needs_work') {
+                if (existingHwTags.has(p.tag)) return; // already have one for this
+                // Find a unit whose grammar matches this weak spot
+                const matchUnit = activeTb.units.find(u =>
+                    completedUnitIds.has(u.id) &&
+                    (u.grammar || []).some(g => g.toLowerCase().includes(p.tag.replace(/_/g, ' ')))
+                );
+                LangyState.homework.current.push({
+                    id: Date.now() + Math.floor(Math.random() * 10000),
+                    unitId: matchUnit?.id || 0,
+                    title: `${p.label} — Weak Spot Practice`,
+                    desc: p.example ? `You wrote: "${p.example}" — let's fix this pattern.` : `Practice ${p.label} to strengthen this area.`,
+                    icon: LangyIcons.target,
+                    createdAt: new Date().toISOString(),
+                    source: 'weak_spot',
+                    weakSpotTag: p.tag,
+                    weakSpotStatus: p.status,
+                    weakSpotCount: p.count,
+                    reason: { en: `Appeared ${p.count}× in recent sessions`, ru: `Встречалось ${p.count}× в недавних сессиях`, es: `Apareció ${p.count}× en sesiones recientes` },
+                });
+            }
+        });
+    }
 
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
 }
@@ -135,9 +168,30 @@ function autoGenerateHomework() {
 function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
     lang = lang || (typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en');
 
-    // Weak spots section from coach data
+    // Coach focus card — shows WHY these tasks exist
+    let focusSection = '';
+    if (typeof CoachIntel !== 'undefined' && CoachIntel.isCoach()) {
+        const focus = CoachIntel.recommendedFocus(lang);
+        if (focus) {
+            const statusDot = { recurring: '#F59E0B', needs_work: '#EF4444', improving: '#10B981', new: 'var(--text-tertiary)' };
+            focusSection = `
+            <div style="padding: 0 var(--sp-5) var(--sp-4);">
+                <div class="card" style="padding:var(--sp-3) var(--sp-4); border-left:3px solid var(--coach, #7C6CF6); background:var(--coach-bg, rgba(124,108,246,0.04));">
+                    <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--coach, #7C6CF6); margin-bottom:var(--sp-1); display:flex; align-items:center; gap:6px;">
+                        ${LangyIcons.target} ${{ en: 'Coach Focus', ru: 'Фокус Coach', es: 'Enfoque del Coach' }[lang]}
+                    </div>
+                    <div style="font-size:var(--fs-sm); color:var(--text-secondary); line-height:1.5;">
+                        ${focus.text}
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+    }
+
+    // Weak spots section from coach data (fallback for non-coach)
     let weakSection = '';
-    if (hasWeakSpots && weakSpots.length > 0) {
+    if (!focusSection && hasWeakSpots && weakSpots.length > 0) {
         weakSection = `
             <div style="padding: 0 var(--sp-5) var(--sp-4);">
                 <div class="card" style="padding:var(--sp-3) var(--sp-4); border-left:3px solid var(--warning); background:rgba(245,158,11,0.04);">
@@ -153,7 +207,7 @@ function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
     }
 
     if (!items.length) {
-        return `${weakSection}<div class="empty-state">
+        return `${focusSection}${weakSection}<div class="empty-state">
             <div class="empty-state__icon">${LangyIcons.sparkles}</div>
             <div class="empty-state__title">${{ en: 'All caught up!', ru: 'Всё сделано!', es: '¡Todo al día!' }[lang]}</div>
             <div class="empty-state__text">${{ en: 'Try a writing exercise or complete more lessons to get new assignments.', ru: 'Попробуйте письменное упражнение или пройдите больше уроков.', es: 'Prueba un ejercicio de escritura o completa más lecciones.' }[lang]}</div>
@@ -163,25 +217,55 @@ function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
         </div>`;
     }
 
-    // Determine skill tag for each item
-    const getSkillTag = (item) => {
+    // Determine source badge for each item (why it was assigned)
+    const getSourceBadge = (item) => {
+        if (item.source === 'weak_spot') {
+            const statusColor = item.weakSpotStatus === 'recurring' ? '#F59E0B' : '#EF4444';
+            const statusLabel = item.weakSpotStatus === 'recurring'
+                ? { en: 'Recurring', ru: 'Повторяется', es: 'Recurrente' }[lang]
+                : { en: 'Weak spot', ru: 'Слабое место', es: 'Punto débil' }[lang];
+            return `<span style="display:inline-flex; align-items:center; gap:3px; font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:${statusColor}; margin-top:2px;">
+                <span style="width:5px; height:5px; border-radius:50%; background:${statusColor};"></span>
+                ${statusLabel} · ${item.weakSpotCount || ''}×
+            </span>`;
+        }
+        if (item.source === 'low_score') {
+            return `<span style="display:inline-flex; align-items:center; gap:3px; font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--warning); margin-top:2px;">
+                ${LangyIcons.alertTriangle} ${{ en: 'Needs review', ru: 'Нужен повтор', es: 'Necesita repaso' }[lang]}
+            </span>`;
+        }
+        // Fallback: generic skill tag
         const grammar = item.desc?.toLowerCase();
-        if (grammar?.includes('grammar') || grammar?.includes('tense') || grammar?.includes('грамматик')) return { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }[lang];
-        if (grammar?.includes('listen') || grammar?.includes('аудир') || grammar?.includes('escuch')) return { en: 'Listening', ru: 'Аудирование', es: 'Escucha' }[lang];
-        if (grammar?.includes('speak') || grammar?.includes('говор') || grammar?.includes('habl')) return { en: 'Speaking', ru: 'Говорение', es: 'Hablar' }[lang];
-        if (grammar?.includes('writ') || grammar?.includes('пис') || grammar?.includes('escr')) return { en: 'Writing', ru: 'Письмо', es: 'Escritura' }[lang];
-        return { en: 'Review', ru: 'Повторение', es: 'Repaso' }[lang];
+        let tag = { en: 'Review', ru: 'Повторение', es: 'Repaso' }[lang];
+        if (grammar?.includes('grammar') || grammar?.includes('tense') || grammar?.includes('грамматик')) tag = { en: 'Grammar', ru: 'Грамматика', es: 'Gramática' }[lang];
+        return `<span style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-top:2px; display:flex; align-items:center; gap:4px;">${LangyIcons.target} ${tag}</span>`;
     };
 
-    return weakSection + items
+    // Reason line — explains WHY this homework exists
+    const getReasonLine = (item) => {
+        if (item.reason) {
+            const text = item.reason[lang] || item.reason.en || '';
+            if (text) return `<div style="font-size:10px; color:var(--text-tertiary); margin-top:2px; font-style:italic;">${text}</div>`;
+        }
+        return '';
+    };
+
+    // Sort: weak-spot items first, then score-based
+    const sorted = [...items].sort((a, b) => {
+        const priority = { weak_spot: 0, low_score: 1 };
+        return (priority[a.source] ?? 2) - (priority[b.source] ?? 2);
+    });
+
+    return focusSection + weakSection + sorted
         .map(
             item => `
         <div class="homework-card" data-id="${item.id}" data-status="pending" data-unit-id="${item.unitId}">
-            <div class="homework-card__icon" style="background: var(--primary-bg);">${item.icon || LangyIcons.fileText}</div>
+            <div class="homework-card__icon" style="background: ${item.source === 'weak_spot' ? 'rgba(245,158,11,0.08)' : 'var(--primary-bg)'};">${item.icon || LangyIcons.fileText}</div>
             <div class="homework-card__info">
                 <div class="homework-card__title">${item.title}</div>
                 <div class="homework-card__meta">${item.desc || { en: 'Review the previous lesson.', ru: 'Повторите предыдущий урок.', es: 'Repasa la lección anterior.' }[lang]}</div>
-                <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-top:2px; display:flex; align-items:center; gap:4px;">${LangyIcons.target} ${getSkillTag(item)}</div>
+                ${getSourceBadge(item)}
+                ${getReasonLine(item)}
             </div>
             <div class="homework-card__status homework-card__status--pending">${{ en: 'Start', ru: 'Начать', es: 'Iniciar' }[lang]} ${LangyIcons.arrowRight}</div>
         </div>
