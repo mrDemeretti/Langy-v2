@@ -93,6 +93,32 @@ function renderGrammar(container) {
                 </div>
             </div>
 
+            <!-- English Curriculum Context -->
+            ${(() => {
+                if (typeof LangyTarget === 'undefined' || LangyTarget.getCode() !== 'en') return '';
+                if (typeof LangyCurriculum === 'undefined') return '';
+                const tb = LangyCurriculum.getActive();
+                if (!tb) return '';
+                const unitId = LangyState.progress?.currentUnitId || 1;
+                const curUnit = tb.units?.find(u => u.id === unitId);
+                if (!curUnit) return '';
+                const unitGrammar = curUnit.grammar || [];
+                // Check which grammar topics are covered in the active level view
+                const relevantTopics = topics.filter(t => unitGrammar.some(g => t.key.includes(g.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '')) || t.rule.toLowerCase().includes(g.split(' ')[0].toLowerCase())));
+                if (activeLevel !== (tb.cefr || '').substring(0,2)) return ''; // Only show when viewing user's level
+                return `
+            <div style="padding:0 var(--sp-5) var(--sp-3);">
+                <div style="padding:var(--sp-2) var(--sp-3); background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.12); border-radius:var(--radius-md); display:flex; align-items:flex-start; gap:8px;">
+                    <span style="color:#10B981; flex-shrink:0; font-size:14px; line-height:1.4;">${LangyIcons.bookOpen}</span>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#10B981; line-height:1;">${{ en: 'Your curriculum', ru: 'Ваша программа', es: 'Tu currículo' }[lang]} · ${tb.cefr}</div>
+                        <div style="font-size:10px; color:var(--text-secondary); line-height:1.4; margin-top:2px;">${{ en: 'Unit', ru: 'Урок', es: 'Unidad' }[lang]} ${unitId}: ${curUnit.title}${unitGrammar.length ? ` — ${unitGrammar.join(', ')}` : ''}</div>
+                        ${relevantTopics.length > 0 ? `<div style="font-size:9px; color:#10B981; margin-top:3px;">${LangyIcons.target} ${relevantTopics.length} ${{ en: 'topic(s) active in your current unit', ru: 'тем(ы) в текущем уроке', es: 'tema(s) activo(s) en tu unidad' }[lang]}</div>` : ''}
+                    </div>
+                </div>
+            </div>`;
+            })()}
+
             <!-- Topic list -->
             <div style="padding: 0 var(--sp-5) var(--sp-8); display:flex; flex-direction:column; gap:var(--sp-2);">
                 ${topics.map((t, i) => `

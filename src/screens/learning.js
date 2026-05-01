@@ -752,6 +752,37 @@ function renderLearning(container) {
                     </div>
                     `;
                 })()}
+                ${(() => {
+                    // English structured track progress card
+                    if (typeof LangyTarget === 'undefined' || LangyTarget.getCode() !== 'en') return '';
+                    if (typeof LangyCurriculum === 'undefined') return '';
+                    const _tb = LangyCurriculum.getActive();
+                    if (!_tb) return '';
+                    const _l = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                    const _mastery = LangyState.progress?.mastery || {};
+                    const _passed = _tb.units.filter(u => { const k = _tb.id + ':' + u.id; return _mastery[k] && _mastery[k].passed; }).length;
+                    const _total = _tb.units.length;
+                    const _pct = Math.round((_passed / _total) * 100);
+                    const _nextUnit = _tb.units.find(u => { const k = _tb.id + ':' + u.id; return !_mastery[k] || !_mastery[k].passed; });
+                    return `
+                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:rgba(217,119,6,0.04); border-radius:var(--radius-lg); border:1px solid rgba(217,119,6,0.12);">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:#D97706; margin-bottom:var(--sp-2); display:flex; align-items:center; gap:6px;">
+                            ${LangyIcons.target} ${{ en: 'Your English Path', ru: 'Ваш путь в английском', es: 'Tu camino en inglés' }[_l]}
+                            <span class="badge" style="font-size:8px; margin-left:auto; background:#D97706; color:#fff;">${_tb.cefr}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:4px;">
+                            <div style="flex:1; height:5px; background:rgba(128,128,128,0.1); border-radius:3px; overflow:hidden;">
+                                <div style="height:100%; width:${_pct}%; background:#D97706; border-radius:3px; transition:width 0.5s;"></div>
+                            </div>
+                            <span style="font-size:10px; font-weight:var(--fw-bold); color:#D97706;">${_pct}%</span>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; font-size:9px; color:var(--text-tertiary);">
+                            <span>${_passed}/${_total} ${{ en: 'units completed', ru: 'уроков пройдено', es: 'unidades completadas' }[_l]}</span>
+                            ${_nextUnit ? `<span>${{ en: 'Next', ru: 'Далее', es: 'Siguiente' }[_l]}: ${_nextUnit.title}</span>` : `<span style="color:#10B981;">${{ en: 'Level complete!', ru: 'Уровень пройден!', es: '¡Nivel completado!' }[_l]}</span>`}
+                        </div>
+                    </div>
+                    `;
+                })()}
 
                 <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
                     ${LangyIcons.home} ${i18n('results.home')}

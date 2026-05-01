@@ -34,6 +34,18 @@ const LangyTarget = {
             mascotRoster: [0, 1, 2, 3], // Zendaya, Travis, Matthew, Omar
             // Skill dimensions this language supports
             skills: ['grammar', 'vocabulary', 'listening', 'speaking', 'reading', 'writing'],
+            // English track positioning — serious structured learning path
+            featured: true,
+            tagline: {
+                en: 'CEFR-aligned structured English track',
+                ru: 'Структурированный курс английского по CEFR',
+                es: 'Curso de inglés estructurado alineado al MCER',
+            },
+            highlights: {
+                en: ['CEFR curriculum A1–C2', 'Grammar-aware coaching', 'Vocabulary progression', 'Tutor-led speaking'],
+                ru: ['Учебная программа CEFR A1–C2', 'Грамматический коучинг', 'Словарный прогресс', 'Разговор с репетитором'],
+                es: ['Currículo MCER A1–C2', 'Coaching gramatical', 'Progresión de vocabulario', 'Conversación guiada'],
+            },
         },
 
         es: {

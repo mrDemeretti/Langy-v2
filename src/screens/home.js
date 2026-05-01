@@ -292,10 +292,39 @@ function renderHome(container) {
                 const fc = '#D97706';
 
                 if (isFeatured) {
+                    // English-specific: show curriculum progress if English
+                    const isEnglishTrack = tc.code === 'en';
+                    let cefrBar = '';
+                    let unitCtx = '';
+                    if (isEnglishTrack && typeof LangyCurriculum !== 'undefined') {
+                        const tb = LangyCurriculum.getActive();
+                        if (tb) {
+                            const mastery = LangyState.progress?.mastery || {};
+                            const passed = tb.units.filter(u => { const k = tb.id + ':' + u.id; return mastery[k] && mastery[k].passed; }).length;
+                            const pct = Math.round((passed / tb.units.length) * 100);
+                            const unitId = LangyState.progress?.currentUnitId || 1;
+                            const curUnit = tb.units.find(u => u.id === unitId);
+                            cefrBar = `<div style="margin-top:6px;">
+                                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:3px;">
+                                    <span style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.3px;">${tb.cefr} ${{ en: 'progress', ru: 'прогресс', es: 'progreso' }[lang]}</span>
+                                    <span style="font-size:9px; font-weight:var(--fw-bold); color:${fc};">${pct}%</span>
+                                </div>
+                                <div style="height:4px; background:rgba(128,128,128,0.1); border-radius:2px; overflow:hidden;">
+                                    <div style="height:100%; width:${pct}%; background:${fc}; border-radius:2px; transition:width 0.5s;"></div>
+                                </div>
+                            </div>`;
+                            if (curUnit) {
+                                unitCtx = `<div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">
+                                    ${LangyIcons.bookOpen} ${{ en: 'Unit', ru: 'Урок', es: 'Unidad' }[lang]} ${unitId}: ${curUnit.title}${curUnit.grammar?.length ? ` · ${curUnit.grammar[0]}` : ''}
+                                </div>`;
+                            }
+                        }
+                    }
+                    const badgeLabel = isEnglishTrack ? ({ en: 'Structured', ru: 'Структурный', es: 'Estructurado' }[lang]) : ({ en: 'Featured', ru: 'Топ', es: 'Destacado' }[lang]);
                     return `<div style="
                         margin:0 var(--sp-5) var(--sp-3); padding:var(--sp-3) var(--sp-4);
                         background:${fc}06; border:1px solid ${fc}22;
-                        border-radius:var(--radius-lg); display:flex; align-items:center; gap:var(--sp-3);
+                        border-radius:var(--radius-lg); display:flex; align-items:flex-start; gap:var(--sp-3);
                     ">
                         <span style="font-size:28px; flex-shrink:0;">${tc.flag}</span>
                         <div style="flex:1; min-width:0;">
@@ -303,13 +332,15 @@ function renderHome(container) {
                                 <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm);">${langName}</span>
                                 <span style="font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
                                     background:${fc}; color:#fff; padding:1px 6px; border-radius:4px; line-height:14px;">
-                                    ${{ en: 'Featured', ru: 'Топ', es: 'Destacado' }[lang]}</span>
+                                    ${badgeLabel}</span>
                             </div>
                             <div style="font-size:10px; color:${fc}; margin-top:2px; font-weight:var(--fw-semibold, 600);">${tagline}</div>
                             ${highlights.length > 0 ? `<div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
                                 ${highlights.map(h => `<span style="font-size:9px; padding:1px 6px; border-radius:var(--radius-full);
                                     background:${fc}08; color:${fc}; border:1px solid ${fc}15;">${h}</span>`).join('')}
                             </div>` : ''}
+                            ${cefrBar}
+                            ${unitCtx}
                         </div>
                     </div>`;
                 }
