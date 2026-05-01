@@ -12,9 +12,9 @@ function renderLearning(container) {
         container.innerHTML = `
             <div class="screen" style="display:flex; flex-direction:column; justify-content:center; align-items:center; padding:var(--sp-8);">
                 <div style="font-size:64px; margin-bottom:var(--sp-4);">${LangyIcons.bookOpen}</div>
-                <h2>Курс не найден</h2>
-                <p class="text-secondary" style="margin:var(--sp-4) 0;">Пройдите тест, чтобы подобрать учебник.</p>
-                <button class="btn btn--primary" onclick="Router.navigate('placement-test')">Пройти тест</button>
+                <h2>${{ en: 'Course not found', ru: 'Курс не найден', es: 'Curso no encontrado' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</h2>
+                <p class="text-secondary" style="margin:var(--sp-4) 0;">${{ en: 'Take a placement test to find your course.', ru: 'Пройдите тест, чтобы подобрать учебник.', es: 'Realiza un test para encontrar tu curso.' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</p>
+                <button class="btn btn--primary" onclick="Router.navigate('placement-test')">${{ en: 'Take test', ru: 'Пройти тест', es: 'Hacer test' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</button>
             </div>
         `;
         return;
@@ -99,7 +99,7 @@ function renderLearning(container) {
                 <header class="learning-header">
                     <div class="circle-btn" id="learning-back">${LangyIcons.back}</div>
                     <div class="learning-header__info">
-                        <div class="learning-header__unit">${mode === 'homework' ? LangyIcons.home + ' ' + i18n('hw.title') : LangyIcons.book + ` Unit ${unit.id}`}</div>
+                        <div class="learning-header__unit">${mode === 'homework' ? LangyIcons.home + ' ' + i18n('hw.title') : LangyIcons.book + ` ${{ en: 'Unit', ru: 'Урок', es: 'Unidad' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']} ${unit.id}`}</div>
                         <div class="learning-header__title">${unit.title}</div>
                     </div>
                     <div class="learning-progress-ring">

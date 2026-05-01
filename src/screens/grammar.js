@@ -61,7 +61,12 @@ function renderGrammar(container) {
     }
 
     const levels = ['A1', 'A2', 'B1', 'B2', 'C1'];
-    const levelNames = { A1: 'Beginner', A2: 'Elementary', B1: 'Intermediate', B2: 'Upper-Intermediate', C1: 'Advanced' };
+    const levelNames_i18n = {
+        en: { A1: 'Beginner', A2: 'Elementary', B1: 'Intermediate', B2: 'Upper-Intermediate', C1: 'Advanced' },
+        ru: { A1: 'Начинающий', A2: 'Элементарный', B1: 'Средний', B2: 'Выше среднего', C1: 'Продвинутый' },
+        es: { A1: 'Principiante', A2: 'Elemental', B1: 'Intermedio', B2: 'Intermedio-Alto', C1: 'Avanzado' },
+    };
+    const levelNames = (levelNames_i18n[lang] || levelNames_i18n.en);
     const topics = GRAMMAR_TOPICS[activeLevel] || GRAMMAR_TOPICS.B1;
 
     container.innerHTML = `
@@ -73,7 +78,10 @@ function renderGrammar(container) {
             </div>
 
             <div style="padding: var(--sp-3) var(--sp-6) var(--sp-2); text-align:center;">
-                <p class="text-secondary text-sm">${{ en: 'Understand how English works', ru: 'Поймите, как устроен английский', es: 'Entiende cómo funciona el inglés' }[lang]}</p>
+                <p class="text-secondary text-sm">${(() => {
+                    const langName = typeof LangyTarget !== 'undefined' ? LangyTarget.displayName(lang) : 'English';
+                    return { en: `Understand how ${langName} works`, ru: `Поймите, как устроен ${langName === 'Английский' ? 'английский' : langName}`, es: `Entiende cómo funciona ${langName === 'Inglés' ? 'el inglés' : langName}` }[lang];
+                })()}</p>
             </div>
 
             <!-- Level selector -->

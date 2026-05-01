@@ -124,7 +124,7 @@ function renderResults(container) {
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="results-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">${{ en: 'Learn', ru: 'Учиться', es: 'Aprender' }[lang]}</div>
+                <div class="nav-header__title">${typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en' && activeTb ? ({ en: `English · ${activeTb.cefr}`, ru: `Английский · ${activeTb.cefr}`, es: `Inglés · ${activeTb.cefr}` }[lang]) : ({ en: 'Learn', ru: 'Учиться', es: 'Aprender' }[lang])}</div>
                 <div style="width:36px;"></div>
             </div>
 
@@ -144,7 +144,7 @@ function renderResults(container) {
 
                 <!-- ═══ SKILL DIMENSIONS (2×2) ═══ -->
                 <div class="learn-hub__section">
-                    <div class="learn-hub__section-title">${LangyIcons.target} ${{ en: 'Study Areas', ru: 'Области изучения', es: 'Áreas de estudio' }[lang]}</div>
+                    <div class="learn-hub__section-title">${LangyIcons.target} ${{ en: 'Skill Areas', ru: 'Направления', es: 'Áreas de estudio' }[lang]}</div>
                     <div class="learn-dim__grid">
                         ${skillModules.map(m => `
                         <div class="learn-dim" id="learn-dim-${m.key}" data-route="${m.route}" style="background:${m.gradient}; border-color:${m.border};">
@@ -208,7 +208,7 @@ function renderResults(container) {
                 <!-- ═══════════════════════════════════ -->
                 <div>
                     <h4 style="margin-bottom:var(--sp-3); padding-left:var(--sp-1); display:flex; align-items:center; gap:8px;">
-                        ${LangyIcons.map} Learning Path
+                        ${LangyIcons.map} ${{ en: 'Learning Path', ru: 'Путь обучения', es: 'Ruta de aprendizaje' }[lang]}
                     </h4>
                     <div class="cefr-path" id="cefr-path">
                         ${levelStatuses
@@ -229,7 +229,7 @@ function renderResults(container) {
                                             </div>
                                             <div class="cefr-level__meta">
                                                 <span style="color:${cfg.color}; display:flex; align-items:center; gap:4px;">${cfg.icon} ${cfg.label}</span>
-                                                <span>${lvl.completedUnits}/${lvl.unitCount} units</span>
+                                                <span>${lvl.completedUnits}/${lvl.unitCount} ${{ en: 'units', ru: 'уроков', es: 'unidades' }[lang]}</span>
                                             </div>
                                             ${
                                                 lvl.status !== 'locked'
@@ -258,17 +258,17 @@ function renderResults(container) {
                     <div style="font-size:36px; color:${avgScore >= 80 ? 'var(--accent-dark)' : avgScore >= 60 ? 'var(--primary)' : 'var(--warning)'};">${avgScore >= 80 ? LangyIcons.trophy : avgScore >= 60 ? LangyIcons.barChart : LangyIcons.award}</div>
                     <div>
                         <div style="font-size:var(--fs-xl); font-weight:var(--fw-black); color:${avgScore >= 80 ? 'var(--accent-dark)' : avgScore >= 60 ? 'var(--primary)' : 'var(--warning)'};">${avgScore}%</div>
-                        <div style="font-size:var(--fs-xs); color:var(--text-secondary);">Average Score</div>
+                        <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${{ en: 'Average Score', ru: 'Средний балл', es: 'Puntuación media' }[lang]}</div>
                     </div>
                     <div style="margin-left:auto; text-align:right;">
                         <div style="color:var(--accent-dark); font-weight:var(--fw-bold); display:flex; align-items:center; gap:4px;">${completedLessons.length} ${LangyIcons.check}</div>
-                        <div style="color:var(--danger); font-size:var(--fs-xs);">${failedLessons.length} needs review</div>
+                        <div style="color:var(--danger); font-size:var(--fs-xs);">${failedLessons.length} ${{ en: 'needs review', ru: 'к повтору', es: 'necesita repaso' }[lang]}</div>
                     </div>
                 </div>
 
                 <!-- Lesson History -->
                 <div>
-                    <h4 style="margin-bottom:var(--sp-3); padding-left: var(--sp-1);">Lesson History</h4>
+                    <h4 style="margin-bottom:var(--sp-3); padding-left: var(--sp-1);">${{ en: 'Lesson History', ru: 'История уроков', es: 'Historial de lecciones' }[lang]}</h4>
                     <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
                         ${
                             progress.lessonHistory.length > 0
@@ -291,7 +291,7 @@ function renderResults(container) {
                             `
                                       )
                                       .join('')
-                                : `<div class="text-center text-xs text-secondary" style="padding:var(--sp-4); display:flex; flex-direction:column; align-items:center; gap:8px;">${LangyIcons.book} No lessons completed yet. Start learning to see your progress!</div>`
+                                : `<div class="text-center text-xs text-secondary" style="padding:var(--sp-4); display:flex; flex-direction:column; align-items:center; gap:8px;">${LangyIcons.book} ${{ en: 'No lessons completed yet. Start learning to see your progress!', ru: 'Уроки ещё не пройдены. Начните обучение, чтобы увидеть прогресс!', es: '¡Aún no has completado lecciones. Empieza a aprender!' }[lang]}</div>`
                         }
                     </div>
                 </div>
@@ -301,7 +301,7 @@ function renderResults(container) {
                     LangyState.aiMemory.mistakes.length > 0
                         ? `
                 <div>
-                    <h4 style="margin-bottom:var(--sp-3); padding-left:var(--sp-1); display:flex; align-items:center; gap:8px;">${LangyIcons.alertTriangle} Areas to Improve</h4>
+                    <h4 style="margin-bottom:var(--sp-3); padding-left:var(--sp-1); display:flex; align-items:center; gap:8px;">${LangyIcons.alertTriangle} ${{ en: 'Areas to Improve', ru: 'Области для улучшения', es: 'Áreas para mejorar' }[lang]}</h4>
                     <div class="card" style="display:flex; flex-direction:column; gap:var(--sp-2);">
                         ${LangyState.aiMemory.mistakes
                             .slice(-5)
@@ -320,14 +320,14 @@ function renderResults(container) {
 
                 <!-- Weekly Activity Chart -->
                 <div>
-                    <h4 style="margin-bottom:var(--sp-3); padding-left:var(--sp-1); display:flex; align-items:center; gap:8px;">${LangyIcons.barChart2} Weekly Activity</h4>
+                    <h4 style="margin-bottom:var(--sp-3); padding-left:var(--sp-1); display:flex; align-items:center; gap:8px;">${LangyIcons.barChart2} ${{ en: 'Weekly Activity', ru: 'Активность за неделю', es: 'Actividad semanal' }[lang]}</h4>
                     <div class="card" style="padding:var(--sp-4);">
                         <div class="weekly-chart" id="weekly-chart">
                             ${buildWeeklyChart()}
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
-                            <span>${LangyState.streakData.totalSessions || 0} total sessions</span>
-                            <span>${Math.round(LangyState.streakData.totalMinutes || 0)} min studied</span>
+                            <span>${LangyState.streakData.totalSessions || 0} ${{ en: 'total sessions', ru: 'всего сессий', es: 'sesiones totales' }[lang]}</span>
+                            <span>${Math.round(LangyState.streakData.totalMinutes || 0)} ${{ en: 'min studied', ru: 'мин. изучения', es: 'min estudiados' }[lang]}</span>
                         </div>
                     </div>
                 </div>
@@ -341,12 +341,12 @@ function renderResults(container) {
                         <div style="display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-3);">
                             <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #EF4444, #F59E0B); display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0;">${LangyIcons.refreshCw}</div>
                             <div>
-                                <div style="font-weight:var(--fw-bold);">Review Weak Units</div>
-                                <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${failedLessons.length} unit${failedLessons.length > 1 ? 's' : ''} need${failedLessons.length === 1 ? 's' : ''} practice</div>
+                                <div style="font-weight:var(--fw-bold);">${{ en: 'Review Weak Units', ru: 'Повторить слабые темы', es: 'Repasar unidades débiles' }[lang]}</div>
+                                <div style="font-size:var(--fs-xs); color:var(--text-secondary);">${failedLessons.length} ${{ en: `unit${failedLessons.length > 1 ? 's' : ''} need${failedLessons.length === 1 ? 's' : ''} practice`, ru: `тем(ы) к повтору`, es: `unidad(es) necesitan práctica` }[lang]}</div>
                             </div>
                         </div>
                         <button class="btn btn--primary btn--full" id="review-weak" style="background:linear-gradient(135deg, #EF4444, #F59E0B); box-shadow: 0 4px 0 #B91C1C;">
-                            ${LangyIcons.rocket} Start Review Session
+                            ${LangyIcons.rocket} ${{ en: 'Start Review Session', ru: 'Начать повторение', es: 'Iniciar repaso' }[lang]}
                         </button>
                     </div>
                 </div>
@@ -462,7 +462,7 @@ function loadLevelUnits(textbookId, container) {
                         ${cleanTitle}
                     </div>
                     <div class="cefr-unit__type">
-                        <span style="display:flex;align-items:center;gap:4px;">${typeIcon} ${isCheckpoint ? 'Review Test' : u.unitType}</span>
+                        <span style="display:flex;align-items:center;gap:4px;">${typeIcon} ${isCheckpoint ? ({ en: 'Review Test', ru: 'Контрольный тест', es: 'Test de repaso' }[lang] || 'Review Test') : u.unitType}</span>
                         ${u.score !== null ? `<span class="badge ${u.score >= 70 ? 'badge--accent' : 'badge--danger'}" style="font-size:10px; padding:1px 6px;">${u.score}%</span>` : ''}
                     </div>
                 </div>

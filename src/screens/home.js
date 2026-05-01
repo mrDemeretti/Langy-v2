@@ -444,7 +444,7 @@ function renderHome(container) {
                         </div>
                         <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-results">
                             <div class="action-card__icon action-card__icon--blue">${LangyIcons.barChart}</div>
-                            <div class="action-card__title">Results ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
+                            <div class="action-card__title">${{ en: 'Results', ru: 'Результаты', es: 'Resultados' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']} ${!user.hasCompletedPlacement ? LangyIcons.lock : ''}</div>
                         </div>
                     </div>
                 </div>
@@ -455,11 +455,11 @@ function renderHome(container) {
                     <div class="home__actions">
                         <div class="action-card" id="nav-duels">
                             <div class="action-card__icon action-card__icon--red">${LangyIcons.swords}</div>
-                            <div class="action-card__title">Duels</div>
+                            <div class="action-card__title">${{ en: 'Duels', ru: 'Дуэли', es: 'Duelos' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
                         </div>
                         <div class="action-card" id="nav-events">
                             <div class="action-card__icon action-card__icon--violet">${LangyIcons.sparkles}</div>
-                            <div class="action-card__title">Events</div>
+                            <div class="action-card__title">${{ en: 'Events', ru: 'События', es: 'Eventos' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
                         </div>
                         <div class="action-card ${!user.hasCompletedPlacement ? 'action-card--locked' : ''}" id="nav-daily">
                             <div class="action-card__icon action-card__icon--gold">${LangyIcons.target}</div>
