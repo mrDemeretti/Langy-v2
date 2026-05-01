@@ -1,4 +1,173 @@
-/* ============================================
+units: [
+    // ── Unit 1: Letters Group 1 ──
+    {
+        id: 1, title: 'الحروف ١ — Letters: ا ب ت ث ج ح', desc: 'Your first 6 Arabic letters — shapes, sounds, and recognition.',
+        unitType: 'grammar', grammar: ['Arabic script basics', 'letter recognition', 'isolated forms'],
+        vocab: ['ا', 'ب', 'ت', 'ث', 'ج', 'ح'],
+        teachSlides: [
+            { type: 'explain', mascotText: "مرحباً! Welcome to Arabic! We'll learn the alphabet in groups of 6–7 letters. Arabic has 28 letters — each has up to 4 forms. Today: your first 6.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Arabic is written right-to-left. Let's meet your first letters:", mascotEmotion: 'thinking',
+              left: { label: 'Letter → Name', items: ['ا = alif (a)', 'ب = bā (b)', 'ت = tā (t)'] },
+              right: { label: 'Letter → Name', items: ['ث = thā (th)', 'ج = jīm (j)', 'ح = ḥā (ḥ)'] }
+            },
+            { type: 'tip', mascotText: "Notice: ب ت ث look similar — same shape, different dots! 1 dot below = ب, 2 dots above = ت, 3 dots above = ث. Dots are the key!", mascotEmotion: 'happy', tipText: "ب = 1 dot below · ت = 2 dots above · ث = 3 dots above" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'ا', right: 'alif' }, { left: 'ب', right: 'bā' }, { left: 'ت', right: 'tā' }, { left: 'ث', right: 'thā' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter is "jīm"?', sentence: 'jīm = ___', options: ['ح', 'ج', 'ث'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'How many dots does ث have?', sentence: 'ث has ___ dots', options: ['1', '2', '3'], correct: 2 } },
+            { type: 'fill-bubble', data: { instruction: 'Arabic is written:', sentence: 'Arabic is written ___', options: ['left-to-right', 'right-to-left', 'top-to-bottom'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Match by dots', pairs: [{ left: '1 dot below', right: 'ب' }, { left: '2 dots above', right: 'ت' }, { left: '3 dots above', right: 'ث' }, { left: 'no dots', right: 'ا' }] } },
+            { type: 'speak-aloud', data: { instruction: 'Say each letter name:', phrase: 'Alif, bā, tā, thā, jīm, ḥā' } }
+        ]
+    },
+    // ── Unit 2: Letters Group 2 ──
+    {
+        id: 2, title: 'الحروف ٢ — Letters: خ د ذ ر ز س ش', desc: 'Letters 7–13: new shapes and the sun/moon letter concept.',
+        unitType: 'grammar', grammar: ['letter forms group 2', 'dot patterns', 'letter shapes'],
+        vocab: ['خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Great progress! Today: 7 more letters. Notice how د and ذ are the same shape — the dot above makes ذ. Same pattern as ر and ز!", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Dot twins — same shape, different sounds:", mascotEmotion: 'thinking',
+              left: { label: 'No dot', items: ['د = dāl (d)', 'ر = rā (r)', 'س = sīn (s)'] },
+              right: { label: 'With dot(s)', items: ['ذ = dhāl (dh)', 'ز = zāy (z)', 'ش = shīn (sh)'] }
+            },
+            { type: 'tip', mascotText: "خ is like ح from Group 1, but with a dot above. Pattern: ح = no dot, خ = dot above.", mascotEmotion: 'happy', tipText: "ح (ḥā) → خ (khā): same shape + dot" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'خ', right: 'khā' }, { left: 'د', right: 'dāl' }, { left: 'ر', right: 'rā' }, { left: 'س', right: 'sīn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter is "shīn"?', sentence: 'shīn = ___', options: ['س', 'ش', 'ث'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'ذ is like د but with:', sentence: 'ذ = د + ___', options: ['a dot above', 'a dot below', 'two dots'], correct: 0 } },
+            { type: 'match-pairs', data: { instruction: 'Dot twins — match the pair', pairs: [{ left: 'د (no dot)', right: 'ذ (dot)' }, { left: 'ر (no dot)', right: 'ز (dot)' }, { left: 'س (no dots)', right: 'ش (dots)' }, { left: 'ح (no dot)', right: 'خ (dot)' }] } },
+            { type: 'fill-bubble', data: { instruction: 'How many letters learned so far?', sentence: 'Group 1 + Group 2 = ___', options: ['10', '13', '15'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Say each letter name:', phrase: 'Khā, dāl, dhāl, rā, zāy, sīn, shīn' } }
+        ]
+    },
+    // ── Unit 3: Letters Group 3 ──
+    {
+        id: 3, title: 'الحروف ٣ — Letters: ص ض ط ظ ع غ', desc: 'The "deep" Arabic sounds — emphatic and pharyngeal letters.',
+        unitType: 'grammar', grammar: ['emphatic consonants', 'pharyngeal sounds', 'ع and غ'],
+        vocab: ['ص', 'ض', 'ط', 'ظ', 'ع', 'غ'],
+        teachSlides: [
+            { type: 'explain', mascotText: "These 6 letters are uniquely Arabic — sounds that don't exist in English! ص ض ط ظ are 'emphatic' (heavier, deeper). ع غ come from the throat.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Emphatic pairs — same shape, dot makes the difference:", mascotEmotion: 'thinking',
+              left: { label: 'No dot', items: ['ص = ṣād (emphatic s)', 'ط = ṭā (emphatic t)'] },
+              right: { label: 'With dot', items: ['ض = ḍād (emphatic d)', 'ظ = ẓā (emphatic z)'] }
+            },
+            { type: 'tip', mascotText: "ع (ʿayn) is the most iconic Arabic sound — a deep throat squeeze. غ (ghayn) is like gargling. These take practice, but you'll get them!", mascotEmotion: 'happy', tipText: "ع = deep throat · غ = gargling · Don't rush — listen and repeat" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'ص', right: 'ṣād' }, { left: 'ض', right: 'ḍād' }, { left: 'ط', right: 'ṭā' }, { left: 'ع', right: 'ʿayn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter sounds like a deep "s"?', sentence: 'Emphatic s = ___', options: ['س', 'ص', 'ش'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'ع is produced from the:', sentence: 'ع comes from the ___', options: ['lips', 'throat', 'nose'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Emphatic pairs', pairs: [{ left: 'ص (no dot)', right: 'ض (dot)' }, { left: 'ط (no dot)', right: 'ظ (dot)' }, { left: 'ع (no dot)', right: 'غ (dot)' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Letters learned: Groups 1+2+3 =', sentence: 'Total letters so far: ___', options: ['16', '19', '21'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Try these sounds:', phrase: 'Ṣād, ḍād, ṭā, ẓā, ʿayn, ghayn' } }
+        ]
+    },
+    // ── Unit 4: Letters Group 4 ──
+    {
+        id: 4, title: 'الحروف ٤ — Letters: ف ق ك ل م ن ه و ي', desc: 'Complete the alphabet! The final 9 letters and how letters connect.',
+        unitType: 'grammar', grammar: ['remaining letters', 'letter connection basics', 'full alphabet'],
+        vocab: ['ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'],
+        teachSlides: [
+            { type: 'explain', mascotText: "You're almost there! These last 9 letters complete the Arabic alphabet — 28 letters total! After this, you'll know every letter.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Key letters in this group:", mascotEmotion: 'thinking',
+              left: { label: 'Familiar sounds', items: ['ف = fā (f)', 'ك = kāf (k)', 'ل = lām (l)', 'م = mīm (m)', 'ن = nūn (n)'] },
+              right: { label: 'New shapes', items: ['ق = qāf (q — deep k)', 'ه = hā (h)', 'و = wāw (w/ū)', 'ي = yā (y/ī)'] }
+            },
+            { type: 'tip', mascotText: "و (wāw) and ي (yā) are special — they can be consonants (w, y) OR long vowels (ū, ī). You'll learn more about this in the vowels unit!", mascotEmotion: 'happy', tipText: "و = w or ū · ي = y or ī · Double duty!" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'ف', right: 'fā' }, { left: 'ق', right: 'qāf' }, { left: 'ل', right: 'lām' }, { left: 'ن', right: 'nūn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'How many letters in Arabic?', sentence: 'Arabic has ___ letters.', options: ['26', '28', '30'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter makes a deep "k" sound?', sentence: 'Deep k = ___', options: ['ك', 'ق', 'غ'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Match the remaining letters', pairs: [{ left: 'ك', right: 'kāf' }, { left: 'م', right: 'mīm' }, { left: 'ه', right: 'hā' }, { left: 'ي', right: 'yā' }] } },
+            { type: 'fill-bubble', data: { instruction: 'و and ي can also be:', sentence: 'و and ي can be consonants or ___', options: ['emphatic sounds', 'long vowels', 'dots'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Complete the alphabet:', phrase: 'Fā, qāf, kāf, lām, mīm, nūn, hā, wāw, yā' } }
+        ]
+    },
+    // ── Unit 5: Vowels & First Reading ──
+    {
+        id: 5, title: 'الحركات — Vowels & Reading', desc: 'Short vowels, sukūn, shadda — and reading your first Arabic words!',
+        unitType: 'grammar', grammar: ['short vowels (fatḥa, ḍamma, kasra)', 'sukūn', 'shadda', 'first word reading'],
+        vocab: ['فَتحة', 'ضَمّة', 'كَسرة', 'سُكون', 'شَدّة', 'كَتَبَ', 'بَيت', 'بِنت'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Now you know the letters — let's add vowels! Arabic vowels are marks above or below letters. They tell you how to pronounce each letter.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "The 3 short vowels:", mascotEmotion: 'thinking',
+              left: { label: 'Vowel marks', items: ['فَ = fa (fatḥa: line above)', 'فُ = fu (ḍamma: curl above)', 'فِ = fi (kasra: line below)'] },
+              right: { label: 'Special marks', items: ['فْ = f— (sukūn: no vowel)', 'فّ = ff (shadda: doubled)'] }
+            },
+            { type: 'tip', mascotText: "Let's read your first word! كَتَبَ = ka-ta-ba (he wrote). Break it down: كَ=ka + تَ=ta + بَ=ba. You just read Arabic!", mascotEmotion: 'happy', tipText: "كَتَبَ = ka·ta·ba = he wrote 🎉" }
+        ],
+        exercises: [
+            { type: 'fill-bubble', data: { instruction: 'What does fatḥa sound like?', sentence: 'بَ = ___', options: ['ba', 'bu', 'bi'], correct: 0 } },
+            { type: 'fill-bubble', data: { instruction: 'What does ḍamma sound like?', sentence: 'بُ = ___', options: ['ba', 'bu', 'bi'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'What does kasra sound like?', sentence: 'بِ = ___', options: ['ba', 'bu', 'bi'], correct: 2 } },
+            { type: 'match-pairs', data: { instruction: 'Match vowel to name', pairs: [{ left: 'َ  (line above)', right: 'fatḥa' }, { left: 'ُ  (curl above)', right: 'ḍamma' }, { left: 'ِ  (line below)', right: 'kasra' }, { left: 'ْ  (circle above)', right: 'sukūn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Read this word: كَتَبَ', sentence: 'كَتَبَ = ___', options: ['kataba', 'kutiba', 'kitāb'], correct: 0 } },
+            { type: 'fill-bubble', data: { instruction: 'Shadda means the letter is:', sentence: 'شَدّة means ___', options: ['silent', 'doubled', 'long'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Read these words aloud:', phrase: 'Ka-ta-ba. Bay-t. Bin-t.' } }
+        ]
+    },
+    // ── Unit 6: Script Checkpoint ──
+    {
+        id: 6, title: '🔄 Script Checkpoint', desc: 'Review all 28 letters, vowels, and read simple words.',
+        unitType: 'review', grammar: ['full alphabet review', 'vowel marks', 'basic reading'],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match Group 1 letters', pairs: [{ left: 'ا', right: 'alif' }, { left: 'ب', right: 'bā' }, { left: 'ج', right: 'jīm' }, { left: 'ح', right: 'ḥā' }] } },
+            { type: 'match-pairs', data: { instruction: 'Match Group 2 letters', pairs: [{ left: 'خ', right: 'khā' }, { left: 'د', right: 'dāl' }, { left: 'س', right: 'sīn' }, { left: 'ش', right: 'shīn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Emphatic s:', sentence: 'Emphatic s = ___', options: ['س', 'ص', 'ش'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'Throat sound:', sentence: 'ع is from the ___', options: ['lips', 'throat', 'teeth'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'How many Arabic letters?', sentence: 'Arabic has ___ letters.', options: ['26', '28', '30'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'Vowel mark below:', sentence: 'بِ uses ___', options: ['fatḥa', 'ḍamma', 'kasra'], correct: 2 } },
+            { type: 'match-pairs', data: { instruction: 'Match vowels', pairs: [{ left: 'َ  above', right: 'fatḥa (a)' }, { left: 'ُ  above', right: 'ḍamma (u)' }, { left: 'ِ  below', right: 'kasra (i)' }, { left: 'ْ  above', right: 'sukūn (—)' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Read: كَتَبَ', sentence: 'كَتَبَ = ___', options: ['kataba', 'kabata', 'takaba'], correct: 0 } },
+            { type: 'fill-bubble', data: { instruction: 'Dot twins: ر +dot =', sentence: 'ر + dot = ___', options: ['ذ', 'ز', 'د'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Full alphabet groups:', phrase: 'Alif bā tā thā jīm ḥā — khā dāl dhāl rā zāy sīn shīn — ṣād ḍād ṭā ẓā ʿayn ghayn — fā qāf kāf lām mīm nūn hā wāw yā' } }
+        ]
+    },
+    // ── Unit 7: First Words & Greetings ──
+    {
+        id: 7, title: 'الكلمات الأولى — First Words & Greetings', desc: 'Read and use essential Arabic greetings and phrases.',
+        unitType: 'situational', grammar: ['reading real words', 'greeting patterns'],
+        vocab: ['مرحبا', 'السلام عليكم', 'شكراً', 'من فضلك', 'نعم', 'لا', 'مع السلامة'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Now you can read letters and vowels — let's read real words! The most important Arabic greeting: السلام عليكم (as-salāmu ʿalaykum) — 'Peace be upon you'. Reply: وعليكم السلام.", mascotEmotion: 'happy' },
+            { type: 'vocab-intro', mascotText: "Essential Arabic greetings:", mascotEmotion: 'happy',
+              words: [{ en: 'مرحبا (marḥaba)', ru: 'Привет' }, { en: 'السلام عليكم', ru: 'Мир вам' }, { en: 'شكراً (shukran)', ru: 'Спасибо' }, { en: 'من فضلك (min faḍlak)', ru: 'Пожалуйста' }, { en: 'نعم (naʿam)', ru: 'Да' }, { en: 'لا (lā)', ru: 'Нет' }, { en: 'مع السلامة (maʿ as-salāma)', ru: 'До свидания' }] },
+            { type: 'tip', mascotText: "شكراً (shukran) means 'thank you' — works everywhere in the Arab world. Try to spot the letters you learned: ش + ك + ر + ا + ً", mascotEmotion: 'happy', tipText: "شكراً = shukran = Thank you · عفواً = You're welcome" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match Arabic to meaning', pairs: [{ left: 'مرحبا', right: 'Hello' }, { left: 'شكراً', right: 'Thank you' }, { left: 'نعم', right: 'Yes' }, { left: 'لا', right: 'No' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Reply to السلام عليكم:', sentence: 'The reply is:', options: ['شكراً', 'وعليكم السلام', 'مرحبا'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '"Thank you" in Arabic:', sentence: 'Thank you = ___', options: ['مرحبا', 'شكراً', 'من فضلك'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '"Goodbye" in Arabic:', sentence: 'Goodbye = ___', options: ['مع السلامة', 'السلام عليكم', 'نعم'], correct: 0 } },
+            { type: 'speak-aloud', data: { instruction: 'Say these greetings:', phrase: 'As-salāmu ʿalaykum. Marḥaba. Shukran. Maʿ as-salāma.' } },
+            { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'shukran', hint: 'Thank you' } }
+        ]
+    },
+    // ── Unit 8: Self-Introduction & Numbers ──
+    {
+        id: 8, title: 'أنا... — Self-Introduction & Numbers', desc: 'Introduce yourself and count 1–10 in Arabic.',
+        unitType: 'situational', grammar: ['أنا (anā) = I', 'اسمي (ismī) = my name', 'Arabic numerals 1-10'],
+        vocab: ['أنا', 'اسمي', 'أنتَ', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة', 'عشرة'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Let's put your reading skills to use! أنا (anā) = I. اسمي (ismī) = my name. You can now introduce yourself: أنا [name]. اسمي [name].", mascotEmotion: 'happy' },
+            { type: 'vocab-intro', mascotText: "Numbers 1-10:", mascotEmotion: 'happy',
+              words: [{ en: '١ واحد (wāḥid)', ru: 'один' }, { en: '٢ اثنان (ithnān)', ru: 'два' }, { en: '٣ ثلاثة (thalātha)', ru: 'три' }, { en: '٤ أربعة (arbaʿa)', ru: 'четыре' }, { en: '٥ خمسة (khamsa)', ru: 'пять' }, { en: '٦ ستة (sitta)', ru: 'шесть' }, { en: '٧ سبعة (sabʿa)', ru: 'семь' }, { en: '٨ ثمانية (thamāniya)', ru: 'восемь' }, { en: '٩ تسعة (tisʿa)', ru: 'девять' }, { en: '١٠ عشرة (ʿashara)', ru: 'десять' }] },
+            { type: 'tip', mascotText: "Arabic numbers in text go left-to-right (١٢٣), even though Arabic text goes right-to-left! Also: Eastern Arabic digits (١٢٣) are used alongside Western digits (123).", mascotEmotion: 'happy', tipText: "Text: right→left · Numbers: left→right" }
+        ],
+        exercises: [
+            { type: 'fill-bubble', data: { instruction: '"I" in Arabic:', sentence: '"I" = ___', options: ['هو', 'أنا', 'أنتَ'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '"My name" in Arabic:', sentence: '"My name" = ___', options: ['أنا', 'اسمي', 'هو'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Match number to Arabic', pairs: [{ left: '1', right: 'واحد' }, { left: '3', right: 'ثلاثة' }, { left: '5', right: 'خمسة' }, { left: '7', right: 'سبعة' }] } },
+            { type: 'fill-bubble', data: { instruction: 'What comes after ٤?', sentence: '٤, ___', options: ['ثلاثة', 'خمسة', 'ستة'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '٢ + ٣ = ?', sentence: 'اثنان + ثلاثة = ___', options: ['أربعة', 'خمسة', 'ستة'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Introduce yourself and count:', phrase: 'Anā [your name]. Wāḥid, ithnān, thalātha, arbaʿa, khamsa, sitta, sabʿa, thamāniya, tisʿa, ʿashara!' } }
+        ]
+    }
+]/* ============================================
    LANGY — FULL CURRICULUM DATA v3
    CEFR-aligned original curriculum: Pre-A1 → C2
    ~95 units across 7 levels · ~600+ exercises
@@ -3017,61 +3186,175 @@ const LangyCurriculum = {
         cefr: 'A1',
         methodology: 'Introduction to Arabic. Script learning, basic greetings, numbers, and simple sentences. MSA (Modern Standard Arabic) with awareness of spoken dialects.',
         units: [
-            {
-                id: 1, title: 'الحروف العربية — The Arabic Alphabet', desc: 'Learn the 28 Arabic letters, their forms (initial, medial, final), and basic sounds.',
-                unitType: 'grammar', grammar: ['Arabic script basics', 'letter forms', 'short vowels'],
-                vocab: ['حروف', 'فتحة', 'ضمة', 'كسرة'],
-                teachSlides: [
-                    { type: 'explain', mascotText: "مرحباً! Welcome to Arabic! Arabic has 28 letters. Each letter has up to 4 forms depending on position (isolated, initial, medial, final). Don't worry — we'll go step by step!", mascotEmotion: 'happy' },
-                    { type: 'compare', mascotText: "Arabic is written right-to-left. Vowels are shown as marks above/below letters:", mascotEmotion: 'thinking',
-                      left: { label: 'Short vowels', items: ['فَ = fa (fatḥa)', 'فُ = fu (ḍamma)', 'فِ = fi (kasra)'] },
-                      right: { label: 'Key letters', items: ['ا = alif', 'ب = bā', 'ت = tā', 'ث = thā'] }
-                    },
-                    { type: 'tip', mascotText: "Start with these 6 letters: ا ب ت ث ج ح — they cover many common words. Practice writing each one!", mascotEmotion: 'happy', tipText: "Practice right-to-left: start from the right side of the page!" }
-                ],
-                exercises: [
-                    { type: 'match-pairs', data: { instruction: 'Match Arabic letter to sound', pairs: [{ left: 'ا', right: 'alif' }, { left: 'ب', right: 'bā' }, { left: 'ت', right: 'tā' }, { left: 'ث', right: 'thā' }] } },
-                    { type: 'fill-bubble', data: { instruction: 'How many letters in Arabic?', sentence: 'Arabic has ___ letters.', options: ['26', '28', '33'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'Arabic is written:', sentence: 'Arabic is written ___', options: ['left-to-right', 'right-to-left', 'top-to-bottom'], correct: 1 } },
-                    { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'marhaba', hint: 'A greeting' } }
-                ]
+    // ── Unit 1: Letters Group 1 ──
+    {
+        id: 1, title: 'الحروف ١ — Letters: ا ب ت ث ج ح', desc: 'Your first 6 Arabic letters — shapes, sounds, and recognition.',
+        unitType: 'grammar', grammar: ['Arabic script basics', 'letter recognition', 'isolated forms'],
+        vocab: ['ا', 'ب', 'ت', 'ث', 'ج', 'ح'],
+        teachSlides: [
+            { type: 'explain', mascotText: "مرحباً! Welcome to Arabic! We'll learn the alphabet in groups of 6–7 letters. Arabic has 28 letters — each has up to 4 forms. Today: your first 6.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Arabic is written right-to-left. Let's meet your first letters:", mascotEmotion: 'thinking',
+              left: { label: 'Letter → Name', items: ['ا = alif (a)', 'ب = bā (b)', 'ت = tā (t)'] },
+              right: { label: 'Letter → Name', items: ['ث = thā (th)', 'ج = jīm (j)', 'ح = ḥā (ḥ)'] }
             },
-            {
-                id: 2, title: 'التحيات — Greetings', desc: 'Essential Arabic greetings and self-introduction.',
-                unitType: 'situational', grammar: ['أنا (anā) = I', 'اسمي (ismī) = my name'],
-                vocab: ['مرحبا', 'السلام عليكم', 'شكراً', 'من فضلك', 'نعم', 'لا', 'مع السلامة'],
-                teachSlides: [
-                    { type: 'explain', mascotText: "The most important Arabic greeting is 'السلام عليكم' (as-salāmu ʿalaykum) — 'Peace be upon you'. The reply is 'وعليكم السلام' (wa-ʿalaykum as-salām).", mascotEmotion: 'happy' },
-                    { type: 'vocab-intro', mascotText: "Essential Arabic greetings:", mascotEmotion: 'happy',
-                      words: [{ en: 'مرحبا (marḥaba)', ru: 'Привет' }, { en: 'السلام عليكم', ru: 'Мир вам' }, { en: 'شكراً (shukran)', ru: 'Спасибо' }, { en: 'من فضلك (min faḍlak)', ru: 'Пожалуйста' }, { en: 'نعم (naʿam)', ru: 'Да' }, { en: 'لا (lā)', ru: 'Нет' }, { en: 'مع السلامة (maʿ as-salāma)', ru: 'До свидания' }] },
-                    { type: 'tip', mascotText: "'Shukran' (شكراً) means 'thank you' and works everywhere in the Arab world. It's your most useful word!", mascotEmotion: 'happy', tipText: "شكراً = Thank you · عفواً = You're welcome" }
-                ],
-                exercises: [
-                    { type: 'match-pairs', data: { instruction: 'Match Arabic to meaning', pairs: [{ left: 'مرحبا', right: 'Hello' }, { left: 'شكراً', right: 'Thank you' }, { left: 'نعم', right: 'Yes' }, { left: 'لا', right: 'No' }] } },
-                    { type: 'fill-bubble', data: { instruction: 'Reply to السلام عليكم:', sentence: 'The reply is:', options: ['شكراً', 'وعليكم السلام', 'مرحبا'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: 'How to say "thank you":', sentence: 'Thank you = ___', options: ['مرحبا', 'شكراً', 'من فضلك'], correct: 1 } },
-                    { type: 'speak-aloud', data: { instruction: 'Say these greetings:', phrase: 'As-salāmu ʿalaykum. Marḥaba. Shukran. Maʿ as-salāma.' } },
-                    { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'shukran', hint: 'Thank you' } }
-                ]
+            { type: 'tip', mascotText: "Notice: ب ت ث look similar — same shape, different dots! 1 dot below = ب, 2 dots above = ت, 3 dots above = ث. Dots are the key!", mascotEmotion: 'happy', tipText: "ب = 1 dot below · ت = 2 dots above · ث = 3 dots above" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'ا', right: 'alif' }, { left: 'ب', right: 'bā' }, { left: 'ت', right: 'tā' }, { left: 'ث', right: 'thā' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter is "jīm"?', sentence: 'jīm = ___', options: ['ح', 'ج', 'ث'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'How many dots does ث have?', sentence: 'ث has ___ dots', options: ['1', '2', '3'], correct: 2 } },
+            { type: 'fill-bubble', data: { instruction: 'Arabic is written:', sentence: 'Arabic is written ___', options: ['left-to-right', 'right-to-left', 'top-to-bottom'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Match by dots', pairs: [{ left: '1 dot below', right: 'ب' }, { left: '2 dots above', right: 'ت' }, { left: '3 dots above', right: 'ث' }, { left: 'no dots', right: 'ا' }] } },
+            { type: 'speak-aloud', data: { instruction: 'Say each letter name:', phrase: 'Alif, bā, tā, thā, jīm, ḥā' } }
+        ]
+    },
+    // ── Unit 2: Letters Group 2 ──
+    {
+        id: 2, title: 'الحروف ٢ — Letters: خ د ذ ر ز س ش', desc: 'Letters 7–13: new shapes and the sun/moon letter concept.',
+        unitType: 'grammar', grammar: ['letter forms group 2', 'dot patterns', 'letter shapes'],
+        vocab: ['خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Great progress! Today: 7 more letters. Notice how د and ذ are the same shape — the dot above makes ذ. Same pattern as ر and ز!", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Dot twins — same shape, different sounds:", mascotEmotion: 'thinking',
+              left: { label: 'No dot', items: ['د = dāl (d)', 'ر = rā (r)', 'س = sīn (s)'] },
+              right: { label: 'With dot(s)', items: ['ذ = dhāl (dh)', 'ز = zāy (z)', 'ش = shīn (sh)'] }
             },
-            {
-                id: 3, title: 'الأرقام — Numbers 1-10', desc: 'Learn Arabic numerals 1-10 and basic counting.',
-                unitType: 'grammar', grammar: ['Arabic numerals 1-10', 'counting'],
-                vocab: ['واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة', 'عشرة'],
-                teachSlides: [
-                    { type: 'explain', mascotText: "Fun fact: the 'Arabic numerals' we use globally (1, 2, 3...) actually came from India through the Arab world! In Arabic text, you'll see both Western digits and Eastern Arabic digits (١٢٣).", mascotEmotion: 'happy' },
-                    { type: 'vocab-intro', mascotText: "Numbers 1-10:", mascotEmotion: 'happy',
-                      words: [{ en: '١ واحد (wāḥid)', ru: 'один' }, { en: '٢ اثنان (ithnān)', ru: 'два' }, { en: '٣ ثلاثة (thalātha)', ru: 'три' }, { en: '٤ أربعة (arbaʿa)', ru: 'четыре' }, { en: '٥ خمسة (khamsa)', ru: 'пять' }, { en: '٦ ستة (sitta)', ru: 'шесть' }, { en: '٧ سبعة (sabʿa)', ru: 'семь' }, { en: '٨ ثمانية (thamāniya)', ru: 'восемь' }, { en: '٩ تسعة (tisʿa)', ru: 'девять' }, { en: '١٠ عشرة (ʿashara)', ru: 'десять' }] },
-                    { type: 'tip', mascotText: "Arabic numbers in text go left-to-right, even though Arabic text goes right-to-left! This is a unique feature.", mascotEmotion: 'happy', tipText: "Text: right→left · Numbers: left→right" }
-                ],
-                exercises: [
-                    { type: 'match-pairs', data: { instruction: 'Match number to Arabic', pairs: [{ left: '1', right: 'واحد' }, { left: '3', right: 'ثلاثة' }, { left: '5', right: 'خمسة' }, { left: '7', right: 'سبعة' }] } },
-                    { type: 'fill-bubble', data: { instruction: 'What comes after 4?', sentence: '٤, ___', options: ['ثلاثة', 'خمسة', 'ستة'], correct: 1 } },
-                    { type: 'fill-bubble', data: { instruction: '٢ + ٣ = ?', sentence: 'اثنان + ثلاثة = ___', options: ['أربعة', 'خمسة', 'ستة'], correct: 1 } },
-                    { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'khamsa', hint: 'A number between 4 and 6' } },
-                    { type: 'speak-aloud', data: { instruction: 'Count in Arabic:', phrase: 'Wāḥid, ithnān, thalātha, arbaʿa, khamsa, sitta, sabʿa, thamāniya, tisʿa, ʿashara!' } }
-                ]
-            }
+            { type: 'tip', mascotText: "خ is like ح from Group 1, but with a dot above. Pattern: ح = no dot, خ = dot above.", mascotEmotion: 'happy', tipText: "ح (ḥā) → خ (khā): same shape + dot" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'خ', right: 'khā' }, { left: 'د', right: 'dāl' }, { left: 'ر', right: 'rā' }, { left: 'س', right: 'sīn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter is "shīn"?', sentence: 'shīn = ___', options: ['س', 'ش', 'ث'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'ذ is like د but with:', sentence: 'ذ = د + ___', options: ['a dot above', 'a dot below', 'two dots'], correct: 0 } },
+            { type: 'match-pairs', data: { instruction: 'Dot twins — match the pair', pairs: [{ left: 'د (no dot)', right: 'ذ (dot)' }, { left: 'ر (no dot)', right: 'ز (dot)' }, { left: 'س (no dots)', right: 'ش (dots)' }, { left: 'ح (no dot)', right: 'خ (dot)' }] } },
+            { type: 'fill-bubble', data: { instruction: 'How many letters learned so far?', sentence: 'Group 1 + Group 2 = ___', options: ['10', '13', '15'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Say each letter name:', phrase: 'Khā, dāl, dhāl, rā, zāy, sīn, shīn' } }
+        ]
+    },
+    // ── Unit 3: Letters Group 3 ──
+    {
+        id: 3, title: 'الحروف ٣ — Letters: ص ض ط ظ ع غ', desc: 'The "deep" Arabic sounds — emphatic and pharyngeal letters.',
+        unitType: 'grammar', grammar: ['emphatic consonants', 'pharyngeal sounds', 'ع and غ'],
+        vocab: ['ص', 'ض', 'ط', 'ظ', 'ع', 'غ'],
+        teachSlides: [
+            { type: 'explain', mascotText: "These 6 letters are uniquely Arabic — sounds that don't exist in English! ص ض ط ظ are 'emphatic' (heavier, deeper). ع غ come from the throat.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Emphatic pairs — same shape, dot makes the difference:", mascotEmotion: 'thinking',
+              left: { label: 'No dot', items: ['ص = ṣād (emphatic s)', 'ط = ṭā (emphatic t)'] },
+              right: { label: 'With dot', items: ['ض = ḍād (emphatic d)', 'ظ = ẓā (emphatic z)'] }
+            },
+            { type: 'tip', mascotText: "ع (ʿayn) is the most iconic Arabic sound — a deep throat squeeze. غ (ghayn) is like gargling. These take practice, but you'll get them!", mascotEmotion: 'happy', tipText: "ع = deep throat · غ = gargling · Don't rush — listen and repeat" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'ص', right: 'ṣād' }, { left: 'ض', right: 'ḍād' }, { left: 'ط', right: 'ṭā' }, { left: 'ع', right: 'ʿayn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter sounds like a deep "s"?', sentence: 'Emphatic s = ___', options: ['س', 'ص', 'ش'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'ع is produced from the:', sentence: 'ع comes from the ___', options: ['lips', 'throat', 'nose'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Emphatic pairs', pairs: [{ left: 'ص (no dot)', right: 'ض (dot)' }, { left: 'ط (no dot)', right: 'ظ (dot)' }, { left: 'ع (no dot)', right: 'غ (dot)' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Letters learned: Groups 1+2+3 =', sentence: 'Total letters so far: ___', options: ['16', '19', '21'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Try these sounds:', phrase: 'Ṣād, ḍād, ṭā, ẓā, ʿayn, ghayn' } }
+        ]
+    },
+    // ── Unit 4: Letters Group 4 ──
+    {
+        id: 4, title: 'الحروف ٤ — Letters: ف ق ك ل م ن ه و ي', desc: 'Complete the alphabet! The final 9 letters and how letters connect.',
+        unitType: 'grammar', grammar: ['remaining letters', 'letter connection basics', 'full alphabet'],
+        vocab: ['ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'],
+        teachSlides: [
+            { type: 'explain', mascotText: "You're almost there! These last 9 letters complete the Arabic alphabet — 28 letters total! After this, you'll know every letter.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "Key letters in this group:", mascotEmotion: 'thinking',
+              left: { label: 'Familiar sounds', items: ['ف = fā (f)', 'ك = kāf (k)', 'ل = lām (l)', 'م = mīm (m)', 'ن = nūn (n)'] },
+              right: { label: 'New shapes', items: ['ق = qāf (q — deep k)', 'ه = hā (h)', 'و = wāw (w/ū)', 'ي = yā (y/ī)'] }
+            },
+            { type: 'tip', mascotText: "و (wāw) and ي (yā) are special — they can be consonants (w, y) OR long vowels (ū, ī). You'll learn more about this in the vowels unit!", mascotEmotion: 'happy', tipText: "و = w or ū · ي = y or ī · Double duty!" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match letter to sound', pairs: [{ left: 'ف', right: 'fā' }, { left: 'ق', right: 'qāf' }, { left: 'ل', right: 'lām' }, { left: 'ن', right: 'nūn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'How many letters in Arabic?', sentence: 'Arabic has ___ letters.', options: ['26', '28', '30'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'Which letter makes a deep "k" sound?', sentence: 'Deep k = ___', options: ['ك', 'ق', 'غ'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Match the remaining letters', pairs: [{ left: 'ك', right: 'kāf' }, { left: 'م', right: 'mīm' }, { left: 'ه', right: 'hā' }, { left: 'ي', right: 'yā' }] } },
+            { type: 'fill-bubble', data: { instruction: 'و and ي can also be:', sentence: 'و and ي can be consonants or ___', options: ['emphatic sounds', 'long vowels', 'dots'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Complete the alphabet:', phrase: 'Fā, qāf, kāf, lām, mīm, nūn, hā, wāw, yā' } }
+        ]
+    },
+    // ── Unit 5: Vowels & First Reading ──
+    {
+        id: 5, title: 'الحركات — Vowels & Reading', desc: 'Short vowels, sukūn, shadda — and reading your first Arabic words!',
+        unitType: 'grammar', grammar: ['short vowels (fatḥa, ḍamma, kasra)', 'sukūn', 'shadda', 'first word reading'],
+        vocab: ['فَتحة', 'ضَمّة', 'كَسرة', 'سُكون', 'شَدّة', 'كَتَبَ', 'بَيت', 'بِنت'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Now you know the letters — let's add vowels! Arabic vowels are marks above or below letters. They tell you how to pronounce each letter.", mascotEmotion: 'happy' },
+            { type: 'compare', mascotText: "The 3 short vowels:", mascotEmotion: 'thinking',
+              left: { label: 'Vowel marks', items: ['فَ = fa (fatḥa: line above)', 'فُ = fu (ḍamma: curl above)', 'فِ = fi (kasra: line below)'] },
+              right: { label: 'Special marks', items: ['فْ = f— (sukūn: no vowel)', 'فّ = ff (shadda: doubled)'] }
+            },
+            { type: 'tip', mascotText: "Let's read your first word! كَتَبَ = ka-ta-ba (he wrote). Break it down: كَ=ka + تَ=ta + بَ=ba. You just read Arabic!", mascotEmotion: 'happy', tipText: "كَتَبَ = ka·ta·ba = he wrote 🎉" }
+        ],
+        exercises: [
+            { type: 'fill-bubble', data: { instruction: 'What does fatḥa sound like?', sentence: 'بَ = ___', options: ['ba', 'bu', 'bi'], correct: 0 } },
+            { type: 'fill-bubble', data: { instruction: 'What does ḍamma sound like?', sentence: 'بُ = ___', options: ['ba', 'bu', 'bi'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'What does kasra sound like?', sentence: 'بِ = ___', options: ['ba', 'bu', 'bi'], correct: 2 } },
+            { type: 'match-pairs', data: { instruction: 'Match vowel to name', pairs: [{ left: 'َ  (line above)', right: 'fatḥa' }, { left: 'ُ  (curl above)', right: 'ḍamma' }, { left: 'ِ  (line below)', right: 'kasra' }, { left: 'ْ  (circle above)', right: 'sukūn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Read this word: كَتَبَ', sentence: 'كَتَبَ = ___', options: ['kataba', 'kutiba', 'kitāb'], correct: 0 } },
+            { type: 'fill-bubble', data: { instruction: 'Shadda means the letter is:', sentence: 'شَدّة means ___', options: ['silent', 'doubled', 'long'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Read these words aloud:', phrase: 'Ka-ta-ba. Bay-t. Bin-t.' } }
+        ]
+    },
+    // ── Unit 6: Script Checkpoint ──
+    {
+        id: 6, title: '🔄 Script Checkpoint', desc: 'Review all 28 letters, vowels, and read simple words.',
+        unitType: 'review', grammar: ['full alphabet review', 'vowel marks', 'basic reading'],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match Group 1 letters', pairs: [{ left: 'ا', right: 'alif' }, { left: 'ب', right: 'bā' }, { left: 'ج', right: 'jīm' }, { left: 'ح', right: 'ḥā' }] } },
+            { type: 'match-pairs', data: { instruction: 'Match Group 2 letters', pairs: [{ left: 'خ', right: 'khā' }, { left: 'د', right: 'dāl' }, { left: 'س', right: 'sīn' }, { left: 'ش', right: 'shīn' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Emphatic s:', sentence: 'Emphatic s = ___', options: ['س', 'ص', 'ش'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'Throat sound:', sentence: 'ع is from the ___', options: ['lips', 'throat', 'teeth'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'How many Arabic letters?', sentence: 'Arabic has ___ letters.', options: ['26', '28', '30'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: 'Vowel mark below:', sentence: 'بِ uses ___', options: ['fatḥa', 'ḍamma', 'kasra'], correct: 2 } },
+            { type: 'match-pairs', data: { instruction: 'Match vowels', pairs: [{ left: 'َ  above', right: 'fatḥa (a)' }, { left: 'ُ  above', right: 'ḍamma (u)' }, { left: 'ِ  below', right: 'kasra (i)' }, { left: 'ْ  above', right: 'sukūn (—)' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Read: كَتَبَ', sentence: 'كَتَبَ = ___', options: ['kataba', 'kabata', 'takaba'], correct: 0 } },
+            { type: 'fill-bubble', data: { instruction: 'Dot twins: ر +dot =', sentence: 'ر + dot = ___', options: ['ذ', 'ز', 'د'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Full alphabet groups:', phrase: 'Alif bā tā thā jīm ḥā — khā dāl dhāl rā zāy sīn shīn — ṣād ḍād ṭā ẓā ʿayn ghayn — fā qāf kāf lām mīm nūn hā wāw yā' } }
+        ]
+    },
+    // ── Unit 7: First Words & Greetings ──
+    {
+        id: 7, title: 'الكلمات الأولى — First Words & Greetings', desc: 'Read and use essential Arabic greetings and phrases.',
+        unitType: 'situational', grammar: ['reading real words', 'greeting patterns'],
+        vocab: ['مرحبا', 'السلام عليكم', 'شكراً', 'من فضلك', 'نعم', 'لا', 'مع السلامة'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Now you can read letters and vowels — let's read real words! The most important Arabic greeting: السلام عليكم (as-salāmu ʿalaykum) — 'Peace be upon you'. Reply: وعليكم السلام.", mascotEmotion: 'happy' },
+            { type: 'vocab-intro', mascotText: "Essential Arabic greetings:", mascotEmotion: 'happy',
+              words: [{ en: 'مرحبا (marḥaba)', ru: 'Привет' }, { en: 'السلام عليكم', ru: 'Мир вам' }, { en: 'شكراً (shukran)', ru: 'Спасибо' }, { en: 'من فضلك (min faḍlak)', ru: 'Пожалуйста' }, { en: 'نعم (naʿam)', ru: 'Да' }, { en: 'لا (lā)', ru: 'Нет' }, { en: 'مع السلامة (maʿ as-salāma)', ru: 'До свидания' }] },
+            { type: 'tip', mascotText: "شكراً (shukran) means 'thank you' — works everywhere in the Arab world. Try to spot the letters you learned: ش + ك + ر + ا + ً", mascotEmotion: 'happy', tipText: "شكراً = shukran = Thank you · عفواً = You're welcome" }
+        ],
+        exercises: [
+            { type: 'match-pairs', data: { instruction: 'Match Arabic to meaning', pairs: [{ left: 'مرحبا', right: 'Hello' }, { left: 'شكراً', right: 'Thank you' }, { left: 'نعم', right: 'Yes' }, { left: 'لا', right: 'No' }] } },
+            { type: 'fill-bubble', data: { instruction: 'Reply to السلام عليكم:', sentence: 'The reply is:', options: ['شكراً', 'وعليكم السلام', 'مرحبا'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '"Thank you" in Arabic:', sentence: 'Thank you = ___', options: ['مرحبا', 'شكراً', 'من فضلك'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '"Goodbye" in Arabic:', sentence: 'Goodbye = ___', options: ['مع السلامة', 'السلام عليكم', 'نعم'], correct: 0 } },
+            { type: 'speak-aloud', data: { instruction: 'Say these greetings:', phrase: 'As-salāmu ʿalaykum. Marḥaba. Shukran. Maʿ as-salāma.' } },
+            { type: 'listen-type', data: { instruction: 'Listen and type in transliteration', text: 'shukran', hint: 'Thank you' } }
+        ]
+    },
+    // ── Unit 8: Self-Introduction & Numbers ──
+    {
+        id: 8, title: 'أنا... — Self-Introduction & Numbers', desc: 'Introduce yourself and count 1–10 in Arabic.',
+        unitType: 'situational', grammar: ['أنا (anā) = I', 'اسمي (ismī) = my name', 'Arabic numerals 1-10'],
+        vocab: ['أنا', 'اسمي', 'أنتَ', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة', 'عشرة'],
+        teachSlides: [
+            { type: 'explain', mascotText: "Let's put your reading skills to use! أنا (anā) = I. اسمي (ismī) = my name. You can now introduce yourself: أنا [name]. اسمي [name].", mascotEmotion: 'happy' },
+            { type: 'vocab-intro', mascotText: "Numbers 1-10:", mascotEmotion: 'happy',
+              words: [{ en: '١ واحد (wāḥid)', ru: 'один' }, { en: '٢ اثنان (ithnān)', ru: 'два' }, { en: '٣ ثلاثة (thalātha)', ru: 'три' }, { en: '٤ أربعة (arbaʿa)', ru: 'четыре' }, { en: '٥ خمسة (khamsa)', ru: 'пять' }, { en: '٦ ستة (sitta)', ru: 'шесть' }, { en: '٧ سبعة (sabʿa)', ru: 'семь' }, { en: '٨ ثمانية (thamāniya)', ru: 'восемь' }, { en: '٩ تسعة (tisʿa)', ru: 'девять' }, { en: '١٠ عشرة (ʿashara)', ru: 'десять' }] },
+            { type: 'tip', mascotText: "Arabic numbers in text go left-to-right (١٢٣), even though Arabic text goes right-to-left! Also: Eastern Arabic digits (١٢٣) are used alongside Western digits (123).", mascotEmotion: 'happy', tipText: "Text: right→left · Numbers: left→right" }
+        ],
+        exercises: [
+            { type: 'fill-bubble', data: { instruction: '"I" in Arabic:', sentence: '"I" = ___', options: ['هو', 'أنا', 'أنتَ'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '"My name" in Arabic:', sentence: '"My name" = ___', options: ['أنا', 'اسمي', 'هو'], correct: 1 } },
+            { type: 'match-pairs', data: { instruction: 'Match number to Arabic', pairs: [{ left: '1', right: 'واحد' }, { left: '3', right: 'ثلاثة' }, { left: '5', right: 'خمسة' }, { left: '7', right: 'سبعة' }] } },
+            { type: 'fill-bubble', data: { instruction: 'What comes after ٤?', sentence: '٤, ___', options: ['ثلاثة', 'خمسة', 'ستة'], correct: 1 } },
+            { type: 'fill-bubble', data: { instruction: '٢ + ٣ = ?', sentence: 'اثنان + ثلاثة = ___', options: ['أربعة', 'خمسة', 'ستة'], correct: 1 } },
+            { type: 'speak-aloud', data: { instruction: 'Introduce yourself and count:', phrase: 'Anā [your name]. Wāḥid, ithnān, thalātha, arbaʿa, khamsa, sitta, sabʿa, thamāniya, tisʿa, ʿashara!' } }
+        ]
+    }
+
         ]
     }
 
