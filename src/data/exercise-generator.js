@@ -515,6 +515,104 @@ const ExerciseGenerator = {
     },
 
     /**
+     * Generate exercises aligned with the current curriculum unit.
+     * Prioritizes grammar categories that match the unit's grammar focus,
+     * and uses unit-scoped vocabulary where possible.
+     * Falls back to standard generation if no curriculum is available.
+     * @param {number} count - Number of exercises
+     * @param {Object} [options] - Options: { types: string[] }
+     * @returns {Array} Array of exercise objects
+     */
+    generateForCurrentUnit(count = 5, options = {}) {
+        // Get curriculum context
+        const level = (typeof LangyState !== 'undefined' ? LangyState.user?.level : null) || 'B1';
+        const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+
+        if (!unitId || typeof LangyCurriculum === 'undefined') {
+            return this.generateBatch(level, count, options);
+        }
+
+        const tb = LangyCurriculum.getActive();
+        if (!tb || !tb.units) return this.generateBatch(level, count, options);
+
+        const unit = tb.units.find(u => u.id === unitId);
+        if (!unit) return this.generateBatch(level, count, options);
+
+        const exercises = [];
+        const unitGrammarCategories = this._getUnitGrammarCategories(level, unit.grammar || []);
+
+        // 60% unit-focused grammar exercises, 40% mixed
+        const focusedCount = Math.ceil(count * 0.6);
+        const bank = LangyGrammarBank[level];
+
+        if (bank && unitGrammarCategories.length > 0) {
+            for (let i = 0; i < focusedCount; i++) {
+                const cat = unitGrammarCategories[i % unitGrammarCategories.length];
+                const patterns = bank[cat];
+                if (patterns && patterns.length > 0) {
+                    const pattern = this._pick(patterns);
+                    const shuffledOptions = this._shuffle(pattern.options);
+                    exercises.push({
+                        type: 'fill-bubble',
+                        data: {
+                            instruction: pattern.instruction || `Grammar: ${pattern.rule || cat.replace(/_/g, ' ')}`,
+                            sentence: pattern.template,
+                            options: shuffledOptions,
+                            correct: shuffledOptions.indexOf(pattern.answer),
+                            rule: pattern.rule
+                        }
+                    });
+                }
+            }
+        }
+
+        // Fill remaining with unit-scoped mixed types (pass unitId for vocab scoping)
+        const mixedTypes = ['match-pairs', 'type-translation', 'word-shuffle', 'listen-type'];
+        while (exercises.length < count) {
+            const t = mixedTypes[exercises.length % mixedTypes.length];
+            exercises.push(this.generate(level, t, unitId));
+        }
+
+        return this._shuffle(exercises);
+    },
+
+    /**
+     * Map unit grammar labels to grammar bank category keys.
+     * e.g. 'present simple' -> ['present_simple'], 'verb be' -> ['verb_be']
+     * @param {string} level
+     * @param {string[]} grammarLabels
+     * @returns {string[]} matching category keys in the grammar bank
+     */
+    _getUnitGrammarCategories(level, grammarLabels) {
+        const bank = LangyGrammarBank[level];
+        if (!bank || !grammarLabels.length) return [];
+
+        const bankCategories = Object.keys(bank).filter(k =>
+            Array.isArray(bank[k]) && k !== 'sentences' && k !== 'translations'
+        );
+
+        const matched = [];
+        grammarLabels.forEach(label => {
+            const normalized = label.toLowerCase().replace(/[\s/-]/g, '_').replace(/['']/g, '');
+            bankCategories.forEach(cat => {
+                // Match by: exact, contains, or label-in-rule
+                if (cat === normalized || cat.includes(normalized) || normalized.includes(cat)) {
+                    if (!matched.includes(cat)) matched.push(cat);
+                } else {
+                    // Check if any pattern's rule matches the label
+                    const patterns = bank[cat];
+                    if (patterns.length > 0 && patterns[0].rule &&
+                        patterns[0].rule.toLowerCase().includes(label.toLowerCase())) {
+                        if (!matched.includes(cat)) matched.push(cat);
+                    }
+                }
+            });
+        });
+
+        return matched;
+    },
+
+    /**
      * Generate a batch of exercises
      * @param {string} level - CEFR level
      * @param {number} count - Number of exercises to generate

@@ -147,7 +147,7 @@ function renderDaily(container) {
     setTimeout(() => Anim.staggerChildren(container, '.daily-task'), 80);
 }
 
-// ─── Generate daily tasks based on actual progress ───
+// ─── Generate daily tasks based on actual progress + curriculum ───
 function generateDailyTasks() {
     const today = new Date().toISOString().split('T')[0];
     const ds = LangyState.streakData?.dailyStats?.[today] || { sessions: 0, words: 0, minutes: 0 };
@@ -158,11 +158,32 @@ function generateDailyTasks() {
     const minutes = ds.minutes || 0;
     const perfectDone = perfectLessonDate === today;
 
+    // Get curriculum context for task descriptions
+    let unitTitle = '';
+    let grammarLabel = '';
+    let isEnglish = false;
+    let cefrLevel = '';
+    if (typeof LangyCurriculum !== 'undefined') {
+        const tb = LangyCurriculum.getActive();
+        if (tb) {
+            cefrLevel = tb.cefr || '';
+            isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+            const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+            if (unitId && tb.units) {
+                const unit = tb.units.find(u => u.id === unitId);
+                if (unit) {
+                    unitTitle = unit.title;
+                    grammarLabel = unit.grammar?.join(', ') || '';
+                }
+            }
+        }
+    }
+
     const tasks = [
         {
             id: 1,
-            title: 'Focus: Complete Lessons',
-            desc: 'Finish 2 language lessons',
+            title: unitTitle ? `Study: ${unitTitle}` : 'Focus: Complete Lessons',
+            desc: grammarLabel ? `Practice ${grammarLabel}` : 'Finish 2 language lessons',
             done: sessions >= 2,
             icon: LangyIcons.book,
             action: 'lesson',
@@ -172,7 +193,7 @@ function generateDailyTasks() {
         {
             id: 2,
             title: 'Vocabulary Expansion',
-            desc: 'Learn 10 new words',
+            desc: unitTitle ? `Build vocabulary for "${unitTitle}"` : 'Learn 10 new words',
             done: words >= 10,
             icon: LangyIcons.bookOpen,
             action: 'lesson',
@@ -182,7 +203,7 @@ function generateDailyTasks() {
         {
             id: 3,
             title: 'Commitment',
-            desc: 'Study for 15 minutes today',
+            desc: cefrLevel ? `${cefrLevel} practice — 15 minutes today` : 'Study for 15 minutes today',
             done: minutes >= 15,
             icon: LangyIcons.hourglass,
             action: 'lesson',
@@ -191,8 +212,8 @@ function generateDailyTasks() {
         },
         {
             id: 4,
-            title: 'Mastery: Perfect Lesson',
-            desc: 'Complete a lesson with 100% accuracy',
+            title: unitTitle ? `Master: ${unitTitle}` : 'Mastery: Perfect Lesson',
+            desc: grammarLabel ? `Score 100% on ${grammarLabel}` : 'Complete a lesson with 100% accuracy',
             done: perfectDone,
             icon: LangyIcons.target,
             action: 'lesson',
@@ -200,6 +221,21 @@ function generateDailyTasks() {
             progressText: perfectDone ? '1/1 perfect' : '0/1 perfect',
         },
     ];
+
+    // English track: add a curriculum-aligned review task
+    if (isEnglish && cefrLevel) {
+        const hwPending = typeof LangyState !== 'undefined' && LangyState.homework?.current?.length > 0;
+        tasks.push({
+            id: 5,
+            title: `Review: ${cefrLevel} Homework`,
+            desc: hwPending ? 'Complete your pending homework assignments' : 'Check your homework for today',
+            done: !hwPending && sessions > 0,
+            icon: LangyIcons.pencil,
+            action: 'homework',
+            actionLabel: hwPending ? 'Review' : 'Check',
+            progressText: hwPending ? `${LangyState.homework.current.length} pending` : 'Up to date',
+        });
+    }
 
     return tasks;
 }
