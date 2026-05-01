@@ -23,6 +23,9 @@ const LangyAI = {
             es: `IMPORTANT: The student speaks Spanish. Give ALL explanations, instructions, and feedback in Spanish. Teach ${targetLang} vocabulary and grammar, but explain everything in Spanish.`,
         };
 
+        // English-specific curriculum grounding
+        const engCtx = this.getEnglishTutoringContext();
+
         return `You are "Langy Teacher" — a professional, experienced and strict ${teacherRole}.
 
 PERSONALITY & TEACHING STYLE:
@@ -49,6 +52,8 @@ CORE RULES:
 8. Structure your responses clearly with headers and bullet points
 9. NEVER reveal answers before the student tries. Give hints, not answers.
 10. When grading work, be honest. A bad essay is a bad essay — say so, but constructively.
+11. When explaining grammar or vocabulary, frame it in terms of the current CEFR level can-do outcomes.
+12. Reference what the student learned in previous units to reinforce continuity.
 
 RESPONSE FORMAT:
 - Keep responses under 300 words unless explaining complex grammar
@@ -58,8 +63,61 @@ RESPONSE FORMAT:
 
 ${ctx ? `\nCURRENT CURRICULUM CONTEXT:\n${ctx}` : ''}
 ${typeof LangyTarget !== 'undefined' && LangyTarget.getAcademicContext ? `\nACADEMIC BACKBONE:\n${LangyTarget.getAcademicContext()}` : ''}
+${engCtx ? `\n${engCtx}` : ''}
 ${progress ? `\nSTUDENT PROGRESS:\n${progress}` : ''}
 ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakAreas.join(', ')}` : ''}`;
+    },
+
+    // ─── ENGLISH-SPECIFIC TUTORING CONTEXT ───
+    getEnglishTutoringContext() {
+        const targetCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+        if (targetCode !== 'en') return ''; // Only applies to English track
+
+        if (typeof LangyCurriculum === 'undefined') return '';
+        const tb = LangyCurriculum.getActive();
+        if (!tb) return '';
+
+        const cefr = tb.cefr || 'B1';
+        let ctx = `ENGLISH CURRICULUM ALIGNMENT (CEFR ${cefr}):`;
+
+        // Level-appropriate complexity guidance
+        const complexityMap = {
+            'Pre-A1': 'Use only the simplest possible English. Single words and very short phrases. Always translate key words.',
+            'A1': 'Use simple present tense and basic vocabulary (< 500 words). Short sentences only. Translate grammar terms.',
+            'A2': 'Use present and past tenses. Introduce simple connectors (and, but, because). Vocabulary up to ~1000 words.',
+            'B1': 'Use a range of tenses including future and conditionals. Expect paragraph-level writing. Vocabulary ~2000 words.',
+            'B2': 'Use complex sentences, passive voice, reported speech. Expect essay-level writing. Academic vocabulary expected.',
+            'C1': 'Use sophisticated grammar and nuanced vocabulary. Expect critical analysis and formal register.',
+            'C2': 'Near-native complexity. Focus on stylistic precision, idiomatic fluency, and academic/professional register.',
+        };
+        ctx += `\nComplexity Guidance: ${complexityMap[cefr] || complexityMap['B1']}`;
+
+        // Current can-do outcome the student is working toward
+        if (tb.canDo && tb.canDo.length) {
+            // Pick the most relevant can-do based on unit progress
+            const progressPct = typeof LangyState !== 'undefined'
+                ? Math.round(((LangyState.progress?.currentUnitId || 1) / Math.max(1, tb.units?.length || 1)) * 100)
+                : 0;
+            const canDoIdx = Math.min(Math.floor(progressPct / 100 * tb.canDo.length), tb.canDo.length - 1);
+            ctx += `\nCurrent Can-Do Target: "${tb.canDo[canDoIdx]}"`;
+            ctx += `\nFrame your feedback around whether the student is approaching this outcome.`;
+        }
+
+        // Current unit grammar and vocab for focused tutoring
+        const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+        if (unitId && tb.units) {
+            const unit = tb.units.find(u => u.id === unitId);
+            if (unit) {
+                if (unit.grammar && unit.grammar.length) {
+                    ctx += `\nGrammar in Focus: ${unit.grammar.join(', ')} \u2014 prioritize corrections and explanations around these topics.`;
+                }
+                if (unit.vocab && unit.vocab.length) {
+                    ctx += `\nActive Vocabulary: ${unit.vocab.slice(0, 15).join(', ')} \u2014 use these words in examples where natural.`;
+                }
+            }
+        }
+
+        return ctx;
     },
 
     // ─── CURRICULUM CONTEXT ───
@@ -269,16 +327,44 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
     // ─── GRADE HOMEWORK ───
     async gradeHomework(taskPrompt, userSubmission) {
         const examinerRole = typeof LangyTarget !== 'undefined' ? LangyTarget.aiExaminerRole : 'English examiner';
-        const gradingPrompt = `You are a strict ${examinerRole}. Grade this homework.
+
+        // Build curriculum-aware grading context
+        let cefrLevel = 'B1';
+        let canDoStr = '';
+        let unitFocus = '';
+        if (typeof LangyCurriculum !== 'undefined') {
+            const tb = LangyCurriculum.getActive();
+            if (tb) {
+                cefrLevel = tb.cefr || 'B1';
+                if (tb.canDo && tb.canDo.length) {
+                    canDoStr = `\nCEFR ${cefrLevel} Can-Do Expectations:\n${tb.canDo.slice(0, 4).map(s => '- ' + s).join('\n')}`;
+                }
+            }
+            const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+            if (unitId && tb && tb.units) {
+                const unit = tb.units.find(u => u.id === unitId);
+                if (unit) {
+                    unitFocus = `\nCurrent Unit Focus: "${unit.title}" — grammar: ${unit.grammar?.join(', ') || 'general'}`;
+                }
+            }
+        }
+
+        const gradingPrompt = `You are a strict, CEFR-certified ${examinerRole} at the ${cefrLevel} level. Grade this homework.
 
 TASK: "${taskPrompt}"
 STUDENT SUBMISSION: "${userSubmission}"
+STUDENT LEVEL: CEFR ${cefrLevel}${canDoStr}${unitFocus}
 
-Evaluate grammar, vocabulary, coherence, and task completion.
+Evaluate based on CEFR ${cefrLevel} expectations:
+- Grammar accuracy (appropriate for this CEFR level)
+- Vocabulary range (expected at this level)
+- Coherence and task completion
+- Whether the student demonstrates the can-do outcomes listed above
+
 You MUST respond in this EXACT format (nothing else):
 Score: [0-100]
 Grade: [A/B/C/D/F]
-Feedback: [Your detailed feedback. Point out specific errors with corrections. Be constructive but strict.]`;
+Feedback: [Your detailed feedback. Point out specific errors with corrections. Reference the CEFR level expectations. Be constructive but strict.]`;
 
         const response = await this.chat(gradingPrompt, gradingPrompt);
 
@@ -295,13 +381,29 @@ Feedback: [Your detailed feedback. Point out specific errors with corrections. B
 
     // ─── GENERATE EXERCISE FROM AI ───
     async generateExercise(type, topic, level) {
-        const prompt = `Generate a single ${type} exercise about "${topic}" for CEFR level ${level}.
+        // Build curriculum-aware exercise context
+        let vocabHint = '';
+        let grammarHint = '';
+        if (typeof LangyCurriculum !== 'undefined') {
+            const tb = LangyCurriculum.getActive();
+            const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+            if (tb && unitId) {
+                const unit = tb.units?.find(u => u.id === unitId);
+                if (unit) {
+                    if (unit.vocab && unit.vocab.length) vocabHint = `\nUse vocabulary from this list where possible: ${unit.vocab.join(', ')}`;
+                    if (unit.grammar && unit.grammar.length) grammarHint = `\nGrammar context for this unit: ${unit.grammar.join(', ')}`;
+                }
+            }
+        }
+
+        const prompt = `Generate a single ${type} exercise about "${topic}" for CEFR level ${level}.${grammarHint}${vocabHint}
+The exercise should be appropriate for a ${level} learner — not too easy, not too hard.
 Format as JSON:
 {
     "prompt": "the question/instruction",
     "options": ["option1", "option2", "option3", "option4"],
     "correct": 0,
-    "explanation": "why this is correct"
+    "explanation": "why this is correct (reference the grammar rule)"
 }`;
 
         try {

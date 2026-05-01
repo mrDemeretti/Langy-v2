@@ -3131,14 +3131,60 @@ const LangyCurriculum = {
             ? `\nAcademic Framework: ${lang.academicBackbone.framework}\nReference: ${lang.academicBackbone.reference}\nMethodology: ${lang.academicBackbone.methodology}`
             : '';
         const canDoStr = tb.canDo && tb.canDo.length
-            ? `\nCEFR Can-Do Statements:\n${tb.canDo.map(s => '- ' + s).join('\n')}`
+            ? `\nCEFR Can-Do Statements for this level:\n${tb.canDo.map(s => '- ' + s).join('\n')}`
             : '';
         const objStr = tb.objectives && tb.objectives.length
-            ? `\nLearning Objectives:\n${tb.objectives.map(s => '- ' + s).join('\n')}`
+            ? `\nLearning Objectives for this level:\n${tb.objectives.map(s => '- ' + s).join('\n')}`
             : '';
+
+        // Current unit context — what the student is actually working on right now
+        let unitCtx = '';
+        const currentUnitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+        if (currentUnitId && tb.units) {
+            const unit = tb.units.find(u => u.id === currentUnitId);
+            if (unit) {
+                unitCtx += `\nCURRENT UNIT: Unit ${unit.id} — "${unit.title}"`;
+                unitCtx += `\nUnit Description: ${unit.desc || ''}`;
+                unitCtx += `\nUnit Type: ${unit.unitType || 'grammar'}`;
+                if (unit.grammar && unit.grammar.length) {
+                    unitCtx += `\nGrammar Focus: ${unit.grammar.join(', ')}`;
+                }
+                if (unit.vocab && unit.vocab.length) {
+                    unitCtx += `\nTarget Vocabulary: ${unit.vocab.join(', ')}`;
+                }
+                // Progression context
+                const unitIdx = tb.units.findIndex(u => u.id === currentUnitId);
+                if (unitIdx > 0) {
+                    const prev = tb.units[unitIdx - 1];
+                    unitCtx += `\nPrevious Unit: "${prev.title}" (${prev.grammar?.join(', ') || 'general'})`;
+                }
+                if (unitIdx < tb.units.length - 1) {
+                    const next = tb.units[unitIdx + 1];
+                    unitCtx += `\nNext Unit: "${next.title}" — student is progressing toward this`;
+                }
+                // Exercise progress within unit
+                const lessonIdx = typeof LangyState !== 'undefined' ? LangyState.progress?.currentLessonIdx : 0;
+                const totalEx = unit.exercises ? unit.exercises.length : 0;
+                if (totalEx > 0) {
+                    unitCtx += `\nExercise Progress: ${lessonIdx || 0}/${totalEx} completed in this unit`;
+                }
+            }
+        }
+
+        // Methodology note for English
+        let methodNote = '';
+        if ((tb.language || 'en') === 'en') {
+            methodNote = `\nENGLISH TUTORING DIRECTIVES:
+- Align all explanations and corrections with CEFR ${tb.cefr} expectations
+- Reference the can-do outcomes above when framing what the student should achieve
+- Ensure grammar explanations match the current unit focus, not arbitrary topics
+- When correcting, relate errors back to the learning objectives for this level
+- Progressively scaffold: build on what was covered in previous units`;
+        }
+
         return `Current textbook: ${tb.title} (${tb.cefr})
 Language: ${tb.language || 'en'}
-Methodology: ${tb.methodology || ''}${bbStr}${canDoStr}${objStr}`;
+Methodology: ${tb.methodology || ''}${bbStr}${canDoStr}${objStr}${unitCtx}${methodNote}`;
     },
 
     /** Get can-do statements for a specific textbook */

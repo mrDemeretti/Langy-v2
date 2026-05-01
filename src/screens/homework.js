@@ -450,8 +450,31 @@ function setupWritingTab(container) {
 
         try {
             const level = LangyState?.user?.level || 'B1';
-            const prompt = `You are an expert English writing teacher. Analyze this student's writing.
-Student level: ${level}
+            // Build curriculum context for writing feedback
+            let cefrLevel = 'B1';
+            let canDoHint = '';
+            let unitHint = '';
+            if (typeof LangyCurriculum !== 'undefined') {
+                const tb = LangyCurriculum.getActive();
+                if (tb) {
+                    cefrLevel = tb.cefr || 'B1';
+                    if (tb.canDo && tb.canDo.length) {
+                        const writingCanDo = tb.canDo.filter(s => /writ|compos|essay|describ|summar|email|letter|report/i.test(s));
+                        const relevantCanDo = writingCanDo.length > 0 ? writingCanDo : tb.canDo.slice(0, 2);
+                        canDoHint = `\nCEFR ${cefrLevel} Writing Expectations:\n${relevantCanDo.map(s => '- ' + s).join('\n')}`;
+                    }
+                }
+                const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+                if (unitId && tb && tb.units) {
+                    const unit = tb.units.find(u => u.id === unitId);
+                    if (unit) {
+                        unitHint = `\nCurrent Unit: "${unit.title}" — grammar focus: ${unit.grammar?.join(', ') || 'general'}`;
+                    }
+                }
+            }
+
+            const prompt = `You are a CEFR-certified English writing teacher at the ${cefrLevel} level. Analyze this student's writing.
+Student level: ${level} (CEFR ${cefrLevel})${canDoHint}${unitHint}
 Prompt: ${ScreenState.get('writingPromptDesc', 'Free writing')}
 
 Student's text:
@@ -462,16 +485,16 @@ SCORE: [A/B/C/D grade]
 LEVEL: [estimated CEFR writing level, e.g. B1-B2]
 
 STRENGTHS:
-- [what they did well, be specific]
+- [what they did well, reference CEFR expectations]
 
 ERRORS:
-- [each grammar/spelling error with correction]
+- [each grammar/spelling error with correction, note if it relates to current unit grammar]
 
 IMPROVED VERSION:
 [rewrite their text with corrections, keeping their style]
 
 TIPS:
-- [2-3 specific actionable tips for improvement]
+- [2-3 specific actionable tips aligned with their CEFR level progression]
 
 Be encouraging but honest. Keep feedback concise.`;
 
@@ -683,8 +706,21 @@ function setupHandwritingTab(container) {
             const base64Data = imageBase64.split(',')[1];
             const mimeType = imageBase64.match(/data:(.*?);/)?.[1] || 'image/jpeg';
 
-            const prompt = `You are an expert English tutor reviewing a student's handwritten work.
-Student level: ${level}
+            // Build curriculum context
+            let cefrLevel = 'B1';
+            let unitHint = '';
+            if (typeof LangyCurriculum !== 'undefined') {
+                const tb = LangyCurriculum.getActive();
+                if (tb) cefrLevel = tb.cefr || 'B1';
+                const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+                if (unitId && tb && tb.units) {
+                    const unit = tb.units.find(u => u.id === unitId);
+                    if (unit) unitHint = `\nUnit grammar focus: ${unit.grammar?.join(', ') || 'general'}`;
+                }
+            }
+
+            const prompt = `You are a CEFR-certified English tutor at the ${cefrLevel} level reviewing a student's handwritten work.
+Student level: ${level} (CEFR ${cefrLevel})${unitHint}
 Writing task: "${taskText}"
 
 Analyze the photo of their handwritten answer. Return ONLY valid JSON (no markdown, no backticks):

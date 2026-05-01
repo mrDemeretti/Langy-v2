@@ -1,4 +1,4 @@
-const CACHE_NAME = 'langy-ai-v53';
+const CACHE_NAME = 'langy-ai-v54';
 const urlsToCache = [
   './',
   './index.html',
