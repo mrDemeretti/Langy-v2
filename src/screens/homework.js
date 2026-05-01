@@ -241,6 +241,13 @@ function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
         return `<span style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-top:2px; display:flex; align-items:center; gap:4px;">${LangyIcons.target} ${tag}</span>`;
     };
 
+    // Grammar rules badge — shows specific rules when tracked
+    const getGrammarBadge = (item) => {
+        if (!item.weakRules || !item.weakRules.length) return '';
+        const rulesText = item.weakRules.slice(0, 3).join(', ');
+        return `<div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">${item.weakRules.slice(0, 3).map(r => `<span style="font-size:9px; padding:2px 6px; border-radius:8px; background:rgba(239,68,68,0.08); color:var(--danger); white-space:nowrap;">${r}</span>`).join('')}</div>`;
+    };
+
     // Reason line — explains WHY this homework exists
     const getReasonLine = (item) => {
         if (item.reason) {
@@ -266,6 +273,7 @@ function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
                 <div class="homework-card__meta">${item.desc || { en: 'Review the previous lesson.', ru: 'Повторите предыдущий урок.', es: 'Repasa la lección anterior.' }[lang]}</div>
                 ${getSourceBadge(item)}
                 ${getReasonLine(item)}
+                ${getGrammarBadge(item)}
             </div>
             <div class="homework-card__status homework-card__status--pending">${{ en: 'Start', ru: 'Начать', es: 'Iniciar' }[lang]} ${LangyIcons.arrowRight}</div>
         </div>
@@ -308,7 +316,28 @@ function renderCompletedHomework(items, lang) {
 // ═══════════════════════════════════════
 function renderWritingTab() {
     const level = LangyState?.user?.level || 'B1 Intermediate';
+
+    // Build grammar-aware prompt for English
+    let grammarPrompt = null;
+    const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+    if (isEnglish && typeof LangyCurriculum !== 'undefined') {
+        const tb = LangyCurriculum.getActive();
+        const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+        if (tb && unitId && tb.units) {
+            const unit = tb.units.find(u => u.id === unitId);
+            if (unit && unit.grammar && unit.grammar.length) {
+                grammarPrompt = {
+                    id: 'grammar-practice',
+                    title: `Grammar Writing: ${unit.grammar[0]}`,
+                    desc: `Write a short paragraph (5-8 sentences) using ${unit.grammar.join(' and ')}. Try to include examples of each rule.`,
+                    icon: LangyIcons.target,
+                };
+            }
+        }
+    }
+
     const prompts = [
+        ...(grammarPrompt ? [grammarPrompt] : []),
         {
             id: 'email',
             title: 'Write an Email',

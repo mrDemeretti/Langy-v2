@@ -166,8 +166,8 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
     // ─── MISTAKES TRACKING ───
     mistakes: [],
 
-    recordMistake(question, userAnswer, correctAnswer) {
-        const entry = { question, userAnswer, correctAnswer, timestamp: Date.now() };
+    recordMistake(question, userAnswer, correctAnswer, rule) {
+        const entry = { question, userAnswer, correctAnswer, rule: rule || '', timestamp: Date.now() };
         this.mistakes.push(entry);
         if (typeof LangyState !== 'undefined' && LangyState.aiMemory) {
             LangyState.aiMemory.mistakes.push(entry);
@@ -179,10 +179,18 @@ ${weakAreas.length ? `\nSTUDENT WEAK AREAS (focus extra attention here): ${weakA
     },
 
     _analyzeWeakAreas() {
-        // Simple pattern analysis from mistakes
         const recent = this.mistakes.slice(-20);
         const areas = {};
+
         recent.forEach(m => {
+            // Priority 1: use the grammar rule field (precise tracking)
+            if (m.rule) {
+                const ruleKey = m.rule.toLowerCase();
+                areas[ruleKey] = (areas[ruleKey] || 0) + 1;
+                return;
+            }
+
+            // Priority 2: fallback heuristic from question text
             const q = (m.question || '').toLowerCase();
             if (q.includes('tense') || q.includes('verb') || q.includes('was') || q.includes('were')) {
                 areas['verb tenses'] = (areas['verb tenses'] || 0) + 1;

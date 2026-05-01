@@ -436,10 +436,12 @@ function renderLearning(container) {
             } else {
                 failedExerciseIndices.push(currentExerciseIdx);
                 if (typeof LangyAI !== 'undefined') {
+                    const exRule = exercise.widgetData?.rule || exercise.data?.rule || '';
                     LangyAI.recordMistake(
                         exercise.widgetData?.sentence || exercise.prompt || '',
                         '',
-                        exercise.widgetData?.answer || ''
+                        exercise.widgetData?.answer || '',
+                        exRule
                     );
                 }
                 if (typeof DeepTutor !== 'undefined') {
@@ -660,7 +662,7 @@ function renderLearning(container) {
                     ${typeof MascotPersona !== 'undefined'
                         ? (score >= LangyConfig.PASS_THRESHOLD ? MascotPersona.tone('lessonComplete') : MascotPersona.tone('lessonFailed'))
                         : (score >= LangyConfig.PASS_THRESHOLD ? i18n('learn.excellent') : i18n('learn.good_try'))}
-                </h2>
+                </div>
 
                 <div class="lesson-summary__stats">
                     <div class="lesson-summary__stat">
@@ -680,6 +682,28 @@ function renderLearning(container) {
                         <span class="lesson-summary__stat-label">XP</span>
                     </div>
                 </div>
+
+                ${(() => {
+                    // Grammar rule breakdown for English
+                    const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+                    if (!isEnglish || failedExerciseIndices.length === 0) return '';
+                    const ruleMap = {};
+                    failedExerciseIndices.forEach(idx => {
+                        const ex = exercises[idx];
+                        const rule = ex?.widgetData?.rule || ex?.data?.rule || '';
+                        if (rule) ruleMap[rule] = (ruleMap[rule] || 0) + 1;
+                    });
+                    const ruleEntries = Object.entries(ruleMap).sort((a, b) => b[1] - a[1]);
+                    if (ruleEntries.length === 0) return '';
+                    return `
+                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:var(--danger-bg); border-radius:var(--radius-lg); border-left:3px solid var(--danger);">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--danger); margin-bottom:var(--sp-2); display:flex; align-items:center; gap:6px;">
+                            ${LangyIcons.alertTriangle} Grammar rules to review
+                        </div>
+                        ${ruleEntries.map(([rule, count]) => `<div style="font-size:var(--fs-xs); color:var(--text-secondary); padding:2px 0;">• <strong>${rule}</strong> — ${count} mistake${count > 1 ? 's' : ''}</div>`).join('')}
+                    </div>
+                    `;
+                })()}
 
                 ${weakTopicsHtml}
                 ${qrButton}
@@ -1143,16 +1167,34 @@ function renderLearning(container) {
         const exists = LangyState.homework.current.some(h => h.unitId === completedUnit.id);
         if (exists) return;
 
-        // Create homework based on unit data
+        // Collect specific weak grammar rules from failed exercises
+        const weakRules = [];
+        if (failedExerciseIndices && failedExerciseIndices.length > 0) {
+            failedExerciseIndices.forEach(idx => {
+                const ex = exercises[idx];
+                const rule = ex?.widgetData?.rule || ex?.data?.rule || '';
+                if (rule && !weakRules.includes(rule)) weakRules.push(rule);
+            });
+        }
+
+        // Build homework description with specific grammar rules
+        let hwDesc = completedUnit.homework?.prompt || '';
+        if (!hwDesc) {
+            if (weakRules.length > 0) {
+                hwDesc = `Review: ${weakRules.join(', ')}. Practice these grammar rules with exercises.`;
+            } else {
+                hwDesc = `Review ${completedUnit.grammar?.join(', ') || 'this lesson'} and write practice sentences.`;
+            }
+        }
+
         const hw = {
             id: Date.now(),
             unitId: completedUnit.id,
             title: `${completedUnit.title} — Review`,
-            desc:
-                completedUnit.homework?.prompt ||
-                `Review ${completedUnit.grammar?.join(', ') || 'this lesson'} and write practice sentences.`,
+            desc: hwDesc,
             icon: LangyIcons.fileText,
             createdAt: new Date().toISOString(),
+            weakRules: weakRules, // Track specific weak rules for focused practice
         };
 
         LangyState.homework.current.push(hw);
