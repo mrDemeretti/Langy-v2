@@ -162,6 +162,11 @@ function renderLearning(container) {
                 <div class="lesson-intro__meta">
                     <div class="lesson-intro__tag">${LangyIcons.fileText} ${unit.grammar?.join(', ') || 'Grammar'}</div>
                     <div class="lesson-intro__tag">${LangyIcons.bookOpen} ${unit.vocabulary?.join(', ') || 'Vocabulary'}</div>
+                    ${typeof VocabTracker !== 'undefined' && activeTb?.cefr ? (() => {
+                        const stats = VocabTracker.getUnitStats(activeTb.cefr, unit.id);
+                        if (stats.total === 0) return '';
+                        return `<div class="lesson-intro__tag" style="color:#F59E0B;">${LangyIcons.brain} ${stats.learned}/${stats.total} ${{ en: 'words learned', ru: 'слов изучено', es: 'palabras aprendidas' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>`;
+                    })() : ''}
                     <div class="lesson-intro__tag">${LangyIcons.clock} ~15 ${i18n('learn.minutes')}</div>
                     <div class="lesson-intro__tag">${LangyIcons.target} ${totalExercises} ${i18n('learn.exercises')}</div>
                 </div>
@@ -708,6 +713,30 @@ function renderLearning(container) {
                 ${weakTopicsHtml}
                 ${qrButton}
 
+                ${(() => {
+                    if (typeof VocabTracker === 'undefined' || !activeTb?.cefr) return '';
+                    const unitVocab = typeof LangyVocabBank !== 'undefined' ? LangyVocabBank.getForUnit(activeTb.cefr, unit.id) : [];
+                    if (unitVocab.length === 0) return '';
+                    const stats = VocabTracker.getUnitStats(activeTb.cefr, unit.id);
+                    const wordsWithStatus = unitVocab.slice(0, 12).map(w => {
+                        const key = w.en?.toLowerCase();
+                        const entry = LangyState.vocabProgress?.words?.[key];
+                        const m = entry?.mastery || 0;
+                        return { en: w.en, ru: w.ru, mastery: m };
+                    });
+                    return `
+                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:rgba(245,158,11,0.06); border-radius:var(--radius-lg); border-left:3px solid #F59E0B;">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:#F59E0B; margin-bottom:var(--sp-2); display:flex; align-items:center; justify-content:space-between;">
+                            <span style="display:flex; align-items:center; gap:6px;">${LangyIcons.brain} ${{ en: 'Vocabulary', ru: 'Словарь', es: 'Vocabulario' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
+                            <span style="font-size:10px; color:var(--text-tertiary); font-weight:var(--fw-medium);">${stats.learned}/${stats.total} ${{ en: 'learned', ru: 'изучено', es: 'aprendidas' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
+                        </div>
+                        <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                            ${wordsWithStatus.map(w => `<span style="font-size:10px; padding:3px 8px; border-radius:var(--radius-full); background:${VocabTracker.masteryColor(w.mastery)}15; color:${VocabTracker.masteryColor(w.mastery)}; border:1px solid ${VocabTracker.masteryColor(w.mastery)}25;" title="${w.ru}">${VocabTracker.masteryIcon(w.mastery)} ${w.en}</span>`).join('')}
+                        </div>
+                    </div>
+                    `;
+                })()}
+
                 <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
                     ${LangyIcons.home} ${i18n('results.home')}
                 </button>
@@ -755,6 +784,12 @@ function renderLearning(container) {
                 accuracy: score,
                 category: dominantCategory,
             });
+        }
+
+        // Record vocabulary progress for this unit
+        if (typeof VocabTracker !== 'undefined' && activeTb?.cefr) {
+            const unitVocab = typeof LangyVocabBank !== 'undefined' ? LangyVocabBank.getForUnit(activeTb.cefr, unit.id) : [];
+            VocabTracker.recordUnitWords(activeTb.cefr, unit.id, unitVocab, { allCorrect: score >= LangyConfig.PASS_THRESHOLD });
         }
 
         // Generate homework for next lesson

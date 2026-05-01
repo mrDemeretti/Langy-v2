@@ -310,6 +310,22 @@ const LangyState = {
         behavioralNote: 'Highly motivated learner',
         conversationContext: [], // { role: 'ai'|'user', content: string, timestamp: number, type: 'text'|'task' }
     },
+
+    // Vocabulary Progress — per-word mastery, review queue, unit tracking
+    vocabProgress: {
+        // Per-word mastery: key = word (en), value = { correct, attempts, lastSeen, mastery: 0-3 }
+        // mastery: 0=new, 1=seen, 2=practiced, 3=mastered
+        words: {},
+        // Words due for review (spaced repetition light)
+        reviewQueue: [], // [{ en, ru, level, category, dueDate }]
+        // Per-unit vocab stats
+        unitStats: {}, // key = "level:unitId", value = { wordsIntroduced, wordsPracticed, wordsMastered }
+        // Total counters
+        totalLearned: 0,    // words at mastery >= 1
+        totalMastered: 0,   // words at mastery >= 3
+        totalReviewed: 0,   // total review sessions
+        lastReviewDate: null,
+    },
 };
 
 /**

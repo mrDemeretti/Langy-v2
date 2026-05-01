@@ -161,6 +161,20 @@ function buildContinuityCard() {
         </div>`;
     }
 
+    // Vocabulary snapshot
+    if (typeof VocabTracker !== 'undefined') {
+        const vs = VocabTracker.getGlobalStats();
+        if (vs.totalLearned > 0 || vs.dueToday > 0) {
+            const vocabItems = [];
+            if (vs.totalLearned > 0) vocabItems.push(`<span style="display:inline-flex; align-items:center; gap:3px; font-size:var(--fs-xs); padding:2px 8px; background:rgba(245,158,11,0.08); border-radius:var(--radius-full); color:#F59E0B;">${LangyIcons.brain} ${vs.totalLearned} ${{ en: 'words', ru: 'слов', es: 'palabras' }[lang]}</span>`);
+            if (vs.dueToday > 0) vocabItems.push(`<span style="display:inline-flex; align-items:center; gap:3px; font-size:var(--fs-xs); padding:2px 8px; background:rgba(239,68,68,0.08); border-radius:var(--radius-full); color:var(--danger);">${vs.dueToday} ${{ en: 'to review', ru: 'к повтору', es: 'para repasar' }[lang]}</span>`);
+            html += `<div style="margin-bottom:var(--sp-2);">
+                <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-tertiary); margin-bottom:4px;">${{ en: 'Vocabulary', ru: 'Словарь', es: 'Vocabulario' }[lang]}</div>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">${vocabItems.join(' ')}</div>
+            </div>`;
+        }
+    }
+
     // Recommended next action — cross-mode intelligence
     if (typeof NextAction !== 'undefined') {
         html += NextAction.renderCard(lang);

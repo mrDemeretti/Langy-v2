@@ -113,7 +113,7 @@ function renderProgress(container) {
                     if (!rec) return '';
                     const reasonText = rec.reason[lang] || rec.reason.en;
                     const labelText = rec.label[lang] || rec.label.en;
-                    const signalColors = { weak_spot: '#F59E0B', pending_homework: '#8B5CF6', weakest_skill: '#3B82F6', never_spoken: '#EF4444', stale_speaking: '#EF4444', low_recent_score: '#F59E0B', no_lessons_yet: '#3B82F6' };
+                    const signalColors = { weak_spot: '#F59E0B', pending_homework: '#8B5CF6', weakest_skill: '#3B82F6', never_spoken: '#EF4444', stale_speaking: '#EF4444', low_recent_score: '#F59E0B', no_lessons_yet: '#3B82F6', vocab_review_due: '#F59E0B' };
                     const ac = signalColors[rec.signal] || 'var(--primary)';
                     return `<div class="card" style="padding:var(--sp-4); border:1px solid ${ac}22; background:${ac}08; cursor:pointer;" id="prog-recommend" data-route="${rec.route}" ${rec.meta?.tag ? 'data-focus-tag="' + rec.meta.tag + '"' : ''}>
                     <div style="display:flex; align-items:center; gap:var(--sp-3);">
@@ -165,7 +165,7 @@ function renderProgress(container) {
 
             <!-- Recent Lessons -->
             ${recent.length ? `
-            <div style="padding: 0 var(--sp-5) var(--sp-8);">
+            <div style="padding: 0 var(--sp-5) var(--sp-4);">
                 <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; font-size:var(--fs-sm);">
                     ${LangyIcons.clock} ${{ en: 'Recent Activity', ru: 'Последняя активность', es: 'Actividad reciente' }[lang]}
                 </h4>
@@ -185,6 +185,105 @@ function renderProgress(container) {
                     }).join('')}
                 </div>
             </div>` : ''}
+
+            <!-- Vocabulary Progress Section -->
+            ${typeof VocabTracker !== 'undefined' ? (() => {
+                const globalStats = VocabTracker.getGlobalStats();
+                const recentWords = VocabTracker.getRecentWords(6);
+                const weakWords = VocabTracker.getWeakestWords(4);
+                const dueCount = globalStats.dueToday;
+
+                // Get current level vocab stats
+                let levelStats = null;
+                if (typeof LangyCurriculum !== 'undefined') {
+                    const tb = LangyCurriculum.getActive();
+                    if (tb?.cefr) levelStats = VocabTracker.getLevelStats(tb.cefr);
+                }
+
+                // Get unit-by-unit breakdown for current level
+                let unitBreakdown = '';
+                if (typeof LangyCurriculum !== 'undefined' && typeof LangyVocabBank !== 'undefined') {
+                    const tb = LangyCurriculum.getActive();
+                    if (tb?.cefr && tb.units) {
+                        const unitRows = tb.units.slice(0, LangyState.progress.currentUnitId).map(u => {
+                            const us = VocabTracker.getUnitStats(tb.cefr, u.id);
+                            if (us.total === 0) return '';
+                            const pctBar = us.pct;
+                            return `<div style="display:flex; align-items:center; gap:var(--sp-2); padding:4px 0;">
+                                <div style="font-size:10px; color:var(--text-tertiary); min-width:36px;">U${u.id}</div>
+                                <div style="flex:1; height:5px; background:rgba(128,128,128,0.1); border-radius:3px; overflow:hidden;">
+                                    <div style="height:100%; width:${pctBar}%; background:${pctBar >= 80 ? '#10B981' : pctBar >= 40 ? '#F59E0B' : 'var(--text-tertiary)'}; border-radius:3px; transition:width 0.4s;"></div>
+                                </div>
+                                <div style="font-size:9px; color:var(--text-tertiary); min-width:32px; text-align:right;">${us.learned}/${us.total}</div>
+                            </div>`;
+                        }).filter(Boolean).join('');
+                        if (unitRows) {
+                            unitBreakdown = `<div style="margin-top:var(--sp-3);">${unitRows}</div>`;
+                        }
+                    }
+                }
+
+                return `
+                <div style="padding: 0 var(--sp-5) var(--sp-4);">
+                    <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:6px; font-size:var(--fs-sm);">
+                        ${LangyIcons.brain} ${{ en: 'Vocabulary', ru: 'Словарный запас', es: 'Vocabulario' }[lang]}
+                    </h4>
+
+                    <!-- Global Vocab Stats -->
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:var(--sp-2); margin-bottom:var(--sp-3);">
+                        <div class="card card--flat" style="padding:var(--sp-3); text-align:center;">
+                            <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:#F59E0B;">${globalStats.totalLearned}</div>
+                            <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase;">${{ en: 'Learned', ru: 'Изучено', es: 'Aprendidas' }[lang]}</div>
+                        </div>
+                        <div class="card card--flat" style="padding:var(--sp-3); text-align:center;">
+                            <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:#10B981;">${globalStats.totalMastered}</div>
+                            <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase;">${{ en: 'Mastered', ru: 'Освоено', es: 'Dominadas' }[lang]}</div>
+                        </div>
+                        <div class="card card--flat" style="padding:var(--sp-3); text-align:center; ${dueCount > 0 ? 'border:1px solid rgba(239,68,68,0.2);' : ''}">
+                            <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:${dueCount > 0 ? 'var(--danger)' : 'var(--text-tertiary)'};">${dueCount}</div>
+                            <div style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase;">${{ en: 'To Review', ru: 'К повтору', es: 'Para repasar' }[lang]}</div>
+                        </div>
+                    </div>
+
+                    ${levelStats ? `
+                    <!-- Level Progress Bar -->
+                    <div class="card card--flat" style="padding:var(--sp-3);">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--sp-1);">
+                            <span style="font-size:var(--fs-xs); font-weight:var(--fw-semibold);">${userLevel} ${{ en: 'Level Vocabulary', ru: 'Словарь уровня', es: 'Vocabulario del nivel' }[lang]}</span>
+                            <span style="font-size:10px; color:var(--text-tertiary);">${levelStats.learned}/${levelStats.total}</span>
+                        </div>
+                        <div style="height:6px; background:rgba(128,128,128,0.1); border-radius:3px; overflow:hidden;">
+                            <div style="height:100%; width:${levelStats.pct}%; background:linear-gradient(90deg, #F59E0B, #10B981); border-radius:3px; transition:width 0.6s;"></div>
+                        </div>
+                        <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">${levelStats.pct}% ${{ en: 'of level vocabulary learned', ru: 'словаря уровня изучено', es: 'del vocabulario del nivel aprendido' }[lang]}</div>
+                        ${unitBreakdown}
+                    </div>
+                    ` : ''}
+
+                    ${recentWords.length > 0 ? `
+                    <!-- Recent Words -->
+                    <div style="margin-top:var(--sp-3);">
+                        <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-tertiary); margin-bottom:var(--sp-2);">${{ en: 'Recently Studied', ru: 'Недавно изучено', es: 'Recientemente estudiado' }[lang]}</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                            ${recentWords.map(w => `<span style="font-size:10px; padding:3px 8px; border-radius:var(--radius-full); background:${VocabTracker.masteryColor(w.mastery)}12; color:${VocabTracker.masteryColor(w.mastery)}; border:1px solid ${VocabTracker.masteryColor(w.mastery)}20;" title="${w.ru || ''}: ${VocabTracker.masteryLabel(w.mastery, lang)}">${VocabTracker.masteryIcon(w.mastery)} ${w.en}</span>`).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    ${weakWords.length > 0 ? `
+                    <!-- Weak Words -->
+                    <div style="margin-top:var(--sp-3);">
+                        <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--danger); margin-bottom:var(--sp-2); display:flex; align-items:center; gap:4px;">${LangyIcons.alertTriangle} ${{ en: 'Needs Practice', ru: 'Нужна практика', es: 'Necesita práctica' }[lang]}</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                            ${weakWords.map(w => {
+                                const acc = w.attempts > 0 ? Math.round((w.correct / w.attempts) * 100) : 0;
+                                return `<span style="font-size:10px; padding:3px 8px; border-radius:var(--radius-full); background:rgba(239,68,68,0.08); color:var(--danger); border:1px solid rgba(239,68,68,0.15);" title="${w.ru || ''} — ${acc}% accuracy">${w.en} (${acc}%)</span>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>`;
+            })() : ''}
         </div>
     `;
 

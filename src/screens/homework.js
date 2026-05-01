@@ -162,6 +162,17 @@ function autoGenerateHomework() {
         });
     }
 
+    // 3) Vocabulary review homework from VocabTracker
+    if (typeof VocabTracker !== 'undefined') {
+        const existingVocabHw = LangyState.homework.current.find(h => h.source === 'vocab_review');
+        if (!existingVocabHw) {
+            const vocabHw = VocabTracker.generateVocabHomework();
+            if (vocabHw) {
+                LangyState.homework.current.push(vocabHw);
+            }
+        }
+    }
+
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
 }
 
@@ -229,6 +240,12 @@ function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
                 ${statusLabel} · ${item.weakSpotCount || ''}×
             </span>`;
         }
+        if (item.source === 'vocab_review') {
+            return `<span style="display:inline-flex; align-items:center; gap:3px; font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#F59E0B; margin-top:2px;">
+                <span style="width:5px; height:5px; border-radius:50%; background:#F59E0B;"></span>
+                ${{ en: 'Vocab Review', ru: 'Повтор слов', es: 'Repaso vocab' }[lang]}
+            </span>`;
+        }
         if (item.source === 'low_score') {
             return `<span style="display:inline-flex; align-items:center; gap:3px; font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--warning); margin-top:2px;">
                 ${LangyIcons.alertTriangle} ${{ en: 'Needs review', ru: 'Нужен повтор', es: 'Necesita repaso' }[lang]}
@@ -257,10 +274,10 @@ function renderCurrentHomework(items, hasWeakSpots, weakSpots, lang) {
         return '';
     };
 
-    // Sort: weak-spot items first, then score-based
+    // Sort: weak-spot items first, then vocab review, then score-based
     const sorted = [...items].sort((a, b) => {
-        const priority = { weak_spot: 0, low_score: 1 };
-        return (priority[a.source] ?? 2) - (priority[b.source] ?? 2);
+        const priority = { weak_spot: 0, vocab_review: 1, low_score: 2 };
+        return (priority[a.source] ?? 3) - (priority[b.source] ?? 3);
     });
 
     return focusSection + weakSection + sorted

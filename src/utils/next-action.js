@@ -169,6 +169,24 @@ const NextAction = (() => {
             });
         }
 
+        // Signal 7: Vocab review due → suggest vocabulary review
+        if (typeof VocabTracker !== 'undefined') {
+            const dueCount = VocabTracker.getDueCount();
+            if (dueCount >= 3) {
+                candidates.push({
+                    priority: dueCount >= 8 ? 9 : 7,
+                    mode: MODES[4], // vocabulary
+                    reason: {
+                        en: `${dueCount} vocabulary words need review — keep them in memory`,
+                        ru: `${dueCount} слов ждут повторения — не забывай их`,
+                        es: `${dueCount} palabras necesitan repaso — mantenlas en memoria`,
+                    },
+                    signal: 'vocab_review_due',
+                    meta: { dueCount },
+                });
+            }
+        }
+
         // Sort by priority (highest first)
         candidates.sort((a, b) => b.priority - a.priority);
 
@@ -211,6 +229,7 @@ const NextAction = (() => {
             stale_speaking: '#EF4444',
             low_recent_score: '#F59E0B',
             no_lessons_yet: '#3B82F6',
+            vocab_review_due: '#F59E0B',
         };
         const accentColor = signalColors[rec.signal] || 'var(--primary)';
 
