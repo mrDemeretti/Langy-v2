@@ -90,6 +90,7 @@ function renderOnboarding(container) {
         const langCards = Object.entries(languages).map(([code, cfg]) => {
             const isSelected = selectedLang === code;
             const backbone = cfg.academicBackbone || {};
+            const isFeatured = cfg.featured === true;
             const subtitleMap = {
                 en: {
                     en: 'CEFR-aligned academic English',
@@ -110,6 +111,12 @@ function renderOnboarding(container) {
             const subtitle = (subtitleMap[code] || {})[lang] || backbone.reference || '';
             const levelStr = cfg.cefrLevels ? `${cfg.cefrLevels[0]}–${cfg.cefrLevels[cfg.cefrLevels.length - 1]}` : '';
 
+            // Featured accent color (warm amber for Arabic wedge)
+            const featuredColor = '#D97706';
+            const borderColor = isSelected ? 'var(--primary)' : isFeatured ? featuredColor + '44' : 'var(--border)';
+            const bgColor = isSelected ? 'var(--primary-bg)' : isFeatured ? featuredColor + '06' : 'var(--bg-card)';
+            const tagline = cfg.tagline ? (cfg.tagline[lang] || cfg.tagline.en) : '';
+
             return `
                 <button class="onboarding__lang-card ${isSelected ? 'onboarding__lang-card--selected' : ''}"
                         data-lang="${code}"
@@ -117,14 +124,22 @@ function renderOnboarding(container) {
                         style="
                             display:flex; align-items:center; gap:var(--sp-4);
                             padding:var(--sp-5) var(--sp-4); border-radius:var(--radius-xl, 20px);
-                            border:2.5px solid ${isSelected ? 'var(--primary)' : 'var(--border)'};
-                            background:${isSelected ? 'var(--primary-bg)' : 'var(--bg-card)'};
+                            border:2.5px solid ${borderColor};
+                            background:${bgColor};
                             cursor:pointer; text-align:left; width:100%;
                             transition: all 0.25s ease;
                             font-family:inherit; font-size:var(--fs-base);
                             color:var(--text-primary);
                             ${isSelected ? 'box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 99,102,241), 0.15);' : ''}
+                            position:relative;
                         ">
+                    ${isFeatured ? `<span style="
+                        position:absolute; top:-9px; right:16px;
+                        background:${featuredColor}; color:#fff;
+                        font-size:9px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase;
+                        padding:2px 10px; border-radius:6px;
+                        line-height:16px;
+                    ">${{ en: 'Featured', ru: 'Рекомендуем', es: 'Destacado' }[lang]}</span>` : ''}
                     <span style="
                         font-size:40px; flex-shrink:0; width:52px; height:52px;
                         display:flex; align-items:center; justify-content:center;
@@ -138,6 +153,7 @@ function renderOnboarding(container) {
                         <div style="font-size:var(--fs-sm); color:var(--text-secondary); margin-top:3px;">
                             ${subtitle}
                         </div>
+                        ${tagline ? `<div style="font-size:var(--fs-xs, 11px); color:${featuredColor}; margin-top:4px; font-weight:var(--fw-semibold, 600);">${tagline}</div>` : ''}
                         <div style="font-size:var(--fs-xs, 11px); color:var(--text-tertiary, var(--text-secondary)); margin-top:4px; opacity:0.7;">
                             CEFR ${levelStr}${cfg.direction === 'rtl' ? ' · RTL' : ''}
                         </div>

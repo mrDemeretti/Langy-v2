@@ -71,6 +71,17 @@ const LangyTarget = {
             aiTeacherRole: 'Arabic language teacher (Modern Standard Arabic)',
             aiExaminerRole: 'Arabic examiner',
             curriculumId: 'ar',
+            featured: true, // wedge language — gets highlighted treatment on key surfaces
+            tagline: {
+                en: 'Our deepest Arabic learning experience',
+                ru: 'Наш самый глубокий курс арабского',
+                es: 'Nuestra experiencia más profunda en árabe',
+            },
+            highlights: {
+                en: ['Script-first methodology', 'MSA + dialect awareness', 'Heritage & religious tracks'],
+                ru: ['Методика «скрипт прежде всего»', 'МСА + диалектное сознание', 'Наследие и религиозные треки'],
+                es: ['Metodología basada en escritura', 'MSA + conciencia dialectal', 'Herencia y pistas religiosas'],
+            },
             academicBackbone: {
                 framework: 'CEFR-adapted for Arabic + ACTFL proficiency guidelines',
                 reference: 'Al-Kitaab / Arabiyyat al-Naas-style progression',

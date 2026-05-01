@@ -18,11 +18,25 @@ function renderSubscription(container) {
         es: 'Dos formas de aprender.\nUna para mejorar más rápido.',
     }[lang];
 
+    // Language-aware value framing
+    const targetCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
     const subheadline = {
-        en: 'Free gives you real practice. Coach makes every session count more.',
-        ru: 'Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
-        es: 'Gratis te da práctica real. Coach hace que cada sesión cuente más.',
-    }[lang];
+        ar: {
+            en: 'Arabic is one of our deepest tracks. Free gives you real practice. Coach makes every session count more.',
+            ru: 'Арабский — один из наших самых глубоких треков. Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
+            es: 'Árabe es una de nuestras pistas más profundas. Gratis te da práctica real. Coach hace que cada sesión cuente más.',
+        },
+        en: {
+            en: 'Free gives you real practice. Coach makes every session count more.',
+            ru: 'Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
+            es: 'Gratis te da práctica real. Coach hace que cada sesión cuente más.',
+        },
+        es: {
+            en: 'Free gives you real practice. Coach makes every session count more.',
+            ru: 'Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
+            es: 'Gratis te da práctica real. Coach hace que cada sesión cuente más.',
+        },
+    }[targetCode]?.[lang] || 'Free gives you real practice. Coach makes every session count more.';
 
     // Free plan: strong, positive, not diminished
     const freeTitle = { en: 'Langy Free', ru: 'Langy Free', es: 'Langy Free' }[lang];

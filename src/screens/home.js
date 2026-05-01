@@ -267,6 +267,49 @@ function renderHome(container) {
                 </div>
             </div>
 
+            <!-- Language Path Badge -->
+            ${(() => {
+                const tc = typeof LangyTarget !== 'undefined' ? LangyTarget.current : null;
+                if (!tc) return '';
+                const isFeatured = tc.featured === true;
+                const langName = typeof LangyTarget !== 'undefined' && LangyTarget.displayName ? LangyTarget.displayName(lang) : tc.nativeName;
+                const tagline = tc.tagline ? (tc.tagline[lang] || tc.tagline.en) : '';
+                const highlights = tc.highlights ? (tc.highlights[lang] || tc.highlights.en) : [];
+                const fc = '#D97706';
+
+                if (isFeatured) {
+                    return `<div style="
+                        margin:0 var(--sp-5) var(--sp-3); padding:var(--sp-3) var(--sp-4);
+                        background:${fc}06; border:1px solid ${fc}22;
+                        border-radius:var(--radius-lg); display:flex; align-items:center; gap:var(--sp-3);
+                    ">
+                        <span style="font-size:28px; flex-shrink:0;">${tc.flag}</span>
+                        <div style="flex:1; min-width:0;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm);">${langName}</span>
+                                <span style="font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+                                    background:${fc}; color:#fff; padding:1px 6px; border-radius:4px; line-height:14px;">
+                                    ${{ en: 'Featured', ru: 'Топ', es: 'Destacado' }[lang]}</span>
+                            </div>
+                            <div style="font-size:10px; color:${fc}; margin-top:2px; font-weight:var(--fw-semibold, 600);">${tagline}</div>
+                            ${highlights.length > 0 ? `<div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
+                                ${highlights.map(h => `<span style="font-size:9px; padding:1px 6px; border-radius:var(--radius-full);
+                                    background:${fc}08; color:${fc}; border:1px solid ${fc}15;">${h}</span>`).join('')}
+                            </div>` : ''}
+                        </div>
+                    </div>`;
+                }
+                return `<div style="
+                    margin:0 var(--sp-5) var(--sp-3); padding:var(--sp-2) var(--sp-4);
+                    background:var(--bg-card); border:1px solid var(--border);
+                    border-radius:var(--radius-lg); display:flex; align-items:center; gap:var(--sp-2);
+                ">
+                    <span style="font-size:20px;">${tc.flag}</span>
+                    <span style="font-weight:var(--fw-semibold, 600); font-size:var(--fs-sm);">${langName}</span>
+                    <span style="font-size:10px; color:var(--text-tertiary); margin-left:auto;">CEFR ${tc.cefrLevels ? tc.cefrLevels[0] + '\u2013' + tc.cefrLevels[tc.cefrLevels.length-1] : ''}</span>
+                </div>`;
+            })()}
+
             <!-- Next Action Zone -->
             <div class="home__next-action">
                 ${
