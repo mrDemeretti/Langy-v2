@@ -2328,9 +2328,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Addition', sentence: 'The team worked hard; ___, they finished early.', options: ['furthermore', 'nevertheless'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Contrast', sentence: 'It was a risky investment. ___, it paid off.', options: ['Moreover', 'However'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Result', sentence: 'Demand fell sharply; ___, prices dropped.', options: ['consequently', 'whereas'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Comparison', sentence: 'He prefers tea, ___ she drinks coffee.', options: ['whereas', 'moreover'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Contrast', sentence: 'The report was thorough. ___, it failed to address the core issue.', options: ['Furthermore', 'Nevertheless'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Basic → C1', pairs: [{ left: 'But...', right: 'However / Nevertheless' }, { left: 'And also...', right: 'Moreover / Furthermore' }, { left: 'So...', right: 'Therefore / Consequently' }, { left: 'On the other hand...', right: 'Whereas / In contrast' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Linkers', words: ['expensive', 'furthermore', 'it', 'poorly', 'is', 'designed', 'was'], correct: ['it', 'was', 'expensive', 'furthermore', 'it', 'is', 'poorly', 'designed'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Он усердно работал; тем не менее, он провалился.', fromLang: 'RU', toLang: 'EN', answer: 'He worked hard; nevertheless, he failed' } },
-                    { type: 'speak-aloud', data: { instruction: 'Formal speech:', phrase: "The initial tests were successful; therefore, we have decided to proceed with the investment." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "The initial results were promising; however, further research is required.", hint: 'Contrast marker with semicolon' } },
+                    { type: 'speak-aloud', data: { instruction: 'Formal speech:', phrase: "The initial tests were successful; therefore, we have decided to proceed. Moreover, the budget allows for further expansion." } }
                 ]
             },
             // ── C1 Unit 2 ──
@@ -2341,14 +2345,20 @@ const LangyCurriculum = {
                 teachSlides: [
                     { type: 'explain', mascotText: "When you don't do something yourself, but you pay or ask someone else to do it, use the Causative!", mascotEmotion: 'happy' },
                     { type: 'examples', mascotText: "Structure: HAVE/GET + Object + Past Participle (V3)", mascotEmotion: 'thinking', items: [{ base: 'DIY', past: "I cut my hair.", highlight: '(I used scissors on myself)' }, { base: 'Causative', past: "I had my hair cut.", highlight: '(A barber did it)' }] },
+                    { type: 'compare', mascotText: "Have vs Get causative:", mascotEmotion: 'happy', left: { label: 'HAVE (formal/neutral)', items: ['I had my car serviced.', 'She had the report proofread.'] }, right: { label: 'GET (informal/dynamic)', items: ['I got my car fixed.', 'She got her nails done.'] } },
+                    { type: 'tip', mascotText: "The causative can also express negative experiences: 'He had his wallet stolen' = someone stole it from him (not a service!).", mascotEmotion: 'thinking', tipText: "Negative causative: had + object + V3 = something bad happened to someone" },
                     { type: 'quiz-check', mascotText: "My watch is broken. I need to ___.", mascotEmotion: 'thinking', options: ['repair it', 'have it repaired'], correct: 1 }
                 ],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Causative', sentence: 'I need to have my car ___.', options: ['repair', 'repaired', 'repairing'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Causative', sentence: 'She ___ her house painted last week.', options: ['had', 'have', 'was'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Get vs Have', sentence: 'We are getting a new security system ___.', options: ['install', 'installed'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Negative', sentence: 'He ___ his phone stolen on the train.', options: ['had', 'got', 'both are correct'], correct: 2 } },
+                    { type: 'fill-bubble', data: { instruction: 'Causative', sentence: 'You should get your eyes ___ regularly.', options: ['test', 'tested', 'testing'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'DIY vs Causative', pairs: [{ left: 'I cut my hair.', right: 'I did it myself' }, { left: 'I had my hair cut.', right: 'A barber did it' }, { left: 'He repaired the car.', right: 'He fixed it himself' }, { left: 'He had the car repaired.', right: 'A mechanic fixed it' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Causative', words: ['had', 'stolen', 'he', 'wallet', 'his'], correct: ['he', 'had', 'his', 'wallet', 'stolen'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я подстригся вчера. (В парикмахерской)', fromLang: 'RU', toLang: 'EN', answer: 'I had my hair cut yesterday' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "She needs to get her passport renewed before the trip.", hint: 'Get-causative: get + object + V3' } },
                     { type: 'speak-aloud', data: { instruction: 'Services:', phrase: "I need to get my computer fixed and have my jacket dry-cleaned before the conference." } }
                 ]
             },
@@ -2366,9 +2376,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: '99% True', sentence: 'He got top scores. He ___ studied hard.', options: ['must have', 'can\'t have'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: '99% False', sentence: 'He ___ gone to Japan; I saw him in London today!', options: ['must have', 'can\'t have'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: '50% Maybe', sentence: 'I can\'t find my keys. I ___ left them in the car.', options: ['must have', 'might have'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: '99% True', sentence: 'The roads are wet. It ___ rained overnight.', options: ['must have', 'might have'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: '99% False', sentence: 'She ___ written this. Her English isn\'t this good.', options: ['must have', 'can\'t have'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Certainty → Modal', pairs: [{ left: '99% sure it happened', right: 'must have + V3' }, { left: '99% sure it didn\'t happen', right: 'can\'t have + V3' }, { left: '50% possible', right: 'might have + V3' }, { left: '50% possible (formal)', right: 'could have + V3' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Deduction', words: ['forgotten', 'have', 'must', 'she', 'meeting', 'the'], correct: ['she', 'must', 'have', 'forgotten', 'the', 'meeting'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Должно быть, он забыл о встрече.', fromLang: 'RU', toLang: 'EN', answer: 'He must have forgotten about the meeting' } },
-                    { type: 'speak-aloud', data: { instruction: 'Speculate:', phrase: "They can't have finished the project already. They must have worked through the night!" } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "She can't have left already. Her coat is still on the chair.", hint: 'can\'t have + V3 = 99% sure it didn\'t happen' } },
+                    { type: 'speak-aloud', data: { instruction: 'Speculate:', phrase: "They can't have finished the project already. They must have worked through the night! Someone might have helped them." } }
                 ]
             },
             // ── C1 Unit 4 ──
@@ -2385,21 +2399,33 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Needn\'t have', sentence: 'We ___ rushed. The train was delayed by an hour! (We ran for no reason).', options: ['didn\'t need to run', 'needn\'t have run'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Didn\'t need to', sentence: 'I ___ to the supermarket because my wife already went. So I stayed home.', options: ['didn\'t need to go', 'needn\'t have gone'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Expectation', sentence: 'You ___ be here at 8 AM! Why are you late?', options: ['were supposed to', 'had to'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Needn\'t have', sentence: 'I ___ bought all this food — nobody came to the party!', options: ['didn\'t need to', 'needn\'t have'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Didn\'t need to', sentence: 'The exam was cancelled, so we ___ revise.', options: ['didn\'t need to', 'needn\'t have'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Meaning → Form', pairs: [{ left: 'Did it + unnecessary', right: 'needn\'t have + V3' }, { left: 'Knew + didn\'t do', right: 'didn\'t need to + verb' }, { left: 'Unmet expectation', right: 'was/were supposed to' }, { left: 'Obligation (past)', right: 'had to' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Unnecessary', words: ['have', 'bought', 'needn\'t', 'wine', 'we', 'more'], correct: ['we', 'needn\'t', 'have', 'bought', 'more', 'wine'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'А я мог бы и не торопиться! (оказалось не нужным)', fromLang: 'RU', toLang: 'EN', answer: 'I needn\'t have hurried' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "You needn't have brought an umbrella. It didn't rain at all.", hint: "needn't have + V3 = did it but it was unnecessary" } },
                     { type: 'speak-aloud', data: { instruction: 'Expectations:', phrase: "I was supposed to call my manager, but I needn't have worried because she called me first." } }
                 ]
             },
             // ── C1 Unit 5 ──
             {
                 id: 5, title: '🔄 Checkpoint 1', desc: 'Review C1 Units 1-4.', unitType: 'review',
-                grammar: ['linkers', 'causative', 'past deduction'], vocab: ['C1 review'],
+                grammar: ['linkers', 'causative', 'past deduction', 'needn\'t have'], vocab: ['C1 review'],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Linkers', sentence: "The project failed; ___, we learned a lot.", options: ['moreover', 'nevertheless'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Linkers', sentence: "Sales increased by 20%. ___, customer satisfaction improved.", options: ['Furthermore', 'However'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Causative', sentence: "I'm having my house ___ next week.", options: ['paint', 'painted'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Causative', sentence: "She got her laptop ___ at the repair shop.", options: ['fix', 'fixed'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Deduction', sentence: "He ___ have read the email; he completely ignored my instructions.", options: ["must", "can't"], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Deduction', sentence: "The lights are on. Someone ___ have come home.", options: ['must', 'might'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Needn\'t', sentence: "You ___ brought a gift, but thank you so much!", options: ['needn\'t have', 'didn\'t need to'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Они, должно быть, заблудились.', fromLang: 'RU', toLang: 'EN', answer: 'They must have got lost' } }
+                    { type: 'fill-bubble', data: { instruction: 'Supposed to', sentence: "He ___ arrive at nine, but he came at noon.", options: ['was supposed to', 'had to'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'C1 Grammar → Example', pairs: [{ left: 'Discourse marker', right: 'Nevertheless, it succeeded.' }, { left: 'Causative', right: 'I had it repaired.' }, { left: 'Past deduction', right: 'She must have left.' }, { left: 'Needn\'t have', right: 'I needn\'t have rushed.' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Linker', words: ['successful', 'project', 'the', 'was', 'consequently', 'expanded', 'we'], correct: ['the', 'project', 'was', 'successful', 'consequently', 'we', 'expanded'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Они, должно быть, заблудились.', fromLang: 'RU', toLang: 'EN', answer: 'They must have got lost' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "I had my suit dry-cleaned; nevertheless, the stain was still visible.", hint: 'Causative + discourse marker' } },
+                    { type: 'speak-aloud', data: { instruction: 'C1 Review:', phrase: "She must have forgotten the meeting. I had the report printed; however, it needn't have been so urgent." } }
                 ]
             },
             // ── C1 Unit 6 ──
@@ -2418,9 +2444,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Cleft (What)', sentence: "___ really annoys me is the noise.", options: ['It', 'What', 'That'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: "Rarely ___ such incredible talent.", options: ['have I seen', 'I have seen'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: "Not only ___ late, but he forgot his laptop.", options: ['was he', 'he was'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: "Under no circumstances ___ you enter this room.", options: ['should', 'you should'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Cleft (What)', sentence: "___ I find most alarming is the lack of funding.", options: ['What', 'It', 'The thing'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Normal → Emphatic', pairs: [{ left: 'I have never seen this.', right: 'Never have I seen this.' }, { left: 'She only then understood.', right: 'Only then did she understand.' }, { left: 'John broke it.', right: 'It was John who broke it.' }, { left: 'I need rest.', right: 'What I need is rest.' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Inversion', words: ['I', 'did', 'little', 'know', 'truth', 'the'], correct: ['little', 'did', 'I', 'know', 'the', 'truth'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Никогда еще я не был так счастлив.', fromLang: 'RU', toLang: 'EN', answer: 'Never have I been so happy' } },
-                    { type: 'speak-aloud', data: { instruction: 'Emphasis:', phrase: "It was his attitude that bothered me most. Rarely do you see such arrogance." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "Not only did he arrive late, but he also forgot the presentation.", hint: 'Not only + inversion + but also' } },
+                    { type: 'speak-aloud', data: { instruction: 'Emphasis:', phrase: "It was his attitude that bothered me most. Rarely do you see such arrogance. Under no circumstances should this be tolerated." } }
                 ]
             },
             // ── C1 Unit 7 ──
@@ -2439,9 +2469,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Distancing', sentence: "___ is believed that the suspect fled the country.", options: ['He', 'It'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Distancing', sentence: "He is reported ___ the country.", options: ['to have fled', 'that he fled'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Hedging', sentence: "This ___ be the best solution available.", options: ['arguably might', '100% will'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Hedging', sentence: "The data ___ to indicate a positive trend.", options: ['seems', 'definitely'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Distancing', sentence: "He is thought ___ a genius.", options: ['to be', 'being'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Direct → Hedged', pairs: [{ left: 'This will fail.', right: 'This is likely to fail.' }, { left: 'He is a genius.', right: 'He is considered to be a genius.' }, { left: 'The economy will recover.', right: 'It is expected that the economy will recover.' }, { left: 'She stole it.', right: 'She is alleged to have stolen it.' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Passive Reporting', words: ['is', 'that', 'economy', 'expected', 'the', 'will', 'recover', 'it'], correct: ['it', 'is', 'expected', 'that', 'the', 'economy', 'will', 'recover'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Считается, что он гений.', fromLang: 'RU', toLang: 'EN', answer: 'He is considered to be a genius' } },
-                    { type: 'speak-aloud', data: { instruction: 'Diplomacy:', phrase: "It is widely believed that these measures, arguably, tend to improve productivity." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "It is widely believed that climate change poses a significant threat to biodiversity.", hint: 'Passive reporting: It is + past participle + that...' } },
+                    { type: 'speak-aloud', data: { instruction: 'Diplomacy:', phrase: "It is widely believed that these measures, arguably, tend to improve productivity. The evidence appears to support this view." } }
                 ]
             },
             // ── C1 Unit 8 ──
@@ -2460,9 +2494,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Negative Ellipsis', sentence: "Is the flight cancelled? — I hope ___.", options: ['not', 'no'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Noun Clause', sentence: "___ he said made me very angry.", options: ['What', 'That'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Ellipsis verb', sentence: "She said she would help, but she ___.", options: ["didn't", "didn't help"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Ellipsis', sentence: "Will it be difficult? — I'm afraid ___.", options: ['so', 'yes'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Noun Clause', sentence: "___ surprised me was his honesty.", options: ['What', 'It'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Full → Ellipsis', pairs: [{ left: 'I think it will rain.', right: 'I think so.' }, { left: 'I hope it won\'t rain.', right: 'I hope not.' }, { left: 'She wanted to stay but she didn\'t stay.', right: 'She wanted to but she didn\'t.' }, { left: 'I believe it is true.', right: 'I believe so.' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Noun clause', words: ['said', 'true', 'he', 'is', 'what', 'not'], correct: ['what', 'he', 'said', 'is', 'not', 'true'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я надеюсь, что да.', fromLang: 'RU', toLang: 'EN', answer: 'I hope so' } },
-                    { type: 'speak-aloud', data: { instruction: 'Flowing speech:', phrase: "What you need to understand is that I wanted to finish early, but I couldn't." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "Do you think the project will succeed? I certainly hope so.", hint: 'Ellipsis with so replacing a full clause' } },
+                    { type: 'speak-aloud', data: { instruction: 'Flowing speech:', phrase: "What you need to understand is that I wanted to finish early, but I couldn't. Will we meet the deadline? I'm afraid not." } }
                 ]
             },
             // ── C1 Unit 9 ──
@@ -2478,8 +2516,15 @@ const LangyCurriculum = {
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Intro Phrase', sentence: "Today, I would like to ___ the issue of climate change.", options: ['talk', 'address'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Emphasis', sentence: "___ is clear is that we need a new strategy.", options: ['What', 'It'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Signposting', sentence: "___ sum up, the evidence strongly supports our proposal.", options: ['To', 'For'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Hedging', sentence: "The data ___ suggest that remote work improves productivity.", options: ['appears to', 'definitely'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Transition', sentence: "Having ___ the advantages, let us now consider the drawbacks.", options: ['discussed', 'talking'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Emphasis', sentence: "It is ___ this reason that we must act now.", options: ['for', 'by'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Presentation Phrase → Purpose', pairs: [{ left: 'I would like to address...', right: 'Introduction' }, { left: 'Having discussed X, let us...', right: 'Transition' }, { left: 'What I find most alarming is...', right: 'Emphasis' }, { left: 'To sum up,...', right: 'Conclusion' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Conclusion', words: ['the', 'to', 'sum', 'up', 'evidence', 'our', 'supports', 'proposal'], correct: ['to', 'sum', 'up', 'the', 'evidence', 'supports', 'our', 'proposal'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'То, что нам нужно - это устойчивое развитие.', fromLang: 'RU', toLang: 'EN', answer: 'What we need is sustainable development' } },
-                    { type: 'speak-aloud', data: { instruction: 'Present:', phrase: "Furthermore, it is essential to recognize that what we decide today will impact future generations." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "It is for precisely this reason that we must reconsider our approach to energy policy.", hint: 'Cleft emphasis: It is for... that...' } },
+                    { type: 'speak-aloud', data: { instruction: 'Present:', phrase: "Furthermore, it is essential to recognize that what we decide today will impact future generations. To sum up, the evidence clearly supports our proposal." } }
                 ]
             },
             // ── C1 Unit 10 ──
@@ -2488,10 +2533,18 @@ const LangyCurriculum = {
                 grammar: ['inversion', 'cleft', 'hedging', 'ellipsis'], vocab: ['C1 review'],
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: "Only later ___ understand the true meaning.", options: ['she did', 'did she'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: "Seldom ___ such dedication in a junior employee.", options: ['do we see', 'we see'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Cleft', sentence: "___ was the CEO who made the decision.", options: ['He', 'It'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Cleft', sentence: "___ I find most troubling is the lack of transparency.", options: ['What', 'It'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Passive Reporting', sentence: "The building is estimated ___ over a million dollars.", options: ['to cost', 'that it costs'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Hedging', sentence: "The results ___ to confirm the hypothesis.", options: ['appear', 'definitely'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Ellipsis', sentence: "Will they finish on time? — I suspect ___.", options: ['not', 'no'], correct: 0 } },
-                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Редко мы встречаем таких людей.', fromLang: 'RU', toLang: 'EN', answer: 'Rarely do we meet such people' } }
+                    { type: 'fill-bubble', data: { instruction: 'Noun Clause', sentence: "___ matters most is the quality of the work.", options: ['What', 'It'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'C1 Grammar → Example', pairs: [{ left: 'Inversion', right: 'Rarely have I seen...' }, { left: 'Cleft sentence', right: 'It was the CEO who...' }, { left: 'Hedging', right: 'The data appears to...' }, { left: 'Ellipsis', right: 'I hope so.' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Inversion', words: ['circumstances', 'no', 'under', 'leave', 'should', 'you'], correct: ['under', 'no', 'circumstances', 'should', 'you', 'leave'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Редко мы встречаем таких людей.', fromLang: 'RU', toLang: 'EN', answer: 'Rarely do we meet such people' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "What I find most concerning is the apparent lack of oversight in this process.", hint: 'What-cleft for emphasis' } },
+                    { type: 'speak-aloud', data: { instruction: 'C1 Review:', phrase: "Not only did the company fail to meet its targets, but it is also believed that the CEO misled investors. I hope not." } }
                 ]
             },
             // ── C1 Unit 11 ──
@@ -2509,9 +2562,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Past -> Present', sentence: "If she had slept earlier, she ___ so tired today.", options: ["wouldn't be", "wouldn't have been"], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Present -> Past', sentence: "If I wasn't afraid of flying, I ___ with you last week.", options: ['would go', 'would have gone'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Mixed', sentence: "If we had brought a map, we ___ lost right now.", options: ["wouldn't be", "wouldn't have been"], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Past -> Present', sentence: "If he had saved money, he ___ afford the trip now.", options: ['would', 'would have'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Present -> Past', sentence: "If she were more confident, she ___ applied for the promotion.", options: ['would', 'would have'], correct: 1 } },
+                    { type: 'match-pairs', data: { instruction: 'Condition -> Result', pairs: [{ left: 'If I had studied (past)', right: 'I would know it now (present)' }, { left: 'If I were taller (present)', right: 'I would have played basketball (past)' }, { left: 'If he had saved money (past)', right: 'He would be rich now (present)' }, { left: 'If she liked travel (present)', right: 'She would have gone last week (past)' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Mixed', words: ['I', 'rich', 'be', 'bought', 'bitcoin', 'had', 'would', 'I', 'now', 'if'], correct: ['if', 'I', 'had', 'bought', 'bitcoin', 'I', 'would', 'be', 'rich', 'now'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Если бы я выучил английский раньше, я бы сейчас имел лучшую работу.', fromLang: 'RU', toLang: 'EN', answer: 'If I had learned English earlier, I would have a better job now' } },
-                    { type: 'speak-aloud', data: { instruction: 'Reflect:', phrase: "If I hadn't moved to this city, I wouldn't have met my best friend." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "If I had taken that job in Berlin, I would probably be fluent in German by now.", hint: 'Past action -> Present result: had + V3 -> would + V1' } },
+                    { type: 'speak-aloud', data: { instruction: 'Reflect:', phrase: "If I hadn't moved to this city, I wouldn't have met my best friend. If I were braver, I would have accepted the offer." } }
                 ]
             },
             // ── C1 Unit 12 ──
@@ -2529,9 +2586,13 @@ const LangyCurriculum = {
                     { type: 'fill-bubble', data: { instruction: 'Get-passive', sentence: "He ___ fired for being late every day.", options: ['got', 'was being'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Continuous', sentence: "Please wait. Your application is currently ___ processed.", options: ['been', 'being'], correct: 1 } },
                     { type: 'fill-bubble', data: { instruction: 'Perfect', sentence: "All the tickets have already ___ sold out.", options: ['been', 'being'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Get-passive', sentence: "Three employees ___ promoted last month.", options: ['got', 'were being'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Continuous Perfect', sentence: "The bridge has ___ repaired for two months now.", options: ['been being', 'being'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Passive Form → Example', pairs: [{ left: 'Simple passive', right: 'The window was broken.' }, { left: 'Get-passive', right: 'He got promoted.' }, { left: 'Continuous passive', right: 'The road is being repaired.' }, { left: 'Perfect passive', right: 'The problem has been solved.' }] } },
                     { type: 'word-shuffle', data: { instruction: 'Continuous Passive', words: ['interrogated', 'suspect', 'the', 'is', 'being', 'currently'], correct: ['the', 'suspect', 'is', 'currently', 'being', 'interrogated'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Мой телефон разбился. (get-passive)', fromLang: 'RU', toLang: 'EN', answer: 'My phone got smashed' } },
-                    { type: 'speak-aloud', data: { instruction: 'Mix Passives:', phrase: "The building is being renovated, but the work hasn't been finished yet. Several workers got injured." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "The new policy is currently being reviewed by the committee.", hint: 'Present continuous passive: is being + V3' } },
+                    { type: 'speak-aloud', data: { instruction: 'Mix Passives:', phrase: "The building is being renovated, but the work hasn't been finished yet. Several workers got injured during the process." } }
                 ]
             },
             // ── C1 Unit 13 ──
@@ -2547,8 +2608,37 @@ const LangyCurriculum = {
                 exercises: [
                     { type: 'fill-bubble', data: { instruction: 'Concession', sentence: "___ I understand your concerns, I must disagree.", options: ['While', 'Because'], correct: 0 } },
                     { type: 'fill-bubble', data: { instruction: 'Counter', sentence: "That's a valid point; ___, we must look at the bigger picture.", options: ['furthermore', 'nevertheless'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Concession', sentence: "___ it may be true that costs will rise, the benefits outweigh them.", options: ['Although', 'Because'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Strengthening', sentence: "The evidence ___ supports the hypothesis.", options: ['overwhelmingly', 'kind of'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Polite Disagree', sentence: "I see your point; ___, I would argue that...", options: ['however', 'and'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Concluding', sentence: "___, the evidence clearly suggests that regulation is necessary.", options: ['Ultimately', 'Firstly'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'Debate Move → Phrase', pairs: [{ left: 'Conceding', right: 'While I admit that...' }, { left: 'Countering', right: 'That may be true, but...' }, { left: 'Strengthening', right: 'The evidence overwhelmingly...' }, { left: 'Concluding', right: 'Ultimately, we must...' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Counter', words: ['be', 'fails', 'that', 'true', 'may', 'to', 'it', 'account', 'for'], correct: ['that', 'may', 'be', 'true', 'it', 'fails', 'to', 'account', 'for'] } },
                     { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Я категорически не согласен с этим утверждением.', fromLang: 'RU', toLang: 'EN', answer: 'I strongly disagree with this statement' } },
-                    { type: 'speak-aloud', data: { instruction: 'Debate:', phrase: "While it is undeniably true that costs will rise, we must consider the long-term environmental benefits." } }
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "While I acknowledge the potential drawbacks, the long-term benefits of this policy are undeniable.", hint: 'Concession + counter: While I acknowledge..., the benefits...' } },
+                    { type: 'speak-aloud', data: { instruction: 'Debate:', phrase: "While it is undeniably true that costs will rise, we must consider the long-term environmental benefits. Ultimately, the evidence suggests that action is imperative." } }
+                ]
+            },
+            // ── C1 Unit 14 ──
+            {
+                id: 14, title: '🎯 Final Checkpoint C1', desc: 'Comprehensive review of all C1 grammar.', unitType: 'review',
+                grammar: ['all C1 grammar'], vocab: ['C1 mastery'],
+                exercises: [
+                    { type: 'fill-bubble', data: { instruction: 'Discourse Marker', sentence: "The project was expensive; ___, it was completed on time.", options: ['nevertheless', 'moreover'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Causative', sentence: "She is having a dress ___ for the ceremony.", options: ['make', 'made'], correct: 1 } },
+                    { type: 'fill-bubble', data: { instruction: 'Deduction', sentence: "The door is open. Someone ___ broken in.", options: ['must have', 'can\'t have'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Needn\'t have', sentence: "We ___ taken a taxi. The bus would have been faster.", options: ['needn\'t have', 'didn\'t need to'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Inversion', sentence: "Not until the final moment ___ the gravity of the situation.", options: ['did she realise', 'she realised'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Cleft', sentence: "___ I find most inspiring is his resilience.", options: ['What', 'It'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Hedging', sentence: "The data ___ to indicate a causal relationship.", options: ['appears', 'proves'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Ellipsis', sentence: "Will it work? — I believe ___.", options: ['so', 'yes'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Mixed Conditional', sentence: "If he had accepted the offer, he ___ in Tokyo right now.", options: ['would be living', 'would have lived'], correct: 0 } },
+                    { type: 'fill-bubble', data: { instruction: 'Advanced Passive', sentence: "The report is ___ reviewed by the board.", options: ['being', 'been'], correct: 0 } },
+                    { type: 'match-pairs', data: { instruction: 'C1 Mastery', pairs: [{ left: 'Discourse markers', right: 'However, moreover, consequently' }, { left: 'Inversion', right: 'Never have I seen...' }, { left: 'Hedging', right: 'It appears to suggest...' }, { left: 'Mixed conditional', right: 'If I had known, I would be...' }] } },
+                    { type: 'word-shuffle', data: { instruction: 'Inversion + Cleft', words: ['what', 'is', 'seldom', 'do', 'we', 'see', 'remarkable', 'is'], correct: ['seldom', 'do', 'we', 'see', 'what', 'is', 'remarkable', 'is'] } },
+                    { type: 'type-translation', data: { instruction: 'Translate', sourceText: 'Считается, что он уехал из страны.', fromLang: 'RU', toLang: 'EN', answer: 'He is believed to have left the country' } },
+                    { type: 'listen-type', data: { instruction: 'Listen and type', text: "Not only did they fail to meet the deadline, but it is also believed that the data was falsified.", hint: 'Inversion + passive reporting' } },
+                    { type: 'speak-aloud', data: { instruction: 'C1 Mastery:', phrase: "What I find most remarkable is how rarely we acknowledge the progress that has been made. Nevertheless, the evidence appears to support the initial hypothesis." } }
                 ]
             }
         ]
