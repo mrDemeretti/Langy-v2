@@ -124,7 +124,13 @@ function renderResults(container) {
         <div class="screen screen--no-pad">
             <div class="nav-header">
                 <div class="nav-header__back" id="results-back">${LangyIcons.back}</div>
-                <div class="nav-header__title">${typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en' && activeTb ? ({ en: `English · ${activeTb.cefr}`, ru: `Английский · ${activeTb.cefr}`, es: `Inglés · ${activeTb.cefr}` }[lang]) : ({ en: 'Learn', ru: 'Учиться', es: 'Aprender' }[lang])}</div>
+                <div class="nav-header__title">${(() => {
+                    if (typeof LangyTarget === 'undefined') return ({ en: 'Learn', ru: 'Учиться', es: 'Aprender' }[lang]);
+                    const code = LangyTarget.getCode();
+                    if (code === 'en' && activeTb) return ({ en: `English · ${activeTb.cefr}`, ru: `Английский · ${activeTb.cefr}`, es: `Inglés · ${activeTb.cefr}` }[lang]);
+                    if (code === 'ar' && activeTb) return ({ en: `Arabic · ${activeTb.cefr}`, ru: `Арабский · ${activeTb.cefr}`, es: `Árabe · ${activeTb.cefr}` }[lang]);
+                    return ({ en: 'Learn', ru: 'Учиться', es: 'Aprender' }[lang]);
+                })()}</div>
                 <div style="width:36px;"></div>
             </div>
 

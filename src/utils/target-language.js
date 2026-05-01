@@ -84,15 +84,44 @@ const LangyTarget = {
             aiExaminerRole: 'Arabic examiner',
             curriculumId: 'ar',
             featured: true, // wedge language — gets highlighted treatment on key surfaces
+            trackColor: '#0F766E', // teal — distinct from English amber
+            trackIdentity: {
+                en: 'Script-First',
+                ru: 'Скрипт-первый',
+                es: 'Escritura primero',
+            },
             tagline: {
                 en: 'Our deepest Arabic learning experience',
                 ru: 'Наш самый глубокий курс арабского',
                 es: 'Nuestra experiencia más profunda en árabe',
             },
             highlights: {
-                en: ['Script-first methodology', 'MSA + dialect awareness', 'Heritage & religious tracks'],
-                ru: ['Методика «скрипт прежде всего»', 'МСА + диалектное сознание', 'Наследие и религиозные треки'],
-                es: ['Metodología basada en escritura', 'MSA + conciencia dialectal', 'Herencia y pistas religiosas'],
+                en: ['Script-first methodology', 'MSA + dialect awareness', 'Heritage & religious tracks', 'Pharyngeal phonetics'],
+                ru: ['Методика «скрипт прежде всего»', 'МСА + диалектное сознание', 'Наследие и религиозные треки', 'Фарингальная фонетика'],
+                es: ['Metodología basada en escritura', 'MSA + conciencia dialectal', 'Herencia y pistas religiosas', 'Fonética faríngea'],
+            },
+            // Distinct Arabic learner motivations — used for path framing
+            learnerPaths: {
+                alphabet: {
+                    icon: '🔤',
+                    label: { en: 'Script learner', ru: 'Изучение письма', es: 'Aprendiz de escritura' },
+                    desc: { en: 'Learning letters, sounds, and reading from scratch', ru: 'Буквы, звуки и чтение с нуля', es: 'Letras, sonidos y lectura desde cero' },
+                },
+                heritage: {
+                    icon: '🏠',
+                    label: { en: 'Heritage connection', ru: 'Связь с наследием', es: 'Conexión cultural' },
+                    desc: { en: 'Understanding family, culture, and roots', ru: 'Понимание семьи, культуры и корней', es: 'Entender familia, cultura y raíces' },
+                },
+                religion: {
+                    icon: '🕌',
+                    label: { en: 'Religious study', ru: 'Религиозное изучение', es: 'Estudio religioso' },
+                    desc: { en: 'Quran, prayers, Islamic knowledge', ru: 'Коран, молитвы, исламские знания', es: 'Corán, oraciones, conocimiento islámico' },
+                },
+                speak: {
+                    icon: '🗣️',
+                    label: { en: 'Daily Arabic', ru: 'Бытовой арабский', es: 'Árabe cotidiano' },
+                    desc: { en: 'Greetings, shopping, social situations', ru: 'Приветствия, покупки, общение', es: 'Saludos, compras, situaciones sociales' },
+                },
             },
             academicBackbone: {
                 framework: 'CEFR-adapted for Arabic + ACTFL proficiency guidelines',

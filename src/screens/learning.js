@@ -753,8 +753,10 @@ function renderLearning(container) {
                     `;
                 })()}
                 ${(() => {
-                    // English structured track progress card
-                    if (typeof LangyTarget === 'undefined' || LangyTarget.getCode() !== 'en') return '';
+                    // Structured track progress card (English + Arabic)
+                    if (typeof LangyTarget === 'undefined') return '';
+                    const _code = LangyTarget.getCode();
+                    if (_code !== 'en' && _code !== 'ar') return '';
                     if (typeof LangyCurriculum === 'undefined') return '';
                     const _tb = LangyCurriculum.getActive();
                     if (!_tb) return '';
@@ -764,17 +766,22 @@ function renderLearning(container) {
                     const _total = _tb.units.length;
                     const _pct = Math.round((_passed / _total) * 100);
                     const _nextUnit = _tb.units.find(u => { const k = _tb.id + ':' + u.id; return !_mastery[k] || !_mastery[k].passed; });
+                    const _tc = LangyTarget.current;
+                    const _color = _tc.trackColor || '#D97706';
+                    const _pathTitle = _code === 'ar'
+                        ? { en: 'Your Arabic Path', ru: 'Ваш путь в арабском', es: 'Tu camino en árabe' }
+                        : { en: 'Your English Path', ru: 'Ваш путь в английском', es: 'Tu camino en inglés' };
                     return `
-                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:rgba(217,119,6,0.04); border-radius:var(--radius-lg); border:1px solid rgba(217,119,6,0.12);">
-                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:#D97706; margin-bottom:var(--sp-2); display:flex; align-items:center; gap:6px;">
-                            ${LangyIcons.target} ${{ en: 'Your English Path', ru: 'Ваш путь в английском', es: 'Tu camino en inglés' }[_l]}
-                            <span class="badge" style="font-size:8px; margin-left:auto; background:#D97706; color:#fff;">${_tb.cefr}</span>
+                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:${_color}0A; border-radius:var(--radius-lg); border:1px solid ${_color}1E;">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:${_color}; margin-bottom:var(--sp-2); display:flex; align-items:center; gap:6px;">
+                            ${LangyIcons.target} ${_pathTitle[_l]}
+                            <span class="badge" style="font-size:8px; margin-left:auto; background:${_color}; color:#fff;">${_tb.cefr}</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:4px;">
                             <div style="flex:1; height:5px; background:rgba(128,128,128,0.1); border-radius:3px; overflow:hidden;">
-                                <div style="height:100%; width:${_pct}%; background:#D97706; border-radius:3px; transition:width 0.5s;"></div>
+                                <div style="height:100%; width:${_pct}%; background:${_color}; border-radius:3px; transition:width 0.5s;"></div>
                             </div>
-                            <span style="font-size:10px; font-weight:var(--fw-bold); color:#D97706;">${_pct}%</span>
+                            <span style="font-size:10px; font-weight:var(--fw-bold); color:${_color};">${_pct}%</span>
                         </div>
                         <div style="display:flex; align-items:center; justify-content:space-between; font-size:9px; color:var(--text-tertiary);">
                             <span>${_passed}/${_total} ${{ en: 'units completed', ru: 'уроков пройдено', es: 'unidades completadas' }[_l]}</span>

@@ -21,11 +21,25 @@ function renderSubscription(container) {
     // Language-aware value framing
     const targetCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
     const subheadline = {
-        ar: {
-            en: 'Arabic is one of our deepest tracks. Free gives you real practice. Coach makes every session count more.',
-            ru: 'Арабский — один из наших самых глубоких треков. Бесплатный план — реальная практика. Coach — каждая сессия эффективнее.',
-            es: 'Árabe es una de nuestras pistas más profundas. Gratis te da práctica real. Coach hace que cada sesión cuente más.',
-        },
+        ar: (() => {
+            const _tb = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive() : null;
+            const _cefr = _tb?.cefr || '';
+            const _tc = typeof LangyTarget !== 'undefined' ? LangyTarget.current : null;
+            const _goal = LangyState.user?.goal || 'speak';
+            const _pathLabel = _tc?.learnerPaths?.[_goal];
+            if (_cefr && _pathLabel) {
+                return {
+                    en: `You're on ${_cefr} with a ${_pathLabel.label.en.toLowerCase()} focus. Free gives you real practice. Coach makes your Arabic path faster.`,
+                    ru: `\u0422\u044b \u043d\u0430 ${_cefr} \u0441 \u0444\u043e\u043a\u0443\u0441\u043e\u043c \u00ab${_pathLabel.label.ru}\u00bb. \u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u044b\u0439 \u043f\u043b\u0430\u043d \u2014 \u0440\u0435\u0430\u043b\u044c\u043d\u0430\u044f \u043f\u0440\u0430\u043a\u0442\u0438\u043a\u0430. Coach \u0443\u0441\u043a\u043e\u0440\u0438\u0442 \u043f\u0443\u0442\u044c.`,
+                    es: `Est\u00e1s en ${_cefr} con enfoque en ${_pathLabel.label.es.toLowerCase()}. Gratis te da pr\u00e1ctica real. Coach acelera tu camino.`,
+                };
+            }
+            return {
+                en: 'Arabic is one of our deepest tracks. Free gives you real practice. Coach makes every session count more.',
+                ru: '\u0410\u0440\u0430\u0431\u0441\u043a\u0438\u0439 \u2014 \u043e\u0434\u0438\u043d \u0438\u0437 \u043d\u0430\u0448\u0438\u0445 \u0441\u0430\u043c\u044b\u0445 \u0433\u043b\u0443\u0431\u043e\u043a\u0438\u0445 \u0442\u0440\u0435\u043a\u043e\u0432. \u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u044b\u0439 \u043f\u043b\u0430\u043d \u2014 \u0440\u0435\u0430\u043b\u044c\u043d\u0430\u044f \u043f\u0440\u0430\u043a\u0442\u0438\u043a\u0430. Coach \u2014 \u043a\u0430\u0436\u0434\u0430\u044f \u0441\u0435\u0441\u0441\u0438\u044f \u044d\u0444\u0444\u0435\u043a\u0442\u0438\u0432\u043d\u0435\u0435.',
+                es: '\u00c1rabe es una de nuestras pistas m\u00e1s profundas. Gratis te da pr\u00e1ctica real. Coach hace que cada sesi\u00f3n cuente m\u00e1s.',
+            };
+        })(),
         en: (() => {
             // English-specific: reference CEFR and curriculum context
             const _tb = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive() : null;
@@ -113,6 +127,12 @@ function renderSubscription(container) {
             ru: `Ты провёл ${talkCount} разговоров. Coach отслеживал бы твои паттерны во всех.`,
             es: `Has tenido ${talkCount} conversaciones. Coach habría seguido tus patrones en todas.`,
         }[lang];
+    } else if (targetCode === 'ar' && _currentUnit && talkCount >= 2) {
+        personalLine = {
+            en: `You're on Unit ${_unitId}: ${_currentUnit.title}. Coach would track your script reading accuracy and grammar patterns in Arabic.`,
+            ru: `Ты на уроке ${_unitId}: ${_currentUnit.title}. Coach отслеживал бы точность чтения и грамматику в арабском.`,
+            es: `Estás en la Unidad ${_unitId}: ${_currentUnit.title}. Coach rastrearía tu precisión en lectura y gramática árabe.`,
+        }[lang];
     } else if (hasStreak) {
         personalLine = {
             en: 'You\'re building a streak. Coach helps make every day\'s practice more focused.',
@@ -145,6 +165,31 @@ function renderSubscription(container) {
                     { dim: 'Precisión oral', outcome: 'Cada conversación alimenta un rastreador de patrones — para no repetir errores', icon: 'mic', color: '#7C6CF6' },
                     { dim: 'Vocabulario', outcome: 'Coach asegura que el vocabulario de la unidad aparezca en tu habla, escritura y repaso', icon: 'brain', color: '#F59E0B' },
                     { dim: 'Continuidad', outcome: 'Tu tutor recuerda todo: última unidad, gramática débil, vocabulario pendiente', icon: 'refresh', color: '#3B82F6' },
+                ],
+            }[lang];
+        }
+        if (targetCode === 'ar') {
+            return {
+                en: [
+                    { dim: 'Script Mastery', outcome: 'Coach tracks your letter recognition, connected forms, and reading fluency across every session', icon: 'bookOpen', color: '#0F766E' },
+                    { dim: 'MSA + Dialect', outcome: 'Understand when you\'re using formal vs spoken patterns — Coach keeps both tracks sharp', icon: 'globe', color: '#3B82F6' },
+                    { dim: 'Speaking Accuracy', outcome: 'Every conversation feeds corrections into a pattern tracker — pharyngeal sounds, shadda, tanween', icon: 'mic', color: '#7C6CF6' },
+                    { dim: 'Heritage & Faith', outcome: 'Coach connects your learning to cultural context: family phrases, Quranic vocabulary, daily expressions', icon: 'heart', color: '#EC4899' },
+                    { dim: 'Continuity', outcome: 'Your tutor remembers your weak letters, grammar gaps, and vocabulary — every session starts smarter', icon: 'refresh', color: '#F59E0B' },
+                ],
+                ru: [
+                    { dim: 'Письмо', outcome: 'Coach отслеживает распознавание букв, связные формы и беглость чтения в каждой сессии', icon: 'bookOpen', color: '#0F766E' },
+                    { dim: 'МСА + Диалект', outcome: 'Пойми, когда ты используешь формальные и разговорные паттерны — Coach держит оба трека', icon: 'globe', color: '#3B82F6' },
+                    { dim: 'Точность речи', outcome: 'Каждый разговор подаёт ошибки в трекер — фарингальные звуки, шадда, танвин', icon: 'mic', color: '#7C6CF6' },
+                    { dim: 'Наследие и вера', outcome: 'Coach связывает обучение с культурным контекстом: семейные фразы, кораническая лексика', icon: 'heart', color: '#EC4899' },
+                    { dim: 'Непрерывность', outcome: 'Репетитор помнит слабые буквы, грамматические пробелы и словарный запас', icon: 'refresh', color: '#F59E0B' },
+                ],
+                es: [
+                    { dim: 'Escritura', outcome: 'Coach rastrea tu reconocimiento de letras, formas conectadas y fluidez de lectura', icon: 'bookOpen', color: '#0F766E' },
+                    { dim: 'MSA + Dialecto', outcome: 'Entiende cuándo usas patrones formales vs hablados — Coach mantiene ambas pistas', icon: 'globe', color: '#3B82F6' },
+                    { dim: 'Precisión oral', outcome: 'Cada conversación alimenta correcciones: sonidos faríngeos, shadda, tanween', icon: 'mic', color: '#7C6CF6' },
+                    { dim: 'Herencia y fe', outcome: 'Coach conecta tu aprendizaje con contexto cultural: frases familiares, vocabulario coránico', icon: 'heart', color: '#EC4899' },
+                    { dim: 'Continuidad', outcome: 'Tu tutor recuerda letras débiles, gramática y vocabulario — cada sesión empieza más inteligente', icon: 'refresh', color: '#F59E0B' },
                 ],
             }[lang];
         }

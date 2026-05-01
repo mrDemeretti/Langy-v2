@@ -292,11 +292,16 @@ function renderHome(container) {
                 const fc = '#D97706';
 
                 if (isFeatured) {
-                    // English-specific: show curriculum progress if English
+                    // Track-specific enrichment
                     const isEnglishTrack = tc.code === 'en';
+                    const isArabicTrack = tc.code === 'ar';
+                    const trackColor = tc.trackColor || fc;
                     let cefrBar = '';
                     let unitCtx = '';
-                    if (isEnglishTrack && typeof LangyCurriculum !== 'undefined') {
+                    let pathCtx = '';
+
+                    // CEFR progress bar (English + Arabic)
+                    if ((isEnglishTrack || isArabicTrack) && typeof LangyCurriculum !== 'undefined') {
                         const tb = LangyCurriculum.getActive();
                         if (tb) {
                             const mastery = LangyState.progress?.mastery || {};
@@ -307,10 +312,10 @@ function renderHome(container) {
                             cefrBar = `<div style="margin-top:6px;">
                                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:3px;">
                                     <span style="font-size:9px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.3px;">${tb.cefr} ${{ en: 'progress', ru: 'прогресс', es: 'progreso' }[lang]}</span>
-                                    <span style="font-size:9px; font-weight:var(--fw-bold); color:${fc};">${pct}%</span>
+                                    <span style="font-size:9px; font-weight:var(--fw-bold); color:${trackColor};">${pct}%</span>
                                 </div>
                                 <div style="height:4px; background:rgba(128,128,128,0.1); border-radius:2px; overflow:hidden;">
-                                    <div style="height:100%; width:${pct}%; background:${fc}; border-radius:2px; transition:width 0.5s;"></div>
+                                    <div style="height:100%; width:${pct}%; background:${trackColor}; border-radius:2px; transition:width 0.5s;"></div>
                                 </div>
                             </div>`;
                             if (curUnit) {
@@ -320,10 +325,28 @@ function renderHome(container) {
                             }
                         }
                     }
-                    const badgeLabel = isEnglishTrack ? ({ en: 'Structured', ru: 'Структурный', es: 'Estructurado' }[lang]) : ({ en: 'Featured', ru: 'Топ', es: 'Destacado' }[lang]);
+
+                    // Arabic-specific: show learner path based on onboarding goal
+                    if (isArabicTrack && tc.learnerPaths) {
+                        const userGoal = LangyState.user?.goal || 'speak';
+                        const path = tc.learnerPaths[userGoal];
+                        if (path) {
+                            pathCtx = `<div style="font-size:9px; color:${trackColor}; margin-top:4px; display:flex; align-items:center; gap:4px;">
+                                <span>${path.icon}</span> ${path.label[lang] || path.label.en}
+                            </div>`;
+                        }
+                    }
+
+                    // Badge label: English=Structured, Arabic=Script-First (from trackIdentity), others=Featured
+                    const badgeLabel = tc.trackIdentity
+                        ? (tc.trackIdentity[lang] || tc.trackIdentity.en)
+                        : isEnglishTrack
+                            ? ({ en: 'Structured', ru: 'Структурный', es: 'Estructurado' }[lang])
+                            : ({ en: 'Featured', ru: 'Топ', es: 'Destacado' }[lang]);
+
                     return `<div style="
                         margin:0 var(--sp-5) var(--sp-3); padding:var(--sp-3) var(--sp-4);
-                        background:${fc}06; border:1px solid ${fc}22;
+                        background:${trackColor}06; border:1px solid ${trackColor}22;
                         border-radius:var(--radius-lg); display:flex; align-items:flex-start; gap:var(--sp-3);
                     ">
                         <span style="font-size:28px; flex-shrink:0;">${tc.flag}</span>
@@ -331,14 +354,15 @@ function renderHome(container) {
                             <div style="display:flex; align-items:center; gap:6px;">
                                 <span style="font-weight:var(--fw-bold); font-size:var(--fs-sm);">${langName}</span>
                                 <span style="font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
-                                    background:${fc}; color:#fff; padding:1px 6px; border-radius:4px; line-height:14px;">
+                                    background:${trackColor}; color:#fff; padding:1px 6px; border-radius:4px; line-height:14px;">
                                     ${badgeLabel}</span>
                             </div>
-                            <div style="font-size:10px; color:${fc}; margin-top:2px; font-weight:var(--fw-semibold, 600);">${tagline}</div>
+                            <div style="font-size:10px; color:${trackColor}; margin-top:2px; font-weight:var(--fw-semibold, 600);">${tagline}</div>
                             ${highlights.length > 0 ? `<div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
                                 ${highlights.map(h => `<span style="font-size:9px; padding:1px 6px; border-radius:var(--radius-full);
-                                    background:${fc}08; color:${fc}; border:1px solid ${fc}15;">${h}</span>`).join('')}
+                                    background:${trackColor}08; color:${trackColor}; border:1px solid ${trackColor}15;">${h}</span>`).join('')}
                             </div>` : ''}
+                            ${pathCtx}
                             ${cefrBar}
                             ${unitCtx}
                         </div>
@@ -357,7 +381,9 @@ function renderHome(container) {
 
             <!-- Current Learning Goal -->
             ${(() => {
-                if (typeof LangyCurriculum === 'undefined' || typeof LangyTarget === 'undefined' || LangyTarget.getCode() !== 'en') return '';
+                if (typeof LangyCurriculum === 'undefined' || typeof LangyTarget === 'undefined') return '';
+                const targetCode = LangyTarget.getCode();
+                if (targetCode !== 'en' && targetCode !== 'ar') return '';
                 const tb = LangyCurriculum.getActive();
                 if (!tb || !tb.canDo || !tb.canDo.length) return '';
                 const skills = LangyState.progress?.skills || {};
@@ -367,10 +393,13 @@ function renderHome(container) {
                 const nextGoal = tb.canDo[Math.min(completed, tb.canDo.length - 1)];
                 if (!nextGoal) return '';
                 const l = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
-                return `<div style="margin:0 var(--sp-5) var(--sp-2); padding:var(--sp-2) var(--sp-3); background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.12); border-radius:var(--radius-md); display:flex; align-items:center; gap:8px; cursor:pointer;" id="home-cando-goal">
-                    <span style="color:#10B981; flex-shrink:0; font-size:14px;">${LangyIcons.target}</span>
+                const tc = LangyTarget.current;
+                const goalColor = (targetCode === 'ar' && tc.trackColor) ? tc.trackColor : '#10B981';
+                const goalIcon = targetCode === 'ar' ? (tc.learnerPaths?.[LangyState.user?.goal]?.icon || LangyIcons.target) : LangyIcons.target;
+                return `<div style="margin:0 var(--sp-5) var(--sp-2); padding:var(--sp-2) var(--sp-3); background:${goalColor}08; border:1px solid ${goalColor}1A; border-radius:var(--radius-md); display:flex; align-items:center; gap:8px; cursor:pointer;" id="home-cando-goal">
+                    <span style="color:${goalColor}; flex-shrink:0; font-size:14px;">${goalIcon}</span>
                     <div style="flex:1; min-width:0;">
-                        <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#10B981; line-height:1;">${{ en: 'Next goal', ru: 'Следующая цель', es: 'Próxima meta' }[l]} · ${tb.cefr}</div>
+                        <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:${goalColor}; line-height:1;">${{ en: 'Next goal', ru: 'Следующая цель', es: 'Próxima meta' }[l]} · ${tb.cefr}</div>
                         <div style="font-size:10px; color:var(--text-secondary); line-height:1.4; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${nextGoal}</div>
                     </div>
                     <span style="font-size:9px; color:var(--text-tertiary);">${completed}/${tb.canDo.length}</span>
