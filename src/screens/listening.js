@@ -1,17 +1,58 @@
 /* ============================================
    SCREEN: LISTENING — Structured Comprehension Practice
-   Dedicated listening hub with TTS-powered exercises:
+   Curriculum-aware listening hub with TTS exercises:
    dictation, phrase catching, intent recognition.
+   Connected to current unit, vocabulary, and grammar.
    ============================================ */
 
 function getListeningExercises(level) {
     const bank = typeof LangyGrammarBank !== 'undefined' ? LangyGrammarBank : {};
     const lvl = bank[level];
-    // Pull translations for dictation
     const translations = lvl?.translations || [];
-    // Pull sentence patterns for phrase-catch
     const sentences = lvl?.sentences || [];
-    return { translations, sentences };
+
+    // Enrich translations with curriculum context
+    const unitId = LangyState?.progress?.currentUnitId || 1;
+    let tb = null;
+    if (typeof LangyCurriculum !== 'undefined') tb = LangyCurriculum.getActive();
+    const currentUnit = tb?.units?.find(u => u.id === unitId);
+
+    // Build unit-specific listening items from vocab bank
+    let unitVocabItems = [];
+    if (typeof LangyVocabBank !== 'undefined' && tb?.cefr) {
+        const vocabWords = LangyVocabBank.getForUnit(tb.cefr, unitId);
+        unitVocabItems = vocabWords.filter(w => w.en && w.ru).map(w => ({
+            en: w.en, ru: w.ru, source: 'vocab', unitId,
+            grammarRule: currentUnit?.grammar?.[0] || '',
+        }));
+    }
+
+    // Build unit-context sentences from grammar patterns
+    let unitGrammarItems = [];
+    if (lvl && currentUnit?.grammar) {
+        const allPatterns = lvl.getAllPatterns?.() || [];
+        const unitRules = (currentUnit.grammar || []).map(g => g.toLowerCase());
+        unitGrammarItems = allPatterns
+            .filter(p => p.rule && unitRules.some(r => p.rule.toLowerCase().includes(r.split(' ')[0])))
+            .slice(0, 8)
+            .map(p => ({
+                en: p.template?.replace('___', p.answer) || '',
+                ru: '', source: 'grammar', unitId,
+                grammarRule: p.rule || '',
+            }))
+            .filter(p => p.en && p.en.length > 5);
+    }
+
+    // Tag level translations with source
+    const taggedTranslations = translations.map(t => ({ ...t, source: 'level', grammarRule: '' }));
+
+    // Prioritize: unit vocab first, then unit grammar, then level translations
+    const combined = [...unitVocabItems, ...unitGrammarItems, ...taggedTranslations];
+    // Deduplicate by en
+    const seen = new Set();
+    const deduped = combined.filter(t => { const k = t.en?.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+
+    return { translations: deduped, sentences, currentUnit, level: tb?.cefr || level };
 }
 
 // Listening drill types
@@ -48,8 +89,14 @@ function renderListening(container) {
     if (activeMode) { renderListeningDrill(container, activeMode, lang); return; }
 
     const userLevel = (LangyState.user?.level || 'B1').substring(0, 2);
-    const { translations } = getListeningExercises(userLevel);
+    const { translations, currentUnit, level } = getListeningExercises(userLevel);
     const sessionsDone = LangyState.progress?.skills?.listening || 0;
+
+    // Curriculum context
+    const unitTitle = currentUnit?.title || '';
+    const unitGrammar = currentUnit?.grammar?.slice(0, 2).join(', ') || '';
+    const vocabCount = typeof LangyVocabBank !== 'undefined' && typeof LangyCurriculum !== 'undefined'
+        ? (LangyCurriculum.getActive()?.cefr ? LangyVocabBank.getForUnit(LangyCurriculum.getActive().cefr, LangyState?.progress?.currentUnitId || 1).length : 0) : 0;
 
     container.innerHTML = `
         <div class="screen screen--no-pad">
@@ -61,8 +108,24 @@ function renderListening(container) {
 
             <div style="padding: var(--sp-3) var(--sp-6) var(--sp-2); text-align:center;">
                 <p class="text-secondary text-sm">${{ en: 'Train your ear to understand real English', ru: 'Тренируйте понимание на слух', es: 'Entrena tu oído para entender inglés real' }[lang]}</p>
-                <div class="badge badge--primary" style="margin-top:var(--sp-2);">${userLevel} · ${sessionsDone}% ${{ en: 'skill', ru: 'навык', es: 'habilidad' }[lang]}</div>
+                <div style="display:flex; justify-content:center; gap:var(--sp-2); margin-top:var(--sp-2); flex-wrap:wrap;">
+                    <div class="badge badge--primary">${level} · ${sessionsDone}% ${{ en: 'skill', ru: 'навык', es: 'habilidad' }[lang]}</div>
+                    ${unitTitle ? `<div class="badge" style="background:rgba(59,130,246,0.08); color:#3B82F6;">${LangyIcons.book} ${{ en: 'Unit', ru: 'Юнит', es: 'Unidad' }[lang]}: ${escapeHTML(unitTitle)}</div>` : ''}
+                </div>
             </div>
+
+            <!-- Curriculum context card -->
+            ${unitTitle ? `
+            <div style="padding: 0 var(--sp-5) var(--sp-3);">
+                <div class="card card--flat" style="padding:var(--sp-3); border-left:3px solid #3B82F6;">
+                    <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:#3B82F6; margin-bottom:4px;">${{ en: 'Current Focus', ru: 'Текущий фокус', es: 'Enfoque actual' }[lang]}</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                        ${unitGrammar ? `<span style="font-size:10px; padding:2px 8px; border-radius:var(--radius-full); background:rgba(139,92,246,0.08); color:#8B5CF6;">${LangyIcons.fileText} ${unitGrammar}</span>` : ''}
+                        ${vocabCount > 0 ? `<span style="font-size:10px; padding:2px 8px; border-radius:var(--radius-full); background:rgba(245,158,11,0.08); color:#F59E0B;">${LangyIcons.brain} ${vocabCount} ${{ en: 'words', ru: 'слов', es: 'palabras' }[lang]}</span>` : ''}
+                        <span style="font-size:10px; padding:2px 8px; border-radius:var(--radius-full); background:rgba(16,185,129,0.08); color:#10B981;">${LangyIcons.headphones} ${translations.length} ${{ en: 'sentences', ru: 'предложений', es: 'oraciones' }[lang]}</span>
+                    </div>
+                </div>
+            </div>` : ''}
 
             <!-- Drill modes -->
             <div style="padding: var(--sp-4) var(--sp-5) var(--sp-6); display:flex; flex-direction:column; gap:var(--sp-3);">
@@ -170,6 +233,7 @@ function renderDictation(container, sentence, item, state, mode, lang) {
             </div>
             <div style="padding: var(--sp-6) var(--sp-5); display:flex; flex-direction:column; align-items:center; gap:var(--sp-4);">
                 <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:${mode.color};">${LangyIcons.target} ${mode.skill[lang]}</div>
+                ${item.grammarRule ? `<div style="font-size:9px; color:#8B5CF6; background:rgba(139,92,246,0.06); padding:2px 8px; border-radius:var(--radius-full);">${LangyIcons.fileText} ${item.grammarRule}</div>` : ''}
                 <div style="display:flex; gap:var(--sp-3); align-items:center;">
                     <button class="btn btn--primary" id="d-play" style="width:56px; height:56px; border-radius:50%; font-size:24px; display:flex; align-items:center; justify-content:center;">🔊</button>
                     <button class="btn btn--ghost btn--sm" id="d-slow">🐢 Slow</button>
@@ -301,17 +365,35 @@ function renderListeningResults(container, state, lang) {
     const accuracy = state.total > 0 ? Math.round((state.correct / state.total) * 100) : 0;
     const durationMin = Math.max(1, Math.round((Date.now() - (state.startTime || Date.now())) / 60000));
 
+    // Performance-based skill increment (not flat)
+    const skillGain = accuracy >= 90 ? 5 : accuracy >= 70 ? 3 : accuracy >= 50 ? 2 : 1;
+
     // Record session
     if (typeof recordSession === 'function') {
         recordSession({ duration: durationMin, wordsLearned: 0, accuracy, category: 'listening' });
     }
-    LangyState.progress.skills.listening = Math.min(100, (LangyState.progress.skills.listening || 0) + 3);
+    LangyState.progress.skills.listening = Math.min(100, (LangyState.progress.skills.listening || 0) + skillGain);
+
+    // Record vocab encountered in this session via VocabTracker
+    if (typeof VocabTracker !== 'undefined') {
+        (state.items || []).forEach((item, i) => {
+            if (item.source === 'vocab' && item.en && item.ru) {
+                VocabTracker.recordWord(item.en, item.ru, { correct: i < state.correct, level: item.level || '', category: 'listening' });
+            }
+        });
+    }
+
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
 
     const personaMsg = typeof MascotPersona !== 'undefined' ? MascotPersona.tone(accuracy >= 80 ? 'lessonComplete' : 'encouragement') : null;
 
+    // Collect grammar rules practiced
+    const grammarRules = [...new Set((state.items || []).map(i => i.grammarRule).filter(Boolean))].slice(0, 3);
+    // Collect vocab words heard
+    const vocabWords = (state.items || []).filter(i => i.source === 'vocab').map(i => i.en).slice(0, 6);
+
     container.innerHTML = `
-        <div class="screen screen--center" style="gap:var(--sp-5); text-align:center; padding:var(--sp-6);">
+        <div class="screen screen--center" style="gap:var(--sp-4); text-align:center; padding:var(--sp-6);">
             <div style="font-size:64px;">${accuracy >= 80 ? '🎉' : accuracy >= 50 ? '👂' : '💪'}</div>
             <h2>${{ en: 'Session Complete', ru: 'Сессия завершена', es: 'Sesión completada' }[lang]}</h2>
             ${personaMsg ? `<p style="font-style:italic; color:var(--text-secondary); font-size:var(--fs-sm);">"${personaMsg}"</p>` : ''}
@@ -319,7 +401,24 @@ function renderListeningResults(container, state, lang) {
                 <div class="stat"><div class="stat__value" style="color:var(--accent-dark);">${state.correct}/${state.total}</div><div class="stat__label">${{ en: 'Correct', ru: 'Верно', es: 'Correcto' }[lang]}</div></div>
                 <div class="stat"><div class="stat__value">${accuracy}%</div><div class="stat__label">${{ en: 'Accuracy', ru: 'Точность', es: 'Precisión' }[lang]}</div></div>
             </div>
-            <div class="badge badge--primary">${LangyIcons.headphones} ${{ en: 'Listening skill +3%', ru: 'Навык аудирования +3%', es: 'Habilidad de escucha +3%' }[lang]}</div>
+            <div class="badge badge--primary">${LangyIcons.headphones} ${{ en: 'Listening skill', ru: 'Навык аудирования', es: 'Habilidad de escucha' }[lang]} +${skillGain}%</div>
+
+            ${grammarRules.length > 0 ? `
+            <div style="width:100%; max-width:300px; text-align:left;">
+                <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#8B5CF6; margin-bottom:4px;">${LangyIcons.fileText} ${{ en: 'Grammar practiced', ru: 'Грамматика', es: 'Gramática practicada' }[lang]}</div>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    ${grammarRules.map(r => `<span style="font-size:10px; padding:2px 8px; border-radius:var(--radius-full); background:rgba(139,92,246,0.08); color:#8B5CF6;">${r}</span>`).join('')}
+                </div>
+            </div>` : ''}
+
+            ${vocabWords.length > 0 ? `
+            <div style="width:100%; max-width:300px; text-align:left;">
+                <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#F59E0B; margin-bottom:4px;">${LangyIcons.brain} ${{ en: 'Vocabulary heard', ru: 'Словарь', es: 'Vocabulario escuchado' }[lang]}</div>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    ${vocabWords.map(w => `<span style="font-size:10px; padding:2px 8px; border-radius:var(--radius-full); background:rgba(245,158,11,0.08); color:#F59E0B;">${w}</span>`).join('')}
+                </div>
+            </div>` : ''}
+
             <div style="display:flex; gap:var(--sp-3); width:100%; max-width:300px;">
                 <button class="btn btn--ghost btn--full" id="lr-home">${{ en: 'Home', ru: 'Домой', es: 'Inicio' }[lang]}</button>
                 <button class="btn btn--primary btn--full" id="lr-again">${{ en: 'Practice Again', ru: 'Ещё раз', es: 'Otra vez' }[lang]}</button>
