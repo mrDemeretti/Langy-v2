@@ -161,8 +161,11 @@ function buildContinuityCard() {
         </div>`;
     }
 
-    // Recommended next action
-    html += `<div class="cont-recommend" data-route="${weakest.route}" style="display:flex; align-items:center; gap:var(--sp-2); padding:var(--sp-2) var(--sp-3); margin-top:var(--sp-2); background:rgba(59,130,246,0.04); border-radius:var(--radius-sm); cursor:pointer;">
+    // Recommended next action — cross-mode intelligence
+    if (typeof NextAction !== 'undefined') {
+        html += NextAction.renderCard(lang);
+    } else {
+        html += `<div class="cont-recommend" data-route="${weakest.route}" style="display:flex; align-items:center; gap:var(--sp-2); padding:var(--sp-2) var(--sp-3); margin-top:var(--sp-2); background:rgba(59,130,246,0.04); border-radius:var(--radius-sm); cursor:pointer;">
         <span style="font-size:16px;">${weakest.icon}</span>
         <div style="flex:1;">
             <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary);">${LangyIcons.arrowRight} ${{ en: 'Suggested next', ru: 'Рекомендуем', es: 'Recomendado' }[lang]}</div>
@@ -170,6 +173,7 @@ function buildContinuityCard() {
         </div>
         <span style="color:var(--text-tertiary); font-size:12px;">${LangyIcons.arrowRight}</span>
     </div>`;
+    }
 
     html += `</div>`;
     return html;
@@ -424,7 +428,10 @@ function renderHome(container) {
         }
     });
 
-    // Continuity card recommendation
+    // Continuity card recommendation — NextAction or fallback
+    if (typeof NextAction !== 'undefined') {
+        NextAction.bindEvents(container);
+    }
     container.querySelector('.cont-recommend')?.addEventListener('click', () => {
         const route = container.querySelector('.cont-recommend')?.dataset.route;
         if (route) Router.navigate(route);

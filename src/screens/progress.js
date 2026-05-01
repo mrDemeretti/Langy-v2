@@ -108,16 +108,34 @@ function renderProgress(container) {
 
             <!-- Recommended Next -->
             <div style="padding: 0 var(--sp-5) var(--sp-4);">
-                <div class="card" style="padding:var(--sp-4); border:1px solid rgba(59,130,246,0.15); background:rgba(59,130,246,0.03); cursor:pointer;" id="prog-recommend">
+                ${typeof NextAction !== 'undefined' ? (() => {
+                    const rec = NextAction.recommend(lang);
+                    if (!rec) return '';
+                    const reasonText = rec.reason[lang] || rec.reason.en;
+                    const labelText = rec.label[lang] || rec.label.en;
+                    const signalColors = { weak_spot: '#F59E0B', pending_homework: '#8B5CF6', weakest_skill: '#3B82F6', never_spoken: '#EF4444', stale_speaking: '#EF4444', low_recent_score: '#F59E0B', no_lessons_yet: '#3B82F6' };
+                    const ac = signalColors[rec.signal] || 'var(--primary)';
+                    return `<div class="card" style="padding:var(--sp-4); border:1px solid ${ac}22; background:${ac}08; cursor:pointer;" id="prog-recommend" data-route="${rec.route}" ${rec.meta?.tag ? 'data-focus-tag="' + rec.meta.tag + '"' : ''}>
+                    <div style="display:flex; align-items:center; gap:var(--sp-3);">
+                        <div style="width:40px; height:40px; border-radius:50%; background:${ac}11; display:flex; align-items:center; justify-content:center; font-size:18px;">${rec.icon}</div>
+                        <div style="flex:1;">
+                            <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:${ac}; margin-bottom:2px;">${LangyIcons.zap} ${{ en: 'Recommended', ru: 'Рекомендация', es: 'Recomendado' }[lang]}</div>
+                            <div style="font-size:var(--fs-sm); font-weight:var(--fw-semibold);">${labelText}</div>
+                            <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px; line-height:1.4;">${reasonText}</div>
+                        </div>
+                        <div style="color:var(--text-tertiary);">${LangyIcons.arrowRight}</div>
+                    </div>
+                </div>`;
+                })() : `<div class="card" style="padding:var(--sp-4); border:1px solid rgba(59,130,246,0.15); background:rgba(59,130,246,0.03); cursor:pointer;" id="prog-recommend">
                     <div style="display:flex; align-items:center; gap:var(--sp-3);">
                         <div style="width:40px; height:40px; border-radius:50%; background:${weakest.color}11; display:flex; align-items:center; justify-content:center; color:${weakest.color}; font-size:18px;">${weakest.icon}</div>
                         <div style="flex:1;">
                             <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--primary); margin-bottom:2px;">${LangyIcons.zap} ${{ en: 'Recommended', ru: 'Рекомендация', es: 'Recomendado' }[lang]}</div>
-                            <div style="font-size:var(--fs-sm); font-weight:var(--fw-semibold);">${{ en: `Practice ${weakest.label.en} to balance your skills`, ru: `Практикуйте ${weakest.label.ru} для баланса навыков`, es: `Practica ${weakest.label.es} para equilibrar tus habilidades` }[lang]}</div>
+                            <div style="font-size:var(--fs-sm); font-weight:var(--fw-semibold);">${{ en: 'Practice ' + weakest.label.en + ' to balance your skills', ru: 'Практикуйте ' + weakest.label.ru + ' для баланса навыков', es: 'Practica ' + weakest.label.es + ' para equilibrar tus habilidades' }[lang]}</div>
                         </div>
                         <div style="color:var(--text-tertiary);">${LangyIcons.arrowRight}</div>
                     </div>
-                </div>
+                </div>`}
             </div>
 
             <!-- Activity Stats -->
@@ -175,7 +193,16 @@ function renderProgress(container) {
     container.querySelectorAll('.prog-skill').forEach(el => {
         el.addEventListener('click', () => Router.navigate(el.dataset.route));
     });
-    container.querySelector('#prog-recommend')?.addEventListener('click', () => Router.navigate(weakest.route));
+    container.querySelector('#prog-recommend')?.addEventListener('click', () => {
+        const el = container.querySelector('#prog-recommend');
+        const focusTag = el?.dataset.focusTag;
+        const route = el?.dataset.route || weakest.route;
+        if (focusTag && typeof CoachIntel !== 'undefined') {
+            CoachIntel.launchFocusPractice(focusTag);
+        } else {
+            Router.navigate(route);
+        }
+    });
 
     setTimeout(() => Anim.staggerChildren(container, '.prog-skill'), 80);
 }
