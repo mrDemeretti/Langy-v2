@@ -174,15 +174,27 @@ function renderLearning(container) {
             teachSlideIdx = 0;
             updateUI();
 
-            // Start AI chat integration
+            // Start AI chat integration — curriculum-aware for English
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.resetChat();
                 setTimeout(() => {
-                    DeepTutor.handleSend(
-                        `I'm starting lesson "${unit.title}". Topics: ${unit.grammar?.join(', ') || 'general'}. Vocabulary: ${unit.vocabulary?.join(', ') || 'general'}. Please introduce this topic briefly and tell me the key points.`,
-                        true
-                    );
+                    const cefrLevel = activeTb.cefr || '';
+                    const canDoTarget = activeTb.canDo && activeTb.canDo.length ? activeTb.canDo[0] : '';
+                    const grammarFocus = unit.grammar?.join(', ') || 'general';
+                    const vocabFocus = unit.vocab?.join(', ') || unit.vocabulary?.join(', ') || 'general';
+                    const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+
+                    let startMsg = `I'm starting lesson "${unit.title}". Topics: ${grammarFocus}. Vocabulary: ${vocabFocus}.`;
+                    if (isEnglish && cefrLevel) {
+                        startMsg += ` My CEFR level: ${cefrLevel}.`;
+                        if (canDoTarget) startMsg += ` Can-do goal: "${canDoTarget}".`;
+                        startMsg += ` Introduce this topic briefly, focusing on what a ${cefrLevel} learner needs to know. Reference the grammar and vocabulary of this unit.`;
+                    } else {
+                        startMsg += ` Please introduce this topic briefly and tell me the key points.`;
+                    }
+
+                    DeepTutor.handleSend(startMsg, true);
                 }, 500);
             }
         };
@@ -315,13 +327,15 @@ function renderLearning(container) {
             });
         }
 
-        // Ask mascot (opens DeepTutor with context)
+        // Ask mascot (opens DeepTutor with curriculum context)
         askBtn.onclick = () => {
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.open();
+                const grammarCtx = unit.grammar?.length ? ` This is about: ${unit.grammar.join(', ')}.` : '';
+                const levelCtx = activeTb.cefr ? ` Student level: CEFR ${activeTb.cefr}.` : '';
                 DeepTutor.handleSend(
-                    `The student doesn't understand this explanation: "${slide.mascotText}". Please explain it more simply, with more examples.`,
+                    `The student doesn't understand this explanation: "${slide.mascotText}".${grammarCtx}${levelCtx} Please explain it more simply, with more examples appropriate for this level.`,
                     true
                 );
             }
@@ -435,7 +449,7 @@ function renderLearning(container) {
             }, 1400);
         });
 
-        // FIX #1: Ask AI during exercises
+        // Ask AI during exercises — curriculum-aware
         target.querySelector('#practice-ask-ai')?.addEventListener('click', () => {
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
@@ -446,7 +460,12 @@ function renderLearning(container) {
                     exercise.widgetData?.phrase ||
                     '';
                 if (prompt) {
-                    DeepTutor.handleSend(`I'm confused about this exercise: "${prompt}". Can you explain it?`, true);
+                    const grammarCtx = unit.grammar?.length ? ` Unit grammar: ${unit.grammar.join(', ')}.` : '';
+                    const levelCtx = activeTb.cefr ? ` My level: CEFR ${activeTb.cefr}.` : '';
+                    DeepTutor.handleSend(
+                        `I'm confused about this exercise: "${prompt}".${grammarCtx}${levelCtx} Can you explain the grammar rule and give me a hint?`,
+                        true
+                    );
                 }
             }
         });
@@ -722,16 +741,29 @@ function renderLearning(container) {
             updateUI();
         });
 
-        // AI feedback after lesson
+        // AI feedback after lesson — curriculum-aware for English
         if (typeof DeepTutor !== 'undefined') {
             DeepTutor.setEmotion(score >= LangyConfig.PASS_THRESHOLD ? 'happy' : 'encouraging');
             const personaMsg = typeof MascotPersona !== 'undefined'
                 ? (score >= LangyConfig.PASS_THRESHOLD ? MascotPersona.tone('encouragement') : MascotPersona.tone('encouragement'))
                 : (score >= LangyConfig.PASS_THRESHOLD ? 'Great job!' : 'Need more practice.');
-            DeepTutor.handleSend(
-                `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${personaMsg}`,
-                true
-            );
+
+            const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+            const cefrLevel = activeTb.cefr || '';
+            const canDoHint = activeTb.canDo && activeTb.canDo.length ? ` Can-do target: "${activeTb.canDo[0]}".` : '';
+            const grammarDone = unit.grammar?.length ? ` Grammar covered: ${unit.grammar.join(', ')}.` : '';
+
+            let completeMsg = `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}).`;
+            if (isEnglish && cefrLevel) {
+                completeMsg += ` CEFR ${cefrLevel}.${canDoHint}${grammarDone}`;
+                completeMsg += score >= LangyConfig.PASS_THRESHOLD
+                    ? ` Summarize what the student demonstrated at this CEFR level and what to focus on next.`
+                    : ` Identify the specific ${cefrLevel}-level skills that need more work based on this score.`;
+            } else {
+                completeMsg += ` ${personaMsg}`;
+            }
+
+            DeepTutor.handleSend(completeMsg, true);
         }
     }
 

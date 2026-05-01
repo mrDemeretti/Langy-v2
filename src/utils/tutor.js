@@ -32,15 +32,20 @@ const DeepTutor = {
         // Create the Overlay (Chat Window)
         this.overlay = document.createElement('div');
         this.overlay.className = 'tutor-overlay';
+        // Build curriculum-aware header and placeholder
+        const cefrBadge = this._getCefrBadge();
+        const inputPlaceholder = this._getInputPlaceholder();
+
         this.overlay.innerHTML = `
             <div class="tutor-chat-window">
                 <header class="tutor-chat__header">
                     <strong>DeepTutor</strong>
+                    ${cefrBadge}
                     <span class="tutor-chat__close" id="tutor-close">✕</span>
                 </header>
                 <div class="tutor-chat__messages" id="tutor-messages"></div>
                 <div class="tutor-chat__input">
-                    <input type="text" class="input" id="tutor-input" placeholder="Ask Langy anything..." autocomplete="off">
+                    <input type="text" class="input" id="tutor-input" placeholder="${inputPlaceholder}" autocomplete="off">
                     <button class="btn btn--primary btn--icon" id="tutor-send">↑</button>
                 </div>
             </div>
@@ -76,7 +81,7 @@ const DeepTutor = {
     loadHistory() {
         const history = LangyState.aiMemory.conversationContext;
         if (history.length === 0) {
-            this.addMessage("Hi! I'm your DeepTutor. How can I help you today?", 'ai');
+            this.addMessage(this._getGreeting(), 'ai');
         } else {
             history.forEach(m => this.addMessage(m.content, m.role, false));
         }
@@ -171,5 +176,87 @@ const DeepTutor = {
         if (emotion !== 'neutral') {
             this.badge.classList.add(`mascot--${emotion}`);
         }
+    },
+
+    // ─── Curriculum-aware helpers ───
+
+    /** Build a curriculum-grounded greeting for the tutor */
+    _getGreeting() {
+        const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+        const targetCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+
+        // English: curriculum-rich greeting
+        if (targetCode === 'en' && typeof LangyCurriculum !== 'undefined') {
+            const tb = LangyCurriculum.getActive();
+            if (tb) {
+                const cefr = tb.cefr || '';
+                const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+                const unit = unitId && tb.units ? tb.units.find(u => u.id === unitId) : null;
+                const unitName = unit ? unit.title : '';
+                const canDo = tb.canDo && tb.canDo.length ? tb.canDo[0] : '';
+
+                if (lang === 'ru') {
+                    let g = `Привет! Я твой AI-репетитор по английскому.`;
+                    if (cefr) g += ` Ты на уровне CEFR ${cefr}.`;
+                    if (unitName) g += ` Сейчас мы работаем над: «${unitName}».`;
+                    if (canDo) g += ` Цель: ${canDo}.`;
+                    g += ` Спрашивай что угодно — грамматику, лексику, или попроси объяснить задание.`;
+                    return g;
+                }
+                if (lang === 'es') {
+                    let g = `¡Hola! Soy tu tutor AI de inglés.`;
+                    if (cefr) g += ` Estás en el nivel CEFR ${cefr}.`;
+                    if (unitName) g += ` Ahora trabajamos en: "${unitName}".`;
+                    if (canDo) g += ` Objetivo: ${canDo}.`;
+                    g += ` Pregunta lo que quieras — gramática, vocabulario, o pide que explique un ejercicio.`;
+                    return g;
+                }
+                // English UI
+                let g = `Hi! I'm your English tutor.`;
+                if (cefr) g += ` You're at CEFR ${cefr}.`;
+                if (unitName) g += ` We're working on: "${unitName}".`;
+                if (canDo) g += ` Goal: ${canDo}.`;
+                g += ` Ask me about grammar, vocabulary, or any exercise you need help with.`;
+                return g;
+            }
+        }
+
+        // Non-English or no curriculum: simple greeting
+        const greetings = {
+            en: "Hi! I'm your language tutor. Ask me anything about your current lesson.",
+            ru: 'Привет! Я твой языковой репетитор. Спрашивай что угодно по текущему уроку.',
+            es: '¡Hola! Soy tu tutor de idiomas. Pregúntame lo que quieras sobre tu lección actual.',
+        };
+        return greetings[lang] || greetings.en;
+    },
+
+    /** CEFR badge for the chat header */
+    _getCefrBadge() {
+        const targetCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+        if (targetCode === 'en' && typeof LangyCurriculum !== 'undefined') {
+            const tb = LangyCurriculum.getActive();
+            if (tb && tb.cefr) {
+                return `<span style="font-size:10px; font-weight:700; background:var(--primary); color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; margin-right:8px;">${tb.cefr}</span>`;
+            }
+        }
+        return '<span style="margin-left:auto;"></span>';
+    },
+
+    /** Context-aware input placeholder */
+    _getInputPlaceholder() {
+        const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+        const targetCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+        if (targetCode === 'en') {
+            return {
+                en: 'Ask about grammar, vocabulary, or exercises...',
+                ru: 'Спроси о грамматике, лексике или заданиях...',
+                es: 'Pregunta sobre gramática, vocabulario o ejercicios...',
+            }[lang] || 'Ask about grammar, vocabulary, or exercises...';
+        }
+        return {
+            en: 'Ask your tutor anything...',
+            ru: 'Спроси репетитора...',
+            es: 'Pregunta a tu tutor...',
+        }[lang] || 'Ask your tutor anything...';
     },
 };

@@ -275,15 +275,33 @@ function renderDuelSearch(container) {
         renderDuels(container);
     });
 
-    // Fetch skill-specific questions from AI
+    // Fetch skill-specific questions from AI — curriculum-aware
     const userLevel = LangyState.user.level || 'B1';
     const weakAreas = LangyState.aiMemory?.weakAreas || [];
     const weakHint = weakAreas.length > 0 ? `\nFocus on weak areas: ${weakAreas.slice(0, 3).join(', ')}.` : '';
 
+    // Curriculum context for English
+    let curriculumHint = '';
+    if (typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en' && typeof LangyCurriculum !== 'undefined') {
+        const tb = LangyCurriculum.getActive();
+        if (tb) {
+            const cefrLevel = tb.cefr || '';
+            const unitId = typeof LangyState !== 'undefined' ? LangyState.progress?.currentUnitId : null;
+            if (cefrLevel) curriculumHint += `\nCEFR level: ${cefrLevel}. Questions must be appropriate for this level.`;
+            if (unitId && tb.units) {
+                const unit = tb.units.find(u => u.id === unitId);
+                if (unit) {
+                    if (unit.grammar?.length) curriculumHint += `\nCurrent grammar focus: ${unit.grammar.join(', ')}. Include at least 1 question on these topics.`;
+                    if (unit.vocab?.length) curriculumHint += `\nCurrent vocabulary: ${unit.vocab.slice(0, 10).join(', ')}. Use these words where natural.`;
+                }
+            }
+        }
+    }
+
     setTimeout(async () => {
         try {
             const prompt = `Generate 3 English ${selectedMode.aiPrompt} multiple choice questions for a competitive language duel.
-Level: ${userLevel}.${weakHint}
+Level: ${userLevel}.${weakHint}${curriculumHint}
 Format EXACTLY as JSON array of objects:
 [
   { "q": "Skill tag (e.g. Grammar: Past Simple)", "text": "The sentence with ___ blank", "options": ["A", "B", "C", "D"], "correct": 0 }
