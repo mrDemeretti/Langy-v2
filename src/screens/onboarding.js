@@ -1,6 +1,7 @@
 /* ============================================
-   SCREEN: ONBOARDING — Multi-Language First Session Setup
-   Flow: Language → Goal → Confidence → Start
+   SCREEN: ONBOARDING — Language-Specific First Session Setup
+   Flow: Language → Goal (language-specific) → Confidence → Start
+   Each language has distinct goals, framing, and path promises.
    ============================================ */
 
 function renderOnboarding(container) {
@@ -211,52 +212,109 @@ function renderOnboarding(container) {
         const targetCfg = typeof LangyTarget !== 'undefined' ? (LangyTarget.LANGUAGES[targetCode] || {}) : {};
         const targetName = (targetCfg.name || {})[lang] || targetCfg.nativeName || 'this language';
 
-        // Customize exam description per language
-        const examDescs = {
-            en: { en: 'IELTS, TOEFL, Cambridge', ru: 'IELTS, TOEFL, Cambridge', es: 'IELTS, TOEFL, Cambridge' },
-            es: { en: 'DELE, SIELE', ru: 'DELE, SIELE', es: 'DELE, SIELE' },
-            ar: { en: 'Arabic proficiency tests', ru: 'Тесты по арабскому', es: 'Pruebas de árabe' },
+        // ─── Language-specific goal trees ───
+        const goalsByLang = {
+            ar: [
+                {
+                    id: 'alphabet',
+                    icon: '🔤',
+                    label: { en: 'Learn the Arabic alphabet', ru: 'Выучить арабский алфавит', es: 'Aprender el alfabeto árabe' }[lang],
+                    desc: { en: 'Letters, sounds, reading & writing from scratch', ru: 'Буквы, звуки, чтение и письмо с нуля', es: 'Letras, sonidos, lectura y escritura desde cero' }[lang],
+                },
+                {
+                    id: 'heritage',
+                    icon: '🏠',
+                    label: { en: 'Connect with my heritage', ru: 'Связь с наследием', es: 'Conectar con mi herencia' }[lang],
+                    desc: { en: 'Understand family, culture, and roots', ru: 'Понять семью, культуру и корни', es: 'Entender familia, cultura y raíces' }[lang],
+                },
+                {
+                    id: 'religion',
+                    icon: '🕌',
+                    label: { en: 'Understand religious texts', ru: 'Понимать религиозные тексты', es: 'Entender textos religiosos' }[lang],
+                    desc: { en: 'Quran, prayers, Islamic knowledge', ru: 'Коран, молитвы, исламские знания', es: 'Corán, oraciones, conocimiento islámico' }[lang],
+                },
+                {
+                    id: 'speak',
+                    icon: LangyIcons.mic,
+                    label: { en: 'Speak Arabic in daily life', ru: 'Говорить по-арабски в быту', es: 'Hablar árabe en el día a día' }[lang],
+                    desc: { en: 'Greetings, shopping, social situations', ru: 'Приветствия, покупки, общение', es: 'Saludos, compras, situaciones sociales' }[lang],
+                },
+            ],
+            es: [
+                {
+                    id: 'travel',
+                    icon: LangyIcons.globe,
+                    label: { en: 'Travel to Spanish-speaking countries', ru: 'Путешествовать по испаноязычным странам', es: 'Viajar a países hispanohablantes' }[lang],
+                    desc: { en: 'Order food, ask directions, meet locals', ru: 'Заказать еду, спросить дорогу, общаться', es: 'Pedir comida, preguntar direcciones, conocer gente' }[lang],
+                },
+                {
+                    id: 'speak',
+                    icon: LangyIcons.mic,
+                    label: { en: 'Speak everyday Spanish', ru: 'Говорить по-испански каждый день', es: 'Hablar español todos los días' }[lang],
+                    desc: { en: 'Conversations, confidence, real fluency', ru: 'Разговоры, уверенность, реальная беглость', es: 'Conversaciones, confianza, fluidez real' }[lang],
+                },
+                {
+                    id: 'relocate',
+                    icon: '🏡',
+                    label: { en: 'Relocate or live abroad', ru: 'Переезд или жизнь за рубежом', es: 'Mudarme o vivir en el extranjero' }[lang],
+                    desc: { en: 'Work, documents, daily life in Spanish', ru: 'Работа, документы, быт на испанском', es: 'Trabajo, documentos, vida diaria en español' }[lang],
+                },
+                {
+                    id: 'exam',
+                    icon: LangyIcons.graduationCap,
+                    label: { en: 'Pass DELE / SIELE', ru: 'Сдать DELE / SIELE', es: 'Aprobar DELE / SIELE' }[lang],
+                    desc: { en: 'Structured exam preparation', ru: 'Подготовка к экзамену', es: 'Preparación estructurada para el examen' }[lang],
+                },
+            ],
+            en: [
+                {
+                    id: 'work',
+                    icon: LangyIcons.clipboard,
+                    label: { en: 'English for work & interviews', ru: 'Английский для работы и собеседований', es: 'Inglés para trabajo y entrevistas' }[lang],
+                    desc: { en: 'Meetings, emails, professional confidence', ru: 'Встречи, письма, профессиональная уверенность', es: 'Reuniones, emails, confianza profesional' }[lang],
+                },
+                {
+                    id: 'speak',
+                    icon: LangyIcons.mic,
+                    label: { en: 'Everyday fluency', ru: 'Бытовая беглость', es: 'Fluidez cotidiana' }[lang],
+                    desc: { en: 'Think and speak in English naturally', ru: 'Думать и говорить на английском свободно', es: 'Pensar y hablar en inglés de forma natural' }[lang],
+                },
+                {
+                    id: 'travel',
+                    icon: LangyIcons.globe,
+                    label: { en: 'Travel & live abroad', ru: 'Путешествия и жизнь за рубежом', es: 'Viajar y vivir en el extranjero' }[lang],
+                    desc: { en: 'Navigate airports, hotels, social life', ru: 'Аэропорты, отели, общение', es: 'Aeropuertos, hoteles, vida social' }[lang],
+                },
+                {
+                    id: 'exam',
+                    icon: LangyIcons.graduationCap,
+                    label: { en: 'Pass IELTS / TOEFL / Cambridge', ru: 'Сдать IELTS / TOEFL / Cambridge', es: 'Aprobar IELTS / TOEFL / Cambridge' }[lang],
+                    desc: { en: 'Academic English & exam strategies', ru: 'Академический английский и стратегии', es: 'Inglés académico y estrategias de examen' }[lang],
+                },
+            ],
+        };
+
+        // Language-specific subtitle for goal step
+        const goalSubtitles = {
+            ar: { en: "We'll shape your Arabic path around this", ru: 'Мы построим твой путь в арабском вокруг этого', es: 'Moldearemos tu camino en árabe según esto' },
+            es: { en: "We'll focus your Spanish on what matters most", ru: 'Мы сфокусируем испанский на том, что важно', es: 'Enfocaremos tu español en lo que más importa' },
+            en: { en: "We'll tailor your English to this goal", ru: 'Мы настроим английский под эту цель', es: 'Ajustaremos tu inglés a este objetivo' },
         };
 
         renderPillStep({
             stepLabel: `2 / ${TOTAL_STEPS}`,
             stateKey: 'intentGoal',
-            title: { en: `What's your goal with ${targetName}?`, ru: `Какая цель в ${targetName === 'Английский' ? 'английском' : targetName === 'Испанский' ? 'испанском' : targetName === 'Арабский' ? 'арабском' : targetName}?`, es: `¿Tu objetivo con ${targetName}?` }[lang],
-            subtitle: {
-                en: 'Pick one — we\'ll tailor everything to it',
-                ru: 'Выбери одну — мы всё настроим под неё',
-                es: 'Elige una — ajustaremos todo',
-            }[lang],
+            title: { en: `Why are you learning ${targetName}?`, ru: `Зачем тебе ${targetName === 'Английский' ? 'английский' : targetName === 'Испанский' ? 'испанский' : targetName === 'Арабский' ? 'арабский' : targetName}?`, es: `¿Por qué aprendes ${targetName}?` }[lang],
+            subtitle: (goalSubtitles[targetCode] || goalSubtitles.en)[lang],
             nextStep: 3,
-            options: [
-                {
-                    id: 'speak',
-                    icon: LangyIcons.mic,
-                    label: { en: 'Speak confidently', ru: 'Заговорить уверенно', es: 'Hablar con confianza' }[lang],
-                    desc: { en: 'Real conversations from day one', ru: 'Реальные разговоры с первого дня', es: 'Conversaciones reales desde el día uno' }[lang],
-                },
-                {
-                    id: 'work',
-                    icon: LangyIcons.clipboard,
-                    label: { en: 'Language for work', ru: 'Язык для работы', es: 'Idioma para el trabajo' }[lang],
-                    desc: { en: 'Meetings, emails, presentations', ru: 'Встречи, письма, презентации', es: 'Reuniones, emails, presentaciones' }[lang],
-                },
-                {
-                    id: 'travel',
-                    icon: LangyIcons.globe,
-                    label: { en: 'Travel without barriers', ru: 'Путешествовать без барьеров', es: 'Viajar sin barreras' }[lang],
-                    desc: { en: 'Navigate any country easily', ru: 'Свободно ориентироваться в любой стране', es: 'Moverse fácilmente en cualquier país' }[lang],
-                },
-                {
-                    id: 'exam',
-                    icon: LangyIcons.graduationCap,
-                    label: { en: 'Pass an exam', ru: 'Сдать экзамен', es: 'Aprobar un examen' }[lang],
-                    desc: (examDescs[targetCode] || examDescs.en)[lang],
-                },
-            ],
+            options: goalsByLang[targetCode] || goalsByLang.en,
             onNext(val) {
-                // Map goal to interests for lightweight personalization
+                // Language-specific goal-to-interest mapping
                 const goalToInterests = {
+                    alphabet: ['reading', 'writing'],
+                    heritage: ['culture', 'social'],
+                    religion: ['religion', 'books'],
+                    relocate: ['social', 'business'],
                     speak: ['social', 'movies'],
                     work: ['business', 'tech'],
                     travel: ['travel', 'food'],
@@ -277,14 +335,37 @@ function renderOnboarding(container) {
         const targetCfg = typeof LangyTarget !== 'undefined' ? (LangyTarget.LANGUAGES[targetCode] || {}) : {};
         const targetName = (targetCfg.name || {})[lang] || targetCfg.nativeName || 'this language';
 
+        // Language-specific confidence descriptions
+        const confByLang = {
+            ar: {
+                zero: { en: "I can't read Arabic letters yet", ru: 'Я ещё не читаю арабские буквы', es: 'Aún no leo letras árabes' },
+                basic: { en: 'I know some letters and simple words', ru: 'Знаю некоторые буквы и простые слова', es: 'Conozco algunas letras y palabras simples' },
+                intermediate: { en: 'I can read and hold basic conversations', ru: 'Могу читать и вести простые разговоры', es: 'Puedo leer y mantener conversaciones básicas' },
+                advanced: { en: 'I read fluently and want to refine', ru: 'Читаю свободно, хочу улучшить', es: 'Leo con fluidez y quiero perfeccionar' },
+            },
+            es: {
+                zero: { en: 'Just hola and gracias so far', ru: 'Только hola и gracias пока', es: 'Solo hola y gracias por ahora' },
+                basic: { en: 'I can order food and introduce myself', ru: 'Могу заказать еду и представиться', es: 'Puedo pedir comida y presentarme' },
+                intermediate: { en: 'I can chat but struggle with tenses', ru: 'Могу общаться, но путаюсь во временах', es: 'Puedo charlar pero me lío con los tiempos' },
+                advanced: { en: 'I speak well but want native-level fluency', ru: 'Говорю хорошо, но хочу уровень носителя', es: 'Hablo bien pero quiero fluidez nativa' },
+            },
+            en: {
+                zero: { en: 'I know almost nothing', ru: 'Почти ничего не знаю', es: 'No sé casi nada' },
+                basic: { en: 'Simple phrases, basic grammar', ru: 'Простые фразы, базовая грамматика', es: 'Frases simples, gramática básica' },
+                intermediate: { en: 'I can talk but freeze in meetings', ru: 'Могу говорить, но зависаю на встречах', es: 'Puedo hablar pero me bloqueo en reuniones' },
+                advanced: { en: 'Fluent but want professional polish', ru: 'Бегло, но хочу профессиональный уровень', es: 'Fluido pero quiero nivel profesional' },
+            },
+        };
+        const cd = confByLang[targetCode] || confByLang.en;
+
         renderPillStep({
             stepLabel: `3 / ${TOTAL_STEPS}`,
             stateKey: 'intentConfidence',
             title: { en: `Your ${targetName} level?`, ru: `Твой уровень ${targetName === 'Английский' ? 'английского' : targetName === 'Испанский' ? 'испанского' : targetName === 'Арабский' ? 'арабского' : targetName}?`, es: `¿Tu nivel de ${targetName}?` }[lang],
             subtitle: {
-                en: 'No test needed — pick your current level',
-                ru: 'Без теста — просто выбери свой уровень',
-                es: 'Sin prueba — elige tu nivel actual',
+                en: 'No test needed — just pick what feels right',
+                ru: 'Без теста — просто выбери, что подходит',
+                es: 'Sin prueba — elige lo que sientas',
             }[lang],
             nextStep: 4,
             options: [
@@ -292,25 +373,25 @@ function renderOnboarding(container) {
                     id: 'zero',
                     icon: LangyIcons.seedling || LangyIcons.heart,
                     label: { en: 'Total beginner', ru: 'Полный ноль', es: 'Principiante total' }[lang],
-                    desc: { en: 'I know almost nothing', ru: 'Почти ничего не знаю', es: 'No sé casi nada' }[lang],
+                    desc: cd.zero[lang],
                 },
                 {
                     id: 'basic',
                     icon: LangyIcons.bookOpen,
                     label: { en: 'I know the basics', ru: 'Знаю базу', es: 'Sé lo básico' }[lang],
-                    desc: { en: 'Simple phrases, basic grammar', ru: 'Простые фразы, базовая грамматика', es: 'Frases simples, gramática básica' }[lang],
+                    desc: cd.basic[lang],
                 },
                 {
                     id: 'intermediate',
                     icon: LangyIcons.messageCircle,
                     label: { en: 'I can have a conversation', ru: 'Могу поговорить', es: 'Puedo conversar' }[lang],
-                    desc: { en: 'But I make mistakes and freeze up', ru: 'Но делаю ошибки и зависаю', es: 'Pero cometo errores y me bloqueo' }[lang],
+                    desc: cd.intermediate[lang],
                 },
                 {
                     id: 'advanced',
                     icon: LangyIcons.trophy,
                     label: { en: 'Pretty good actually', ru: 'Довольно хорошо', es: 'Bastante bien' }[lang],
-                    desc: { en: 'I want to polish and perfect it', ru: 'Хочу отшлифовать и улучшить', es: 'Quiero pulir y perfeccionar' }[lang],
+                    desc: cd.advanced[lang],
                 },
             ],
             onNext(val) {
@@ -365,21 +446,25 @@ function renderOnboarding(container) {
                     <div style="font-size:48px; margin-bottom:var(--sp-3);">${targetFlag}</div>
 
                     <h2 class="onboarding__title">${{
-                        en: `Let's start your ${targetName} journey!`,
-                        ru: `Начнём изучать ${targetName === 'Английский' ? 'английский' : targetName === 'Испанский' ? 'испанский' : targetName === 'Арабский' ? 'арабский' : targetName}!`,
-                        es: `¡Empecemos tu viaje en ${targetName}!`,
-                    }[lang]}</h2>
+                        ar: { en: 'Your Arabic journey begins!', ru: 'Твой путь в арабском начинается!', es: '¡Tu camino en árabe comienza!' },
+                        es: { en: 'Vamos — your Spanish path is ready!', ru: 'Vamos — твой путь в испанском готов!', es: '¡Vamos — tu camino en español está listo!' },
+                        en: { en: 'Your English growth starts now!', ru: 'Рост твоего английского начинается!', es: '¡Tu crecimiento en inglés empieza ahora!' },
+                    }[targetCode]?.[lang] || `Let's start your ${targetName} journey!`}</h2>
 
                     <p class="onboarding__subtitle" style="max-width:340px; margin:var(--sp-3) auto 0;">${{
-                        en: 'Your AI coach is ready. You can change your mascot and language anytime.',
-                        ru: 'ИИ-коуч готов. Маскота и язык можно сменить в любое время.',
-                        es: 'Tu coach IA está listo. Puedes cambiar mascota e idioma cuando quieras.',
-                    }[lang]}</p>
+                        ar: { en: 'Your AI tutor will guide you through letters, sounds, and your first Arabic words.', ru: 'ИИ-репетитор проведёт тебя через буквы, звуки и первые арабские слова.', es: 'Tu tutor IA te guiará por letras, sonidos y tus primeras palabras en árabe.' },
+                        es: { en: 'Your AI coach will help you start speaking Spanish from the very first session.', ru: 'ИИ-коуч поможет заговорить по-испански с первой же сессии.', es: 'Tu coach IA te ayudará a hablar español desde la primera sesión.' },
+                        en: { en: 'Your AI coach will help you speak, think, and grow in English — starting now.', ru: 'ИИ-коуч поможет тебе говорить, думать и расти в английском — начиная сейчас.', es: 'Tu coach IA te ayudará a hablar, pensar y crecer en inglés — empezando ahora.' },
+                    }[targetCode]?.[lang] || 'Your AI coach is ready.'}</p>
                 </div>
 
                 <div class="onboarding__bottom">
                     <button class="btn btn--primary btn--lg btn--full onboarding__btn" id="onboarding-finish">
-                        ${{ en: 'Start guided speaking', ru: 'Начать разговорную сессию', es: 'Iniciar sesión guiada' }[lang]} ${LangyIcons.rocket}
+                        ${{ 
+                            ar: { en: 'Start learning Arabic', ru: 'Начать учить арабский', es: 'Empezar a aprender árabe' },
+                            es: { en: 'Start speaking Spanish', ru: 'Начать говорить по-испански', es: 'Empezar a hablar español' },
+                            en: { en: 'Start your English session', ru: 'Начать сессию английского', es: 'Iniciar sesión de inglés' },
+                        }[targetCode]?.[lang] || 'Start guided speaking'} ${LangyIcons.rocket}
                     </button>
                 </div>
             </div>
@@ -408,10 +493,14 @@ function renderOnboarding(container) {
             // ─── SPEAKING-FIRST: Go directly into first talk session ───
             // Pre-configure the talk screen to skip the picker and start immediately
             const scenarioMap = {
-                speak: 'coffee', // casual & approachable
-                work: 'interview', // professional context
-                travel: 'airport', // travel scenario
-                exam: 'free', // flexible practice
+                speak: 'coffee',       // casual & approachable
+                work: 'interview',     // professional context
+                travel: 'airport',     // travel scenario
+                exam: 'free',          // flexible practice
+                alphabet: 'roommate',  // gentle Arabic start
+                heritage: 'coffee',    // warm social
+                religion: 'free',      // open practice
+                relocate: 'airport',   // relocation/travel
             };
             // For absolute beginners, use the friendliest scenario
             const scenario = userConfidence === 'zero' ? 'roommate' : scenarioMap[userGoal] || 'coffee';
