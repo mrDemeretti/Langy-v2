@@ -233,27 +233,27 @@ function renderOnboarding(container) {
             ar: [
                 {
                     id: 'alphabet',
-                    icon: '🔤',
-                    label: { en: 'Learn the Arabic alphabet', ru: 'Выучить арабский алфавит', es: 'Aprender el alfabeto árabe' }[lang],
-                    desc: { en: 'Letters, sounds, reading & writing from scratch', ru: 'Буквы, звуки, чтение и письмо с нуля', es: 'Letras, sonidos, lectura y escritura desde cero' }[lang],
+                    icon: '✍️',
+                    label: { en: 'Read & write Arabic from zero', ru: 'Читать и писать по-арабски с нуля', es: 'Leer y escribir árabe desde cero' }[lang],
+                    desc: { en: 'Start with the script — letters, vowels, then your first words', ru: 'Начни с письма — буквы, гласные, затем первые слова', es: 'Empieza por la escritura — letras, vocales, luego tus primeras palabras' }[lang],
                 },
                 {
                     id: 'heritage',
                     icon: '🏠',
-                    label: { en: 'Connect with my heritage', ru: 'Связь с наследием', es: 'Conectar con mi herencia' }[lang],
-                    desc: { en: 'Understand family, culture, and roots', ru: 'Понять семью, культуру и корни', es: 'Entender familia, cultura y raíces' }[lang],
+                    label: { en: 'Reconnect with my roots', ru: 'Восстановить связь с корнями', es: 'Reconectar con mis raíces' }[lang],
+                    desc: { en: 'Understand family conversations, culture, and identity', ru: 'Понимать семейные разговоры, культуру и самоидентификацию', es: 'Entender conversaciones familiares, cultura e identidad' }[lang],
                 },
                 {
                     id: 'religion',
                     icon: '🕌',
-                    label: { en: 'Understand religious texts', ru: 'Понимать религиозные тексты', es: 'Entender textos religiosos' }[lang],
-                    desc: { en: 'Quran, prayers, Islamic knowledge', ru: 'Коран, молитвы, исламские знания', es: 'Corán, oraciones, conocimiento islámico' }[lang],
+                    label: { en: 'Read Quran & understand prayers', ru: 'Читать Коран и понимать молитвы', es: 'Leer el Corán y entender oraciones' }[lang],
+                    desc: { en: 'Build reading skill for religious texts and daily worship', ru: 'Навык чтения для религиозных текстов и ежедневной молитвы', es: 'Desarrollar lectura para textos religiosos y oración diaria' }[lang],
                 },
                 {
                     id: 'speak',
                     icon: LangyIcons.mic,
-                    label: { en: 'Speak Arabic in daily life', ru: 'Говорить по-арабски в быту', es: 'Hablar árabe en el día a día' }[lang],
-                    desc: { en: 'Greetings, shopping, social situations', ru: 'Приветствия, покупки, общение', es: 'Saludos, compras, situaciones sociales' }[lang],
+                    label: { en: 'Speak Arabic in real life', ru: 'Говорить по-арабски в жизни', es: 'Hablar árabe en la vida real' }[lang],
+                    desc: { en: 'Learn script first, then greetings, introductions, and daily phrases', ru: 'Сначала письмо, затем приветствия, представления и фразы', es: 'Primero la escritura, luego saludos, presentaciones y frases diarias' }[lang],
                 },
             ],
             es: [
@@ -312,7 +312,7 @@ function renderOnboarding(container) {
 
         // Language-specific subtitle for goal step
         const goalSubtitles = {
-            ar: { en: "We'll shape your Arabic path around this", ru: 'Мы построим твой путь в арабском вокруг этого', es: 'Moldearemos tu camino en árabe según esto' },
+            ar: { en: "Your Arabic path starts with the script — we'll guide you from there", ru: 'Твой путь начнётся с письма — мы поведём тебя дальше', es: 'Tu camino comienza con la escritura — te guiaremos desde ahí' },
             es: { en: "We'll focus your Spanish on what matters most", ru: 'Мы сфокусируем испанский на том, что важно', es: 'Enfocaremos tu español en lo que más importa' },
             en: { en: "We'll tailor your English to this goal", ru: 'Мы настроим английский под эту цель', es: 'Ajustaremos tu inglés a este objetivo' },
         };
@@ -327,9 +327,9 @@ function renderOnboarding(container) {
             onNext(val) {
                 // Language-specific goal-to-interest mapping
                 const goalToInterests = {
-                    alphabet: ['reading', 'writing'],
-                    heritage: ['culture', 'social'],
-                    religion: ['religion', 'books'],
+                    alphabet: ['script', 'reading'],
+                    heritage: ['culture', 'family'],
+                    religion: ['religion', 'reading'],
                     relocate: ['social', 'business'],
                     speak: ['social', 'movies'],
                     work: ['business', 'tech'],
@@ -354,10 +354,10 @@ function renderOnboarding(container) {
         // Language-specific confidence descriptions
         const confByLang = {
             ar: {
-                zero: { en: "I can't read Arabic letters yet", ru: 'Я ещё не читаю арабские буквы', es: 'Aún no leo letras árabes' },
-                basic: { en: 'I know some letters and simple words', ru: 'Знаю некоторые буквы и простые слова', es: 'Conozco algunas letras y palabras simples' },
-                intermediate: { en: 'I can read and hold basic conversations', ru: 'Могу читать и вести простые разговоры', es: 'Puedo leer y mantener conversaciones básicas' },
-                advanced: { en: 'I read fluently and want to refine', ru: 'Читаю свободно, хочу улучшить', es: 'Leo con fluidez y quiero perfeccionar' },
+                zero: { en: "I've never seen the Arabic script before", ru: 'Я никогда не видел арабское письмо', es: 'Nunca he visto la escritura árabe' },
+                basic: { en: 'I recognise some letters and can sound out words', ru: 'Узнаю некоторые буквы и могу читать по слогам', es: 'Reconozco algunas letras y puedo deletrear palabras' },
+                intermediate: { en: 'I can read Arabic text and hold simple conversations', ru: 'Могу читать арабский текст и вести простые разговоры', es: 'Puedo leer texto árabe y mantener conversaciones simples' },
+                advanced: { en: 'I read and speak well — want to refine and expand', ru: 'Читаю и говорю хорошо — хочу улучшить и расширить', es: 'Leo y hablo bien — quiero perfeccionar y ampliar' },
             },
             es: {
                 zero: { en: 'Just hola and gracias so far', ru: 'Только hola и gracias пока', es: 'Solo hola y gracias por ahora' },
@@ -462,13 +462,13 @@ function renderOnboarding(container) {
                     <div style="font-size:48px; margin-bottom:var(--sp-3);">${targetFlag}</div>
 
                     <h2 class="onboarding__title">${{
-                        ar: { en: 'Your Arabic journey begins!', ru: 'Твой путь в арабском начинается!', es: '¡Tu camino en árabe comienza!' },
+                        ar: { en: 'Your Arabic script journey begins!', ru: 'Твой путь к арабскому письму начинается!', es: '¡Tu camino a la escritura árabe comienza!' },
                         es: { en: 'Vamos — your Spanish path is ready!', ru: 'Vamos — твой путь в испанском готов!', es: '¡Vamos — tu camino en español está listo!' },
                         en: { en: 'Your English growth starts now!', ru: 'Рост твоего английского начинается!', es: '¡Tu crecimiento en inglés empieza ahora!' },
                     }[targetCode]?.[lang] || `Let's start your ${targetName} journey!`}</h2>
 
                     <p class="onboarding__subtitle" style="max-width:340px; margin:var(--sp-3) auto 0;">${{
-                        ar: { en: 'Your AI tutor will guide you through letters, sounds, and your first Arabic words.', ru: 'ИИ-репетитор проведёт тебя через буквы, звуки и первые арабские слова.', es: 'Tu tutor IA te guiará por letras, sonidos y tus primeras palabras en árabe.' },
+                        ar: { en: 'You\'ll start by learning the Arabic alphabet in small groups, then vowels, then reading your first real words.', ru: 'Ты начнёшь с арабского алфавита по группам, затем гласные, затем чтение первых настоящих слов.', es: 'Empezarás con el alfabeto árabe en grupos pequeños, luego vocales, luego leerás tus primeras palabras reales.' },
                         es: { en: 'Your AI coach will help you start speaking Spanish from the very first session.', ru: 'ИИ-коуч поможет заговорить по-испански с первой же сессии.', es: 'Tu coach IA te ayudará a hablar español desde la primera sesión.' },
                         en: { en: 'Your AI coach will help you speak, think, and grow in English — starting now.', ru: 'ИИ-коуч поможет тебе говорить, думать и расти в английском — начиная сейчас.', es: 'Tu coach IA te ayudará a hablar, pensar y crecer en inglés — empezando ahora.' },
                     }[targetCode]?.[lang] || 'Your AI coach is ready.'}</p>
@@ -477,7 +477,7 @@ function renderOnboarding(container) {
                 <div class="onboarding__bottom">
                     <button class="btn btn--primary btn--lg btn--full onboarding__btn" id="onboarding-finish">
                         ${{ 
-                            ar: { en: 'Start learning Arabic', ru: 'Начать учить арабский', es: 'Empezar a aprender árabe' },
+                            ar: { en: 'Start with the Arabic script', ru: 'Начать с арабского письма', es: 'Empezar con la escritura árabe' },
                             es: { en: 'Start speaking Spanish', ru: 'Начать говорить по-испански', es: 'Empezar a hablar español' },
                             en: { en: 'Start your English session', ru: 'Начать сессию английского', es: 'Iniciar sesión de inglés' },
                         }[targetCode]?.[lang] || 'Start guided speaking'} ${LangyIcons.rocket}
