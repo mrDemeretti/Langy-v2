@@ -697,12 +697,28 @@ ARABIC-SPECIFIC DIRECTIVES:
 - Speak mostly in the UI language (English/Russian/Spanish) but weave in Arabic words with transliteration.
 - The early goal is confidence and familiarity, not fluency.` : '';
 
+        // English language directive
+        const englishDirective = targetLang === 'en' ? `
+ENGLISH-SPECIFIC DIRECTIVES:
+- Teach primarily through English. Support comprehension clearly when needed.
+- Adapt explanations to the learner's level.
+- Prefer real-life, usable English over textbook stiffness.
+- Prioritize natural phrasing, tone, and conversational flow.
+- Help the learner sound more natural, not just more correct.
+- When useful, explain why a phrase sounds natural or unnatural.
+- Support confidence in speaking, not only grammatical accuracy.
+- Keep examples current, socially believable, and easy to reuse.
+- Avoid overly formal or unnatural textbook phrasing unless the learner specifically asks.
+- English guidance priorities: natural expression, usable everyday phrasing, conversational confidence, clarity without stiffness, correction that helps the learner immediately retry.` : '';
+
+        const langDirective = arabicDirective || englishDirective;
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${arabicDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}
 ${curCtx ? '\nCURRICULUM CONTEXT:\n' + curCtx : ''}
 
 LANGY TUTOR BASELINE — APPLY ALWAYS:
