@@ -14,12 +14,13 @@ const DeepTutor = {
         this.badge.className = 'tutor-widget';
         this.badge.id = 'tutor-widget';
 
-        const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
         const chosenIdx = LangyState.mascot.selected || 0;
+        const mascotImg = typeof TalkEngine !== 'undefined' ? TalkEngine.getMascotImage(chosenIdx)
+            : ['zendaya', 'travis', 'matthew', 'omar', 'elyanna', 'adel_imam'][chosenIdx] || 'zendaya';
 
         this.badge.innerHTML = `
             <div class="tutor-widget__badge">
-                <img src="assets/mascots/${mascotNames[chosenIdx]}.png" alt="Mascot">
+                <img src="assets/mascots/${mascotImg}.png" alt="Mascot">
             </div>
         `;
 

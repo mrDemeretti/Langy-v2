@@ -248,7 +248,7 @@ function renderHome(container) {
                 <div class="home__mascot-stage" id="home-mascot" style="--mascot-color: ${['#7C6CF6','#4ADE80','#F59E0B','#06B6D4'][LangyState.mascot.selected || 0]};">
                     <img 
                         id="mascot-img"
-                        src="assets/mascots/${['zendaya', 'travis', 'matthew', 'omar'][LangyState.mascot.selected || 0]}.png" 
+                        src="assets/mascots/${(typeof TalkEngine !== 'undefined' ? TalkEngine.getMascotImage(LangyState.mascot.selected || 0) : ['zendaya','travis','matthew','omar','elyanna','adel_imam'][LangyState.mascot.selected || 0])}.png" 
                         alt="Langy Mascot" 
                         class="home__mascot-img"
                     >

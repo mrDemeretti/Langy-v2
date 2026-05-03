@@ -24,7 +24,7 @@ function renderFirstTalkIntro(container) {
     const scenarioId = ScreenState.get('talkScenario', 'coffee');
     const scenario = TalkEngine.scenarios.find(s => s.id === scenarioId) || TalkEngine.scenarios[0];
     const persona = TalkEngine.personas[mascotId] || TalkEngine.personas[0];
-    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar', 4: 'elyanna', 5: 'adel_imam' };
     const lang = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
     const confidence = LangyState.user.confidenceLevel || 'intermediate';
 
@@ -123,7 +123,9 @@ function renderFirstTalkIntro(container) {
 // ═══════════════════════════════════════
 function renderTalkSelect(container) {
     const mascotId = LangyState.mascot?.selected || 0;
-    const mascots = Object.entries(TalkEngine.personas);
+    const targetLang = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+    const langMascotIds = TalkEngine.getMascotIdsForLanguage(targetLang);
+    const mascots = langMascotIds.map(id => [String(id), TalkEngine.personas[id]]);
     const scenarios = TalkEngine.scenarios;
 
     container.innerHTML = `
@@ -142,7 +144,7 @@ function renderTalkSelect(container) {
                     <div class="talk-stage__mascot">
                         ${(() => {
                             const selId = ScreenState.get('talkMascot') ?? mascotId;
-                            const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+                            const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar', 4: 'elyanna', 5: 'adel_imam' };
                             const m = TalkEngine.personas[selId];
                             return `
                                 <img src="assets/mascots/${imgs[selId]}.png" alt="${m.name}"
@@ -163,8 +165,8 @@ function renderTalkSelect(container) {
                     <div class="talk-partner-strip">
                         ${mascots
                             .map(([id, m]) => {
-                                const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
-                                const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+                                const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4', 4: '#C084FC', 5: '#F97316' };
+                                const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar', 4: 'elyanna', 5: 'adel_imam' };
                                 const isSelected = parseInt(id) === (ScreenState.get('talkMascot') ?? mascotId);
                                 return `
                                 <div class="talk-partner ${isSelected ? 'talk-partner--active' : ''}" 
@@ -263,8 +265,8 @@ function renderTalkCall(container) {
     const session = TalkEngine.startSession(mascotId, scenarioId);
     const persona = session.persona;
     const scenario = session.scenario;
-    const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
-    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
+    const colors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4', 4: '#C084FC', 5: '#F97316' };
+    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar', 4: 'elyanna', 5: 'adel_imam' };
     const color = colors[mascotId] || '#10B981';
     const minTurns = TalkEngine.REWARD_MIN_TURNS;
 
@@ -686,9 +688,9 @@ function renderTalkSummary(container) {
     const isFirstSession = !LangyState.talkHistory || LangyState.talkHistory.length <= 1;
     const sessionCount = (LangyState.talkHistory || []).length || 1;
     const mascotId = summary.mascotId ?? LangyState.mascot?.selected ?? 0;
-    const mascotName = summary.mascot || ['Zendaya', 'Travis', 'Matthew', 'Omar'][mascotId] || 'Your coach';
-    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar' };
-    const mascotColors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4' };
+    const mascotName = summary.mascot || ['Zendaya', 'Travis', 'Matthew', 'Omar', 'Elyanna', 'Adel Imam'][mascotId] || 'Your coach';
+    const imgs = { 0: 'zendaya', 1: 'travis', 2: 'matthew', 3: 'omar', 4: 'elyanna', 5: 'adel_imam' };
+    const mascotColors = { 0: '#7C6CF6', 1: '#4ADE80', 2: '#F59E0B', 3: '#06B6D4', 4: '#C084FC', 5: '#F97316' };
     const mascotColor = mascotColors[mascotId] || 'var(--primary)';
 
     // Structured vs plain feedback

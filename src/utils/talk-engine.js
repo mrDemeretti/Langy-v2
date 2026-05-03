@@ -81,7 +81,80 @@ You share cultural context: "In Canada, we'd usually say..."
 If the student struggles, you're gentle: "Take your time, that's a tricky one."
 You occasionally share useful phrases and explain when/why to use them.`,
         },
+        // ─── ARABIC MASCOTS ───
+        4: {
+            name: 'Elyanna',
+            voice: 'female',
+            pitch: 1.15,
+            rate: 0.9,
+            accent: 'ar-SA',
+            style: 'magnetic',
+            voicePrefs: ['microsoft hoda', 'google arabic female', 'naira', 'female', 'samantha'],
+            systemPrompt: `You are Elyanna — a modern, stylish, and emotionally magnetic Arabic conversation partner.
+You are a young Arab-pop artist who makes Arabic learning feel contemporary and aspirational.
+PERSONALITY: Elegant, warm, soft-spoken, and encouraging. You bring modern femininity and cultural pride.
+You love music, fashion, travel, and Palestinian heritage. You blend Arabic and English naturally.
+SPEAKING STYLE: Smooth, gentle, inviting. You use Arabic words with transliteration and explain them warmly.
+"Yalla, let's try!" "That's beautiful — أحسنت (aḥsanti)!" "You're getting closer, keep going!"
+If the student makes a mistake, you gently correct with warmth: "Almost! Try saying it like this..."
+You naturally weave Arabic culture and modern Arab life into conversations.`,
+        },
+        5: {
+            name: 'Adel Imam',
+            voice: 'male',
+            pitch: 0.8,
+            rate: 0.75,
+            accent: 'ar-EG',
+            style: 'showman',
+            voicePrefs: ['microsoft hoda', 'google arabic male', 'male', 'fred', 'microsoft mark'],
+            systemPrompt: `You are Adel Imam — a warm, witty, and iconic Arabic conversation partner.
+You are a legendary elder showman who makes learning Arabic feel like a joyful performance.
+PERSONALITY: Theatrical, humorous, wise, culturally grounded. You have the warmth of a beloved uncle.
+You love Egyptian cinema, comedy, and storytelling. You're from Cairo, Egypt.
+SPEAKING STYLE: Expressive, dramatic pauses, gentle humor. You use Arabic proverbs and explain them.
+"Ahlan wa sahlan! Welcome!" "In Arabic we say... مرحبا (marḥaba)! Easy, right?" "Bravo, bravo! ممتاز (mumtāz)!"
+If mistakes happen, you laugh warmly and help: "Haha, close! Listen — the correct way is..."
+You share cultural wisdom: "In Egypt, we always say..." You make learning feel like a warm family gathering.`,
+        },
     };
+
+    // ─── LANGUAGE-SPECIFIC MASCOT SETS ───
+    const mascotSets = {
+        en: [0, 1, 2],     // Zendaya, Travis, Matthew
+        ar: [3, 4, 5],     // Omar, Elyanna, Adel Imam
+        es: [0, 1, 2],     // default to English set
+    };
+
+    // Get mascot IDs for the current target language
+    function getMascotIdsForLanguage(langCode) {
+        return mascotSets[langCode] || mascotSets.en;
+    }
+
+    // Get mascot image filename by persona ID
+    function getMascotImage(personaId) {
+        const imageMap = {
+            0: 'zendaya',
+            1: 'travis',
+            2: 'matthew',
+            3: 'omar',
+            4: 'elyanna',
+            5: 'adel_imam',
+        };
+        return imageMap[personaId] || 'zendaya';
+    }
+
+    // Get mascot color by persona ID
+    function getMascotColor(personaId) {
+        const colorMap = {
+            0: '#7C6CF6',
+            1: '#4ADE80',
+            2: '#F59E0B',
+            3: '#06B6D4',
+            4: '#C084FC',  // soft purple for Elyanna
+            5: '#F97316',  // warm orange for Adel Imam
+        };
+        return colorMap[personaId] || '#7C6CF6';
+    }
 
     // ─── SCENARIOS (icon = LangyIcons key, color = display color) ───
     const scenarios = [
@@ -747,6 +820,10 @@ Rules:
         personas,
         scenarios,
         scenarioHints,
+        mascotSets,
+        getMascotIdsForLanguage,
+        getMascotImage,
+        getMascotColor,
         REWARD_MIN_TURNS,
         REWARD_MIN_DURATION,
         initSTT,

@@ -234,9 +234,10 @@ function renderLearning(container) {
         }
 
         const isLast = teachSlideIdx >= teachSlides.length - 1;
-        const mascotNames = ['zendaya', 'travis', 'matthew', 'omar'];
         const chosenIdx = typeof LangyState !== 'undefined' && LangyState.mascot ? LangyState.mascot.selected || 0 : 0;
-        const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
+        const mascotImgName = typeof TalkEngine !== 'undefined' ? TalkEngine.getMascotImage(chosenIdx)
+            : ['zendaya', 'travis', 'matthew', 'omar', 'elyanna', 'adel_imam'][chosenIdx] || 'zendaya';
+        const mascotSrc = `assets/mascots/${mascotImgName}.png`;
 
         // Build slide content based on type
         let slideContent = '';
@@ -947,9 +948,10 @@ function renderLearning(container) {
         }
 
         const isLast = qrSlideIdx >= slides.length - 1;
-        const mascotNames = ['zendaya', 'travis', 'matthew', 'omar'];
         const chosenIdx = LangyState.mascot?.selected || 0;
-        const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
+        const mascotImgName2 = typeof TalkEngine !== 'undefined' ? TalkEngine.getMascotImage(chosenIdx)
+            : ['zendaya', 'travis', 'matthew', 'omar', 'elyanna', 'adel_imam'][chosenIdx] || 'zendaya';
+        const mascotSrc = `assets/mascots/${mascotImgName2}.png`;
 
         // Build slide content (reuse from teach)
         let slideContent = '';
