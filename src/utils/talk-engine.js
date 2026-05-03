@@ -311,8 +311,12 @@ You occasionally share useful phrases and explain when/why to use them.`,
         const accentLang = persona.accent || 'en-US';
         const langPrefix = accentLang.substring(0, 2);
 
-        const englishVoices = voices.filter(v => v.lang.startsWith(langPrefix));
-        const allEnglish = voices.filter(v => v.lang.startsWith('en'));
+        // Language-aware voice filtering
+        const targetLangCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+        const isArabic = targetLangCode === 'ar';
+        const searchPrefix = isArabic ? 'ar' : langPrefix;
+        const englishVoices = voices.filter(v => v.lang.startsWith(searchPrefix));
+        const allEnglish = isArabic ? voices.filter(v => v.lang.startsWith('ar')) : voices.filter(v => v.lang.startsWith('en'));
 
         for (const pref of prefs) {
             const found = englishVoices.find(v => v.name.toLowerCase().includes(pref));
@@ -408,11 +412,29 @@ If they get it right, acknowledge it briefly.
 Do NOT lecture about grammar — keep it conversational and natural.
 Aim for the student to practice ${coachFocus} at least 3-4 times during this conversation.` : '';
 
+        // Get target language and curriculum context
+        const targetLang = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+        const curCtx = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getAIContext() : '';
+
+        // Arabic early-learner directive
+        const arabicDirective = targetLang === 'ar' ? `
+ARABIC-SPECIFIC DIRECTIVES:
+- The student is learning Arabic (MSA). This is a script-first track.
+- For beginners: always include transliteration in parentheses after Arabic words, e.g. مرحبا (marḥaba).
+- Keep Arabic vocabulary simple and connected to what the student has learned (letters, greetings, numbers).
+- If the student is at A1, focus on: pronunciation of Arabic sounds, reading practice, basic greetings, and self-introduction.
+- Do NOT jump into complex grammar — the student may still be learning the alphabet.
+- Celebrate small wins: correctly pronouncing a letter, reading a word, or using a greeting.
+- Speak mostly in the UI language (English/Russian/Spanish) but weave in Arabic words with transliteration.
+- The early goal is confidence and familiarity, not fluency.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
-STUDENT NAME: ${LangyState?.user?.name || 'Student'}${coachDirective}
+STUDENT NAME: ${LangyState?.user?.name || 'Student'}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${arabicDirective}
+${curCtx ? '\nCURRICULUM CONTEXT:\n' + curCtx : ''}
 
 CRITICAL RULES FOR CONVERSATION:
 1. Respond as a REAL person in a REAL conversation. Be natural.

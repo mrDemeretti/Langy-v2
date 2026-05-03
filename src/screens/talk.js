@@ -70,7 +70,9 @@ function renderFirstTalkIntro(container) {
             }[lang]}</h2>
 
             <p style="color:var(--text-secondary); margin-bottom:var(--sp-2); max-width:300px;">
-                ${{ en: 'Your first conversation:', ru: 'Твой первый разговор:', es: 'Tu primera conversación:' }[lang]}
+                ${isArabicTrack
+                    ? { en: 'Your first Arabic listening session:', ru: '\u0422\u0432\u043e\u044f \u043f\u0435\u0440\u0432\u0430\u044f \u0430\u0440\u0430\u0431\u0441\u043a\u0430\u044f \u0441\u0435\u0441\u0441\u0438\u044f:', es: 'Tu primera sesi\u00f3n de escucha en \u00e1rabe:' }[lang]
+                    : { en: 'Your first conversation:', ru: '\u0422\u0432\u043e\u0439 \u043f\u0435\u0440\u0432\u044b\u0439 \u0440\u0430\u0437\u0433\u043e\u0432\u043e\u0440:', es: 'Tu primera conversaci\u00f3n:' }[lang]}
                 <strong style="color:var(--primary);">${scenario.title}</strong>
             </p>
 
@@ -91,7 +93,9 @@ function renderFirstTalkIntro(container) {
 
             <button class="btn btn--primary btn--xl btn--full" id="first-talk-start"
                     style="max-width:340px; font-size:var(--fs-lg); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
-                ${LangyIcons.mic} ${{ en: "Let's talk!", ru: 'Поговорим!', es: '¡Hablemos!' }[lang]}
+                ${LangyIcons.mic} ${isArabicTrack
+                    ? { en: "Let's listen & practice!", ru: 'Слушаем и практикуем!', es: '¡Escuchemos y practiquemos!' }[lang]
+                    : { en: "Let's talk!", ru: 'Поговорим!', es: '¡Hablemos!' }[lang]}
             </button>
 
             <button class="btn btn--ghost" id="first-talk-skip"
