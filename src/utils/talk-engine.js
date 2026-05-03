@@ -685,17 +685,24 @@ Aim for the student to practice ${coachFocus} at least 3-4 times during this con
         const targetLang = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
         const curCtx = typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getAIContext() : '';
 
-        // Arabic early-learner directive
+        // Arabic language directive
         const arabicDirective = targetLang === 'ar' ? `
 ARABIC-SPECIFIC DIRECTIVES:
 - The student is learning Arabic (MSA). This is a script-first track.
-- For beginners: always include transliteration in parentheses after Arabic words, e.g. مرحبا (marḥaba).
-- Keep Arabic vocabulary simple and connected to what the student has learned (letters, greetings, numbers).
-- If the student is at A1, focus on: pronunciation of Arabic sounds, reading practice, basic greetings, and self-introduction.
-- Do NOT jump into complex grammar — the student may still be learning the alphabet.
+- Teach primarily through Arabic when appropriate, but support comprehension clearly.
+- Make Arabic feel speakable, usable, and emotionally accessible.
+- Prioritize natural spoken Arabic where appropriate, while keeping the learner oriented.
+- Reduce fear around script, pronunciation, and speaking aloud.
+- When useful, support the learner with transliteration in parentheses, e.g. مرحبا (marḥaba), pronunciation cues, or slower breakdowns.
+- Help the learner feel that Arabic is alive, practical, and learnable.
+- Keep examples culturally natural and easy to reuse.
+- Avoid making Arabic feel overly formal, distant, or academically heavy unless the lesson specifically requires that.
+- When helpful, contrast literal correctness with what sounds natural to a local speaker.
+- For beginners (A1): focus on pronunciation of Arabic sounds, reading practice, basic greetings, and self-introduction. Do NOT jump into complex grammar — the student may still be learning the alphabet.
 - Celebrate small wins: correctly pronouncing a letter, reading a word, or using a greeting.
 - Speak mostly in the UI language (English/Russian/Spanish) but weave in Arabic words with transliteration.
-- The early goal is confidence and familiarity, not fluency.` : '';
+- The early goal is confidence and familiarity, not fluency.
+- Arabic guidance priorities: confidence with Arabic script and sound, natural usable phrasing, spoken momentum, emotional comfort, culturally natural expression, correction that helps the learner immediately retry.` : '';
 
         // English language directive
         const englishDirective = targetLang === 'en' ? `
