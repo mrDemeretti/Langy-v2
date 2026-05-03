@@ -60,7 +60,7 @@ function renderFirstTalkIntro(container) {
                         box-shadow:0 8px 32px rgba(0,0,0,0.15); border:3px solid var(--primary);">
                 <img src="assets/mascots/${imgs[mascotId]}.png" alt="${persona.name}"
                      style="width:100%; height:100%; object-fit:contain;"
-                     onerror="this.parentElement.innerHTML='<span style=font-size:48px>${persona.name[0]}</span>'">
+                     onerror="this.onerror=null; this.src=this.src.replace('.png','.svg');">
             </div>
 
             <h2 style="margin-bottom:var(--sp-2);">${{
@@ -149,7 +149,7 @@ function renderTalkSelect(container) {
                             return `
                                 <img src="assets/mascots/${imgs[selId]}.png" alt="${m.name}"
                                      style="width:100%; height:100%; object-fit:contain; animation: mascotIdle 4s ease-in-out infinite;"
-                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=font-size:48px;color:var(--primary)>${LangyIcons.mic}</div>';">
+                                     onerror="this.onerror=null; this.src=this.src.replace('.png','.svg');">
                             `;
                         })()}
                     </div>
@@ -173,7 +173,7 @@ function renderTalkSelect(container) {
                                      data-id="${id}" style="--mascot-color: ${colors[id]};">
                                     <div class="talk-partner__avatar">
                                         <img src="assets/mascots/${imgs[id]}.png" alt="${m.name}" 
-                                             onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:16px>${m.name[0]}</span>';">
+                                             onerror="this.onerror=null; this.src=this.src.replace('.png','.svg');">
                                     </div>
                                     <span class="talk-partner__name">${m.name}</span>
                                 </div>
@@ -314,7 +314,7 @@ function renderTalkCall(container) {
                     <div class="talk-call__avatar" id="mascot-avatar" style="background:${color}15;">
                         <img src="assets/mascots/${imgs[mascotId]}.png" alt="${persona.name}" 
                              style="width:100%; height:100%; object-fit:cover; border-radius:50%;"
-                             onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-size:48px;color:${color}>${persona.name[0]}</span>';">
+                             onerror="this.onerror=null; this.src=this.src.replace('.png','.svg');">
                     </div>
                 </div>
 
@@ -828,7 +828,7 @@ function renderTalkSummary(container) {
                                     border:3px solid ${mascotColor}; box-shadow:0 4px 20px ${mascotColor}33;">
                             <img src="assets/mascots/${imgs[mascotId]}.png" alt="${mascotName}"
                                  style="width:100%; height:100%; object-fit:contain;"
-                                 onerror="this.parentElement.innerHTML='<span style=font-size:32px>${mascotName[0]}</span>'">
+                                 onerror="this.onerror=null; this.src=this.src.replace('.png','.svg');">
                         </div>
                         <div style="position:absolute; bottom:-4px; right:-4px; width:24px; height:24px;
                                     border-radius:50%; background:var(--primary); color:white;

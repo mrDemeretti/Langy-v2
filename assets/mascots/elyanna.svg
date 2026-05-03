@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#DDD6FE"/>
+      <stop offset="100%" stop-color="#C084FC"/>
+    </radialGradient>
+    <radialGradient id="skin" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#F5D0B0"/>
+      <stop offset="100%" stop-color="#E8B894"/>
+    </radialGradient>
+  </defs>
+  <circle cx="200" cy="200" r="200" fill="url(#bg)"/>
+  <!-- Hair -->
+  <ellipse cx="200" cy="155" rx="95" ry="105" fill="#2D1810"/>
+  <!-- Face -->
+  <ellipse cx="200" cy="185" rx="72" ry="82" fill="url(#skin)"/>
+  <!-- Hair front -->
+  <path d="M128 155 Q140 110 200 100 Q260 110 272 155 Q265 130 200 125 Q135 130 128 155Z" fill="#2D1810"/>
+  <!-- Hair sides -->
+  <ellipse cx="125" cy="200" rx="18" ry="55" fill="#2D1810"/>
+  <ellipse cx="275" cy="200" rx="18" ry="55" fill="#2D1810"/>
+  <!-- Eyes -->
+  <ellipse cx="175" cy="185" rx="10" ry="11" fill="#2D1810"/>
+  <ellipse cx="225" cy="185" rx="10" ry="11" fill="#2D1810"/>
+  <circle cx="177" cy="183" r="3" fill="white" opacity="0.7"/>
+  <circle cx="227" cy="183" r="3" fill="white" opacity="0.7"/>
+  <!-- Eyebrows -->
+  <path d="M160 170 Q175 163 190 168" stroke="#2D1810" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M210 168 Q225 163 240 170" stroke="#2D1810" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M195 195 Q200 205 205 195" stroke="#D4A078" stroke-width="2" fill="none"/>
+  <!-- Smile -->
+  <path d="M178 215 Q200 235 222 215" stroke="#C07060" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Lips -->
+  <ellipse cx="200" cy="218" rx="18" ry="6" fill="#D4807088"/>
+  <!-- Neck -->
+  <rect x="185" y="260" width="30" height="25" rx="10" fill="#E8B894"/>
+  <!-- Shoulders/Top -->
+  <ellipse cx="200" cy="330" rx="100" ry="65" fill="#9333EA"/>
+  <!-- Collar -->
+  <path d="M150 300 Q200 280 250 300" stroke="#A855F7" stroke-width="3" fill="none"/>
+  <!-- Earrings -->
+  <circle cx="128" cy="210" r="5" fill="#F59E0B"/>
+  <circle cx="272" cy="210" r="5" fill="#F59E0B"/>
+  <!-- Name -->
+  <text x="200" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" opacity="0.9">ELYANNA</text>
+</svg>
