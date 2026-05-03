@@ -3184,7 +3184,27 @@ const LangyCurriculum = {
         title: 'A1 — مبتدئ',
         level: 'A1',
         cefr: 'A1',
-        methodology: 'Introduction to Arabic. Script learning, basic greetings, numbers, and simple sentences. MSA (Modern Standard Arabic) with awareness of spoken dialects.',
+        methodology: 'Script-first introduction to Arabic. Letters in 4 progressive groups, vowel marks, first reading, then greetings and self-introduction. MSA (Modern Standard Arabic) with spoken dialect awareness.',
+        canDo: [
+            'Can recognise and name all 28 Arabic letters in isolated form',
+            'Can distinguish dot patterns that differentiate similar letters (\u0628/\u062a/\u062b, \u062f/\u0630, \u0631/\u0632, \u0633/\u0634)',
+            'Can identify emphatic and pharyngeal sounds unique to Arabic (\u0635, \u0636, \u0637, \u0638, \u0639, \u063a)',
+            'Can read short vowel marks (fat\u1e25a, \u1e0damma, kasra) and special marks (suk\u016bn, shadda)',
+            'Can sound out and read simple Arabic words letter by letter',
+            'Can use basic greetings and polite phrases (\u0645\u0631\u062d\u0628\u0627, \u0634\u0643\u0631\u0627\u064b, \u0627\u0644\u0633\u0644\u0627\u0645 \u0639\u0644\u064a\u0643\u0645)',
+            'Can introduce themselves with \u0623\u0646\u0627 and \u0627\u0633\u0645\u064a',
+            'Can count from 1 to 10 in Arabic and recognise Eastern Arabic numerals (\u0661\u0662\u0663)',
+        ],
+        objectives: [
+            'Letter recognition: all 28 letters in isolated form with correct naming',
+            'Dot-pattern awareness: distinguish similar-shape letters by dot count and position',
+            'Emphatic and pharyngeal sounds: \u1e63\u0101d, \u1e0d\u0101d, \u1e6d\u0101, \u1e93\u0101, \u02bfayn, ghayn',
+            'Vowel system: fat\u1e25a (a), \u1e0damma (u), kasra (i), suk\u016bn, shadda',
+            'First reading: decode simple vowelled words (e.g. \u0643\u064e\u062a\u064e\u0628\u064e, \u0628\u064e\u064a\u062a)',
+            'Essential phrases: greetings, thank you, yes/no, goodbye',
+            'Self-introduction: \u0623\u0646\u0627 (I), \u0627\u0633\u0645\u064a (my name)',
+            'Numbers 1\u201310 and Eastern Arabic digit recognition',
+        ],
         units: [
     // ── Unit 1: Letters Group 1 ──
     {
