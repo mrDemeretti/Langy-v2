@@ -516,6 +516,53 @@ const LangyGrammarBank = {
         // ═══════════════════════════════════════════
         ar: {
             A1: {
+                // ── Script: Letter Recognition ──
+                letters_group1: [
+                    { template: 'Which letter is "alif"?', answer: 'ا', options: ['ا', 'ب', 'ت'], skill: 'script', rule: 'letter recognition group 1' },
+                    { template: 'Which letter is "bā"?', answer: 'ب', options: ['ا', 'ب', 'ث'], skill: 'script', rule: 'letter recognition group 1' },
+                    { template: 'ت has how many dots?', answer: '2 above', options: ['1 below', '2 above', '3 above'], skill: 'script', rule: 'dot patterns' },
+                    { template: 'ث has how many dots?', answer: '3 above', options: ['1 below', '2 above', '3 above'], skill: 'script', rule: 'dot patterns' },
+                    { template: 'Which letter is "jīm"?', answer: 'ج', options: ['ج', 'ح', 'خ'], skill: 'script', rule: 'letter recognition group 1' },
+                    { template: 'ح and خ differ by:', answer: 'a dot above', options: ['a dot below', 'a dot above', 'no difference'], skill: 'script', rule: 'dot patterns' },
+                ],
+                letters_group2: [
+                    { template: 'Which letter is "dāl"?', answer: 'د', options: ['د', 'ذ', 'ر'], skill: 'script', rule: 'letter recognition group 2' },
+                    { template: 'د + dot above = ___', answer: 'ذ', options: ['ذ', 'ز', 'ر'], skill: 'script', rule: 'dot twins' },
+                    { template: 'ر + dot above = ___', answer: 'ز', options: ['ذ', 'ز', 'د'], skill: 'script', rule: 'dot twins' },
+                    { template: 'س + 3 dots = ___', answer: 'ش', options: ['ش', 'ث', 'ص'], skill: 'script', rule: 'dot twins' },
+                    { template: 'Which letter is "sīn"?', answer: 'س', options: ['س', 'ش', 'ص'], skill: 'script', rule: 'letter recognition group 2' },
+                ],
+                letters_group3: [
+                    { template: 'The emphatic "s" is:', answer: 'ص', options: ['س', 'ص', 'ش'], skill: 'script', rule: 'emphatic letters' },
+                    { template: 'ص + dot = ___', answer: 'ض', options: ['ض', 'ظ', 'ذ'], skill: 'script', rule: 'emphatic dot twins' },
+                    { template: 'ط + dot = ___', answer: 'ظ', options: ['ض', 'ظ', 'ذ'], skill: 'script', rule: 'emphatic dot twins' },
+                    { template: 'ع is produced from the:', answer: 'throat', options: ['lips', 'throat', 'nose'], skill: 'script', rule: 'pharyngeal sounds' },
+                    { template: 'ع + dot = ___', answer: 'غ', options: ['غ', 'خ', 'ف'], skill: 'script', rule: 'pharyngeal dot twins' },
+                ],
+                letters_group4: [
+                    { template: 'The deep "k" sound is:', answer: 'ق', options: ['ك', 'ق', 'غ'], skill: 'script', rule: 'letter recognition group 4' },
+                    { template: 'و can be a consonant (w) or a:', answer: 'long vowel (ū)', options: ['short vowel', 'long vowel (ū)', 'dot'], skill: 'script', rule: 'dual-role letters' },
+                    { template: 'ي can be a consonant (y) or a:', answer: 'long vowel (ī)', options: ['short vowel', 'long vowel (ī)', 'emphatic'], skill: 'script', rule: 'dual-role letters' },
+                    { template: 'Arabic has ___ letters total.', answer: '28', options: ['26', '28', '30'], skill: 'script', rule: 'alphabet basics' },
+                    { template: 'Which letter is "nūn"?', answer: 'ن', options: ['ن', 'ب', 'ت'], skill: 'script', rule: 'letter recognition group 4' },
+                ],
+                // ── Script: Vowels & Reading ──
+                vowels: [
+                    { template: 'بَ reads as:', answer: 'ba', options: ['ba', 'bu', 'bi'], skill: 'script', rule: 'fatḥa vowel' },
+                    { template: 'بُ reads as:', answer: 'bu', options: ['ba', 'bu', 'bi'], skill: 'script', rule: 'ḍamma vowel' },
+                    { template: 'بِ reads as:', answer: 'bi', options: ['ba', 'bu', 'bi'], skill: 'script', rule: 'kasra vowel' },
+                    { template: 'The mark  َ (line above) is called:', answer: 'fatḥa', options: ['fatḥa', 'ḍamma', 'kasra'], skill: 'script', rule: 'vowel names' },
+                    { template: 'The mark  ُ (curl above) is called:', answer: 'ḍamma', options: ['fatḥa', 'ḍamma', 'kasra'], skill: 'script', rule: 'vowel names' },
+                    { template: 'The mark  ِ (line below) is called:', answer: 'kasra', options: ['fatḥa', 'ḍamma', 'kasra'], skill: 'script', rule: 'vowel names' },
+                    { template: 'Sukūn means the letter is:', answer: 'without a vowel', options: ['doubled', 'without a vowel', 'long'], skill: 'script', rule: 'sukūn' },
+                    { template: 'Shadda means the letter is:', answer: 'doubled', options: ['silent', 'doubled', 'long'], skill: 'script', rule: 'shadda' },
+                ],
+                reading: [
+                    { template: 'كَتَبَ reads as:', answer: 'kataba', options: ['kataba', 'kutiba', 'katibu'], skill: 'script', rule: 'first reading' },
+                    { template: 'بَيت reads as:', answer: 'bayt', options: ['bayt', 'buyt', 'biyt'], skill: 'script', rule: 'first reading' },
+                    { template: 'بِنت reads as:', answer: 'bint', options: ['bint', 'bant', 'bunt'], skill: 'script', rule: 'first reading' },
+                ],
+                // ── Communication: Greetings & Phrases ──
                 pronouns: [
                     { template: '___ طالب (I am a student)', answer: 'أنا', options: ['أنا', 'أنتَ', 'هو'], skill: 'grammar', rule: 'personal pronouns' },
                     { template: '___ من مصر (He is from Egypt)', answer: 'هو', options: ['أنا', 'هو', 'هي'], skill: 'grammar', rule: 'personal pronouns' },
@@ -526,10 +573,14 @@ const LangyGrammarBank = {
                     { template: 'The reply to السلام عليكم is:', answer: 'وعليكم السلام', options: ['مرحبا', 'وعليكم السلام', 'شكراً'], skill: 'culture', rule: 'Islamic greeting response' },
                     { template: '"Thank you" in Arabic:', answer: 'شكراً', options: ['مرحبا', 'شكراً', 'من فضلك'], skill: 'vocabulary', rule: 'basic phrases' },
                     { template: '"Please" in Arabic:', answer: 'من فضلك', options: ['شكراً', 'من فضلك', 'لا'], skill: 'vocabulary', rule: 'basic phrases' },
+                    { template: '"Goodbye" in Arabic:', answer: 'مع السلامة', options: ['مرحبا', 'شكراً', 'مع السلامة'], skill: 'vocabulary', rule: 'basic phrases' },
+                    { template: '"Yes" in Arabic:', answer: 'نعم', options: ['نعم', 'لا', 'شكراً'], skill: 'vocabulary', rule: 'basic phrases' },
                 ],
                 numbers: [
                     { template: 'واحد + واحد = ?', answer: 'اثنان', options: ['واحد', 'اثنان', 'ثلاثة'], skill: 'grammar', rule: 'numbers' },
                     { template: 'ثلاثة + اثنان = ?', answer: 'خمسة', options: ['أربعة', 'خمسة', 'ستة'], skill: 'grammar', rule: 'numbers' },
+                    { template: 'أربعة + ثلاثة = ?', answer: 'سبعة', options: ['ستة', 'سبعة', 'ثمانية'], skill: 'grammar', rule: 'numbers' },
+                    { template: 'عشرة - واحد = ?', answer: 'تسعة', options: ['ثمانية', 'تسعة', 'سبعة'], skill: 'grammar', rule: 'numbers' },
                 ],
                 getAllPatterns() {
                     let all = [];

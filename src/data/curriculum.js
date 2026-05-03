@@ -3663,7 +3663,7 @@ const LangyCurriculum = {
             }
         }
 
-        // Methodology note for English
+        // Methodology note per language
         let methodNote = '';
         if ((tb.language || 'en') === 'en') {
             methodNote = `\nENGLISH TUTORING DIRECTIVES:
@@ -3672,6 +3672,17 @@ const LangyCurriculum = {
 - Ensure grammar explanations match the current unit focus, not arbitrary topics
 - When correcting, relate errors back to the learning objectives for this level
 - Progressively scaffold: build on what was covered in previous units`;
+        } else if ((tb.language) === 'ar') {
+            methodNote = `\nARABIC TUTORING DIRECTIVES:
+- This is a script-first track: prioritise letter recognition, reading readiness, and phonetic accuracy before grammar
+- In early units (1-6), focus on the Arabic script: letter shapes, dot patterns, emphatic vs non-emphatic, vowel marks
+- Always provide transliteration alongside Arabic script for beginner learners
+- When correcting, reference the specific letter group or vowel mark being practiced
+- Distinguish between MSA (Modern Standard Arabic) and dialect when relevant, but teach MSA first
+- Encourage right-to-left reading practice and letter-connection awareness
+- After the Script Checkpoint (Unit 6), shift focus toward communication: greetings, self-introduction, numbers
+- Celebrate script milestones — reading the first word is a major achievement for Arabic learners
+- Reference the can-do outcomes and learning objectives when framing progress`;
         }
 
         return `Current textbook: ${tb.title} (${tb.cefr})
