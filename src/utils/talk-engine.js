@@ -1007,12 +1007,28 @@ This is a guided speaking session. Help the learner speak through a structured, 
 - Guided speaking priorities: speaking momentum, confidence, usable phrases, manageable correction, visible progress, structured success, emotional safety.
 - Avoid: long explanations, passive information dumps, over-correcting every line, turning the session into free chat too early, making the learner guess what to do next, letting the learner get stuck without a simpler bridge.` : '';
 
+        // Homework / writing feedback modifier
+        const isWritingFeedback = ScreenState.get('writingFeedback', false);
+        const writingFeedbackDirective = isWritingFeedback ? `
+WRITING FEEDBACK MODE — ACTIVE:
+This interaction is focused on reviewing the learner's written work. Give clear, useful, confidence-safe feedback.
+- Evaluate writing in a fair, level-appropriate way. Identify what is working as well as what needs improvement.
+- Keep feedback actionable and easy to understand. Preserve the learner's confidence while still being honest.
+- Prioritize the most useful corrections first. Focus on writing quality, not just isolated grammar mistakes.
+- Preserve tutor personality while staying precise and helpful. Make the learner feel that revision is manageable.
+- Point out strengths clearly. Identify the most important improvement areas.
+- Correct errors in a way the learner can learn from. Prefer rewrites and stronger versions over abstract criticism.
+- Connect corrections to clarity, naturalness, grammar, vocabulary, or task completion when useful.
+- Avoid correcting every minor issue if it harms clarity. Make the learner feel they know how to improve the next draft.
+- Writing feedback priorities: clarity, actionability, level-appropriate correction, confidence preservation, visible improvement, useful rewrite guidance.
+- Avoid: red-pen overload, harsh evaluation language, vague praise, overly academic critique, correcting every tiny mistake with equal weight, making the learner feel the writing is hopeless.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${freeTalkDirective}${reengageDirective}${placementDirective}${onboardingDirective}${guidedSpeakingDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${freeTalkDirective}${reengageDirective}${placementDirective}${onboardingDirective}${guidedSpeakingDirective}${writingFeedbackDirective}
 ${curCtx ? `
 CURRICULUM CONTEXT:
 ${curCtx}
