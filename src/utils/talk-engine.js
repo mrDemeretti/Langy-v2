@@ -919,6 +919,18 @@ ${userPhrases}
 
 ${avgConf !== null ? `Their average pronunciation confidence score was ${(avgConf * 100).toFixed(0)}%.` : ''}
 
+REVIEW / REFLECTION MODE — ACTIVE:
+This is a post-speaking review. Help the learner understand what went well, what needs work, and what to do next without killing confidence.
+- Summarize progress clearly. Highlight a small number of important takeaways.
+- Reinforce what the learner did well. Identify the most useful improvement area.
+- Keep feedback actionable. Preserve the learner's confidence while still being honest.
+- Make improvement feel visible and manageable. Prefer clarity and direction over long analysis.
+- Point out 1-3 meaningful strengths and 1-2 high-value growth areas.
+- Explain improvement in a way the learner can use immediately. End with a clear next step.
+- Make the learner feel forward momentum.
+- Review priorities: clarity, honesty, confidence preservation, visible progress, actionability, focused improvement.
+- Avoid: overwhelming lists of mistakes, vague praise with no learning value, harshness, long academic reports, discouraging feedback, correcting every small issue at once.
+
 Respond with a JSON object only (no markdown, no code fences):
 {
   "praise": "One specific thing they did well (1 sentence)",
