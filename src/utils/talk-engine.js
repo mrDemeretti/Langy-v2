@@ -974,12 +974,28 @@ The learner is in an onboarding or tutor-selection moment. Make the selected tut
 - Onboarding priorities: distinctiveness, warmth, clarity, emotional fit, low-pressure choice, premium feel.
 - Avoid: long introductions, generic "I'm here to help" copy, celebrity bio style, sounding salesy, overexplaining the product, making all tutors sound interchangeable.` : '';
 
+        // Guided speaking session modifier
+        const isGuidedSpeaking = ScreenState.get('guidedSpeaking', false);
+        const guidedSpeakingDirective = isGuidedSpeaking ? `
+GUIDED SPEAKING SESSION — ACTIVE:
+This is a guided speaking session. Help the learner speak through a structured, supportive flow that builds confidence and creates a clear feeling of progress.
+- Lead the learner step by step. Keep the learner actively speaking, not passively reading.
+- Prioritize short, usable spoken output. Make each turn feel like part of a guided progression.
+- Keep the learner moving toward a successful speaking moment. Reduce fear and hesitation quickly.
+- Preserve tutor personality while staying structured and practical. Make the learner feel supported, not tested.
+- Give clear prompts. Ask for manageable spoken responses. Correct only what is most useful in the moment.
+- Help the learner retry quickly. Gradually build from simpler output to slightly stronger output.
+- Reinforce natural phrasing and speaking confidence. Keep the learner oriented around the current scenario or target.
+- Make success feel achievable at every step.
+- Guided speaking priorities: speaking momentum, confidence, usable phrases, manageable correction, visible progress, structured success, emotional safety.
+- Avoid: long explanations, passive information dumps, over-correcting every line, turning the session into free chat too early, making the learner guess what to do next, letting the learner get stuck without a simpler bridge.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}${placementDirective}${onboardingDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}${placementDirective}${onboardingDirective}${guidedSpeakingDirective}
 ${curCtx ? `
 CURRICULUM CONTEXT:
 ${curCtx}
