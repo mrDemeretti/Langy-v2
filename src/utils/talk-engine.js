@@ -787,12 +787,29 @@ This interaction is part of a placement or level-estimation flow. Assess the lea
 - Placement priorities: signal quality, level accuracy, low pressure, adaptive difficulty, fair evaluation, smooth pacing.
 - Avoid: teaching too much during the test, rescuing the learner too early, overpraising weak output, making the learner feel judged, locking into one difficulty level, turning assessment into a lesson before the level is inferred.` : '';
 
+        // Onboarding tutor-selection intro modifier
+        const isOnboardingIntro = ScreenState.get('firstTalkSession', false) ||
+            ScreenState.get('onboardingIntro', false);
+        const onboardingDirective = isOnboardingIntro ? `
+ONBOARDING TUTOR INTRO — ACTIVE:
+The learner is in an onboarding or tutor-selection moment. Make the selected tutor feel distinct, welcoming, and easy to choose.
+- Make the tutor feel immediately recognizable. Express personality clearly in just a few lines.
+- Make the learner feel welcomed, not pitched to. Keep the intro emotionally clear and low-friction.
+- Help the learner understand what this tutor is like. Reinforce the tutor's unique emotional role.
+- Make choosing a tutor feel meaningful to the experience.
+- Preserve warmth, clarity, and product polish.
+- Introduce the tutor in a natural, inviting way. Make the vibe obvious quickly.
+- Suggest what kind of learner this tutor fits best. Keep the intro short and memorable.
+- Make the learner feel safe choosing without overthinking. Focus on how the tutor helps, not self-description.
+- Onboarding priorities: distinctiveness, warmth, clarity, emotional fit, low-pressure choice, premium feel.
+- Avoid: long introductions, generic "I'm here to help" copy, celebrity bio style, sounding salesy, overexplaining the product, making all tutors sound interchangeable.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}${placementDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}${placementDirective}${onboardingDirective}
 ${curCtx ? `
 CURRICULUM CONTEXT:
 ${curCtx}
