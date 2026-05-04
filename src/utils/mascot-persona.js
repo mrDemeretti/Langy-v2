@@ -216,6 +216,162 @@ const MascotPersona = (function () {
                 'Let me share a small wisdom:',
             ],
         },
+
+        // Antonio — warm, socially confident, welcoming
+        6: {
+            name: 'Antonio',
+            languages: ['es'],
+            correct: [
+                '¡Perfecto! That\'s exactly right!',
+                'Muy bien! Beautiful answer!',
+                '¡Exacto! You nailed it!',
+                'Wonderful! That sounded very natural!',
+                '¡Bravo! Perfect!',
+            ],
+            incorrect: [
+                'Almost! Let\'s try that one more time.',
+                'Close — but we can make it better.',
+                'Good try! The natural way is a little different.',
+                'Not quite, but you\'re on the right track.',
+            ],
+            encouragement: [
+                'You\'re doing great! Keep this energy!',
+                'Every phrase gets you closer. Keep going!',
+                'I can see your confidence growing!',
+                'You\'re making real progress!',
+            ],
+            lessonComplete: [
+                '¡Excelente! What a great session!',
+                'Bravo! You should be proud of that!',
+                'That was wonderful! Keep this up!',
+                '¡Fantástico! Really well done!',
+            ],
+            lessonFailed: [
+                'No worries — every step forward counts.',
+                'This is how we learn. You\'ll get it next time.',
+                'Don\'t be hard on yourself — you showed up!',
+                'Let\'s review together. You\'re closer than you think.',
+            ],
+            retry: [
+                '¡Otra vez! You\'re almost there!',
+                'One more time — with confidence!',
+                'Let\'s try again, together.',
+            ],
+            greeting: [
+                '¡Hola! Ready to speak some Spanish?',
+                'Welcome back! Let\'s make this fun!',
+                '¡Vamos! Let\'s get started!',
+            ],
+            coaching: [
+                'Here\'s a useful tip…',
+                'Listen to this — it\'s important:',
+                'A natural way to think about it:',
+            ],
+        },
+
+        // Karol G — bold, modern, high-energy
+        7: {
+            name: 'Karol G',
+            languages: ['es'],
+            correct: [
+                '¡Sí! That\'s it! 🔥',
+                'Perfect! You killed it!',
+                '¡Dale! That was fire!',
+                'Yaaas! Exactly right!',
+                '¡Increíble! Nailed it!',
+            ],
+            incorrect: [
+                'Not yet — but we keep going!',
+                'Almost! Try it one more time!',
+                'Good energy! Just tweak this part.',
+                'No stress! Let\'s fix it quick.',
+            ],
+            encouragement: [
+                'You\'re on fire! Don\'t stop!',
+                'That energy! Keep it going!',
+                'Look at you! ¡Increíble!',
+                'You\'re leveling up for real!',
+            ],
+            lessonComplete: [
+                '¡Lo lograste! Amazing! 🎉',
+                'You went off! So proud!',
+                '¡Brutal! That was incredible!',
+                'You absolutely crushed it!',
+            ],
+            lessonFailed: [
+                'It\'s all good! We bounce back!',
+                'Not the end — just the beginning!',
+                'You showed up, that\'s what matters!',
+                'We\'ll get it next round!',
+            ],
+            retry: [
+                '¡Otra vez! Let\'s go! 💪',
+                'Again — with more power!',
+                'One more shot — you got this!',
+            ],
+            greeting: [
+                '¡Hey! Ready to vibe in Spanish?',
+                '¡Dale! Let\'s make this fun!',
+                '¡Hola, bichota! Let\'s learn!',
+            ],
+            coaching: [
+                'Okay listen up real quick…',
+                'Pro tip, mami:',
+                'This one\'s important:',
+            ],
+        },
+
+        // Shakira — radiant, warm, rhythmic
+        8: {
+            name: 'Shakira',
+            languages: ['es'],
+            correct: [
+                '¡Hermoso! That was beautiful!',
+                'Perfect! It sounds so natural!',
+                '¡Así es! Beautifully done!',
+                'Lovely! That flowed perfectly!',
+                '¡Precioso! Exactly right!',
+            ],
+            incorrect: [
+                'So close! Let\'s polish it a bit.',
+                'Almost perfect — one small thing.',
+                'Beautiful try! Here\'s the natural way.',
+                'Don\'t worry — it\'s a tricky one.',
+            ],
+            encouragement: [
+                'You\'re blossoming! Keep going!',
+                'I love your progress! ¡Sigue así!',
+                'You\'re finding the rhythm of Spanish!',
+                'Every word you learn is a gift!',
+            ],
+            lessonComplete: [
+                '¡Maravilloso! What a beautiful session! 🌟',
+                'You were incredible today!',
+                '¡Qué lindo! So proud of you!',
+                'That was truly beautiful work!',
+            ],
+            lessonFailed: [
+                'It\'s okay, corazón. We\'ll try again.',
+                'Learning is a dance — some steps take time.',
+                'You\'re braver than you think. Keep going.',
+                'Let\'s take it slower. No rush.',
+            ],
+            retry: [
+                'One more time — with feeling!',
+                '¡Otra vez! Softly and clearly.',
+                'Again — let it flow naturally.',
+            ],
+            greeting: [
+                '¡Hola, corazón! Ready to learn?',
+                'Welcome! Let\'s make Spanish feel beautiful!',
+                '¡Vamos! I\'m so happy you\'re here!',
+            ],
+            coaching: [
+                'Here\'s something beautiful to know:',
+                'Listen to this — it\'s lovely:',
+                'A little wisdom for you:',
+            ],
+        },
     };
 
     // ─── API ───

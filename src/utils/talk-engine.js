@@ -312,13 +312,51 @@ Struggle lines: "No tragedy — we fix it." / "Start with this cleaner version: 
 The learner should feel: "This teacher has presence. Arabic feels rich and human. I trust this guide."
 You are not just a tutor. You are the charismatic cultural weight of Arabic.`,
         },
+        // ─── SPANISH MASCOTS ───
+        6: {
+            name: 'Antonio',
+            voice: 'male',
+            pitch: 0.9,
+            rate: 0.85,
+            accent: 'es-ES',
+            style: 'warm',
+            voicePrefs: ['google español male', 'microsoft pablo', 'jorge', 'male', 'diego'],
+            systemPrompt: `You are Antonio — a warm, confident, and socially engaging Spanish conversation partner.
+You are one of the core Spanish tutors inside Langy. You make spoken Spanish feel approachable from the first minute.
+PERSONALITY: Warm, socially confident, expressive, encouraging, lively, approachable, emotionally intelligent.
+[PLACEHOLDER — full persona prompt will be injected]`,
+        },
+        7: {
+            name: 'Karol G',
+            voice: 'female',
+            pitch: 1.2,
+            rate: 1.0,
+            accent: 'es-CO',
+            style: 'bold',
+            voicePrefs: ['google español female', 'microsoft helena', 'paulina', 'female', 'monica'],
+            systemPrompt: `You are Karol G — a bold, modern, and energizing Spanish conversation partner.
+You are one of the core Spanish tutors inside Langy.
+[PLACEHOLDER — full persona prompt will be injected]`,
+        },
+        8: {
+            name: 'Shakira',
+            voice: 'female',
+            pitch: 1.15,
+            rate: 0.9,
+            accent: 'es-CO',
+            style: 'radiant',
+            voicePrefs: ['google español female', 'microsoft helena', 'paulina', 'female', 'monica'],
+            systemPrompt: `You are Shakira — a radiant, expressive, and emotionally warm Spanish conversation partner.
+You are one of the core Spanish tutors inside Langy.
+[PLACEHOLDER — full persona prompt will be injected]`,
+        },
     };
 
     // ─── LANGUAGE-SPECIFIC MASCOT SETS ───
     const mascotSets = {
         en: [0, 1, 2],     // Zendaya, Travis, Matthew
         ar: [3, 4, 5],     // Omar, Elyanna, Adel Imam
-        es: [0, 1, 2],     // default to English set
+        es: [6, 7, 8],     // Antonio, Karol G, Shakira
     };
 
     // Get mascot IDs for the current target language
@@ -335,6 +373,9 @@ You are not just a tutor. You are the charismatic cultural weight of Arabic.`,
             3: 'omar',
             4: 'elyanna',
             5: 'adel_imam',
+            6: 'antonio',
+            7: 'karol_g',
+            8: 'shakira',
         };
         return imageMap[personaId] || 'zendaya';
     }
@@ -348,6 +389,9 @@ You are not just a tutor. You are the charismatic cultural weight of Arabic.`,
             3: '#06B6D4',
             4: '#C084FC',  // soft purple for Elyanna
             5: '#F97316',  // warm orange for Adel Imam
+            6: '#1E3A5F',  // navy blue for Antonio
+            7: '#EC4899',  // hot pink for Karol G
+            8: '#F59E0B',  // golden for Shakira
         };
         return colorMap[personaId] || '#7C6CF6';
     }
