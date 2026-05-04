@@ -736,12 +736,29 @@ The learner may be a beginner or feeling low-confidence. Make the interaction sa
 - Beginner-safe priorities: emotional safety, clarity, short usable output, low-friction retry, visible progress, confidence before complexity.
 - Avoid: dense explanations, multiple teaching points at once, abstract grammar, high-pressure correction, making the learner feel behind, responses too advanced to repeat.` : '';
 
+        // Scenario immersion modifier (activates for all scenarios except free talk)
+        const isScenarioMode = scenarioId && scenarioId !== 'free';
+        const scenarioDirective = isScenarioMode ? `
+SCENARIO IMMERSION — ACTIVE:
+This interaction is inside a specific real-world scenario. Make the learner feel inside that situation while teaching clearly.
+- Stay grounded in the active scenario. Make the exchange feel like a believable real-life moment.
+- Use language that fits the situation naturally. Keep the learner oriented around the scenario goal.
+- Reinforce useful phrases someone would actually say in this setting.
+- Make the interaction feel authored, not generic. Preserve tutor personality while staying relevant to the scene.
+- Keep immersion strong without becoming theatrical or distracting.
+- If the learner drifts, gently bring them back to the scenario.
+- Prefer concrete situational language over abstract practice.
+- Frame replies as if the learner is really in the situation. Prioritize practical phrases for that exact context.
+- Make corrections relevant to the scene. Use natural follow-up questions that fit the setting.
+- Scenario priorities: realism, practical language, situational clarity, useful repetition, confidence in-context, emotionally believable interaction.
+- Avoid: generic unrelated examples, textbook drift, breaking the scene without reason, phrases no one would use in that setting, overdescribing the environment, turning the scenario into roleplay theater.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}
 ${curCtx ? '\nCURRICULUM CONTEXT:\n' + curCtx : ''}
 
 LANGY TUTOR BASELINE — APPLY ALWAYS:
