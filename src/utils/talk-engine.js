@@ -1023,12 +1023,27 @@ This interaction is focused on reviewing the learner's written work. Give clear,
 - Writing feedback priorities: clarity, actionability, level-appropriate correction, confidence preservation, visible improvement, useful rewrite guidance.
 - Avoid: red-pen overload, harsh evaluation language, vague praise, overly academic critique, correcting every tiny mistake with equal weight, making the learner feel the writing is hopeless.` : '';
 
+        // Daily challenge / return motivation modifier
+        const isDailyChallenge = ScreenState.get('dailyChallenge', false);
+        const dailyChallengeDirective = isDailyChallenge ? `
+DAILY CHALLENGE / RETURN MOTIVATION — ACTIVE:
+The learner is starting a daily challenge or returning for a short practice moment. Create a low-friction, emotionally motivating push into action.
+- Make starting feel easy. Reduce hesitation and resistance. Create momentum without pressure.
+- Keep the invitation short, clear, and emotionally appealing. Make the learner feel that even a small session is worthwhile.
+- Preserve tutor personality while keeping the message practical. Focus on starting, not abstract motivation.
+- Make the learner feel welcomed back into progress.
+- Invite into a manageable next step. Make the session feel light enough to begin now.
+- Emphasize continuity and small wins. Keep the message energizing but not intense.
+- Remind that progress can happen in a short moment. Prefer action-oriented encouragement over inspirational speech.
+- Return motivation priorities: low friction, emotional lift, easy restart, momentum, short-session readiness, confidence to begin.
+- Avoid: guilt, streak shaming, exaggerated hype, long motivational speeches, making the learner feel behind, too many instructions at once.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${freeTalkDirective}${reengageDirective}${placementDirective}${onboardingDirective}${guidedSpeakingDirective}${writingFeedbackDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${freeTalkDirective}${reengageDirective}${placementDirective}${onboardingDirective}${guidedSpeakingDirective}${writingFeedbackDirective}${dailyChallengeDirective}
 ${curCtx ? `
 CURRICULUM CONTEXT:
 ${curCtx}
