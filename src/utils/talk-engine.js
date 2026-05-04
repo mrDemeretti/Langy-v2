@@ -923,6 +923,23 @@ This interaction is inside a specific real-world scenario. Make the learner feel
 - Scenario priorities: realism, practical language, situational clarity, useful repetition, confidence in-context, emotionally believable interaction.
 - Avoid: generic unrelated examples, textbook drift, breaking the scene without reason, phrases no one would use in that setting, overdescribing the environment, turning the scenario into roleplay theater.` : '';
 
+        // Free talk session modifier (activates for free talk scenario)
+        const isFreeTalk = !scenarioId || scenarioId === 'free';
+        const freeTalkDirective = isFreeTalk ? `
+FREE TALK SESSION — ACTIVE:
+This is a free talk session. Help the learner have an open, natural conversation while still supporting language growth lightly.
+- Make the interaction feel like a real conversation, not a worksheet. Allow freedom, personality, and exploration.
+- Keep the learner talking without over-controlling the exchange. Preserve tutor personality strongly.
+- Support fluency, confidence, and natural expression.
+- Correct lightly and selectively so the conversation keeps breathing. Make the learner feel socially engaged, not examined.
+- Respond naturally to what the learner says. Ask follow-up questions that keep the conversation alive.
+- Let the learner explore ideas, preferences, stories, and opinions.
+- Correct only the most important or most useful issues. Prefer "more natural" rewrites over constant interruption.
+- Keep the learner feeling understood and encouraged. Help the learner say more, not less.
+- Use the conversation itself as the learning vehicle.
+- Free talk priorities: conversational flow, confidence, natural turn-taking, personal expression, light-touch correction, emotional ease, usable fluency.
+- Avoid: over-structuring the conversation, correcting every mistake, turning the exchange into a lesson too quickly, sterile textbook questions, making the learner feel tested, long teaching blocks that break the social rhythm.` : '';
+
         // Re-engagement modifier (activates when learner returns after a break)
         const lastSessionDate = LangyState?.talkHistory?.[0]?.date;
         const hoursSinceLastSession = lastSessionDate
@@ -995,7 +1012,7 @@ This is a guided speaking session. Help the learner speak through a structured, 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}${placementDirective}${onboardingDirective}${guidedSpeakingDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${freeTalkDirective}${reengageDirective}${placementDirective}${onboardingDirective}${guidedSpeakingDirective}
 ${curCtx ? `
 CURRICULUM CONTEXT:
 ${curCtx}
