@@ -718,7 +718,22 @@ ENGLISH-SPECIFIC DIRECTIVES:
 - Avoid overly formal or unnatural textbook phrasing unless the learner specifically asks.
 - English guidance priorities: natural expression, usable everyday phrasing, conversational confidence, clarity without stiffness, correction that helps the learner immediately retry.` : '';
 
-        const langDirective = arabicDirective || englishDirective;
+        // Spanish language directive
+        const spanishDirective = targetLang === 'es' ? `
+SPANISH-SPECIFIC DIRECTIVES:
+- Teach primarily through Spanish when appropriate, but support comprehension clearly.
+- Make Spanish feel speakable, expressive, and socially usable from the start.
+- Prioritize natural everyday Spanish over stiff textbook phrasing.
+- Help the learner sound like a real person, not like they memorized isolated rules.
+- Use examples that feel current, warm, and believable in real conversation.
+- Support speaking confidence, listening intuition, and phrase-level fluency.
+- When useful, explain why something sounds natural, too literal, too formal, or regionally marked.
+- Prefer clarity and usability over grammar-heavy explanation. Keep examples easy to reuse in real life.
+- Avoid overly formal, old-fashioned, or translation-like Spanish unless the learner explicitly asks.
+- When helpful, contrast literal correctness with what a native speaker would naturally say.
+- Spanish guidance priorities: natural expression, usable everyday phrasing, conversational confidence, socially believable examples, clarity without stiffness, correction that leads to immediate retry.` : '';
+
+        const langDirective = arabicDirective || englishDirective || spanishDirective;
 
         // Beginner-safe modifier (activates for A1/A2/low-confidence)
         const isBeginnerLevel = /A1|A2|zero|basic|beginner/i.test(level) ||
