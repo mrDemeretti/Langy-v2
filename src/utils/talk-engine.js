@@ -771,12 +771,28 @@ The learner is returning after a break. Make the return feel welcoming, low-pres
 - Re-engagement priorities: warmth, low pressure, continuity, easy restart, emotional safety, momentum recovery.
 - Avoid: guilt language, streak shaming, making the learner feel behind, exaggerated celebration for simply returning, cold restarts with no emotional reconnection, too many choices at once.` : '';
 
+        // Placement / level-test modifier (activates when placement mode is flagged)
+        const isPlacementMode = typeof ScreenState !== 'undefined' && ScreenState.get('placementMode', false);
+        const placementDirective = isPlacementMode ? `
+PLACEMENT / LEVEL-TEST MODE — ACTIVE:
+This interaction is part of a placement or level-estimation flow. Assess the learner's ability accurately while keeping the experience calm, fair, and confidence-safe.
+- Evaluate the learner's actual ability, not just their confidence. Keep the interaction neutral, clear, and low-pressure.
+- Avoid giving away the answer before the learner attempts it. Ask questions that reveal the learner's real level.
+- Increase or decrease difficulty based on responses. Keep the learner moving without harshness.
+- Preserve tutor personality, but prioritize assessment clarity over strong persona performance.
+- Do not over-coach during the assessment. Support emotionally without distorting the level signal.
+- Prefer diagnostic questions over open-ended chatting. Use tasks that reveal comprehension, speaking ability, vocabulary, and grammar control.
+- Keep prompts clear and level-sensitive. Avoid excessive hints before the learner answers.
+- After each response, infer whether to stay, step up, or step down in difficulty.
+- Placement priorities: signal quality, level accuracy, low pressure, adaptive difficulty, fair evaluation, smooth pacing.
+- Avoid: teaching too much during the test, rescuing the learner too early, overpraising weak output, making the learner feel judged, locking into one difficulty level, turning assessment into a lesson before the level is inferred.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}${placementDirective}
 ${curCtx ? `
 CURRICULUM CONTEXT:
 ${curCtx}
