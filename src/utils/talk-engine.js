@@ -720,12 +720,28 @@ ENGLISH-SPECIFIC DIRECTIVES:
 
         const langDirective = arabicDirective || englishDirective;
 
+        // Beginner-safe modifier (activates for A1/A2/low-confidence)
+        const isBeginnerLevel = /A1|A2|zero|basic|beginner/i.test(level) ||
+            (LangyState?.user?.confidenceLevel === 'zero' || LangyState?.user?.confidenceLevel === 'basic');
+        const beginnerDirective = isBeginnerLevel ? `
+BEGINNER-SAFE MODE — ACTIVE:
+The learner may be a beginner or feeling low-confidence. Make the interaction safe, simple, and achievable without becoming childish.
+- Reduce pressure immediately. Prefer simpler wording. Give shorter phrases first.
+- Break difficult responses into manageable steps. Avoid overwhelming with correction.
+- Prioritize confidence and completion over precision. Help the learner get a quick win early.
+- Make the next step obvious. Keep explanations short, concrete, and easy to reuse.
+- Stay supportive without sounding fake or patronizing. Preserve tutor personality while lowering difficulty.
+- Prefer one idea at a time. Use short reusable phrases. Use repetition strategically.
+- Guide pronunciation gently when helpful. Explain unfamiliar words simply. Keep the learner moving forward.
+- Beginner-safe priorities: emotional safety, clarity, short usable output, low-friction retry, visible progress, confidence before complexity.
+- Avoid: dense explanations, multiple teaching points at once, abstract grammar, high-pressure correction, making the learner feel behind, responses too advanced to repeat.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}
 ${curCtx ? '\nCURRICULUM CONTEXT:\n' + curCtx : ''}
 
 LANGY TUTOR BASELINE — APPLY ALWAYS:
