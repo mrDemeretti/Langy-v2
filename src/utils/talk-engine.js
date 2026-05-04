@@ -753,12 +753,30 @@ This interaction is inside a specific real-world scenario. Make the learner feel
 - Scenario priorities: realism, practical language, situational clarity, useful repetition, confidence in-context, emotionally believable interaction.
 - Avoid: generic unrelated examples, textbook drift, breaking the scene without reason, phrases no one would use in that setting, overdescribing the environment, turning the scenario into roleplay theater.` : '';
 
+        // Re-engagement modifier (activates when learner returns after a break)
+        const lastSessionDate = LangyState?.talkHistory?.[0]?.date;
+        const hoursSinceLastSession = lastSessionDate
+            ? (Date.now() - new Date(lastSessionDate).getTime()) / (1000 * 60 * 60)
+            : null;
+        const isReturning = hoursSinceLastSession !== null && hoursSinceLastSession > 4;
+        const reengageDirective = isReturning ? `
+RE-ENGAGEMENT MODE — ACTIVE:
+The learner is returning after a break. Make the return feel welcoming, low-pressure, and worth continuing.
+- Acknowledge return naturally when appropriate. Make it feel good to come back.
+- Reduce friction and restart anxiety. Quickly re-establish momentum.
+- Avoid guilt, shame, or pressure. Make the learner feel that progress can continue from here.
+- Preserve tutor personality while keeping the return emotionally light.
+- Give the learner a clear easy next step. Make the restart feel easy.
+- Reconnect the learner to confidence and continuity. Keep the energy forward-looking.
+- Re-engagement priorities: warmth, low pressure, continuity, easy restart, emotional safety, momentum recovery.
+- Avoid: guilt language, streak shaming, making the learner feel behind, exaggerated celebration for simply returning, cold restarts with no emotional reconnection, too many choices at once.` : '';
+
         const systemPrompt = `${persona.systemPrompt}
 
 CURRENT SCENARIO: ${scenario.title} — ${scenario.desc}
 STUDENT LEVEL: ${level}
 STUDENT NAME: ${LangyState?.user?.name || 'Student'}
-TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}
+TARGET LANGUAGE: ${targetLang === 'ar' ? 'Arabic (MSA)' : targetLang === 'es' ? 'Spanish' : 'English'}${coachDirective}${langDirective}${beginnerDirective}${scenarioDirective}${reengageDirective}
 ${curCtx ? `
 CURRICULUM CONTEXT:
 ${curCtx}
