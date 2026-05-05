@@ -191,6 +191,41 @@ function renderProfile(container) {
                     </div>
                 </div>
 
+                <!-- Vocabulary Mastery -->
+                ${(() => {
+                    if (typeof VocabMastery === 'undefined') return '';
+                    const langCode = typeof LangyTarget !== 'undefined' ? LangyTarget.getCode() : 'en';
+                    const cefr = settings.languageLevel || 'A1';
+                    const card = VocabMastery.getProfileCard(langCode, cefr);
+                    if (card.total === 0 && card.bankSize === 0) return '';
+                    const barPct = Math.min(card.pct, 100);
+                    return `
+                <div class="profile__section">
+                    <div class="profile__section-title">${LangyIcons.bookOpen} ${{ en: 'Vocabulary', ru: 'Словарь', es: 'Vocabulario' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                    <div style="background:var(--bg-card); border-radius:var(--radius-xl); padding:var(--sp-4); box-shadow:var(--shadow-sm);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:var(--sp-3);">
+                            <div style="text-align:center; flex:1;">
+                                <div style="font-size:var(--fs-xl); font-weight:var(--fw-black); color:#f59e0b;">${card.known}</div>
+                                <div style="font-size:10px; color:var(--text-tertiary);">✅ ${{ en: 'Solid', ru: 'Уверенно', es: 'Sólido' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                            </div>
+                            <div style="text-align:center; flex:1;">
+                                <div style="font-size:var(--fs-xl); font-weight:var(--fw-black); color:#3b82f6;">${card.practicing}</div>
+                                <div style="font-size:10px; color:var(--text-tertiary);">🔄 ${{ en: 'Practicing', ru: 'Практика', es: 'Practicando' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                            </div>
+                            <div style="text-align:center; flex:1;">
+                                <div style="font-size:var(--fs-xl); font-weight:var(--fw-black); color:#9ca3af;">${card.seen}</div>
+                                <div style="font-size:10px; color:var(--text-tertiary);">👁 ${{ en: 'Seen', ru: 'Видел', es: 'Visto' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                            </div>
+                        </div>
+                        <div style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-1);">${card.total} / ${card.bankSize}</div>
+                        <div style="height:6px; background:var(--bg-alt); border-radius:3px; overflow:hidden;">
+                            <div style="height:100%; width:${barPct}%; background:linear-gradient(90deg,#10B981,#34D399); border-radius:3px; transition:width 0.4s;"></div>
+                        </div>
+                        <div style="font-size:10px; color:var(--text-tertiary); margin-top:var(--sp-1); text-align:right;">${barPct}%</div>
+                    </div>
+                </div>`;
+                })()}
+
                 <!-- Mini Achievements -->
                 <div class="profile__section">
                     <div class="profile__section-title">${LangyIcons.sparkles} ${i18n('profile.achievements')}</div>
