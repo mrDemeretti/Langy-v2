@@ -311,20 +311,17 @@ const LangyState = {
         conversationContext: [], // { role: 'ai'|'user', content: string, timestamp: number, type: 'text'|'task' }
     },
 
-    // Vocabulary Progress — per-word mastery, review queue, unit tracking
-    vocabProgress: {
-        // Per-word mastery: key = word (en), value = { correct, attempts, lastSeen, mastery: 0-3 }
-        // mastery: 0=new, 1=seen, 2=practiced, 3=mastered
-        words: {},
-        // Words due for review (spaced repetition light)
-        reviewQueue: [], // [{ en, ru, level, category, dueDate }]
-        // Per-unit vocab stats
-        unitStats: {}, // key = "level:unitId", value = { wordsIntroduced, wordsPracticed, wordsMastered }
-        // Total counters
-        totalLearned: 0,    // words at mastery >= 1
-        totalMastered: 0,   // words at mastery >= 3
-        totalReviewed: 0,   // total review sessions
-        lastReviewDate: null,
+    // Vocabulary Mastery — per-word compact tracking (MVP vocab spec v1)
+    // Only words the learner has encountered get entries here.
+    // Keys = vocab id (e.g. "en_food_003"), Values = compact mastery object.
+    // States: new (no entry) → seen → practiced → known
+    // Transitions: seen→practiced (used in session), practiced→known (3 correct, 2+ sessions)
+    // Demotion: known→practiced (2 incorrect recently)
+    vocabMastery: {
+        // Example:
+        // "en_food_003": { m:"practiced", c:2, i:0, s:1, t:1714862400000 }
+        // m = mastery state, c = times correct, i = times incorrect,
+        // s = distinct sessions, t = last seen timestamp (ms)
     },
 };
 
