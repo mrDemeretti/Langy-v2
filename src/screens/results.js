@@ -613,7 +613,7 @@ function startQuickCheck(textbookId, unitId) {
                 // Switch to this textbook and unit
                 LangyCurriculum.activeTextbookId = textbookId;
                 LangyState.progress.currentUnitId = unitId;
-                LangyState.aiMemory.currentTextbookId = textbookId;
+                if (LangyState.aiMemory) LangyState.aiMemory.currentTextbookId = textbookId;
                 if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
                 Router.navigate('learning');
             });

@@ -216,7 +216,8 @@ function renderHome(container) {
     const isBeforeFirstSession = !user.firstSessionCompleted;
     const isEarlyJourney = isFirstJourney || isBeforeFirstSession || talkSessions < 3;
     // True beginner: zero/basic confidence AND hasn't done a lesson yet
-    const isTrueBeginner = isEarlyJourney && (user.confidenceLevel === 'zero' || user.confidenceLevel === 'basic') && lessonsDone === 0;
+    // Also treat unknown confidence (null) + no lessons as true beginner
+    const isTrueBeginner = isEarlyJourney && lessonsDone === 0 && (user.confidenceLevel === 'zero' || user.confidenceLevel === 'basic' || !user.confidenceLevel);
     // Post-lesson beginner: did a lesson but hasn't spoken yet
     const isPostLessonBeginner = isEarlyJourney && lessonsDone > 0 && !user.firstSessionCompleted;
     const firstScenario = user.firstSpeakingScenarioId || 'coffee';

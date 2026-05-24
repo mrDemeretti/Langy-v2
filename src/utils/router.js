@@ -132,12 +132,14 @@ const Router = {
                     renderFn(container);
                 } catch (e) {
                     console.error(`[Router] Screen '${hash}' crashed:`, e);
+                    if (typeof LangyLogger !== 'undefined') {
+                        LangyLogger.error('Router.handleRoute', `Screen '${hash}' crashed`, e);
+                    }
                     container.innerHTML = `
                         <div style="padding:32px;text-align:center;color:var(--text-secondary);">
                             <div style="font-size:48px;margin-bottom:16px;">${typeof LangyIcons !== 'undefined' ? LangyIcons.alertTriangle : '!'}</div>
                             <h3>Something went wrong</h3>
                             <p style="font-size:14px;margin:8px 0 16px;">Screen "${escapeHTML(hash)}" failed to load.</p>
-                            <pre style="text-align:left;font-size:11px;background:rgba(0,0,0,0.05);padding:12px;border-radius:8px;overflow-x:auto;max-height:200px;margin-bottom:16px;white-space:pre-wrap;word-break:break-all;">${escapeHTML(e.message)}\n\n${escapeHTML(e.stack || '')}</pre>
                             <button class="btn btn--primary" onclick="Router.navigate('home')">Go Home</button>
                         </div>
                     `;
