@@ -165,7 +165,7 @@ function renderCalendar(container) {
                 level = 'future';
             } else if (isFreeze) {
                 level = 'freeze';
-                content = `<span class="cal-cell-num">${d}</span><span class="cal-cell-icon">🛡️</span>`;
+                content = `<span class="cal-cell-num">${d}</span><span class="cal-cell-icon">${LangyIcons.shield}</span>`;
             } else if (dayData) {
                 const mins = dayData.minutes || 0;
                 if (mins >= 30) level = 'high';
@@ -255,7 +255,7 @@ function renderCalendar(container) {
         return `
             <div class="card" style="margin-bottom:var(--sp-4);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-3);">
-                    <h4 style="margin:0;">📊 Activity Trend</h4>
+                    <h4 style="margin:0; display:flex; align-items:center; gap:8px;">${LangyIcons.barChart} Activity Trend</h4>
                     <span style="font-size:var(--fs-xs); color:var(--text-muted);">${stats.activeDays} active days</span>
                 </div>
                 <div class="cal-activity-bar">
@@ -285,7 +285,7 @@ function renderCalendar(container) {
         if (!data && !isActive && !isFreeze) {
             return `
                 <div class="card cal-day-card" style="margin-top:var(--sp-4); text-align:center;">
-                    <div style="font-size:32px; margin-bottom:var(--sp-2);">😴</div>
+                    <div style="font-size:32px; margin-bottom:var(--sp-2);">${LangyIcons.moon}</div>
                     <h4>${formatted}</h4>
                     <p style="color:var(--text-muted); margin-top:var(--sp-1);">No activity on this day</p>
                 </div>
@@ -295,7 +295,7 @@ function renderCalendar(container) {
         if (isFreeze && !data) {
             return `
                 <div class="card cal-day-card" style="margin-top:var(--sp-4); text-align:center; border-left: 3px solid rgba(99, 102, 241, 0.5);">
-                    <div style="font-size:32px; margin-bottom:var(--sp-2);">🛡️</div>
+                    <div style="font-size:32px; margin-bottom:var(--sp-2);">${LangyIcons.shield}</div>
                     <h4>${formatted}</h4>
                     <p style="color:var(--info); margin-top:var(--sp-1);">Streak Freeze was used</p>
                 </div>
@@ -316,7 +316,7 @@ function renderCalendar(container) {
 
         return `
             <div class="card cal-day-card" style="margin-top:var(--sp-4); border-left: 3px solid var(--primary);">
-                <h4 style="margin-bottom:var(--sp-3);">📅 ${formatted}</h4>
+                <h4 style="margin-bottom:var(--sp-3); display:flex; align-items:center; gap:8px;">${LangyIcons.calendar} ${formatted}</h4>
                 <div class="cal-day-stats">
                     <div class="cal-day-stat">
                         <span class="cal-day-stat__val" style="color:var(--primary);">${d.sessions}</span>
@@ -357,7 +357,7 @@ function renderCalendar(container) {
     function renderDayPlaceholder() {
         return `
             <div class="card" style="margin-top:var(--sp-4); text-align:center; padding:var(--sp-6); opacity:0.7;">
-                <div style="font-size:28px; margin-bottom:var(--sp-2);">👆</div>
+                <div style="font-size:28px; margin-bottom:var(--sp-2);">${LangyIcons.arrow}</div>
                 <p style="color:var(--text-muted); font-size:var(--fs-sm);">Tap a day to see details</p>
             </div>
         `;

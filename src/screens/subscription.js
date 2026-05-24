@@ -73,7 +73,7 @@ function renderSubscription(container) {
             LangyState.subscription.plan = planId;
 
             if (planId === 'free') {
-                Anim.showToast('Free plan activated! 🎉');
+                Anim.showToast(`Free plan activated! ${LangyIcons.check}`);
                 setTimeout(() => Router.navigate('mascot-select'), 800);
             } else {
                 // Open donation/payment page

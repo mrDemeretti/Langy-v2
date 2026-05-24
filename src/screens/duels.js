@@ -13,20 +13,75 @@ function renderDuels(container) {
     }
 }
 
+function getPlayerLeague(wins) {
+    if (wins >= 50) return `${LangyIcons.diamond} Diamond`;
+    if (wins >= 25) return `${LangyIcons.trophy} Gold`;
+    if (wins >= 10) return `${LangyIcons.medal} Silver`;
+    return `${LangyIcons.award} Bronze`;
+}
+
+function buildLeaderboard(playerWins) {
+    const names = ['Sophia M.', 'James K.', 'Yuki T.', 'Marco P.', 'Elena V.', 'Omar A.', 'Lily C.', 'Noah R.', 'Ava S.', 'Liam G.', 'Zara H.', 'Kai N.'];
+    const colors = ['#EF4444','#3B82F6','#8B5CF6','#F59E0B','#EC4899','#10B981','#6366F1','#14B8A6','#F97316','#06B6D4'];
+
+    // Generate bots with realistic XP ranges
+    const bots = names.slice(0, 10).map((name, i) => ({
+        name,
+        xp: Math.floor(Math.random() * 400 + 100 - i * 15),
+        color: colors[i % colors.length],
+        initial: name[0]
+    }));
+
+    // Ensure sorted descending
+    bots.sort((a, b) => b.xp - a.xp);
+
+    // Insert player by XP (wins * 30)
+    const playerXP = playerWins * 30;
+    const playerName = LangyState.user?.name || 'You';
+    let playerInserted = false;
+    const rows = [];
+
+    bots.forEach((bot, i) => {
+        if (!playerInserted && playerXP >= bot.xp) {
+            rows.push({ name: playerName, xp: playerXP, color: '#10B981', initial: (playerName[0] || 'Y').toUpperCase(), isPlayer: true });
+            playerInserted = true;
+        }
+        rows.push(bot);
+    });
+    if (!playerInserted) {
+        rows.push({ name: playerName, xp: playerXP, color: '#10B981', initial: (playerName[0] || 'Y').toUpperCase(), isPlayer: true });
+    }
+
+    // Only show top 10
+    return rows.slice(0, 10).map((r, i) => `
+        <div class="leaderboard__row ${r.isPlayer ? 'leaderboard__row--you' : ''}" style="animation-delay:${i * 50}ms;">
+            <div class="leaderboard__rank" style="color:${i === 0 ? '#F59E0B' : i === 1 ? '#9CA3AF' : i === 2 ? '#CD7F32' : 'var(--text-secondary)'};">
+                ${i < 3 ? [`<span style="color:#F59E0B">${LangyIcons.trophy}</span>`,`<span style="color:#9CA3AF">${LangyIcons.medal}</span>`,`<span style="color:#CD7F32">${LangyIcons.award}</span>`][i] : '#' + (i + 1)}
+            </div>
+            <div class="leaderboard__avatar" style="background:${r.color};">${r.initial}</div>
+            <div class="leaderboard__info">
+                <div class="leaderboard__name">${r.name} ${r.isPlayer ? '<span style="font-size:10px;color:var(--primary);">(You)</span>' : ''}</div>
+                <div class="leaderboard__league">${getPlayerLeague(Math.floor(r.xp / 30))}</div>
+            </div>
+            <div class="leaderboard__xp">${r.xp} XP</div>
+        </div>
+    `).join('');
+}
+
 function renderDuelModes(container) {
     const { duels } = LangyState;
 
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="duels-back">←</div>
-                <div class="nav-header__title">Language Duels</div>
+                <div class="nav-header__back" id="duels-back">${LangyIcons.back}</div>
+                <div class="nav-header__title">${i18n('duels.title')}</div>
                 <div style="width:36px;"></div>
             </div>
 
             <div style="padding: var(--sp-4) var(--sp-6); text-align:center;">
-                <h3>Choose Your Mode</h3>
-                <p class="text-secondary text-sm" style="margin-top:var(--sp-1);">Challenge other learners!</p>
+                <h3>${i18n('duels.choose_mode')}</h3>
+                <p class="text-secondary text-sm" style="margin-top:var(--sp-1);">${i18n('duels.challenge')}</p>
             </div>
 
             <div class="duels__modes">
@@ -45,18 +100,28 @@ function renderDuelModes(container) {
                 <div class="card card--flat" style="padding:var(--sp-4);">
                     <div style="display:flex; justify-content:space-around;">
                         <div class="stat">
-                            <div class="stat__value" style="color:var(--accent-dark);">12</div>
-                            <div class="stat__label">Wins</div>
+                            <div class="stat__value" style="color:var(--accent-dark);">${duels.stats?.wins || 0}</div>
+                            <div class="stat__label">${i18n('duels.wins')}</div>
                         </div>
                         <div class="stat">
-                            <div class="stat__value" style="color:var(--danger);">5</div>
-                            <div class="stat__label">Losses</div>
+                            <div class="stat__value" style="color:var(--danger);">${duels.stats?.losses || 0}</div>
+                            <div class="stat__label">${i18n('duels.losses')}</div>
                         </div>
                         <div class="stat">
-                            <div class="stat__value" style="color:var(--reward-gold);">71%</div>
-                            <div class="stat__label">Win Rate</div>
+                            <div class="stat__value" style="color:var(--reward-gold);">${(duels.stats?.wins || 0) + (duels.stats?.losses || 0) > 0 ? Math.round(((duels.stats?.wins || 0) / ((duels.stats?.wins || 0) + (duels.stats?.losses || 0))) * 100) : 0}%</div>
+                            <div class="stat__label">${i18n('duels.win_rate')}</div>
                         </div>
-                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Leaderboard -->
+            <div style="padding: 0 var(--sp-6) var(--sp-6);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--sp-3);">
+                    <h3 style="display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.users} ${i18n('duels.leaderboard')}</h3>
+                    <div class="badge badge--primary">${getPlayerLeague(duels.stats?.wins || 0)}</div>
+                </div>
+                <div class="card card--flat" style="padding:var(--sp-2);">
+                    ${buildLeaderboard(duels.stats?.wins || 0)}
                 </div>
             </div>
         </div>
@@ -82,14 +147,14 @@ function renderDuelSearch(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="search-back">←</div>
-                <div class="nav-header__title">Finding Opponent</div>
+                <div class="nav-header__back" id="search-back">${LangyIcons.back}</div>
+                <div class="nav-header__title">${i18n('duels.finding')}</div>
                 <div style="width:36px;"></div>
             </div>
 
             <div class="duel-search">
                 <div class="duel-search__spinner"></div>
-                <div class="duel-search__text">Searching for opponent...</div>
+                <div class="duel-search__text">${i18n('duels.searching')}</div>
                 <p class="text-secondary text-sm">This won't take long!</p>
                 <button class="btn btn--ghost" id="search-cancel">Cancel</button>
             </div>
@@ -151,7 +216,7 @@ function renderDuelBattle(container) {
             <!-- Top half: fighters -->
             <div class="duel-battle__top">
                 <div class="duel-fighter">
-                    <div class="duel-fighter__mascot">🧑‍🎓</div>
+                    <div class="duel-fighter__mascot">${LangyIcons.user}</div>
                     <div class="duel-fighter__name">You</div>
                     <div class="duel-fighter__score" id="my-score">${state.myScore}</div>
                 </div>
@@ -159,7 +224,7 @@ function renderDuelBattle(container) {
                 <div class="duel-vs">VS</div>
 
                 <div class="duel-fighter">
-                    <div class="duel-fighter__mascot">🤖</div>
+                    <div class="duel-fighter__mascot">${LangyIcons.brain}</div>
                     <div class="duel-fighter__name">Bot_Pro</div>
                     <div class="duel-fighter__score" id="opp-score">${state.opponentScore}</div>
                 </div>
@@ -169,7 +234,7 @@ function renderDuelBattle(container) {
             <div class="duel-battle__bottom">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-2);">
                     <span class="badge badge--primary">Q${state.questionIndex + 1}/${state.questions.length}</span>
-                    <div class="timer" id="duel-timer">⏱ 10</div>
+                    <div class="timer" id="duel-timer" style="display:flex;align-items:center;gap:8px;">${LangyIcons.clock} 10</div>
                 </div>
 
                 <div class="duel-question">
@@ -190,7 +255,7 @@ function renderDuelBattle(container) {
     const timerEl = container.querySelector('#duel-timer');
     const timerInterval = setInterval(() => {
         timeLeft--;
-        if (timerEl) timerEl.innerHTML = `⏱ ${timeLeft}`;
+        if (timerEl) timerEl.innerHTML = `<span style="display:flex;align-items:center;gap:8px;">${LangyIcons.clock} ${timeLeft}</span>`;
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             if (!state.answered) {
@@ -246,9 +311,9 @@ function renderDuelResults(container, state) {
 
     container.innerHTML = `
         <div class="screen screen--center" style="gap:var(--sp-6); text-align:center;">
-            <div style="font-size:80px;">${won ? '🎉' : tied ? '🤝' : '😤'}</div>
+            <div style="font-size:80px;">${won ? LangyIcons.sparkles : tied ? LangyIcons.users : LangyIcons.flame}</div>
             <h2 style="color:${won ? 'var(--accent-dark)' : tied ? 'var(--reward-gold)' : 'var(--danger)'};">
-                ${won ? 'Victory!' : tied ? 'It\'s a Tie!' : 'Defeat!'}
+                ${won ? i18n('duels.victory') : tied ? i18n('duels.tie') : i18n('duels.defeat')}
             </h2>
 
             <div style="display:flex; gap:var(--sp-8);">
@@ -264,21 +329,30 @@ function renderDuelResults(container, state) {
 
             ${won ? `
                 <div class="daily__reward" style="animation: pulse 1s ease-in-out infinite;">
-                    <span>🎁</span>
+                    <span>${LangyIcons.gift}</span>
                     <span>+25 Dangy earned!</span>
                 </div>
             ` : ''}
 
             <div style="display:flex; gap:var(--sp-3); width:100%; max-width:300px;">
-                <button class="btn btn--ghost btn--full" id="duel-home">Home</button>
-                <button class="btn btn--primary btn--full" id="duel-rematch">Rematch</button>
+                <button class="btn btn--ghost btn--full" id="duel-home">${i18n('nav.home')}</button>
+                <button class="btn btn--primary btn--full" id="duel-rematch">${i18n('duels.rematch')}</button>
             </div>
         </div>
     `;
 
     if (won) {
         LangyState.currencies.dangy += 25;
+        if (!LangyState.duels.stats) LangyState.duels.stats = { wins: 0, losses: 0, ties: 0 };
+        LangyState.duels.stats.wins++;
+    } else if (tied) {
+        if (!LangyState.duels.stats) LangyState.duels.stats = { wins: 0, losses: 0, ties: 0 };
+        LangyState.duels.stats.ties++;
+    } else {
+        if (!LangyState.duels.stats) LangyState.duels.stats = { wins: 0, losses: 0, ties: 0 };
+        LangyState.duels.stats.losses++;
     }
+    if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
 
     container.querySelector('#duel-home')?.addEventListener('click', () => {
         window._duelView = 'modes';

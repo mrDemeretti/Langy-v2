@@ -3,6 +3,15 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (typeof LangyMetrics !== 'undefined') {
+        LangyMetrics.init();
+    }
+
+    // Initialize i18n
+    if (typeof LangyI18n !== 'undefined') {
+        LangyI18n.loadSavedLang();
+    }
+
     // Apply saved theme preference
     if (typeof localStorage !== 'undefined') {
         const savedTheme = localStorage.getItem('langy_theme');
@@ -13,12 +22,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Global UI Interaction Sound Listener
+    // Global UI Interaction Sound + Haptic Listener
     document.body.addEventListener('click', (e) => {
         // Find if the click hit an interactive element
-        const isInteractive = e.target.closest('.btn, .circle-btn, .profile__option, .action-card, .card--interactive, .home__streak, .coin, .nav-header__back');
-        if (isInteractive && typeof AudioUtils !== 'undefined') {
-            AudioUtils.playPop();
+        const isInteractive = e.target.closest('.btn, .circle-btn, .profile__option, .action-card, .card--interactive, .home__streak, .coin, .nav-header__back, .bottom-nav__tab');
+        if (isInteractive) {
+            if (typeof AudioUtils !== 'undefined') AudioUtils.playPop();
+            if (typeof Anim !== 'undefined') Anim.haptic('light');
         }
     });
 
@@ -36,6 +46,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Re-apply theme from loaded state
                 if (typeof toggleDarkMode === 'function') {
                     toggleDarkMode(LangyState.settings.darkMode);
+                }
+                // Re-apply language from loaded state
+                if (typeof LangyI18n !== 'undefined' && LangyState.settings.interfaceLang) {
+                    LangyI18n.currentLang = LangyState.settings.interfaceLang;
                 }
                 
                 // ─── STREAK MIGRATION ───
@@ -63,32 +77,58 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 // ─── DAILY STREAK CHECK ───
-                const today = new Date().toISOString().split('T')[0];
-                const lastDate = sd.lastSession.date;
+                // FIX: Use LOCAL date, not UTC — prevents timezone bugs
+                const now = new Date();
+                const today = now.getFullYear() + '-' + 
+                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(now.getDate()).padStart(2, '0');
+                
+                // FIX: Use lastVisitDate (tracks app opens) instead of lastSession.date (only tracks lesson completions)
+                // This prevents streak loss when user opens app but doesn't finish a lesson
+                const lastDate = sd.lastVisitDate || sd.lastSession.date;
                 
                 if (lastDate && lastDate !== today) {
-                    const last = new Date(lastDate);
-                    const curr = new Date(today);
+                    // Calculate diff using local dates to avoid UTC timezone issues
+                    const lastParts = lastDate.split('-').map(Number);
+                    const todayParts = today.split('-').map(Number);
+                    const last = new Date(lastParts[0], lastParts[1] - 1, lastParts[2]);
+                    const curr = new Date(todayParts[0], todayParts[1] - 1, todayParts[2]);
                     const diffMs = curr.getTime() - last.getTime();
                     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
                     
                     if (diffDays === 1) {
-                        // Consecutive day → streak continues (increment on lesson completion)
+                        // Consecutive day → streak continues
                     } else if (diffDays > 1) {
                         // Missed day(s) — try to use Streak Freeze
                         const missedDays = diffDays - 1;
                         const availableFreezes = sd.streakFreezes || 0;
                         
                         if (availableFreezes >= missedDays) {
-                            // Freeze covers the gap!
+                            // Freezes fully cover the gap!
                             sd.streakFreezes -= missedDays;
                             if (!sd.freezeUsedDates) sd.freezeUsedDates = [];
                             for (let i = 1; i <= missedDays; i++) {
                                 const freezeDate = new Date(last);
                                 freezeDate.setDate(freezeDate.getDate() + i);
-                                sd.freezeUsedDates.push(freezeDate.toISOString().split('T')[0]);
+                                const fd = freezeDate.getFullYear() + '-' + String(freezeDate.getMonth()+1).padStart(2,'0') + '-' + String(freezeDate.getDate()).padStart(2,'0');
+                                sd.freezeUsedDates.push(fd);
                             }
                             setTimeout(() => showStreakOverlay('freeze', missedDays, sd.streakFreezes), 1500);
+                        } else if (availableFreezes > 0) {
+                            // PARTIAL protection
+                            const protectedDays = availableFreezes;
+                            sd.streakFreezes = 0;
+                            if (!sd.freezeUsedDates) sd.freezeUsedDates = [];
+                            for (let i = 1; i <= protectedDays; i++) {
+                                const freezeDate = new Date(last);
+                                freezeDate.setDate(freezeDate.getDate() + i);
+                                const fd = freezeDate.getFullYear() + '-' + String(freezeDate.getMonth()+1).padStart(2,'0') + '-' + String(freezeDate.getDate()).padStart(2,'0');
+                                sd.freezeUsedDates.push(fd);
+                            }
+                            const lostDays = missedDays - protectedDays;
+                            sd.days = Math.max(0, sd.days - lostDays);
+                            LangyState.user.streak = sd.days;
+                            setTimeout(() => showStreakOverlay('partial', lostDays, 0), 1500);
                         } else {
                             // No freezes — streak lost
                             const lostDays = sd.days;
@@ -101,8 +141,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
                 
-                // Mark today as not yet completed
-                if (lastDate !== today) {
+                // FIX: Always update lastVisitDate on app open — this is separate from lesson completion
+                sd.lastVisitDate = today;
+                
+                // Mark today as not yet completed (lesson-wise)
+                if (!sd.lastSession.date || sd.lastSession.date !== today) {
                     sd.todayCompleted = false;
                     LangyState.dailyChallenge.tasks.forEach(t => t.done = false);
                 }
@@ -114,7 +157,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                     LangyCurriculum.restoreFromState();
                 }
 
-                startRoute = 'home';
+                if (typeof LangyState.user.firstSessionCompleted !== 'boolean') {
+                    LangyState.user.firstSessionCompleted = (LangyState.talkHistory || []).length > 0;
+                }
+                if (typeof LangyState.user.firstSpeakingScenarioStarted !== 'boolean') {
+                    LangyState.user.firstSpeakingScenarioStarted = LangyState.user.firstSessionCompleted;
+                }
+                if (!LangyState.user.firstSpeakingScenarioId) {
+                    LangyState.user.firstSpeakingScenarioId = 'coffee';
+                }
+
+                // Backfill firstLessonCompleted for existing users
+                if (typeof LangyState.user.firstLessonCompleted !== 'boolean') {
+                    LangyState.user.firstLessonCompleted = (LangyState.progress.lessonHistory || []).length > 0;
+                }
+
+                const isFirstJourney =
+                    LangyState.user?.hasCompletedOnboarding && LangyState.user?.firstSessionCompleted === false;
+                const userConfidence = LangyState.user?.confidenceLevel;
+                const isTrueBeginner = (userConfidence === 'zero' || userConfidence === 'basic') &&
+                    (LangyState.progress.lessonHistory || []).length === 0;
+
+                if (isFirstJourney && !isTrueBeginner) {
+                    // Intermediate/advanced: resume speaking-first flow
+                    const scenario = LangyState.user.firstSpeakingScenarioId || 'coffee';
+                    ScreenState.set('talkMascot', LangyState.mascot.selected || 0);
+                    ScreenState.set('talkScenario', scenario);
+                    ScreenState.set('firstTalkSession', !LangyState.user.firstSpeakingScenarioStarted);
+                    ScreenState.set('guidedSpeaking', true);
+                    ScreenState.set('talkView', 'call');
+                    startRoute = 'talk';
+                } else {
+                    // Beginners go to home (lesson-first CTA)
+                    // Returning users also go to home
+                    startRoute = 'home';
+                }
             }
         } catch (e) {
             console.error('DB init error:', e);
@@ -150,16 +227,23 @@ function showStreakOverlay(type, days, freezesLeft) {
     overlay.id = 'streak-overlay';
 
     const isFreeze = type === 'freeze';
+    const isPartial = type === 'partial';
     const bg = isFreeze
         ? 'linear-gradient(135deg, rgba(99,102,241,0.95), rgba(59,130,246,0.95))'
+        : isPartial
+        ? 'linear-gradient(135deg, rgba(245,158,11,0.95), rgba(217,119,6,0.95))'
         : 'linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95))';
-    const icon = isFreeze ? '🛡️' : '💔';
-    const title = isFreeze ? 'Streak Protected!' : 'Streak Lost';
+    const icon = isFreeze ? LangyIcons.shield : isPartial ? LangyIcons.shield : LangyIcons.flame;
+    const title = isFreeze ? 'Streak Protected!' : isPartial ? 'Streak Partially Saved' : 'Streak Lost';
     const subtitle = isFreeze
         ? `Freeze shield saved your ${LangyState.streakData.days}-day streak!`
+        : isPartial
+        ? `Freezes saved some days, but your streak was reduced by ${days}.`
         : `Your ${days}-day streak was lost.`;
     const detail = isFreeze
         ? `${days} freeze${days > 1 ? 's' : ''} used · ${freezesLeft} remaining`
+        : isPartial
+        ? `Current streak: ${LangyState.streakData.days} days · Buy more freezes in the Shop!`
         : 'Start a new streak today — every day counts!';
 
     overlay.innerHTML = `
@@ -202,7 +286,7 @@ function showStreakOverlay(type, days, freezesLeft) {
                 backdrop-filter:blur(4px);
                 transition: all 0.2s ease;
                 font-family: inherit;
-            ">Got it</button>
+            ">${typeof i18n!=='undefined'?i18n('common.got_it'):'Got it'}</button>
         </div>
     `;
 

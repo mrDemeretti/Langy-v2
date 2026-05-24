@@ -4,14 +4,14 @@
 
 function renderInterests(container) {
     const interestPool = [
-        { id: 'cinema', name: 'Cinema & Actors', emoji: '🎬' },
-        { id: 'travel', name: 'Travel & Nature', emoji: '🌍' },
-        { id: 'tech', name: 'Tech & AI', emoji: '💻' },
-        { id: 'music', name: 'Music & Concerts', emoji: '🎸' },
-        { id: 'cooking', name: 'Cooking & Food', emoji: '🍳' },
-        { id: 'sports', name: 'Sports & Fitness', emoji: '⚽' },
-        { id: 'business', name: 'Business & Career', emoji: '👔' },
-        { id: 'gaming', name: 'Gaming', emoji: '🎮' },
+        { id: 'cinema', name: 'Cinema & Actors', emoji: LangyIcons.play },
+        { id: 'travel', name: 'Travel & Nature', emoji: LangyIcons.globe },
+        { id: 'tech', name: 'Tech & AI', emoji: LangyIcons.globe },
+        { id: 'music', name: 'Music & Concerts', emoji: LangyIcons.volume },
+        { id: 'cooking', name: 'Cooking & Food', emoji: LangyIcons.info },
+        { id: 'sports', name: 'Sports & Fitness', emoji: LangyIcons.award },
+        { id: 'business', name: 'Business & Career', emoji: LangyIcons.clipboard },
+        { id: 'gaming', name: 'Gaming', emoji: LangyIcons.play },
     ];
 
     container.innerHTML = `
@@ -29,7 +29,7 @@ function renderInterests(container) {
                     <div class="interest-card" data-id="${item.id}">
                         <div class="interest-card__emoji">${item.emoji}</div>
                         <div class="interest-card__name">${item.name}</div>
-                        <div class="interest-card__check">✓</div>
+                        <div class="interest-card__check">${LangyIcons.check}</div>
                     </div>
                 `).join('')}
             </div>
@@ -69,7 +69,7 @@ function renderInterests(container) {
 
     submitBtn.addEventListener('click', () => {
         LangyState.user.interests = Array.from(selected);
-        Anim.showToast('Tailoring your curriculum... 🧵');
+        Anim.showToast(`Tailoring your curriculum... ${LangyIcons.edit}`);
         setTimeout(() => {
             Router.navigate('mascot-select');
         }, 1200);

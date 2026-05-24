@@ -11,10 +11,10 @@ function renderLearning(container) {
     if (!activeTb || !activeTb.units || !activeTb.units.length) {
         container.innerHTML = `
             <div class="screen" style="display:flex; flex-direction:column; justify-content:center; align-items:center; padding:var(--sp-8);">
-                <div style="font-size:64px; margin-bottom:var(--sp-4);">📚</div>
-                <h2>Курс не найден</h2>
-                <p class="text-secondary" style="margin:var(--sp-4) 0;">Пройдите тест, чтобы подобрать учебник.</p>
-                <button class="btn btn--primary" onclick="Router.navigate('placement-test')">Пройти тест</button>
+                <div style="font-size:64px; margin-bottom:var(--sp-4);">${LangyIcons.bookOpen}</div>
+                <h2>${{ en: 'Course not found', ru: 'Курс не найден', es: 'Curso no encontrado' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</h2>
+                <p class="text-secondary" style="margin:var(--sp-4) 0;">${{ en: 'Take a placement test to find your course.', ru: 'Пройдите тест, чтобы подобрать учебник.', es: 'Realiza un test para encontrar tu curso.' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</p>
+                <button class="btn btn--primary" onclick="Router.navigate('placement-test')">${{ en: 'Take test', ru: 'Пройти тест', es: 'Hacer test' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</button>
             </div>
         `;
         return;
@@ -48,8 +48,10 @@ function renderLearning(container) {
         const shuffledStatic = [...staticExercises].sort(() => Math.random() - 0.5).slice(0, staticCount);
         exercises = shuffledStatic;
 
-        // Generate dynamic exercises for the rest
-        const dynamicExercises = ExerciseGenerator.generateBatch(activeTb.cefr, dynamicCount, { noRepeatTypes: true });
+        // Generate dynamic exercises — curriculum-aware for English
+        const dynamicExercises = (typeof ExerciseGenerator.generateForCurrentUnit === 'function')
+            ? ExerciseGenerator.generateForCurrentUnit(dynamicCount, { types: ['fill-bubble', 'match-pairs', 'word-shuffle', 'type-translation', 'listen-type'] })
+            : ExerciseGenerator.generateBatch(activeTb.cefr, dynamicCount, { noRepeatTypes: true });
         exercises = exercises.concat(dynamicExercises);
 
         // Shuffle all exercises together
@@ -63,35 +65,41 @@ function renderLearning(container) {
     let currentExerciseIdx = 0;
     let correctAnswers = 0;
     let failedExerciseIndices = []; // Track which exercises were failed
-    let lessonStartTime = Date.now();
+    const lessonStartTime = Date.now();
     let _destroyed = false;
     let teachSlideIdx = 0;
     const teachSlides = unit.teachSlides || [];
 
     // Quick Review state
-    let qrWeakUnits = [];       // Units that need review
-    let qrCurrentUnitIdx = 0;   // Which weak unit we're reviewing
-    let qrPhase = 'theory';     // 'theory' | 'practice' | 'result'
+    let qrWeakUnits = []; // Units that need review
+    let qrCurrentUnitIdx = 0; // Which weak unit we're reviewing
+    let qrPhase = 'theory'; // 'theory' | 'practice' | 'result'
     let qrSlideIdx = 0;
     let qrExerciseIdx = 0;
     let qrCorrect = 0;
-    let qrAttempts = 0;         // Attempts without theory (max 2 before forced theory)
+    let qrAttempts = 0; // Attempts without theory (max 2 before forced theory)
     let qrExercises = [];
 
     // ─── MAIN RENDER ───
     function updateUI() {
         if (_destroyed) return;
-        const progress = currentStep === 'intro' ? 0 :
-                        currentStep === 'theory' ? 15 :
-                        currentStep === 'practice' ? 15 + Math.round((currentExerciseIdx / totalExercises) * 70) :
-                        currentStep === 'summary' ? 100 : 50;
+        const progress =
+            currentStep === 'intro'
+                ? 0
+                : currentStep === 'theory'
+                  ? 15
+                  : currentStep === 'practice'
+                    ? 15 + Math.round((currentExerciseIdx / totalExercises) * 70)
+                    : currentStep === 'summary'
+                      ? 100
+                      : 50;
 
         container.innerHTML = `
             <div class="screen screen--no-pad learning-screen">
                 <header class="learning-header">
-                    <div class="circle-btn" id="learning-back">←</div>
+                    <div class="circle-btn" id="learning-back">${LangyIcons.back}</div>
                     <div class="learning-header__info">
-                        <div class="learning-header__unit">${mode === 'homework' ? '🏠 Homework' : `📘 Unit ${unit.id}`}</div>
+                        <div class="learning-header__unit">${mode === 'homework' ? LangyIcons.home + ' ' + i18n('hw.title') : LangyIcons.book + ` ${{ en: 'Unit', ru: 'Урок', es: 'Unidad' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']} ${unit.id}`}</div>
                         <div class="learning-header__title">${unit.title}</div>
                     </div>
                     <div class="learning-progress-ring">
@@ -119,48 +127,97 @@ function renderLearning(container) {
         const content = container.querySelector('#lesson-content');
 
         switch (currentStep) {
-            case 'intro': renderIntro(content); break;
-            case 'teach': renderTeach(content); break;
-            case 'theory': renderTheory(content); break;
-            case 'practice': renderPractice(content); break;
-            case 'homework': renderHomeworkMode(content); break;
-            case 'summary': renderSummary(content); break;
-            case 'quick-review': renderQuickReview(content); break;
+            case 'intro':
+                renderIntro(content);
+                break;
+            case 'teach':
+                renderTeach(content);
+                break;
+            case 'theory':
+                renderTheory(content);
+                break;
+            case 'practice':
+                renderPractice(content);
+                break;
+            case 'homework':
+                renderHomeworkMode(content);
+                break;
+            case 'summary':
+                renderSummary(content);
+                break;
+            case 'quick-review':
+                renderQuickReview(content);
+                break;
         }
     }
 
     // ─── INTRO CARD ───
     function renderIntro(target) {
+        const mascotGreeting = typeof MascotPersona !== 'undefined' ? MascotPersona.tone('greeting') : '';
         target.innerHTML = `
             <div class="lesson-intro animate-in">
-                <div class="lesson-intro__icon">📘</div>
+                <div class="lesson-intro__icon">${LangyIcons.book}</div>
                 <h2 class="lesson-intro__title">${unit.title}</h2>
+                ${mascotGreeting ? `<div style="font-size:var(--fs-sm); color:var(--text-secondary); font-style:italic; text-align:center; margin:var(--sp-1) 0 var(--sp-2);">"${mascotGreeting}" — ${typeof MascotPersona !== 'undefined' ? MascotPersona.name() : ''}</div>` : ''}
                 <div class="lesson-intro__meta">
-                    <div class="lesson-intro__tag">📝 ${unit.grammar?.join(', ') || 'Grammar'}</div>
-                    <div class="lesson-intro__tag">📚 ${unit.vocabulary?.join(', ') || 'Vocabulary'}</div>
-                    <div class="lesson-intro__tag">⏱️ ~15 минут / minutes</div>
-                    <div class="lesson-intro__tag">🎯 ${totalExercises} заданий / exercises</div>
+                    <div class="lesson-intro__tag">${LangyIcons.fileText} ${unit.grammar?.join(', ') || 'Grammar'}</div>
+                    <div class="lesson-intro__tag">${LangyIcons.bookOpen} ${unit.vocabulary?.join(', ') || 'Vocabulary'}</div>
+                    ${typeof VocabTracker !== 'undefined' && activeTb?.cefr ? (() => {
+                        const stats = VocabTracker.getUnitStats(activeTb.cefr, unit.id);
+                        if (stats.total === 0) return '';
+                        return `<div class="lesson-intro__tag" style="color:#F59E0B;">${LangyIcons.brain} ${stats.learned}/${stats.total} ${{ en: 'words learned', ru: 'слов изучено', es: 'palabras aprendidas' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>`;
+                    })() : ''}
+                    <div class="lesson-intro__tag">${LangyIcons.clock} ~15 ${i18n('learn.minutes')}</div>
+                    <div class="lesson-intro__tag">${LangyIcons.target} ${totalExercises} ${i18n('learn.exercises')}</div>
+                    ${(() => {
+                        if (!activeTb?.canDo?.length) return '';
+                        const unitGrammar = (unit.grammar || []).map(g => g.toLowerCase());
+                        // Find a can-do that matches unit grammar, else use first unlearned
+                        const relCanDo = activeTb.canDo.find(s => unitGrammar.some(g => s.toLowerCase().includes(g.split(' ')[0])));
+                        const goalText = relCanDo || activeTb.canDo[0];
+                        if (!goalText) return '';
+                        const ll = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                        return `<div style="width:100%; margin-top:var(--sp-2); padding:var(--sp-2) var(--sp-3); background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.12); border-radius:var(--radius-md); display:flex; align-items:flex-start; gap:6px;">
+                            <span style="color:#10B981; flex-shrink:0; font-size:12px; line-height:1.4;">${LangyIcons.check}</span>
+                            <div>
+                                <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:#10B981; line-height:1;">${{ en: 'After this lesson you can', ru: 'После этого урока вы сможете', es: 'Después de esta lección podrás' }[ll]}</div>
+                                <div style="font-size:10px; color:var(--text-secondary); line-height:1.4; margin-top:2px;">${goalText}</div>
+                            </div>
+                        </div>`;
+                    })()}
                 </div>
                 <button class="btn btn--primary btn--xl btn--full lesson-intro__start" id="start-lesson">
-                    Начать урок / Start Lesson →
+                    ${i18n('learn.start_lesson')} ${LangyIcons.arrowRight}
                 </button>
             </div>
         `;
 
         target.querySelector('#start-lesson').onclick = () => {
-            currentStep = teachSlides.length > 0 ? 'teach' : (unit.theory ? 'theory' : 'practice');
+            currentStep = teachSlides.length > 0 ? 'teach' : unit.theory ? 'theory' : 'practice';
             teachSlideIdx = 0;
             updateUI();
 
-            // Start AI chat integration
+            // Start AI chat integration — curriculum-aware for English
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.resetChat();
                 setTimeout(() => {
-                    DeepTutor.handleSend(
-                        `I'm starting lesson "${unit.title}". Topics: ${unit.grammar?.join(', ') || 'general'}. Vocabulary: ${unit.vocabulary?.join(', ') || 'general'}. Please introduce this topic briefly and tell me the key points.`,
-                        true
-                    );
+                    const cefrLevel = activeTb.cefr || '';
+                    const canDoTarget = activeTb.canDo && activeTb.canDo.length ? activeTb.canDo[0] : '';
+                    const grammarFocus = unit.grammar?.join(', ') || 'general';
+                    const vocabFocus = unit.vocab?.join(', ') || unit.vocabulary?.join(', ') || 'general';
+                    const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+
+                    let startMsg = `I'm starting lesson "${unit.title}". Topics: ${grammarFocus}. Vocabulary: ${vocabFocus}.`;
+                    if (isEnglish && cefrLevel) {
+                        startMsg += ` My CEFR level: ${cefrLevel}.`;
+                        if (canDoTarget) startMsg += ` Can-do goal: "${canDoTarget}".`;
+                        startMsg += ` Introduce this topic briefly, focusing on what a ${cefrLevel} learner needs to know. Reference the grammar and vocabulary of this unit.`;
+                    } else {
+                        startMsg += ` Please introduce this topic briefly and tell me the key points.`;
+                    }
+
+                    DeepTutor.handleSend(startMsg, true);
                 }, 500);
             }
         };
@@ -169,28 +226,45 @@ function renderLearning(container) {
     // ─── MASCOT TEACH ───
     function renderTeach(target) {
         const slide = teachSlides[teachSlideIdx];
-        if (!slide) { currentStep = 'practice'; currentExerciseIdx = 0; updateUI(); return; }
+        if (!slide) {
+            currentStep = 'practice';
+            currentExerciseIdx = 0;
+            updateUI();
+            return;
+        }
 
         const isLast = teachSlideIdx >= teachSlides.length - 1;
-        const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
-        const chosenIdx = (typeof LangyState !== 'undefined' && LangyState.mascot) ? LangyState.mascot.selected || 0 : 0;
-        const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
+        const chosenIdx = typeof LangyState !== 'undefined' && LangyState.mascot ? LangyState.mascot.selected || 0 : 0;
+        const mascotImgName = typeof TalkEngine !== 'undefined' ? TalkEngine.getMascotImage(chosenIdx)
+            : ['zendaya', 'travis', 'matthew', 'omar', 'elyanna', 'adel_imam'][chosenIdx] || 'zendaya';
+        const mascotSrc = `assets/mascots/${mascotImgName}.png`;
 
         // Build slide content based on type
         let slideContent = '';
         if (slide.type === 'examples' && slide.items) {
-            slideContent = `<div class="teach-examples">${slide.items.map(it => {
-                const hl = it.highlight ? `<span class="teach-hl">${it.highlight}</span>` : '';
-                return `<div class="teach-example-row"><span class="teach-base">${it.base}</span><span class="teach-arrow">→</span><span class="teach-result">${it.past}${hl ? '' : ''}</span></div>`;
-            }).join('')}</div>`;
+            slideContent = `<div class="teach-examples">${slide.items
+                .map(it => {
+                    const hl = it.highlight ? `<span class="teach-hl">${it.highlight}</span>` : '';
+                    return `<div class="teach-example-row"><span class="teach-base">${it.base}</span><span class="teach-arrow">→</span><span class="teach-result">${it.past}${hl ? '' : ''}</span></div>`;
+                })
+                .join('')}</div>`;
         } else if (slide.type === 'compare' && slide.left && slide.right) {
             slideContent = `<div class="teach-compare"><div class="teach-col"><div class="teach-col__label">${slide.left.label}</div>${slide.left.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div><div class="teach-vs">VS</div><div class="teach-col teach-col--accent"><div class="teach-col__label">${slide.right.label}</div>${slide.right.items.map(i => `<div class="teach-col__item">${i}</div>`).join('')}</div></div>`;
         } else if (slide.type === 'vocab-intro' && slide.words) {
             slideContent = `<div class="teach-vocab-grid">${slide.words.map(w => `<div class="teach-vocab-card"><div class="teach-vocab-card__en">${w.en}</div><div class="teach-vocab-card__ru">${w.ru}</div></div>`).join('')}</div>`;
+            // ── VocabMastery: mark shown words as seen (silent) ──
+            if (typeof VocabMastery !== 'undefined' && typeof LangyVocabBank !== 'undefined' && activeTb?.cefr) {
+                const allWords = LangyVocabBank[activeTb.cefr]?.getAllWords?.() || [];
+                const slideTargets = new Set(slide.words.map(w => (w.en || w.target || '').toLowerCase()));
+                const ids = allWords
+                    .filter(w => slideTargets.has((w.target || w.en || '').toLowerCase()))
+                    .map(w => w.id).filter(Boolean);
+                if (ids.length) VocabMastery.markSeenBatch(ids);
+            }
         } else if (slide.type === 'quiz-check') {
             slideContent = `<div class="teach-quiz" id="teach-quiz">${(slide.options || []).map((o, i) => `<button class="btn btn--secondary teach-quiz__opt" data-idx="${i}">${o}</button>`).join('')}</div>`;
         } else if (slide.type === 'tip') {
-            slideContent = `<div class="teach-tip"><div class="teach-tip__icon">💡</div><div class="teach-tip__text">${slide.tipText || ''}</div></div>`;
+            slideContent = `<div class="teach-tip"><div class="teach-tip__icon">${LangyIcons.helpCircle}</div><div class="teach-tip__text">${slide.tipText || ''}</div></div>`;
         }
 
         target.innerHTML = `
@@ -206,14 +280,14 @@ function renderLearning(container) {
                 </div>
                 ${slideContent ? `<div class="teach-content">${slideContent}</div>` : ''}
                 <div class="teach-actions">
-                    <button class="btn btn--primary btn--xl btn--full" id="teach-next" style="display:none;">
-                        ${isLast ? '🚀 К практике! / Start Practice →' : 'Далее / Next →'}
+                    <button class="btn btn--primary btn--xl btn--full" id="teach-next" style="display:none; gap: var(--sp-2);">
+                        ${isLast ? LangyIcons.rocket + ' К практике! / Start Practice' : 'Далее / Next'}
                     </button>
-                    <button class="btn btn--ghost btn--sm" id="teach-ask" style="margin-top:var(--sp-2);display:none;">
-                        💬 Не понимаю / Ask mascot
+                    <button class="btn btn--ghost btn--sm" id="teach-ask" style="margin-top:var(--sp-2);display:none; gap: var(--sp-2);">
+                        ${LangyIcons.messageCircle} Не понимаю / Ask mascot
                     </button>
-                    <button class="btn btn--ghost btn--sm" id="teach-speak" style="margin-top:var(--sp-1);display:none;">
-                        🔊 Озвучить / Listen
+                    <button class="btn btn--ghost btn--sm" id="teach-speak" style="margin-top:var(--sp-1);display:none; gap: var(--sp-2);">
+                        ${LangyIcons.volume} Озвучить / Listen
                     </button>
                 </div>
             </div>
@@ -273,34 +347,51 @@ function renderLearning(container) {
                         const rightBtn = target.querySelector(`.teach-quiz__opt[data-idx="${slide.correct}"]`);
                         if (rightBtn) rightBtn.classList.add('teach-quiz__opt--correct');
                     }
-                    target.querySelectorAll('.teach-quiz__opt').forEach(b => b.disabled = true);
+                    target.querySelectorAll('.teach-quiz__opt').forEach(b => (b.disabled = true));
                     if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion(correct ? 'happy' : 'encouraging');
                     // Auto-advance after 1.5s
-                    setTimeout(() => { if (!_destroyed) { teachSlideIdx++; updateUI(); } }, 1500);
+                    setTimeout(() => {
+                        if (!_destroyed) {
+                            teachSlideIdx++;
+                            updateUI();
+                        }
+                    }, 1500);
                 };
             });
         }
 
-        // Ask mascot (opens DeepTutor with context)
+        // Ask mascot (opens DeepTutor with curriculum context)
         askBtn.onclick = () => {
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.open();
-                DeepTutor.handleSend(`The student doesn't understand this explanation: "${slide.mascotText}". Please explain it more simply, with more examples.`, true);
+                const grammarCtx = unit.grammar?.length ? ` This is about: ${unit.grammar.join(', ')}.` : '';
+                const levelCtx = activeTb.cefr ? ` Student level: CEFR ${activeTb.cefr}.` : '';
+                DeepTutor.handleSend(
+                    `The student doesn't understand this explanation: "${slide.mascotText}".${grammarCtx}${levelCtx} Please explain it more simply, with more examples appropriate for this level.`,
+                    true
+                );
             }
         };
 
-        // TTS — Google built-in Web Speech API
+        // TTS — Mascot-aware voice via LangyVoice
         speakBtn.onclick = () => {
-            if ('speechSynthesis' in window) {
+            if (typeof LangyVoice !== 'undefined') {
+                speakBtn.innerHTML = `${LangyIcons.volume} Playing...`;
+                LangyVoice.sayAs(chosenIdx, fullText, () => {
+                    speakBtn.innerHTML = `${LangyIcons.volume} Озвучить / Listen`;
+                });
+            } else if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(fullText);
-                utterance.lang = 'en-US';
+                utterance.lang = typeof LangyTarget !== 'undefined' ? LangyTarget.ttsLang : 'en-US';
                 utterance.rate = 0.9;
                 utterance.pitch = 1.0;
                 window.speechSynthesis.speak(utterance);
-                speakBtn.textContent = '🔊 Playing...';
-                utterance.onend = () => { speakBtn.textContent = '🔊 Озвучить / Listen'; };
+                speakBtn.innerHTML = `${LangyIcons.volume} Playing...`;
+                utterance.onend = () => {
+                    speakBtn.innerHTML = `${LangyIcons.volume} Озвучить / Listen`;
+                };
             } else {
                 Anim.showToast('TTS не поддерживается в этом браузере');
             }
@@ -315,10 +406,10 @@ function renderLearning(container) {
                     ${unit.theory || `<h3>${unit.title}</h3><p>Let's learn about ${unit.grammar?.join(' and ') || 'new topics'}!</p>`}
                 </div>
                 <button class="btn btn--primary btn--xl btn--full" id="theory-continue" style="margin-top:var(--sp-6);">
-                    Понятно! К заданиям / Got it! Practice →
+                    Понятно! К заданиям / Got it! Practice
                 </button>
-                <button class="btn btn--ghost btn--full" id="theory-ask-ai" style="margin-top:var(--sp-2);">
-                    💬 Спросить AI / Ask AI Teacher
+                <button class="btn btn--ghost btn--full" id="theory-ask-ai" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
+                    ${LangyIcons.messageCircle} Спросить AI / Ask AI Teacher
                 </button>
             </div>
         `;
@@ -351,11 +442,13 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="lesson-exercise animate-in">
                 <div class="lesson-exercise__counter">
-                    Задание ${currentExerciseIdx + 1} из ${totalExercises}
+                    ${i18n('learn.exercise_counter')
+                        .replace('{n}', currentExerciseIdx + 1)
+                        .replace('{total}', totalExercises)}
                 </div>
                 <div id="exercise-widget"></div>
-                <button class="btn btn--ghost btn--full" id="practice-ask-ai" style="margin-top:var(--sp-3);">
-                    💬 Не понимаю / Ask AI
+                <button class="btn btn--ghost btn--full" id="practice-ask-ai" style="margin-top:var(--sp-3); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
+                    ${LangyIcons.messageCircle} ${i18n('learn.ask_ai')}
                 </button>
             </div>
         `;
@@ -364,7 +457,7 @@ function renderLearning(container) {
         const widgetType = exercise.widgetType || mapExerciseToWidget(exercise);
         const widgetData = exercise.widgetData || mapExerciseData(exercise);
 
-        LangyWidgets.render(widgetArea, widgetType, widgetData, (isCorrect) => {
+        LangyWidgets.render(widgetArea, widgetType, widgetData, isCorrect => {
             if (isCorrect === 'skipped') {
                 totalExercises--; // Do not count skipped exercises towards total score calculation
                 if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('encouraging');
@@ -374,9 +467,32 @@ function renderLearning(container) {
             } else {
                 failedExerciseIndices.push(currentExerciseIdx);
                 if (typeof LangyAI !== 'undefined') {
-                    LangyAI.recordMistake(exercise.widgetData?.sentence || exercise.prompt || '', '', exercise.widgetData?.answer || '');
+                    const exRule = exercise.widgetData?.rule || exercise.data?.rule || '';
+                    LangyAI.recordMistake(
+                        exercise.widgetData?.sentence || exercise.prompt || '',
+                        '',
+                        exercise.widgetData?.answer || '',
+                        exRule
+                    );
                 }
-                if (typeof DeepTutor !== 'undefined') DeepTutor.setEmotion('encouraging');
+                if (typeof DeepTutor !== 'undefined') {
+                    DeepTutor.setEmotion('encouraging');
+                    // Send a curriculum-aware correction to DeepTutor for English
+                    const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+                    if (isEnglish) {
+                        const exSentence = exercise.widgetData?.sentence || exercise.data?.sentence || '';
+                        const exAnswer = exercise.widgetData?.answer || (exercise.data?.options ? exercise.data.options[exercise.data.correct] : '') || '';
+                        const exRule = exercise.widgetData?.rule || exercise.data?.rule || '';
+                        const cefrLvl = activeTb.cefr || '';
+                        if (exSentence && exAnswer) {
+                            let correctionMsg = `The student just got this wrong: "${exSentence}" — correct answer: "${exAnswer}".`;
+                            if (exRule) correctionMsg += ` Grammar rule: ${exRule}.`;
+                            if (cefrLvl) correctionMsg += ` Level: CEFR ${cefrLvl}.`;
+                            correctionMsg += ` Give a brief (2-3 sentence) explanation of why this answer is correct, appropriate for this CEFR level. Do not give a full lesson — just the key point.`;
+                            DeepTutor.handleSend(correctionMsg, true);
+                        }
+                    }
+                }
             }
 
             currentExerciseIdx++;
@@ -385,14 +501,23 @@ function renderLearning(container) {
             }, 1400);
         });
 
-        // ✅ FIX #1: Ask AI during exercises
+        // Ask AI during exercises — curriculum-aware
         target.querySelector('#practice-ask-ai')?.addEventListener('click', () => {
             if (typeof DeepTutor !== 'undefined') {
                 DeepTutor.show();
                 DeepTutor.open();
-                const prompt = exercise.widgetData?.sentence || exercise.widgetData?.sourceText || exercise.widgetData?.phrase || '';
+                const prompt =
+                    exercise.widgetData?.sentence ||
+                    exercise.widgetData?.sourceText ||
+                    exercise.widgetData?.phrase ||
+                    '';
                 if (prompt) {
-                    DeepTutor.handleSend(`I'm confused about this exercise: "${prompt}". Can you explain it?`, true);
+                    const grammarCtx = unit.grammar?.length ? ` Unit grammar: ${unit.grammar.join(', ')}.` : '';
+                    const levelCtx = activeTb.cefr ? ` My level: CEFR ${activeTb.cefr}.` : '';
+                    DeepTutor.handleSend(
+                        `I'm confused about this exercise: "${prompt}".${grammarCtx}${levelCtx} Can you explain the grammar rule and give me a hint?`,
+                        true
+                    );
                 }
             }
         });
@@ -404,15 +529,24 @@ function renderLearning(container) {
         // ExerciseGenerator exercises already use widget type names
         if (ex.data) return ex.type;
         switch (ex.type) {
-            case 'choice': return 'fill-bubble';
-            case 'fill-blank': return 'fill-bubble';
-            case 'translate': return 'type-translation';
-            case 'speaking': return 'speak-aloud';
-            case 'word-shuffle': return 'word-shuffle';
-            case 'match-pairs': return 'match-pairs';
-            case 'listen-type': return 'listen-type';
-            case 'read-answer': return 'read-answer';
-            default: return 'fill-bubble';
+            case 'choice':
+                return 'fill-bubble';
+            case 'fill-blank':
+                return 'fill-bubble';
+            case 'translate':
+                return 'type-translation';
+            case 'speaking':
+                return 'speak-aloud';
+            case 'word-shuffle':
+                return 'word-shuffle';
+            case 'match-pairs':
+                return 'match-pairs';
+            case 'listen-type':
+                return 'listen-type';
+            case 'read-answer':
+                return 'read-answer';
+            default:
+                return 'fill-bubble';
         }
     }
 
@@ -428,7 +562,11 @@ function renderLearning(container) {
             case 'speaking':
                 return { phrase: ex.prompt || ex.answer };
             default:
-                return { sentence: ex.prompt || 'Choose the correct answer', options: ex.options || ['A', 'B', 'C'], correct: ex.correct || 0 };
+                return {
+                    sentence: ex.prompt || 'Choose the correct answer',
+                    options: ex.options || ['A', 'B', 'C'],
+                    correct: ex.correct || 0,
+                };
         }
     }
 
@@ -437,13 +575,13 @@ function renderLearning(container) {
         const hw = unit.homework;
         target.innerHTML = `
             <div class="lesson-homework animate-in">
-                <div class="lesson-exercise__counter">📝 HOMEWORK / ДОМАШНЕЕ ЗАДАНИЕ</div>
-                <h3 style="margin: var(--sp-2) 0;">${unit.title} Review</h3>
+                <div class="lesson-exercise__counter" style="display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} ${{ en: 'HOMEWORK', ru: 'ДОМАШНЕЕ ЗАДАНИЕ', es: 'TAREA' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>
+                <h3 style="margin: var(--sp-2) 0;">${unit.title} ${{ en: 'Review', ru: 'Повторение', es: 'Repaso' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</h3>
                 <p style="margin:var(--sp-3) 0; color:var(--text-secondary);">${hw?.prompt || 'Write a short text about this topic.'}</p>
-                <textarea class="input lesson-homework__textarea" id="hw-input" placeholder="Начните писать здесь / Start writing here..."></textarea>
+                <textarea class="input lesson-homework__textarea" id="hw-input" placeholder="${{ en: 'Start writing here...', ru: 'Начните писать здесь...', es: 'Empieza a escribir aquí...' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}"></textarea>
                 <div class="lesson-homework__actions">
-                    <button class="btn btn--primary btn--full btn--lg" id="hw-submit">
-                        📤 Отправить на проверку / Submit for Review
+                    <button class="btn btn--primary btn--full btn--lg" id="hw-submit" style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">
+                        ${LangyIcons.upload} ${{ en: 'Submit for Review', ru: 'Отправить на проверку', es: 'Enviar para revisión' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}
                     </button>
                 </div>
                 <div id="hw-result"></div>
@@ -457,12 +595,12 @@ function renderLearning(container) {
         submitBtn.onclick = async () => {
             const text = input.value.trim();
             if (text.length < 10) {
-                Anim.showToast("Слишком коротко! / Too short!");
+                Anim.showToast({ en: 'Too short!', ru: 'Слишком коротко!', es: '¡Muy corto!' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']);
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = '🔄 AI проверяет... / AI is grading...';
+            submitBtn.innerHTML = `${LangyIcons.loader} ${{ en: 'AI is grading...', ru: 'AI проверяет...', es: 'IA calificando...' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}`;
 
             try {
                 const result = await LangyAI.gradeHomework(hw?.prompt || unit.title, text);
@@ -471,7 +609,7 @@ function renderLearning(container) {
                 const mockResult = {
                     score: Math.floor(Math.random() * 30) + 55,
                     grade: 'C',
-                    feedback: 'Good effort! Keep practicing your grammar and vocabulary.'
+                    feedback: 'Good effort! Keep practicing your grammar and vocabulary.',
                 };
                 showHomeworkGrade(resultArea, mockResult, submitBtn);
             }
@@ -483,7 +621,7 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="lesson-grade animate-in" style="border-color: ${passed ? 'var(--accent)' : 'var(--danger)'}">
                 <div class="lesson-grade__header">
-                    <span class="lesson-grade__label">AI EVALUATION</span>
+                    <span class="lesson-grade__label">${{ en: 'AI EVALUATION', ru: '\u041e\u0426\u0415\u041d\u041a\u0410 AI', es: 'EVALUACI\u00d3N IA' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
                     <span class="lesson-grade__score" style="color:${passed ? 'var(--accent-dark)' : 'var(--danger)'}">
                         ${result.grade} (${result.score}%)
                     </span>
@@ -494,16 +632,41 @@ function renderLearning(container) {
 
         submitBtn.disabled = false;
         if (passed) {
-            submitBtn.textContent = '✅ Завершить / Finish';
+            submitBtn.innerHTML = `${LangyIcons.check} ${i18n('learn.finish')}`;
             submitBtn.onclick = () => {
                 saveLessonProgress(result);
                 _destroyed = true;
                 Router.navigate('home');
             };
         } else {
-            submitBtn.textContent = '🔄 Попробовать снова / Try Again';
+            submitBtn.innerHTML = `${LangyIcons.refresh} ${i18n('learn.try_again')}`;
             submitBtn.onclick = () => updateUI();
         }
+    }
+
+    // ─── LESSON → SPEAKING: scenario picker ───
+    // Maps unit vocab/grammar keywords to the best speaking scenario.
+    // Returns a scenario ID string, or 'free' as fallback.
+    function pickScenarioFromUnit(u) {
+        const KEYWORD_MAP = [
+            { scenario: 'coffee',     keywords: ['coffee', 'tea', 'café', 'cafe', 'food', 'drink', 'restaurant', 'order', 'can i have', 'sandwich', 'cake'] },
+            { scenario: 'restaurant', keywords: ['restaurant', 'menu', 'waiter', 'meal', 'dinner', 'lunch', 'breakfast'] },
+            { scenario: 'airport',    keywords: ['airport', 'flight', 'travel', 'ticket', 'boarding', 'passport', 'hotel', 'directions'] },
+            { scenario: 'shopping',   keywords: ['shopping', 'shop', 'store', 'clothes', 'buy', 'price', 'souvenir', 'market', 'money'] },
+            { scenario: 'doctor',     keywords: ['doctor', 'health', 'hospital', 'medicine', 'sick', 'body', 'pain'] },
+            { scenario: 'interview',  keywords: ['job', 'jobs', 'work', 'interview', 'career', 'office', 'meeting', 'business'] },
+            { scenario: 'roommate',   keywords: ['home', 'house', 'flat', 'roommate', 'daily', 'routine', 'morning', 'evening'] },
+        ];
+        const combined = [
+            ...(u.vocab || []),
+            ...(u.grammar || []),
+            (u.title || ''),
+        ].join(' ').toLowerCase();
+
+        for (const { scenario, keywords } of KEYWORD_MAP) {
+            if (keywords.some(k => combined.includes(k))) return scenario;
+        }
+        return 'free';
     }
 
     // ─── SUMMARY ───
@@ -514,7 +677,7 @@ function renderLearning(container) {
         const isCheckpoint = unit.unitType === 'review';
 
         // For checkpoints: analyze which covered units had failures
-        let weakUnits = [];
+        const weakUnits = [];
         if (isCheckpoint && failedExerciseIndices.length > 0) {
             const coveredUnits = LangyCurriculum.getCheckpointCoverage(unit.id);
             // Map failed exercises back to covered units (distribute evenly)
@@ -528,39 +691,47 @@ function renderLearning(container) {
         }
 
         // Build weak topics display for checkpoints
-        const weakTopicsHtml = isCheckpoint && weakUnits.length > 0 ? `
+        const weakTopicsHtml =
+            isCheckpoint && weakUnits.length > 0
+                ? `
             <div class="qr-weak-topics" style="margin-top:var(--sp-4); padding:var(--sp-4); background:var(--danger-bg); border-radius:var(--radius-lg);">
-                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-2); color:var(--danger);">📋 Слабые темы / Weak Topics:</div>
+                <div style="font-weight:var(--fw-bold); margin-bottom:var(--sp-2); color:var(--danger); display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} ${i18n('learn.weak_topics')}:</div>
                 ${weakUnits.map(u => `<div style="padding:var(--sp-1) 0; color:var(--text-secondary);">• Unit ${u.id}: ${u.title}</div>`).join('')}
             </div>
-        ` : '';
+        `
+                : '';
 
         // Quick Review button for checkpoints with weak areas
-        const qrButton = isCheckpoint && weakUnits.length > 0 ? `
+        const qrButton =
+            isCheckpoint && weakUnits.length > 0
+                ? `
             <button class="btn btn--primary btn--xl btn--full" id="start-quick-review" style="margin-top:var(--sp-4); background:linear-gradient(135deg, var(--primary), var(--accent-dark)); border:none;">
-                ⚡ Повторить слабые темы / Quick Review
+                ${LangyIcons.lightning} ${i18n('learn.quick_review')}
             </button>
-        ` : '';
+        `
+                : '';
 
         target.innerHTML = `
             <div class="lesson-summary animate-in">
-                <div class="lesson-summary__icon">${score >= 70 ? '🎉' : '💪'}</div>
+                <div class="lesson-summary__icon">${score >= LangyConfig.PASS_THRESHOLD ? LangyIcons.sparkles : LangyIcons.flame}</div>
                 <h2 class="lesson-summary__title">
-                    ${score >= 70 ? 'Отлично! / Excellent!' : 'Хорошая попытка! / Good try!'}
-                </h2>
+                    ${typeof MascotPersona !== 'undefined'
+                        ? (score >= LangyConfig.PASS_THRESHOLD ? MascotPersona.tone('lessonComplete') : MascotPersona.tone('lessonFailed'))
+                        : (score >= LangyConfig.PASS_THRESHOLD ? i18n('learn.excellent') : i18n('learn.good_try'))}
+                </div>
 
                 <div class="lesson-summary__stats">
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">${score}%</span>
-                        <span class="lesson-summary__stat-label">Точность / Accuracy</span>
+                        <span class="lesson-summary__stat-label">${i18n('learn.accuracy')}</span>
                     </div>
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">${correctAnswers}/${totalExercises}</span>
-                        <span class="lesson-summary__stat-label">Правильно / Correct</span>
+                        <span class="lesson-summary__stat-label">${i18n('learn.correct')}</span>
                     </div>
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">${duration}m</span>
-                        <span class="lesson-summary__stat-label">Время / Time</span>
+                        <span class="lesson-summary__stat-label">${i18n('learn.time')}</span>
                     </div>
                     <div class="lesson-summary__stat">
                         <span class="lesson-summary__stat-value">+${xpEarned}</span>
@@ -568,30 +739,158 @@ function renderLearning(container) {
                     </div>
                 </div>
 
+                ${(() => {
+                    // Grammar rule breakdown for English
+                    const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+                    if (!isEnglish || failedExerciseIndices.length === 0) return '';
+                    const ruleMap = {};
+                    failedExerciseIndices.forEach(idx => {
+                        const ex = exercises[idx];
+                        const rule = ex?.widgetData?.rule || ex?.data?.rule || '';
+                        if (rule) ruleMap[rule] = (ruleMap[rule] || 0) + 1;
+                    });
+                    const ruleEntries = Object.entries(ruleMap).sort((a, b) => b[1] - a[1]);
+                    if (ruleEntries.length === 0) return '';
+                    return `
+                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:var(--danger-bg); border-radius:var(--radius-lg); border-left:3px solid var(--danger);">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:var(--danger); margin-bottom:var(--sp-2); display:flex; align-items:center; gap:6px;">
+                            ${LangyIcons.alertTriangle} ${{ en: 'Grammar rules to review', ru: 'Грамматические правила для повторения', es: 'Reglas de gramática para repasar' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}
+                        </div>
+                        ${ruleEntries.map(([rule, count]) => `<div style="font-size:var(--fs-xs); color:var(--text-secondary); padding:2px 0;">• <strong>${rule}</strong> — ${count} ${{ en: count > 1 ? 'mistakes' : 'mistake', ru: LangyI18n?.pluralize?.(count, 'ошибка', 'ошибки', 'ошибок') || 'ошибок', es: count > 1 ? 'errores' : 'error' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</div>`).join('')}
+                    </div>
+                    `;
+                })()}
+
                 ${weakTopicsHtml}
                 ${qrButton}
 
-                <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
-                    🏠 На главную / Home
+                ${(() => {
+                    if (typeof VocabTracker === 'undefined' || !activeTb?.cefr) return '';
+                    const unitVocab = typeof LangyVocabBank !== 'undefined' ? LangyVocabBank.getForUnit(activeTb.cefr, unit.id) : [];
+                    if (unitVocab.length === 0) return '';
+                    const stats = VocabTracker.getUnitStats(activeTb.cefr, unit.id);
+                    const wordsWithStatus = unitVocab.slice(0, 12).map(w => {
+                        const key = w.en?.toLowerCase();
+                        const entry = LangyState.vocabProgress?.words?.[key];
+                        const m = entry?.mastery || 0;
+                        return { en: w.en, ru: w.ru, mastery: m };
+                    });
+                    return `
+                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:rgba(245,158,11,0.06); border-radius:var(--radius-lg); border-left:3px solid #F59E0B;">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:#F59E0B; margin-bottom:var(--sp-2); display:flex; align-items:center; justify-content:space-between;">
+                            <span style="display:flex; align-items:center; gap:6px;">${LangyIcons.brain} ${{ en: 'Vocabulary', ru: 'Словарь', es: 'Vocabulario' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
+                            <span style="font-size:10px; color:var(--text-tertiary); font-weight:var(--fw-medium);">${stats.learned}/${stats.total} ${{ en: 'learned', ru: 'изучено', es: 'aprendidas' }[typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en']}</span>
+                        </div>
+                        <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                            ${wordsWithStatus.map(w => `<span style="font-size:10px; padding:3px 8px; border-radius:var(--radius-full); background:${VocabTracker.masteryColor(w.mastery)}15; color:${VocabTracker.masteryColor(w.mastery)}; border:1px solid ${VocabTracker.masteryColor(w.mastery)}25;" title="${w.ru}">${VocabTracker.masteryIcon(w.mastery)} ${w.en}</span>`).join('')}
+                        </div>
+                    </div>
+                    `;
+                })()}
+                ${(() => {
+                    // Structured track progress card (English + Arabic)
+                    if (typeof LangyTarget === 'undefined') return '';
+                    const _code = LangyTarget.getCode();
+                    if (_code !== 'en' && _code !== 'ar') return '';
+                    if (typeof LangyCurriculum === 'undefined') return '';
+                    const _tb = LangyCurriculum.getActive();
+                    if (!_tb) return '';
+                    const _l = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                    const _mastery = LangyState.progress?.mastery || {};
+                    const _passed = _tb.units.filter(u => { const k = _tb.id + ':' + u.id; return _mastery[k] && _mastery[k].passed; }).length;
+                    const _total = _tb.units.length;
+                    const _pct = Math.round((_passed / _total) * 100);
+                    const _nextUnit = _tb.units.find(u => { const k = _tb.id + ':' + u.id; return !_mastery[k] || !_mastery[k].passed; });
+                    const _tc = LangyTarget.current;
+                    const _color = _tc.trackColor || '#D97706';
+                    const _pathTitle = _code === 'ar'
+                        ? { en: 'Your Arabic Path', ru: 'Ваш путь в арабском', es: 'Tu camino en árabe' }
+                        : { en: 'Your English Path', ru: 'Ваш путь в английском', es: 'Tu camino en inglés' };
+                    return `
+                    <div style="margin-top:var(--sp-3); padding:var(--sp-3); background:${_color}0A; border-radius:var(--radius-lg); border:1px solid ${_color}1E;">
+                        <div style="font-size:var(--fs-xs); font-weight:var(--fw-bold); color:${_color}; margin-bottom:var(--sp-2); display:flex; align-items:center; gap:6px;">
+                            ${LangyIcons.target} ${_pathTitle[_l]}
+                            <span class="badge" style="font-size:8px; margin-left:auto; background:${_color}; color:#fff;">${_tb.cefr}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:var(--sp-2); margin-bottom:4px;">
+                            <div style="flex:1; height:5px; background:rgba(128,128,128,0.1); border-radius:3px; overflow:hidden;">
+                                <div style="height:100%; width:${_pct}%; background:${_color}; border-radius:3px; transition:width 0.5s;"></div>
+                            </div>
+                            <span style="font-size:10px; font-weight:var(--fw-bold); color:${_color};">${_pct}%</span>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; font-size:9px; color:var(--text-tertiary);">
+                            <span>${_passed}/${_total} ${{ en: 'units completed', ru: 'уроков пройдено', es: 'unidades completadas' }[_l]}</span>
+                            ${_nextUnit ? `<span>${{ en: 'Next', ru: 'Далее', es: 'Siguiente' }[_l]}: ${_nextUnit.title}</span>` : `<span style="color:#10B981;">${{ en: 'Level complete!', ru: 'Уровень пройден!', es: '¡Nivel completado!' }[_l]}</span>`}
+                        </div>
+                    </div>
+                    `;
+                })()}
+
+                ${(() => {
+                    // For beginners who just passed their first lesson, make speaking the primary CTA
+                    const _ll = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+                    const _isFirstLesson = !LangyState.user.firstLessonCompleted;
+                    const _isBeginner = LangyState.user.confidenceLevel === 'zero' || LangyState.user.confidenceLevel === 'basic';
+                    const _passed = score >= LangyConfig.PASS_THRESHOLD;
+                    const _tutorName = typeof TalkEngine !== 'undefined' ? (TalkEngine.personas[LangyState.mascot?.selected || 0]?.name || { en: 'your tutor', ru: 'тьютором', es: 'tu tutor' }[_ll]) : { en: 'your tutor', ru: 'тьютором', es: 'tu tutor' }[_ll];
+                    const _speakPrimary = _isFirstLesson && _isBeginner && _passed;
+
+                    if (!_passed || isCheckpoint) {
+                        // Failed or checkpoint — Home primary, retry secondary
+                        return `
+                <button class="btn btn--primary btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
+                    ${LangyIcons.home} ${i18n('results.home')}
                 </button>
-                ${score < 70 ? '<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2);">🔄 Повторить / Retry</button>' : ''}
+                ${score < LangyConfig.PASS_THRESHOLD ? `<button class="btn btn--ghost btn--full" id="summary-retry" style="margin-top:var(--sp-2); display:flex; align-items:center; justify-content:center; gap:var(--sp-2);">${LangyIcons.refresh} ${typeof MascotPersona !== 'undefined' ? MascotPersona.tone('retry') : i18n('learn.try_again')}</button>` : ''}`;
+                    } else if (_speakPrimary) {
+                        // First-lesson beginner who passed → speaking is PRIMARY
+                        return `
+                <button class="btn btn--primary btn--xl btn--full" id="summary-speak" style="margin-top:var(--sp-3); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:var(--sp-4);">
+                    <div style="display:flex; align-items:center; gap:var(--sp-2);">
+                        ${LangyIcons.mic} ${{ en: 'Practice speaking now', ru: 'Попрактиковаться в речи', es: 'Practicar hablando ahora' }[_ll]}
+                    </div>
+                    <div style="font-size:var(--fs-xs); opacity:0.8; font-weight:var(--fw-medium);">
+                        ${{ en: `Use what you just learned with ${_tutorName}`, ru: `Примени то, что выучил, с ${_tutorName}`, es: `Usa lo que aprendiste con ${_tutorName}` }[_ll]}
+                    </div>
+                </button>
+                <button class="btn btn--ghost btn--full" id="summary-finish" style="margin-top:var(--sp-2);">
+                    ${LangyIcons.home} ${i18n('results.home')}
+                </button>`;
+                    } else {
+                        // Regular pass — Home primary, speak secondary
+                        return `
+                <button class="btn btn--${isCheckpoint && weakUnits.length > 0 ? 'ghost' : 'primary'} btn--xl btn--full" id="summary-finish" style="margin-top:var(--sp-3);">
+                    ${LangyIcons.home} ${i18n('results.home')}
+                </button>
+                <button class="btn btn--ghost btn--full" id="summary-speak" style="margin-top:var(--sp-2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:var(--sp-3);">
+                    <div style="display:flex; align-items:center; gap:var(--sp-2);">
+                        ${LangyIcons.mic} ${{ en: 'Talk about this lesson', ru: 'Поговорить по теме урока', es: 'Hablar sobre esta lección' }[_ll]}
+                    </div>
+                    <div style="font-size:var(--fs-xs); opacity:0.65; font-weight:var(--fw-medium);">
+                        ${{ en: `with ${_tutorName} · ~2 min`, ru: `с ${_tutorName} · ~2 мин`, es: `con ${_tutorName} · ~2 min` }[_ll]}
+                    </div>
+                </button>`;
+                    }
+                })()}
             </div>
         `;
 
         // Save progress
-        saveLessonProgress({ score, grade: score >= 90 ? 'A' : score >= 70 ? 'B' : 'C', feedback: '' });
+        saveLessonProgress({ score, grade: score >= 90 ? 'A' : score >= LangyConfig.PASS_THRESHOLD ? 'B' : 'C', feedback: '' });
+        const oldXp = LangyState.user.xp;
         LangyState.user.xp += xpEarned;
         LangyState.currencies.dangy += correctAnswers * 10;
+        if (typeof checkLevelUp === 'function') checkLevelUp(oldXp, LangyState.user.xp);
 
         // Dynamically determine the dominant category and vocab words
-        let categoryCounts = { vocabulary: 0, grammar: 0, listening: 0, speaking: 0, writing: 0 };
+        const categoryCounts = { vocabulary: 0, grammar: 0, listening: 0, speaking: 0, writing: 0 };
         let vocabWordsCount = 0;
-        
+
         exercises.forEach(ex => {
             const t = ex.type;
             if (t === 'match-pairs' || t === 'image-choice') {
                 categoryCounts.vocabulary++;
-                vocabWordsCount += (ex.data && ex.data.pairs) ? ex.data.pairs.length : 1;
+                vocabWordsCount += ex.data && ex.data.pairs ? ex.data.pairs.length : 1;
             } else if (t === 'listen-type') {
                 categoryCounts.listening++;
             } else if (t === 'speak-aloud') {
@@ -603,7 +902,9 @@ function renderLearning(container) {
             }
         });
 
-        const dominantCategory = Object.keys(categoryCounts).reduce((a, b) => categoryCounts[a] > categoryCounts[b] ? a : b);
+        const dominantCategory = Object.keys(categoryCounts).reduce((a, b) =>
+            categoryCounts[a] > categoryCounts[b] ? a : b
+        );
         const actualWordsLearned = Math.min(vocabWordsCount, Math.floor(correctAnswers)); // Ensure it doesn't exceed total correct
 
         // Record session for streak tracking & rewards
@@ -612,8 +913,21 @@ function renderLearning(container) {
                 duration: duration,
                 wordsLearned: actualWordsLearned,
                 accuracy: score,
-                category: dominantCategory
+                category: dominantCategory,
             });
+        }
+
+        // Record vocabulary progress for this unit
+        if (typeof VocabTracker !== 'undefined' && activeTb?.cefr) {
+            const unitVocab = typeof LangyVocabBank !== 'undefined' ? LangyVocabBank.getForUnit(activeTb.cefr, unit.id) : [];
+            VocabTracker.recordUnitWords(activeTb.cefr, unit.id, unitVocab, { allCorrect: score >= LangyConfig.PASS_THRESHOLD });
+        }
+        // ── VocabMastery: mark all unit vocab words as seen (silent, no UI) ──
+        if (typeof VocabMastery !== 'undefined' && typeof LangyVocabBank !== 'undefined' && activeTb?.cefr) {
+            const unitVocabIds = LangyVocabBank.getForUnit(activeTb.cefr, unit.id)
+                .map(w => w.id)
+                .filter(Boolean);
+            if (unitVocabIds.length) VocabMastery.markSeenBatch(unitVocabIds);
         }
 
         // Generate homework for next lesson
@@ -635,6 +949,43 @@ function renderLearning(container) {
             Router.navigate('home');
         };
 
+        // ── Lesson → Speaking direct handoff ──
+        target.querySelector('#summary-speak')?.addEventListener('click', () => {
+            _destroyed = true;
+            const scenarioId = pickScenarioFromUnit(unit);
+            const mascotId = LangyState.mascot?.selected || 0;
+            const ll = typeof LangyI18n !== 'undefined' ? LangyI18n.currentLang : 'en';
+
+            // Build lesson context string for AI
+            const grammarCtx = (unit.grammar || []).join(', ');
+            const vocabCtx = (unit.vocabulary || unit.vocab || []).join(', ');
+            const lessonContextStr = [
+                `The learner just completed a lesson: "${unit.title}".`,
+                grammarCtx ? `Grammar covered: ${grammarCtx}.` : '',
+                vocabCtx ? `Vocabulary topics: ${vocabCtx}.` : '',
+                'Naturally weave these topics into the conversation when it feels right.',
+                'Do NOT lecture — just make the conversation relevant to what they just studied.',
+            ].filter(Boolean).join(' ');
+
+            // Set ScreenState for direct talk launch
+            ScreenState.set('talkScenario', scenarioId);
+            ScreenState.set('talkMascot', mascotId);
+            ScreenState.set('talkView', 'call'); // skip scenario selection
+            ScreenState.set('lessonContext', lessonContextStr);
+            ScreenState.set('guidedSpeaking', true);
+            // For beginner first-timers, set firstTalkSession for tip banner
+            if (!LangyState.user.firstSessionCompleted) {
+                ScreenState.set('firstTalkSession', true);
+            } else {
+                ScreenState.remove('firstTalkSession');
+            }
+            ScreenState.remove('coachFocus');
+            ScreenState.remove('coachFocusTag');
+            ScreenState.remove('coachLoopActive');
+
+            Router.navigate('talk');
+        });
+
         target.querySelector('#summary-retry')?.addEventListener('click', () => {
             currentExerciseIdx = 0;
             correctAnswers = 0;
@@ -643,13 +994,42 @@ function renderLearning(container) {
             updateUI();
         });
 
-        // AI feedback after lesson
+        // AI feedback after lesson — curriculum-aware structured review
         if (typeof DeepTutor !== 'undefined') {
-            DeepTutor.setEmotion(score >= 70 ? 'happy' : 'encouraging');
-            DeepTutor.handleSend(
-                `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${score >= 70 ? 'Great job!' : 'Need more practice.'}`,
-                true
-            );
+            DeepTutor.setEmotion(score >= LangyConfig.PASS_THRESHOLD ? 'happy' : 'encouraging');
+
+            const isEnglish = typeof LangyTarget !== 'undefined' && LangyTarget.getCode() === 'en';
+            const cefrLevel = activeTb.cefr || '';
+
+            if (isEnglish && cefrLevel && typeof LangyAI !== 'undefined' && LangyAI.buildReviewPrompt) {
+                // Collect weak rules from failed exercises
+                const weakRules = [];
+                failedExerciseIndices.forEach(idx => {
+                    const ex = exercises[idx];
+                    const rule = ex?.widgetData?.rule || ex?.data?.rule;
+                    if (rule && !weakRules.includes(rule)) weakRules.push(rule);
+                });
+
+                const reviewPrompt = LangyAI.buildReviewPrompt({
+                    unitTitle: unit.title,
+                    score,
+                    cefrLevel,
+                    grammarTopics: unit.grammar || [],
+                    canDo: activeTb.canDo && activeTb.canDo.length ? activeTb.canDo[0] : '',
+                    weakRules,
+                    correctCount: correctAnswers,
+                    totalCount: totalExercises,
+                });
+                DeepTutor.handleSend(reviewPrompt, true);
+            } else {
+                const personaMsg = typeof MascotPersona !== 'undefined'
+                    ? MascotPersona.tone('encouragement')
+                    : (score >= LangyConfig.PASS_THRESHOLD ? 'Great job!' : 'Need more practice.');
+                DeepTutor.handleSend(
+                    `Lesson "${unit.title}" completed! Score: ${score}% (${correctAnswers}/${totalExercises}). ${personaMsg}`,
+                    true
+                );
+            }
         }
     }
 
@@ -688,9 +1068,10 @@ function renderLearning(container) {
         }
 
         const isLast = qrSlideIdx >= slides.length - 1;
-        const mascotNames = ['luna', 'rex', 'pixel', 'omar'];
         const chosenIdx = LangyState.mascot?.selected || 0;
-        const mascotSrc = `assets/mascots/${mascotNames[chosenIdx]}.png`;
+        const mascotImgName2 = typeof TalkEngine !== 'undefined' ? TalkEngine.getMascotImage(chosenIdx)
+            : ['zendaya', 'travis', 'matthew', 'omar', 'elyanna', 'adel_imam'][chosenIdx] || 'zendaya';
+        const mascotSrc = `assets/mascots/${mascotImgName2}.png`;
 
         // Build slide content (reuse from teach)
         let slideContent = '';
@@ -705,9 +1086,9 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="teach-slide animate-in">
                 <div class="qr-header">
-                    <div class="qr-header__badge">⚡ Quick Review</div>
-                    <div class="qr-header__topic">📖 ${weakUnit.title}</div>
-                    <div class="qr-header__progress">${qrCurrentUnitIdx + 1}/${qrWeakUnits.length} тем</div>
+                    <div class="qr-header__badge" style="display:flex; align-items:center; gap:4px;">${LangyIcons.lightning} Quick Review</div>
+                    <div class="qr-header__topic" style="display:flex; align-items:center; gap:4px;">${LangyIcons.bookOpen} ${weakUnit.title}</div>
+                    <div class="qr-header__progress">${qrCurrentUnitIdx + 1}/${qrWeakUnits.length} ${i18n('learn.topics')}</div>
                 </div>
                 <div class="teach-slide__progress">
                     ${slides.map((_, i) => `<div class="teach-dot ${i === qrSlideIdx ? 'teach-dot--active' : i < qrSlideIdx ? 'teach-dot--done' : ''}"></div>`).join('')}
@@ -721,7 +1102,7 @@ function renderLearning(container) {
                 ${slideContent ? `<div class="teach-content">${slideContent}</div>` : ''}
                 <div class="teach-actions">
                     <button class="btn btn--primary btn--xl btn--full" id="qr-next" style="display:none;">
-                        ${isLast ? '📝 К упражнениям / Practice →' : 'Далее / Next →'}
+                        ${isLast ? `<span style="display:flex; align-items:center; gap:var(--sp-2);">${LangyIcons.fileText} ${i18n('learn.to_practice')}</span>` : i18n('learn.next')}
                     </button>
                 </div>
             </div>
@@ -733,7 +1114,10 @@ function renderLearning(container) {
         const fullText = slide.mascotText || '';
         let charIdx = 0;
         function typeChar() {
-            if (_destroyed || charIdx >= fullText.length) { if (nextBtn) nextBtn.style.display = ''; return; }
+            if (_destroyed || charIdx >= fullText.length) {
+                if (nextBtn) nextBtn.style.display = '';
+                return;
+            }
             charIdx++;
             textEl.textContent = fullText.slice(0, charIdx);
             setTimeout(typeChar, 20);
@@ -771,11 +1155,13 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="lesson-exercise animate-in">
                 <div class="qr-header">
-                    <div class="qr-header__badge">⚡ Quick Review</div>
-                    <div class="qr-header__topic">📝 ${weakUnit.title}</div>
+                    <div class="qr-header__badge" style="display:flex; align-items:center; gap:4px;">${LangyIcons.lightning} Quick Review</div>
+                    <div class="qr-header__topic" style="display:flex; align-items:center; gap:4px;">${LangyIcons.fileText} ${weakUnit.title}</div>
                 </div>
                 <div class="lesson-exercise__counter">
-                    Задание ${qrExerciseIdx + 1} из ${qrExercises.length}
+                    ${i18n('learn.exercise_counter')
+                        .replace('{n}', qrExerciseIdx + 1)
+                        .replace('{total}', qrExercises.length)}
                 </div>
                 <div id="qr-exercise-widget"></div>
             </div>
@@ -785,25 +1171,29 @@ function renderLearning(container) {
         const widgetType = exercise.widgetType || mapExerciseToWidget(exercise);
         const widgetData = exercise.widgetData || mapExerciseData(exercise);
 
-        LangyWidgets.render(widgetArea, widgetType, widgetData, (isCorrect) => {
+        LangyWidgets.render(widgetArea, widgetType, widgetData, isCorrect => {
             if (isCorrect) qrCorrect++;
             qrExerciseIdx++;
-            setTimeout(() => { if (!_destroyed) updateUI(); }, 1400);
+            setTimeout(() => {
+                if (!_destroyed) updateUI();
+            }, 1400);
         });
     }
 
     // Quick Review: Result for one topic
     function renderQRResult(target, weakUnit) {
         const qrScore = qrExercises.length > 0 ? Math.round((qrCorrect / qrExercises.length) * 100) : 0;
-        const passed = qrScore >= 70;
+        const passed = qrScore >= LangyConfig.PASS_THRESHOLD;
 
         if (passed) {
             // Mark this unit as mastered
             const masteryKey = activeTb.id + ':' + weakUnit.id;
             LangyState.progress.mastery[masteryKey] = {
-                score: qrScore, passed: true,
+                score: qrScore,
+                passed: true,
                 attempts: (LangyState.progress.mastery[masteryKey]?.attempts || 0) + 1,
-                failedIndices: [], lastAttempt: new Date().toISOString().split('T')[0]
+                failedIndices: [],
+                lastAttempt: new Date().toISOString().split('T')[0],
             };
         }
 
@@ -813,12 +1203,12 @@ function renderLearning(container) {
         target.innerHTML = `
             <div class="lesson-summary animate-in">
                 <div class="qr-header">
-                    <div class="qr-header__badge">⚡ Quick Review</div>
+                    <div class="qr-header__badge" style="display:flex; align-items:center; gap:4px;">${LangyIcons.lightning} Quick Review</div>
                     <div class="qr-header__topic">${weakUnit.title}</div>
                 </div>
-                <div class="lesson-summary__icon">${passed ? '✅' : '📖'}</div>
+                <div class="lesson-summary__icon">${passed ? LangyIcons.check : LangyIcons.bookOpen}</div>
                 <h2 class="lesson-summary__title">
-                    ${passed ? 'Тема усвоена! / Topic Mastered!' : needsTheory ? 'Давай повторим теорию / Let\'s review theory' : 'Попробуй ещё раз / Try again!'}
+                    ${passed ? i18n('learn.topic_mastered') : needsTheory ? i18n('learn.review_theory') : i18n('learn.try_again')}
                 </h2>
                 <div class="lesson-summary__stats">
                     <div class="lesson-summary__stat">
@@ -831,7 +1221,7 @@ function renderLearning(container) {
                     </div>
                 </div>
                 <button class="btn btn--primary btn--xl btn--full" id="qr-continue" style="margin-top:var(--sp-6);">
-                    ${passed ? '→ Далее / Next Topic' : needsTheory ? '📖 Повторить теорию / Review Theory' : '🔄 Ещё раз / Retry'}
+                    ${passed ? `${LangyIcons.arrowRight} ${i18n('learn.next_topic')}` : needsTheory ? `<span style="display:flex; align-items:center; gap:8px;">${LangyIcons.bookOpen} ${i18n('learn.review_theory')}</span>` : `<span style="display:flex; align-items:center; gap:8px;">${LangyIcons.refresh} ${i18n('learn.try_again')}</span>`}
                 </button>
             </div>
         `;
@@ -867,15 +1257,14 @@ function renderLearning(container) {
 
         target.innerHTML = `
             <div class="lesson-summary animate-in">
-                <div class="lesson-summary__icon" style="font-size:72px;">🏆</div>
-                <h2 class="lesson-summary__title">Все темы усвоены!</h2>
-                <h3 style="color:var(--text-secondary); font-weight:var(--fw-medium); margin-top:var(--sp-1);">All topics mastered!</h3>
+                <div class="lesson-summary__icon" style="font-size:72px;">${LangyIcons.trophy}</div>
+                <h2 class="lesson-summary__title">${i18n('learn.all_mastered')}</h2>
                 <div style="margin-top:var(--sp-4); padding:var(--sp-4); background:var(--primary-bg); border-radius:var(--radius-lg); text-align:center;">
-                    <div style="font-size:var(--fs-sm); color:var(--text-secondary);">Повторено тем / Topics reviewed</div>
+                    <div style="font-size:var(--fs-sm); color:var(--text-secondary);">${i18n('learn.topics_reviewed')}</div>
                     <div style="font-size:var(--fs-2xl); font-weight:var(--fw-black); color:var(--primary);">${qrWeakUnits.length}</div>
                 </div>
                 <button class="btn btn--primary btn--xl btn--full" id="qr-finish" style="margin-top:var(--sp-6);">
-                    🚀 Продолжить курс / Continue Course
+                    <span style="display:flex; align-items:center; gap:8px;">${LangyIcons.rocket} ${i18n('home.continue')}</span>
                 </button>
             </div>
         `;
@@ -895,30 +1284,35 @@ function renderLearning(container) {
             score: result.score,
             grade: result.grade,
             feedback: result.feedback || '',
-            status: result.score >= 70 ? 'done' : 'error',
+            status: result.score >= LangyConfig.PASS_THRESHOLD ? 'done' : 'error',
             errors: Math.max(0, totalExercises - correctAnswers),
             date: new Date().toISOString().split('T')[0],
-            icon: result.score >= 70 ? '✅' : '📝'
+            icon: result.score >= LangyConfig.PASS_THRESHOLD ? LangyIcons.check : LangyIcons.fileText,
         };
 
         LangyState.progress.lessonHistory.push(historyEntry);
+
+        // Mark first lesson as completed (for beginner flow)
+        if (!LangyState.user.firstLessonCompleted) {
+            LangyState.user.firstLessonCompleted = true;
+        }
 
         // Save mastery record
         const masteryKey = activeTb.id + ':' + unit.id;
         const prev = LangyState.progress.mastery[masteryKey];
         LangyState.progress.mastery[masteryKey] = {
             score: Math.max(result.score, prev?.score || 0),
-            passed: result.score >= 70 || (prev?.passed || false),
+            passed: result.score >= LangyConfig.PASS_THRESHOLD || prev?.passed || false,
             attempts: (prev?.attempts || 0) + 1,
             failedIndices: failedExerciseIndices,
-            lastAttempt: new Date().toISOString().split('T')[0]
+            lastAttempt: new Date().toISOString().split('T')[0],
         };
 
         // Remove from homework queue if completed
         LangyState.homework.current = LangyState.homework.current.filter(h => h.unitId !== unit.id);
 
         // Advance curriculum (with checkpoint gating)
-        if (mode === 'lesson' && result.score >= 70 && unit.id === LangyState.progress.currentUnitId) {
+        if (mode === 'lesson' && result.score >= LangyConfig.PASS_THRESHOLD && unit.id === LangyState.progress.currentUnitId) {
             const nextUnit = activeTb.units.find(u => u.id === unit.id + 1);
             if (nextUnit) {
                 // If next unit is past a checkpoint, verify checkpoint is cleared
@@ -936,7 +1330,10 @@ function renderLearning(container) {
 
         // Update overall
         LangyState.progress.topicsCompleted = LangyState.progress.lessonHistory.filter(l => l.status === 'done').length;
-        LangyState.progress.overall = Math.min(100, Math.round((LangyState.progress.topicsCompleted / activeTb.units.length) * 100));
+        LangyState.progress.overall = Math.min(
+            100,
+            Math.round((LangyState.progress.topicsCompleted / activeTb.units.length) * 100)
+        );
 
         if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
     }
@@ -970,30 +1367,50 @@ function renderLearning(container) {
             badges[cefr] = {
                 earned: true,
                 date: new Date().toISOString().split('T')[0],
-                badge: '🏅'
+                badge: LangyIcons.medal,
             };
             // Show celebration!
             setTimeout(() => {
-                Anim.showToast(`🏅 ${cefr} Level Complete! Badge earned!`);
+                Anim.showToast(`${LangyIcons.medal} ${cefr} Level Complete! Badge earned!`);
             }, 500);
             if (typeof LangyDB !== 'undefined') LangyDB.saveProgress();
         }
     }
 
-    // ✅ FIX #4: Generate homework after every lesson
+    // FIX #4: Generate homework after every lesson
     function generateHomeworkAfterLesson(completedUnit, score) {
         // Check if homework for this unit already exists
         const exists = LangyState.homework.current.some(h => h.unitId === completedUnit.id);
         if (exists) return;
 
-        // Create homework based on unit data
+        // Collect specific weak grammar rules from failed exercises
+        const weakRules = [];
+        if (failedExerciseIndices && failedExerciseIndices.length > 0) {
+            failedExerciseIndices.forEach(idx => {
+                const ex = exercises[idx];
+                const rule = ex?.widgetData?.rule || ex?.data?.rule || '';
+                if (rule && !weakRules.includes(rule)) weakRules.push(rule);
+            });
+        }
+
+        // Build homework description with specific grammar rules
+        let hwDesc = completedUnit.homework?.prompt || '';
+        if (!hwDesc) {
+            if (weakRules.length > 0) {
+                hwDesc = `Review: ${weakRules.join(', ')}. Practice these grammar rules with exercises.`;
+            } else {
+                hwDesc = `Review ${completedUnit.grammar?.join(', ') || 'this lesson'} and write practice sentences.`;
+            }
+        }
+
         const hw = {
             id: Date.now(),
             unitId: completedUnit.id,
             title: `${completedUnit.title} — Review`,
-            desc: completedUnit.homework?.prompt || `Review ${completedUnit.grammar?.join(', ') || 'this lesson'} and write practice sentences.`,
-            icon: '📝',
-            createdAt: new Date().toISOString()
+            desc: hwDesc,
+            icon: LangyIcons.fileText,
+            createdAt: new Date().toISOString(),
+            weakRules: weakRules, // Track specific weak rules for focused practice
         };
 
         LangyState.homework.current.push(hw);

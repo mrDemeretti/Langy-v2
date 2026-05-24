@@ -36,15 +36,49 @@ function buildCefrBadges() {
         }
 
         return `
-            <div class="cefr-badge ${stateClass}" style="--badge-color: ${lv.color};">
+            <div class="cefr-badge ${stateClass}" style="--badge-color: ${lv.color}; ${isEarned ? 'cursor:pointer;' : ''}" data-code="${lv.code}" data-earned="${isEarned}" data-name="${lv.name}" data-color="${lv.color}" data-date="${(badge && badge.date) || ''}">
                 <div class="cefr-badge__level">${lv.code}</div>
-                <div class="cefr-badge__icon">${isEarned ? (badge.badge || '🏅') : isActive ? '🔓' : '🔒'}</div>
+                <div class="cefr-badge__icon">${isEarned ? LangyIcons.medal : isActive ? LangyIcons.unlock : LangyIcons.lock}</div>
                 <div class="cefr-badge__name">${lv.name}</div>
                 ${isEarned ? `<div class="cefr-badge__date">${badge.date || ''}</div>` : ''}
                 ${isActive ? `<div class="cefr-badge__progress">${progressPct}%</div>` : ''}
             </div>
         `;
     }).join('');
+}
+
+function buildAchievements() {
+    const { streakData, dailyChallenge } = LangyState;
+    const days = streakData?.days || 0;
+    const words = streakData?.wordsLearned || 0;
+    const perfectDate = dailyChallenge?._perfectLessonDate;
+    
+    const achievements = [
+        {
+            id: 'early_bird', title: 'Early Bird', desc: 'Study before 8 AM',
+            icon: LangyIcons.sunrise, unlocked: true
+        },
+        {
+            id: 'unstoppable', title: 'Unstoppable', desc: '7 Day Streak',
+            icon: LangyIcons.flame, unlocked: days >= 7
+        },
+        {
+            id: 'vocab_master', title: 'Vocab Master', desc: '50 Words',
+            icon: LangyIcons.brain, unlocked: words >= 50
+        },
+        {
+            id: 'perfectionist', title: 'Perfectionist', desc: '100% Lesson',
+            icon: LangyIcons.target, unlocked: perfectDate !== null && perfectDate !== undefined
+        }
+    ];
+
+    return achievements.map(ach => `
+        <div class="achievement-card ${!ach.unlocked ? 'achievement-card--locked' : ''}">
+            <div class="achievement-card__icon">${ach.icon}</div>
+            <div class="achievement-card__title">${ach.title}</div>
+            <div class="achievement-card__desc">${ach.desc}</div>
+        </div>
+    `).join('');
 }
 
 function renderProfile(container) {
@@ -54,11 +88,17 @@ function renderProfile(container) {
         <div class="screen screen--no-pad profile">
             <!-- Header -->
             <div class="profile__header">
-                <div class="nav-header__back" id="profile-back" style="position:absolute; top:var(--sp-4); left:var(--sp-4); background:rgba(255,255,255,0.15); border:none; color:white;">←</div>
+                <div class="nav-header__back" id="profile-back" style="position:absolute; top:var(--sp-4); left:var(--sp-4); background:rgba(255,255,255,0.15); border:none; color:white;">${LangyIcons.back}</div>
 
-                <div class="profile__avatar-large">${user.avatar}</div>
+                <div class="profile__avatar-large" id="prof-avatar" title="Tap to change">${user.avatar}</div>
                 <div class="profile__name">${user.name}</div>
-                <div class="profile__level">${user.level} • ${user.xp} XP</div>
+                <div class="profile__level" style="margin-bottom:var(--sp-1);">${user.level}</div>
+                
+                <!-- XP Progress Bar -->
+                <div class="profile__xp-container">
+                    <div class="profile__xp-fill" style="width: ${((user.xp % 500) / 500) * 100}%;"></div>
+                </div>
+                <div style="font-size:10px; opacity:0.8; margin-bottom:var(--sp-2);">Level ${Math.floor(user.xp / 500) + 1} · ${user.xp % 500} / 500 XP</div>
 
                 <div class="profile__stats-row">
                     <div class="profile__stat">
@@ -80,140 +120,173 @@ function renderProfile(container) {
                 </div>
             </div>
 
+            <!-- Premium Banner -->
+            ${LangyState.subscription.plan !== 'premium' ? `
+            <div class="profile__premium-banner" id="prof-premium-banner">
+                <div>
+                    <h3 style="margin:0; font-size:var(--fs-lg);">Langy Pro ${LangyIcons.crown}</h3>
+                    <p style="margin:0; font-size:var(--fs-xs); opacity:0.9;">Unlock all premium features</p>
+                </div>
+                <button class="btn" style="background:white; color:#b45309; padding:4px 12px; font-weight:var(--fw-bold); border-radius:var(--radius-full);">GET</button>
+            </div>
+            ` : ''}
+
             <!-- Settings Sections -->
             <div class="profile__sections">
 
+                <!-- Mini Achievements -->
+                <div class="profile__section">
+                    <div class="profile__section-title">${LangyIcons.sparkles} ${i18n('profile.achievements')}</div>
+                    <div class="achievements-row">
+                        ${buildAchievements()}
+                    </div>
+                </div>
+
                 <!-- CEFR Certificates -->
                 <div class="profile__section">
-                    <div class="profile__section-title">🏆 My Certificates</div>
+                    <div class="profile__section-title">${LangyIcons.trophy} ${i18n('profile.certificates')}</div>
                     <div class="cefr-badges">
                         ${buildCefrBadges()}
                     </div>
                 </div>
                 <!-- Account -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Account</div>
+                    <div class="profile__section-title">${i18n('profile.account')}</div>
                     <div class="profile__option" id="prof-edit">
-                        <div class="profile__option-icon" style="background:var(--primary-bg);">👤</div>
+                        <div class="profile__option-icon" style="background:var(--primary-bg); color:var(--primary);">${LangyIcons.user}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Edit Profile</div>
-                            <div class="profile__option-desc">Name, avatar, email</div>
+                            <div class="profile__option-label">${i18n('profile.edit')}</div>
+                            <div class="profile__option-desc">${i18n('profile.edit_desc')}</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
-                    </div>
-                    <div class="profile__option" id="prof-subscription">
-                        <div class="profile__option-icon" style="background:var(--reward-gold-bg);">⭐</div>
-                        <div class="profile__option-text">
-                            <div class="profile__option-label">Subscription</div>
-                            <div class="profile__option-desc">${LangyState.subscription.plan ? LangyState.subscription.plan.charAt(0).toUpperCase() + LangyState.subscription.plan.slice(1) + ' Plan' : 'Free Plan'}</div>
-                        </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-level">
-                        <div class="profile__option-icon" style="background:var(--accent-bg);">📊</div>
+                        <div class="profile__option-icon" style="background:var(--accent-bg); color:var(--accent-dark);">${LangyIcons.barChart}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Language Level</div>
+                            <div class="profile__option-label">${i18n('profile.language_level')}</div>
                             <div class="profile__option-desc">${settings.languageLevel}</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
                 <!-- Preferences -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Preferences</div>
+                    <div class="profile__section-title">${i18n('profile.preferences')}</div>
 
                     <div class="profile__option" id="prof-theme">
-                        <div class="profile__option-icon" style="background:rgba(99,102,241,0.1);">${settings.darkMode ? '🌙' : '☀️'}</div>
+                        <div class="profile__option-icon" style="background:rgba(99,102,241,0.1); color:#6366F1;">${settings.darkMode ? LangyIcons.moon : LangyIcons.sun}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">${settings.darkMode ? 'Dark Mode' : 'White Mode'}</div>
-                            <div class="profile__option-desc">Current theme</div>
+                            <div class="profile__option-label">${settings.darkMode ? i18n('profile.dark_mode') : i18n('profile.light_mode')}</div>
+                            <div class="profile__option-desc">${i18n('profile.current_theme')}</div>
                         </div>
                         <div class="toggle ${settings.darkMode ? 'toggle--active' : ''}" id="toggle-dark"></div>
                     </div>
 
                     <div class="profile__option" id="prof-notif">
-                        <div class="profile__option-icon" style="background:rgba(239,68,68,0.1);">🔔</div>
+                        <div class="profile__option-icon" style="background:rgba(239,68,68,0.1); color:#EF4444;">${LangyIcons.bell}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Notifications</div>
-                            <div class="profile__option-desc">Daily reminders</div>
+                            <div class="profile__option-label">${i18n('profile.notifications')}</div>
+                            <div class="profile__option-desc">${i18n('profile.reminder')}</div>
                         </div>
                         <div class="toggle ${settings.notifications ? 'toggle--active' : ''}" id="toggle-notif"></div>
                     </div>
 
                     <div class="profile__option" id="prof-sound">
-                        <div class="profile__option-icon" style="background:rgba(245,158,11,0.1);">🔊</div>
+                        <div class="profile__option-icon" style="background:rgba(245,158,11,0.1); color:#F59E0B;">${LangyIcons.volume}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Sound Effects</div>
-                            <div class="profile__option-desc">In-app sounds</div>
+                            <div class="profile__option-label">${i18n('profile.sound')}</div>
+                            <div class="profile__option-desc">${i18n('profile.sounds_desc')}</div>
                         </div>
                         <div class="toggle ${settings.sound ? 'toggle--active' : ''}" id="toggle-sound"></div>
                     </div>
 
                     <div class="profile__option" id="prof-haptics">
-                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1);">📳</div>
+                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1); color:#22C55E;">${LangyIcons.vibrate}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Haptic Feedback</div>
-                            <div class="profile__option-desc">Vibration on interactions</div>
+                            <div class="profile__option-label">${i18n('profile.haptics')}</div>
+                            <div class="profile__option-desc">${i18n('profile.haptics_desc')}</div>
                         </div>
                         <div class="toggle ${settings.haptics ? 'toggle--active' : ''}" id="toggle-haptics"></div>
+                    </div>
+
+                    <div class="profile__option" id="prof-lang">
+                        <div class="profile__option-icon" style="background:rgba(6,182,212,0.1); color:#06B6D4;">${LangyIcons.globe}</div>
+                        <div class="profile__option-text">
+                            <div class="profile__option-label">${i18n('profile.language')}</div>
+                            <div class="profile__option-desc">${(typeof LangyI18n !== 'undefined' ? LangyI18n.languages.find(l => l.code === LangyI18n.currentLang)?.name : 'English') || 'English'}</div>
+                        </div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
                 <!-- Learning -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Learning</div>
+                    <div class="profile__section-title">${i18n('profile.learning')}</div>
                     <div class="profile__option" id="prof-goals">
-                        <div class="profile__option-icon" style="background:var(--primary-bg);">🎯</div>
+                        <div class="profile__option-icon" style="background:var(--primary-bg); color:var(--primary);">${LangyIcons.target}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Daily Goal</div>
-                            <div class="profile__option-desc">15 minutes per day</div>
+                            <div class="profile__option-label">${i18n('profile.daily_goal')}</div>
+                            <div class="profile__option-desc">${i18n('profile.daily_goal_desc')}</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-reminder">
-                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1);">⏰</div>
+                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;">${LangyIcons.clock}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Reminder Time</div>
+                            <div class="profile__option-label">${i18n('profile.reminder')}</div>
                             <div class="profile__option-desc">${settings.dailyReminder}</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
                 <!-- Support -->
                 <div class="profile__section">
-                    <div class="profile__section-title">Support</div>
+                    <div class="profile__section-title">${i18n('profile.support')}</div>
                     <div class="profile__option" id="prof-help">
-                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1);">❓</div>
+                        <div class="profile__option-icon" style="background:rgba(59,130,246,0.1); color:#3B82F6;">${LangyIcons.helpCircle}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">Help & FAQ</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-feedback">
-                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1);">💬</div>
+                        <div class="profile__option-icon" style="background:rgba(74,222,128,0.1); color:#22C55E;">${LangyIcons.messageCircle}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label">Send Feedback</div>
+                            <div class="profile__option-label">${i18n('profile.feedback')}</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                     <div class="profile__option" id="prof-about">
-                        <div class="profile__option-icon" style="background:rgba(156,163,175,0.1);">ℹ️</div>
+                        <div class="profile__option-icon" style="background:rgba(156,163,175,0.1); color:#6B7280;">${LangyIcons.info}</div>
                         <div class="profile__option-text">
                             <div class="profile__option-label">About Langy</div>
-                            <div class="profile__option-desc">Version 1.0.0</div>
+                            <div class="profile__option-desc">Version 2.2.0</div>
                         </div>
-                        <div class="profile__option-arrow">→</div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
+                    </div>
+                </div>
+
+                <!-- Community -->
+                <div class="profile__section">
+                    <div class="profile__section-title">${i18n('profile.community')}</div>
+                    <div class="profile__option" id="prof-invite">
+                        <div class="profile__option-icon" style="background:rgba(236,72,153,0.1); color:#EC4899;">${LangyIcons.gift}</div>
+                        <div class="profile__option-text">
+                            <div class="profile__option-label">${i18n('profile.invite')}</div>
+                            <div class="profile__option-desc">${i18n('profile.invite_desc')}</div>
+                        </div>
+                        <div class="profile__option-arrow">${LangyIcons.arrow}</div>
                     </div>
                 </div>
 
                 <!-- Danger Zone -->
                 <div class="profile__section">
                     <div class="profile__option" id="prof-logout">
-                        <div class="profile__option-icon" style="background:var(--danger-bg);">🚪</div>
+                        <div class="profile__option-icon" style="background:var(--danger-bg); color:var(--danger);">${LangyIcons.logout}</div>
                         <div class="profile__option-text">
-                            <div class="profile__option-label" style="color:var(--danger);">Log Out</div>
+                            <div class="profile__option-label" style="color:var(--danger);">${i18n('profile.logout')}</div>
                         </div>
                     </div>
                 </div>
@@ -232,8 +305,12 @@ function renderProfile(container) {
             settings[key] = !settings[key];
             if (key === 'darkMode') {
                 toggleDarkMode(settings.darkMode);
+                Anim.showToast(`Theme changed to ${settings.darkMode ? 'Dark' : 'White'} Mode`);
+            } else {
+                const labels = { notifications: 'Notifications', sound: 'Sound Effects', haptics: 'Haptic Feedback' };
+                Anim.showToast(`${labels[key] || key} ${settings[key] ? 'enabled' : 'disabled'}`);
             }
-            Anim.showToast(`Theme changed to ${settings.darkMode ? 'Dark' : 'White'} Mode`);
+            if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
             renderProfile(container);
         });
     }
@@ -244,13 +321,37 @@ function renderProfile(container) {
     setupToggle('prof-haptics', 'haptics');
 
     // Navigation / Modals
-    container.querySelector('#prof-subscription')?.addEventListener('click', () => showSubscription());
+    container.querySelector('#prof-premium-banner')?.addEventListener('click', () => {
+        if (typeof showSubscription === 'function') {
+            showSubscription();
+        } else {
+            Anim.showToast('Premium Plans coming soon!');
+        }
+    });
+
+    // Avatar interaction → open avatar picker
+    const avatarEl = container.querySelector('#prof-avatar');
+    if (avatarEl) {
+        avatarEl.addEventListener('click', () => {
+            showAvatarPicker();
+        });
+    }
+
     container.querySelector('#prof-logout')?.addEventListener('click', async () => {
         if (typeof LangyDB !== 'undefined') {
             try { await LangyDB.logout(); } catch(e) {}
         }
-        Anim.showToast('Logged out. See you soon! 👋');
+        Anim.showToast(`Logged out. See you soon! ${LangyIcons.messageCircle}`);
         setTimeout(() => Router.navigate('auth'), 800);
+    });
+
+    container.querySelector('#prof-invite')?.addEventListener('click', () => {
+        const inviteLink = `https://langy.app/invite/${LangyState?.user?.name?.toLowerCase().replace(/\s+/g, '') || 'friend'}-${Math.floor(1000 + Math.random() * 9000)}`;
+        navigator.clipboard.writeText(inviteLink).then(() => {
+            Anim.showToast(`Invite link copied: ${inviteLink} ${LangyIcons.clipboard}`);
+        }).catch(() => {
+            Anim.showToast(`Invite link: ${inviteLink}`);
+        });
     });
 
     container.querySelector('#prof-level')?.addEventListener('click', () => showLevelPicker());
@@ -258,9 +359,26 @@ function renderProfile(container) {
     container.querySelector('#prof-reminder')?.addEventListener('click', () => showReminderPicker());
     
     container.querySelector('#prof-goals')?.addEventListener('click', () => showGoalsPicker());
+    container.querySelector('#prof-lang')?.addEventListener('click', () => showLanguagePicker(container));
     container.querySelector('#prof-help')?.addEventListener('click', () => showHelp());
     container.querySelector('#prof-feedback')?.addEventListener('click', () => showFeedback());
     container.querySelector('#prof-about')?.addEventListener('click', () => showAbout());
+
+    // ── CEFR Badge Click → Certificate ──
+    container.querySelectorAll('.cefr-badge').forEach(badge => {
+        badge.addEventListener('click', () => {
+            const earned = badge.dataset.earned === 'true';
+            const code = badge.dataset.code;
+            const name = badge.dataset.name;
+            const color = badge.dataset.color;
+            const date = badge.dataset.date;
+            if (earned) {
+                showCertificate(code, name, color, date);
+            } else {
+                Anim.showToast(`${LangyIcons.lock} Complete ${code} to unlock this certificate!`);
+            }
+        });
+    });
 
     setTimeout(() => Anim.staggerChildren(container, '.profile__option'), 40);
 }
@@ -286,9 +404,10 @@ function showLevelPicker() {
             <div style="display:flex; flex-direction:column; gap:var(--sp-2);">
                 ${levels.map(level => `
                     <div class="profile__option" data-level="${level}" style="background:${LangyState.settings.languageLevel === level.split(' ')[0] ? 'var(--primary-bg)' : 'transparent'}; border-radius:var(--radius-lg); cursor:pointer;">
-                        <div style="flex:1; font-weight:var(--fw-medium);">${level}</div>
-                        ${LangyState.settings.languageLevel === level.split(' ')[0] ? '<span style="color:var(--primary);">✓</span>' : ''}
-                    </div>
+                        <div class="lang-option" data-level="${level.split(' ')[0]}">
+                    <span>${level}</span>
+                    ${LangyState.settings.languageLevel === level.split(' ')[0] ? `<span style="color:var(--primary); display:flex; align-items:center; gap:4px;">${LangyIcons.check}</span>` : ''}
+                </div>
                 `).join('')}
             </div>
         </div>
@@ -317,6 +436,114 @@ function showLevelPicker() {
     });
 }
 
+function showAvatarPicker() {
+    const avatars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Z', '1', '7', '42', 'AI', 'EN', 'OK', 'GO', 'YO', 'LG', 'QA'];
+    const colors = [
+        { bg: 'linear-gradient(135deg, #10B981, #059669)', label: 'Emerald' },
+        { bg: 'linear-gradient(135deg, #6366F1, #4F46E5)', label: 'Indigo' },
+        { bg: 'linear-gradient(135deg, #EC4899, #DB2777)', label: 'Pink' },
+        { bg: 'linear-gradient(135deg, #F59E0B, #D97706)', label: 'Amber' },
+        { bg: 'linear-gradient(135deg, #3B82F6, #2563EB)', label: 'Blue' },
+        { bg: 'linear-gradient(135deg, #8B5CF6, #7C3AED)', label: 'Violet' },
+        { bg: 'linear-gradient(135deg, #EF4444, #DC2626)', label: 'Red' },
+        { bg: 'linear-gradient(135deg, #14B8A6, #0D9488)', label: 'Teal' },
+    ];
+
+    const currentAvatar = LangyState.user.avatar || '🦊';
+    let selectedEmoji = currentAvatar;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.innerHTML = `
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6); max-height: 85vh; overflow-y: auto;">
+            <div class="overlay__handle"></div>
+            <h3 style="margin-bottom:var(--sp-4);">Choose Avatar</h3>
+
+            <!-- Preview -->
+            <div style="display:flex; justify-content:center; margin-bottom:var(--sp-4);">
+                <div id="avatar-preview" style="width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:40px; background:var(--primary); box-shadow: 0 6px 20px rgba(16,185,129,0.3); transition: all 0.3s;">${currentAvatar}</div>
+            </div>
+
+            <!-- Emoji Grid -->
+            <p style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-2);">SELECT EMOJI</p>
+            <div style="display:grid; grid-template-columns:repeat(6, 1fr); gap:var(--sp-2); margin-bottom:var(--sp-4);">
+                ${avatars.map(e => `
+                    <div class="avatar-emoji-pick" data-emoji="${e}" style="
+                        width:44px; height:44px; border-radius:var(--radius-lg);
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:24px; cursor:pointer; transition: all 0.2s;
+                        background:${e === currentAvatar ? 'var(--primary-bg)' : 'var(--bg-card)'};
+                        border: 2px solid ${e === currentAvatar ? 'var(--primary)' : 'transparent'};
+                    ">${e}</div>
+                `).join('')}
+            </div>
+
+            <!-- Or use initial letter -->
+            <p style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-2);">OR USE YOUR INITIAL</p>
+            <div style="display:flex; gap:var(--sp-2); flex-wrap:wrap; margin-bottom:var(--sp-4);">
+                ${colors.map(c => `
+                    <div class="avatar-letter-pick" data-letter="${(LangyState.user.name || 'U')[0].toUpperCase()}" data-bg="${c.bg}" style="
+                        width:44px; height:44px; border-radius:50%;
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:18px; font-weight:900; cursor:pointer; transition: all 0.2s;
+                        background:${c.bg}; color:white;
+                        border: 2px solid transparent;
+                    ">${(LangyState.user.name || 'U')[0].toUpperCase()}</div>
+                `).join('')}
+            </div>
+
+            <button class="btn btn--primary btn--full" id="save-avatar">Save Avatar</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+    // Emoji selection
+    overlay.querySelectorAll('.avatar-emoji-pick').forEach(el => {
+        el.addEventListener('click', () => {
+            selectedEmoji = el.dataset.emoji;
+            overlay.querySelector('#avatar-preview').textContent = selectedEmoji;
+            overlay.querySelector('#avatar-preview').style.fontSize = '40px';
+            overlay.querySelectorAll('.avatar-emoji-pick').forEach(e => {
+                e.style.background = 'var(--bg-card)';
+                e.style.borderColor = 'transparent';
+            });
+            el.style.background = 'var(--primary-bg)';
+            el.style.borderColor = 'var(--primary)';
+            // Reset letter selections
+            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => e.style.borderColor = 'transparent');
+        });
+    });
+
+    // Letter selection
+    overlay.querySelectorAll('.avatar-letter-pick').forEach(el => {
+        el.addEventListener('click', () => {
+            selectedEmoji = el.dataset.letter;
+            const preview = overlay.querySelector('#avatar-preview');
+            preview.textContent = selectedEmoji;
+            preview.style.background = el.dataset.bg;
+            preview.style.fontSize = '32px';
+            overlay.querySelectorAll('.avatar-letter-pick').forEach(e => e.style.borderColor = 'transparent');
+            el.style.borderColor = 'white';
+            // Reset emoji selections
+            overlay.querySelectorAll('.avatar-emoji-pick').forEach(e => {
+                e.style.background = 'var(--bg-card)';
+                e.style.borderColor = 'transparent';
+            });
+        });
+    });
+
+    overlay.querySelector('#save-avatar')?.addEventListener('click', () => {
+        LangyState.user.avatar = selectedEmoji;
+        overlay.remove();
+        Anim.showToast('Avatar updated!');
+        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+        const container = document.getElementById('screen-container');
+        if (container) renderProfile(container);
+    });
+}
+
 function showEditProfile() {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -325,6 +552,14 @@ function showEditProfile() {
             <div class="overlay__handle"></div>
             <h3 style="margin-bottom:var(--sp-4);">Edit Profile</h3>
             <div style="display:flex; flex-direction:column; gap:var(--sp-4);">
+                <!-- Avatar quick-change -->
+                <div style="display:flex; align-items:center; gap:var(--sp-4);">
+                    <div id="edit-avatar-btn" style="width:56px; height:56px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:28px; cursor:pointer; flex-shrink:0; box-shadow:0 4px 12px rgba(16,185,129,0.2);">${LangyState.user.avatar}</div>
+                    <div>
+                        <div style="font-weight:var(--fw-bold);">Profile Photo</div>
+                        <div style="font-size:var(--fs-xs); color:var(--primary); cursor:pointer;" id="change-avatar-link">Change avatar ${LangyIcons.arrow}</div>
+                    </div>
+                </div>
                 <div class="input-group">
                     <label>Nickname</label>
                     <input type="text" id="edit-name" class="input" value="${LangyState.user.name}">
@@ -340,6 +575,15 @@ function showEditProfile() {
     
     document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+    // Open avatar picker from edit profile
+    const avatarTriggers = [overlay.querySelector('#edit-avatar-btn'), overlay.querySelector('#change-avatar-link')];
+    avatarTriggers.forEach(el => {
+        el?.addEventListener('click', () => {
+            overlay.remove();
+            showAvatarPicker();
+        });
+    });
     
     overlay.querySelector('#save-profile').addEventListener('click', async () => {
         const newName = overlay.querySelector('#edit-name').value;
@@ -348,7 +592,11 @@ function showEditProfile() {
         if(newEmail) LangyState.user.email = newEmail;
         overlay.remove();
         Anim.showToast('Profile updated!');
-        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+        if (typeof LangyDB !== 'undefined') {
+            LangyDB.saveProgress().catch(() => {});
+            // Also update the users store so changes persist across logins
+            LangyDB.updateUserRecord({ name: newName, email: newEmail }).catch(() => {});
+        }
         if(typeof renderProfile === 'function') {
             const container = document.getElementById('screen-container');
             if(container) renderProfile(container);
@@ -390,10 +638,10 @@ function showReminderPicker() {
 
 function showGoalsPicker() {
     const goals = [
-        { label: 'Relaxed', time: '5 min/day', icon: '☕' },
-        { label: 'Normal', time: '15 min/day', icon: '🚶' },
-        { label: 'Serious', time: '30 min/day', icon: '🏃' },
-        { label: 'Intense', time: '60 min/day', icon: '🔥' }
+        { label: 'Relaxed', time: '5 min/day', icon: LangyIcons.info },
+        { label: 'Normal', time: '15 min/day', icon: LangyIcons.user },
+        { label: 'Serious', time: '30 min/day', icon: LangyIcons.zap },
+        { label: 'Intense', time: '60 min/day', icon: LangyIcons.fire }
     ];
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -468,18 +716,148 @@ function showAbout() {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
     overlay.innerHTML = `
-        <div class="overlay__sheet" style="padding-bottom:var(--sp-6); text-align:center;">
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6);">
             <div class="overlay__handle"></div>
-            <h1 style="color:var(--primary); font-size: 42px; margin-bottom:var(--sp-2);">Langy</h1>
-            <p style="color:var(--text-secondary); font-weight:var(--fw-bold); margin-bottom:var(--sp-4);">Version 1.0.0 (Beta)</p>
-            <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-bottom:var(--sp-6); padding: 0 var(--sp-4);">
-                A premium gameified language learning app designed to make your journey immersive, fun, and unstoppable. 
-            </p>
-            <button class="btn btn--primary" onclick="this.closest('.overlay').remove();">Close</button>
+            
+            <!-- Logo & Version -->
+            <div style="text-align:center; margin-bottom:var(--sp-4);">
+                <div style="width:80px; height:80px; border-radius:24px; background:linear-gradient(135deg, var(--primary), var(--primary-dark)); display:flex; align-items:center; justify-content:center; margin:0 auto var(--sp-3); box-shadow: 0 8px 24px rgba(16,185,129,0.3);">
+                    <span style="color:white; font-size:36px; font-weight:var(--fw-black);">L</span>
+                </div>
+                <h2 style="color:var(--primary);">Langy AI</h2>
+                <div style="display:flex; align-items:center; justify-content:center; gap:var(--sp-2); margin-top:var(--sp-1);">
+                    <span class="badge badge--primary">v2.2.0</span>
+                    <span class="badge badge--accent">Stable</span>
+                </div>
+                <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-2); padding:0 var(--sp-4);">
+                    AI-powered gameified English learning app. Immersive, fun, and unstoppable.
+                </p>
+            </div>
+
+            <!-- Changelog -->
+            <div style="margin-bottom:var(--sp-4);">
+                <h4 style="margin-bottom:var(--sp-2); display:flex; align-items:center; gap:8px;">${LangyIcons.sparkles} What's New</h4>
+                <div style="display:flex; flex-direction:column; gap:var(--sp-2); max-height:200px; overflow-y:auto;">
+                    <div class="card card--flat" style="padding:var(--sp-3);">
+                        <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm); color:var(--primary);">v2.2.0 — Feature Sprint</div>
+                        <ul style="font-size:var(--fs-xs); color:var(--text-secondary); margin-top:var(--sp-1); padding-left:var(--sp-4); line-height:1.6;">
+                            <li>Streak Freeze — protect your streak in Shop</li>
+                            <li>Animated fire icon — burns when active</li>
+                            <li>Sound effects — correct/wrong/level up</li>
+                            <li>Weekly Leaderboard in Duels</li>
+                            <li>Weekly Activity chart in Results</li>
+                            <li>Review Weak Units mode</li>
+                            <li>CEFR Certificate sharing</li>
+                        </ul>
+                    </div>
+                    <div class="card card--flat" style="padding:var(--sp-3);">
+                        <div style="font-weight:var(--fw-bold); font-size:var(--fs-sm);">v2.1.0 — Bug Fixes</div>
+                        <ul style="font-size:var(--fs-xs); color:var(--text-secondary); margin-top:var(--sp-1); padding-left:var(--sp-4); line-height:1.6;">
+                            <li>Colorized all icons — no more black</li>
+                            <li>Avatar picker system</li>
+                            <li>Events progress tracking</li>
+                            <li>Fixed placement sync bug</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <div style="display:flex; gap:var(--sp-2); margin-bottom:var(--sp-4);">
+                <button class="btn btn--secondary btn--full" onclick="window.open('https://github.com/mrDemeretti/Langy-v2','_blank');" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.github} GitHub
+                </button>
+                <button class="btn btn--secondary btn--full" onclick="window.open('https://t.me/langyai','_blank');" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.messageCircle} Telegram
+                </button>
+            </div>
+
+            <!-- Credits -->
+            <div style="text-align:center; font-size:var(--fs-xs); color:var(--text-tertiary); margin-bottom:var(--sp-3);">
+                Made with ${LangyIcons.heart} by DeepTutor Team<br>
+                © 2026 Langy AI. All rights reserved.
+            </div>
+
+            <button class="btn btn--ghost btn--full" onclick="this.closest('.overlay').remove();">Close</button>
         </div>
     `;
     document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+}
+
+function showCertificate(code, name, color, date) {
+    const userName = LangyState.user?.name || 'Learner';
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.innerHTML = `
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6);">
+            <div class="overlay__handle"></div>
+            
+            <!-- Certificate Card -->
+            <div id="cert-card" style="background:linear-gradient(135deg, ${color}08, ${color}15); border:2px solid ${color}30; border-radius:var(--radius-xl); padding:var(--sp-6); text-align:center; margin-bottom:var(--sp-4); position:relative; overflow:hidden;">
+                <!-- Decorative corners -->
+                <div style="position:absolute; top:8px; left:8px; width:24px; height:24px; border-top:3px solid ${color}; border-left:3px solid ${color}; border-radius:4px 0 0 0; opacity:0.5;"></div>
+                <div style="position:absolute; top:8px; right:8px; width:24px; height:24px; border-top:3px solid ${color}; border-right:3px solid ${color}; border-radius:0 4px 0 0; opacity:0.5;"></div>
+                <div style="position:absolute; bottom:8px; left:8px; width:24px; height:24px; border-bottom:3px solid ${color}; border-left:3px solid ${color}; border-radius:0 0 0 4px; opacity:0.5;"></div>
+                <div style="position:absolute; bottom:8px; right:8px; width:24px; height:24px; border-bottom:3px solid ${color}; border-right:3px solid ${color}; border-radius:0 0 4px 0; opacity:0.5;"></div>
+                
+                <div style="font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:2px; color:${color}; font-weight:var(--fw-bold); margin-bottom:var(--sp-2);">Certificate of Achievement</div>
+                
+                <div style="width:64px; height:64px; border-radius:50%; background:${color}; display:flex; align-items:center; justify-content:center; margin:0 auto var(--sp-3); box-shadow:0 4px 16px ${color}40;">
+                    <span style="color:white; font-size:24px; font-weight:var(--fw-black);">${code}</span>
+                </div>
+                
+                <div style="font-size:var(--fs-xs); color:var(--text-secondary); margin-bottom:var(--sp-1);">This certifies that</div>
+                <div style="font-size:var(--fs-xl); font-weight:var(--fw-black); color:var(--text); margin-bottom:var(--sp-2);">${userName}</div>
+                <div style="font-size:var(--fs-sm); color:var(--text-secondary); margin-bottom:var(--sp-3);">has successfully completed</div>
+                <div style="font-size:var(--fs-lg); font-weight:var(--fw-bold); color:${color};">${code} — ${name}</div>
+                <div style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-3);">
+                    ${date ? 'Earned: ' + date : 'Langy AI English Course'}<br>
+                    Issued by Langy AI
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display:flex; gap:var(--sp-2);">
+                <button class="btn btn--secondary btn--full" id="cert-copy" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.clipboard} Copy Text
+                </button>
+                <button class="btn btn--primary btn--full" id="cert-share" style="font-size:var(--fs-sm);">
+                    ${LangyIcons.share2} Share
+                </button>
+            </div>
+            <button class="btn btn--ghost btn--full" style="margin-top:var(--sp-2);" onclick="this.closest('.overlay').remove();">Close</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+    // Copy certificate text
+    overlay.querySelector('#cert-copy')?.addEventListener('click', () => {
+        const text = `Certificate of Achievement\n\n${userName} has completed ${code} — ${name}\n\nIssued by Langy AI\n${date ? 'Date: ' + date : ''}\n\n#LangyAI #LanguageLearning #CEFR`;
+        navigator.clipboard.writeText(text).then(() => {
+            Anim.showToast(`${LangyIcons.check} Certificate copied to clipboard!`);
+        }).catch(() => {
+            Anim.showToast(`${LangyIcons.clipboard} Copy: ${text.substring(0, 50)}...`);
+        });
+    });
+
+    // Share (Web Share API or fallback)
+    overlay.querySelector('#cert-share')?.addEventListener('click', () => {
+        const shareData = {
+            title: `${code} Certificate — Langy AI`,
+            text: `I just earned my ${code} (${name}) certificate on Langy AI!`,
+            url: 'https://mrdemeretti.github.io/Langy-v2'
+        };
+        if (navigator.share) {
+            navigator.share(shareData).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`).then(() => {
+                Anim.showToast(`${LangyIcons.check} Share text copied!`);
+            }).catch(() => {});
+        }
+    });
 }
 
 function showSubscription() {
@@ -488,7 +866,7 @@ function showSubscription() {
     overlay.innerHTML = `
         <div class="overlay__sheet" style="padding-bottom:var(--sp-6); text-align:center;">
             <div class="overlay__handle"></div>
-            <div style="font-size: 50px; margin-bottom:var(--sp-2);">⭐</div>
+            <div style="font-size: 50px; margin-bottom:var(--sp-2);">${LangyIcons.star}</div>
             <h2 style="margin-bottom:var(--sp-2);">Langy Premium</h2>
             <p style="color:var(--text-secondary); font-size:var(--fs-sm); margin-bottom:var(--sp-4);">Unlock limitless learning.</p>
             
@@ -502,13 +880,81 @@ function showSubscription() {
                 </ul>
             </div>
             
-            <button class="btn btn--primary btn--full" style="background:var(--reward-gold); color:white; border:none; box-shadow:0 4px 0 #b47306;" onclick="Anim.showToast('Premium Activated! You are amazing. 🎉'); this.closest('.overlay').remove();">
+            <button class="btn btn--primary btn--full" id="activate-premium-btn" style="background:var(--reward-gold); color:white; border:none; box-shadow:0 4px 0 #b47306;">
                 Subscribe for $9.99/mo
             </button>
         </div>
     `;
     document.body.appendChild(overlay);
+    
+    // Animate in
+    setTimeout(() => overlay.querySelector('.overlay__sheet').style.transform = 'translateY(0)', 10);
+    
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.querySelector('.overlay__sheet').style.transform = 'translateY(100%)';
+            setTimeout(() => overlay.remove(), 300);
+        }
+    });
+    
+    overlay.querySelector('#activate-premium-btn').addEventListener('click', () => {
+        LangyState.subscription.plan = 'premium';
+        if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
+        Anim.showToast(`Premium Activated! You are amazing. ${LangyIcons.sparkles}`);
+        
+        // Remove the banner from the profile screen
+        const banner = document.getElementById('prof-premium-banner');
+        if(banner) {
+            banner.style.transition = 'all 0.3s ease';
+            banner.style.opacity = '0';
+            banner.style.transform = 'scale(0.9)';
+            setTimeout(() => banner.remove(), 300);
+        }
+        
+        overlay.querySelector('.overlay__sheet').style.transform = 'translateY(100%)';
+        setTimeout(() => overlay.remove(), 300);
+    });
+}
+
+function showLanguagePicker(profileContainer) {
+    if (typeof LangyI18n === 'undefined') return;
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    const currentLang = LangyI18n.currentLang;
+    
+    overlay.innerHTML = `
+        <div class="overlay__sheet" style="padding-bottom:var(--sp-6);">
+            <div class="overlay__handle"></div>
+            <h3 style="margin-bottom:var(--sp-4);">${i18n('profile.language')}</h3>
+            <div style="display:flex; flex-direction:column; gap:var(--sp-3);">
+                ${LangyI18n.languages.map(lang => `
+                    <div class="profile__option lang-option ${lang.code === currentLang ? 'profile__option--active' : ''}" data-lang="${lang.code}" style="cursor:pointer; ${lang.code === currentLang ? 'border: 2px solid var(--primary); background: var(--primary-bg);' : ''}">
+                        <div class="profile__option-icon" style="font-size:24px; background:transparent;">${lang.flag}</div>
+                        <div class="profile__option-text">
+                            <div class="profile__option-label">${lang.name}</div>
+                        </div>
+                        ${lang.code === currentLang ? `<span style="color:var(--primary);">${LangyIcons.check}</span>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    
+    overlay.querySelectorAll('.lang-option').forEach(el => {
+        el.addEventListener('click', () => {
+            const lang = el.dataset.lang;
+            LangyI18n.setLang(lang);
+            overlay.remove();
+            Anim.showToast(`Language: ${LangyI18n.languages.find(l => l.code === lang)?.name}`);
+            // Re-render profile with new language
+            if (profileContainer && typeof renderProfile === 'function') {
+                renderProfile(profileContainer);
+            }
+        });
+    });
 }
 
 Router.register('profile', renderProfile);

@@ -111,7 +111,7 @@ const LangyDB = {
             email: email.trim().toLowerCase(),
             name: name.trim(),
             passwordHash,
-            avatar: '🧑‍🎓',
+            avatar: null,
             hasCompletedPlacement: false,
             level: 'Testing...',
             joinDate: new Date().toISOString().split('T')[0]
@@ -328,6 +328,16 @@ const LangyDB = {
     },
 
     /* ========== AUTO-SAVE ========== */
+
+    // Update user record (name, avatar) in the users store
+    async updateUserRecord(updates) {
+        if (!this.currentUser || !this.db) return;
+        const user = await this._req('users', 'readonly', s => s.get(this.currentUser.email));
+        if (!user) return;
+        Object.assign(user, updates);
+        await this._req('users', 'readwrite', s => s.put(user));
+        this.currentUser = user;
+    },
 
     startAutoSave() {
         this.stopAutoSave();

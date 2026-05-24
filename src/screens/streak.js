@@ -10,18 +10,18 @@ function buyStreakFreeze() {
     const current = sd.streakFreezes || 0;
     
     if (current >= max) {
-        if (typeof Anim !== 'undefined') Anim.showToast('🛡️ Max freezes reached!');
+        if (typeof Anim !== 'undefined') Anim.showToast(`${LangyIcons.shield} Max freezes reached!`);
         return false;
     }
     if (LangyState.currencies.dangy < price) {
-        if (typeof Anim !== 'undefined') Anim.showToast('❌ Not enough Dangy!');
+        if (typeof Anim !== 'undefined') Anim.showToast(`${LangyIcons.alertCircle} Not enough Dangy!`);
         return false;
     }
     
     LangyState.currencies.dangy -= price;
     sd.streakFreezes = current + 1;
     
-    if (typeof Anim !== 'undefined') Anim.showToast(`🛡️ Streak Freeze bought! (${sd.streakFreezes}/${max})`);
+    if (typeof Anim !== 'undefined') Anim.showToast(`${LangyIcons.shield} Streak Freeze bought! (${sd.streakFreezes}/${max})`);
     if (typeof LangyDB !== 'undefined') LangyDB.saveProgress().catch(() => {});
     
     return true;
@@ -62,11 +62,11 @@ function buildStreakCalendar() {
         if (d > today) {
             html += '<div class="streak-cal__day streak-cal__day--future"></div>';
         } else if (activeDays.includes(iso)) {
-            html += '<div class="streak-cal__day streak-cal__day--active">🔥</div>';
+            html += '<div class="streak-cal__day streak-cal__day--active">${LangyIcons.flame}</div>';
         } else if (freezeDays.includes(iso)) {
-            html += '<div class="streak-cal__day streak-cal__day--freeze">🛡️</div>';
+            html += '<div class="streak-cal__day streak-cal__day--freeze">${LangyIcons.shield}</div>';
         } else if (iso === todayISO) {
-            html += `<div class="streak-cal__day streak-cal__day--today">${sd.todayCompleted ? '🔥' : '•'}</div>`;
+            html += `<div class="streak-cal__day streak-cal__day--today">${sd.todayCompleted ? LangyIcons.flame : '•'}</div>`;
         } else {
             html += '<div class="streak-cal__day streak-cal__day--missed"></div>';
         }
@@ -78,14 +78,14 @@ function buildStreakCalendar() {
 
 function buildRewardsRoadmap(currentDays) {
     const milestones = [
-        { days: 3,   emoji: '🌟', reward: '25 Dangy', label: '3 Days' },
-        { days: 7,   emoji: '⭐', reward: '50 Dangy + 5 Langy', label: 'Week' },
-        { days: 14,  emoji: '🌟', reward: '100 Dangy + 10 Langy', label: '2 Weeks' },
-        { days: 30,  emoji: '🏆', reward: '200 Dangy + 25 Langy', label: 'Month' },
-        { days: 60,  emoji: '💎', reward: '400 Dangy + 50 Langy', label: '2 Months' },
-        { days: 90,  emoji: '👑', reward: '600 Dangy + 100 Langy', label: '3 Months' },
-        { days: 180, emoji: '🔥', reward: '1000 Dangy + 200 Langy', label: '6 Months' },
-        { days: 365, emoji: '🏅', reward: '2000 Dangy + 500 Langy', label: '1 Year' },
+        { days: 3,   emoji: LangyIcons.star, reward: '25 Dangy', label: '3 Days' },
+        { days: 7,   emoji: LangyIcons.star, reward: '50 Dangy + 5 Langy', label: 'Week' },
+        { days: 14,  emoji: LangyIcons.award, reward: '100 Dangy + 10 Langy', label: '2 Weeks' },
+        { days: 30,  emoji: LangyIcons.trophy, reward: '200 Dangy + 25 Langy', label: 'Month' },
+        { days: 60,  emoji: LangyIcons.diamond, reward: '400 Dangy + 50 Langy', label: '2 Months' },
+        { days: 90,  emoji: LangyIcons.crown, reward: '600 Dangy + 100 Langy', label: '3 Months' },
+        { days: 180, emoji: LangyIcons.flame, reward: '1000 Dangy + 200 Langy', label: '6 Months' },
+        { days: 365, emoji: LangyIcons.medal, reward: '2000 Dangy + 500 Langy', label: '1 Year' },
     ];
     
     return milestones.map(m => {
@@ -103,7 +103,7 @@ function buildRewardsRoadmap(currentDays) {
                         <div class="reward-milestone__bar">
                             <div class="reward-milestone__fill" style="width:${progress}%"></div>
                         </div>
-                    ` : '<span class="reward-milestone__check">✅ Earned</span>'}
+                    ` : '<span class="reward-milestone__check">${LangyIcons.check} Earned</span>'}
                 </div>
             </div>
         `;
@@ -130,8 +130,8 @@ function renderStreak(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="streak-back">←</div>
-                <div class="nav-header__title">Streak & Stats</div>
+                <div class="nav-header__back" id="streak-back">${LangyIcons.back}</div>
+                <div class="nav-header__title">${i18n('streak.title')}</div>
                 <div style="width:36px;"></div>
             </div>
 
@@ -140,30 +140,30 @@ function renderStreak(container) {
                 <div class="streak-detail__stats">
                     <div class="streak-detail__big-stat">
                         <div class="value">
-                            <span style="font-size:36px; animation: streakFire 1.5s ease-in-out infinite;">🔥</span>
+                            <span style="font-size:36px; animation: streakFire 1.5s ease-in-out infinite;">${LangyIcons.flame}</span>
                             <span id="streak-count">${sd.days}</span>
                         </div>
-                        <div class="label">${sd.days === 0 ? 'Start your streak today!' : 'Day Streak'}</div>
-                        ${sd.longestStreak > 0 ? `<div class="label" style="color:var(--reward-gold); margin-top:var(--sp-1);">🏆 Best: ${sd.longestStreak} days</div>` : ''}
+                        <div class="label">${sd.days === 0 ? {en:'Start your streak today!',ru:'Начните стрик сегодня!',es:'¡Empieza tu racha hoy!'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en'] : i18n('home.streak')}</div>
+                        ${sd.longestStreak > 0 ? `<div class="label" style="color:var(--reward-gold); margin-top:var(--sp-1);">${LangyIcons.trophy} Best: ${sd.longestStreak} days</div>` : ''}
                     </div>
 
                     <!-- Quick stats grid -->
                     <div class="streak-detail__grid">
                         <div class="streak-detail__item">
                             <div class="value" style="color:var(--primary);">${sd.totalSessions}</div>
-                            <div class="label">Total Sessions</div>
+                            <div class="label">${i18n('streak.total_sessions')}</div>
                         </div>
                         <div class="streak-detail__item">
                             <div class="value" style="color:var(--accent-dark);">${totalMinutes >= 60 ? Math.floor(totalMinutes / 60) + 'h ' + (totalMinutes % 60) + 'm' : totalMinutes + 'm'}</div>
-                            <div class="label">Total Time</div>
+                            <div class="label">${i18n('streak.total_time')}</div>
                         </div>
                         <div class="streak-detail__item">
                             <div class="value" style="color:var(--reward-gold);">${sd.wordsLearned}</div>
-                            <div class="label">Words Learned</div>
+                            <div class="label">${i18n('streak.words_learned')}</div>
                         </div>
                         <div class="streak-detail__item">
                             <div class="value" style="color:${(sd.accuracy || 0) >= 75 ? 'var(--accent-dark)' : 'var(--danger)'};">${sd.accuracy || 0}%</div>
-                            <div class="label">Avg Accuracy</div>
+                            <div class="label">${i18n('streak.avg_accuracy')}</div>
                         </div>
                     </div>
                 </div>
@@ -172,19 +172,19 @@ function renderStreak(container) {
                 <div class="card streak-freeze-card" style="margin-top:var(--sp-4);">
                     <div class="streak-freeze__header">
                         <div>
-                            <h4 style="margin:0;">🛡️ Streak Freeze</h4>
+                            <h4 style="margin:0;">${LangyIcons.shield} ${i18n('streak.freeze')}</h4>
                             <p style="color:var(--text-muted); font-size:var(--fs-xs); margin:var(--sp-1) 0 0;">Protects your streak when you miss a day</p>
                         </div>
                         <div class="streak-freeze__count">
                             ${Array.from({length: maxFreezes}, (_, i) => 
-                                `<span class="freeze-shield ${i < freezes ? 'freeze-shield--active' : ''}">${i < freezes ? '🛡️' : '🔘'}</span>`
+                                `<span class="freeze-shield ${i < freezes ? 'freeze-shield--active' : ''}">${i < freezes ? LangyIcons.shield : LangyIcons.circle}</span>`
                             ).join('')}
                         </div>
                     </div>
                     <button class="btn btn--primary btn--full" id="buy-freeze" 
                         ${freezes >= maxFreezes ? 'disabled style="opacity:0.5;"' : ''}
                         ${LangyState.currencies.dangy < freezePrice ? 'disabled style="opacity:0.5;"' : ''}>
-                        ${freezes >= maxFreezes ? '🛡️ Max Freezes!' : `🛡️ Buy Freeze — ${freezePrice} Dangy`}
+                        ${freezes >= maxFreezes ? `${LangyIcons.shield} Max Freezes!` : `${LangyIcons.shield} Buy Freeze — ${freezePrice} Dangy`}
                     </button>
                     <div style="text-align:center; margin-top:var(--sp-2); font-size:var(--fs-xs); color:var(--text-muted);">
                         You have <strong style="color:var(--primary);">${LangyState.currencies.dangy}</strong> Dangy
@@ -193,17 +193,17 @@ function renderStreak(container) {
 
                 <!-- 28-Day Calendar -->
                 <div class="card" style="margin-top:var(--sp-4);">
-                    <h4 style="margin-bottom:var(--sp-3);">📅 Activity Calendar</h4>
+                    <h4 style="margin-bottom:var(--sp-3);">${LangyIcons.calendar} Activity Calendar</h4>
                     <div class="streak-calendar">
                         ${buildStreakCalendar()}
                     </div>
                     <div class="streak-cal__legend">
-                        <span>🔥 Active</span>
-                        <span>🛡️ Freeze</span>
+                        <span>${LangyIcons.flame} Active</span>
+                        <span style="display:flex;align-items:center;gap:4px;">${LangyIcons.shield} Freeze</span>
                         <span class="streak-cal__legend-missed">Missed</span>
                     </div>
                     <button class="btn btn--ghost btn--full" id="open-full-calendar" style="margin-top:var(--sp-3); font-size:var(--fs-sm);">
-                        📊 Full Calendar & Stats →
+                        ${LangyIcons.barChart} Full Calendar & Stats
                     </button>
                 </div>
 
@@ -227,7 +227,7 @@ function renderStreak(container) {
 
                 <!-- Rewards Roadmap -->
                 <div class="card" style="margin-top:var(--sp-4);">
-                    <h4 style="margin-bottom:var(--sp-3);">🎁 Streak Rewards</h4>
+                    <h4 style="margin-bottom:var(--sp-3);">${LangyIcons.gift} Streak Rewards</h4>
                     <div class="rewards-roadmap">
                         ${buildRewardsRoadmap(sd.days)}
                     </div>
@@ -254,10 +254,10 @@ function renderStreak(container) {
                 </div>
                 ` : `
                 <div class="card" style="margin-top:var(--sp-4); margin-bottom:var(--sp-6); text-align:center; padding: var(--sp-8);">
-                    <div style="font-size:48px; margin-bottom:var(--sp-3);">📚</div>
+                    <div style="font-size:48px; margin-bottom:var(--sp-3);">${LangyIcons.book}</div>
                     <h4>No sessions yet!</h4>
                     <p style="color:var(--text-muted); margin-top:var(--sp-2);">Complete a lesson to start tracking your progress</p>
-                    <button class="btn btn--primary" id="streak-start-lesson" style="margin-top:var(--sp-4);">🚀 Start Learning</button>
+                    <button class="btn btn--primary" id="streak-start-lesson" style="margin-top:var(--sp-4);">${LangyIcons.rocket} Start Learning</button>
                 </div>
                 `}
             </div>

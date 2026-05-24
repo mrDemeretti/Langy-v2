@@ -29,10 +29,10 @@ function renderPlacementTest(container) {
         { level: 0, skill: 'vocabulary', widget: 'image-choice', data: {
             word: 'Apple', correct: 0,
             options: [
-                { emoji: '🍎', label: 'Apple' },
-                { emoji: '🍌', label: 'Banana' },
-                { emoji: '🍊', label: 'Orange' },
-                { emoji: '🍇', label: 'Grape' }
+                { emoji: LangyIcons.heart, label: 'Apple' },
+                { emoji: LangyIcons.sun, label: 'Banana' },
+                { emoji: LangyIcons.sun, label: 'Orange' },
+                { emoji: LangyIcons.moon, label: 'Grape' }
             ]
         }},
         { level: 0, skill: 'vocabulary', widget: 'match-pairs', data: {
@@ -97,10 +97,10 @@ function renderPlacementTest(container) {
         { level: 1, skill: 'vocabulary', widget: 'image-choice', data: {
             word: 'Cloudy', correct: 2,
             options: [
-                { emoji: '☀️', label: 'Sunny' },
-                { emoji: '🌧️', label: 'Rainy' },
-                { emoji: '☁️', label: 'Cloudy' },
-                { emoji: '❄️', label: 'Snowy' }
+                { emoji: LangyIcons.sun, label: 'Sunny' },
+                { emoji: LangyIcons.moon, label: 'Rainy' },
+                { emoji: LangyIcons.moon, label: 'Cloudy' },
+                { emoji: LangyIcons.star, label: 'Snowy' }
             ]
         }},
 
@@ -259,33 +259,33 @@ function renderPlacementTest(container) {
         container.innerHTML = `
             <div class="screen placement-test">
                 <div class="placement-intro">
-                    <div class="placement-intro__icon">🧬</div>
+                    <div class="placement-intro__icon">${LangyIcons.brain}</div>
                     <h2 class="placement-intro__title">Определение уровня</h2>
                     <p class="placement-intro__subtitle">Comprehensive CEFR Assessment</p>
                     
                     <div class="placement-intro__info">
                         <div class="placement-intro__row">
-                            <span class="placement-intro__emoji">📝</span>
+                            <span class="placement-intro__emoji">${LangyIcons.fileText}</span>
                             <span>Грамматика и лексика</span>
                             <span class="badge badge--primary">Grammar</span>
                         </div>
                         <div class="placement-intro__row">
-                            <span class="placement-intro__emoji">📖</span>
+                            <span class="placement-intro__emoji">${LangyIcons.bookOpen}</span>
                             <span>Чтение текстов</span>
                             <span class="badge badge--accent">Reading</span>
                         </div>
                         <div class="placement-intro__row">
-                            <span class="placement-intro__emoji">🎧</span>
+                            <span class="placement-intro__emoji">${LangyIcons.headphones}</span>
                             <span>Аудирование</span>
                             <span class="badge badge--gold">Listening</span>
                         </div>
                         <div class="placement-intro__row">
-                            <span class="placement-intro__emoji">✍️</span>
+                            <span class="placement-intro__emoji">${LangyIcons.pencil}</span>
                             <span>Перевод и письмо</span>
                             <span class="badge" style="background:var(--accent-bg); color:var(--accent-dark);">Writing</span>
                         </div>
                         <div class="placement-intro__row">
-                            <span class="placement-intro__emoji">🎤</span>
+                            <span class="placement-intro__emoji">${LangyIcons.mic}</span>
                             <span>Произношение</span>
                             <span class="badge badge--danger">Speaking</span>
                         </div>
@@ -297,7 +297,7 @@ function renderPlacementTest(container) {
                     </div>
 
                     <button class="btn btn--primary btn--xl btn--full" id="start-test-btn">
-                        🚀 Начать тест / Start Test
+                        Начать тест / Start Test
                     </button>
                 </div>
             </div>
@@ -436,6 +436,9 @@ function renderPlacementTest(container) {
             LangyCurriculum.selectTextbookByLevel(cefr);
         }
 
+        // Sync settings.languageLevel with placement result
+        LangyState.settings.languageLevel = cefr;
+
         renderResults(cefr, levelNames[cefr], overall, skillPcts);
     }
 
@@ -444,12 +447,12 @@ function renderPlacementTest(container) {
         currentStep = 'result';
 
         const skillLabels = {
-            grammar: { name: 'Грамматика / Grammar', icon: '📝' },
-            vocabulary: { name: 'Лексика / Vocabulary', icon: '📚' },
-            reading: { name: 'Чтение / Reading', icon: '📖' },
-            listening: { name: 'Аудирование / Listening', icon: '🎧' },
-            writing: { name: 'Письмо / Writing', icon: '✍️' },
-            speaking: { name: 'Говорение / Speaking', icon: '🎤' }
+            grammar: { name: 'Грамматика / Grammar', icon: LangyIcons.fileText },
+            vocabulary: { name: 'Лексика / Vocabulary', icon: LangyIcons.book },
+            reading: { name: 'Чтение / Reading', icon: LangyIcons.bookOpen },
+            listening: { name: 'Аудирование / Listening', icon: LangyIcons.headphones },
+            writing: { name: 'Письмо / Writing', icon: LangyIcons.pencil },
+            speaking: { name: 'Говорение / Speaking', icon: LangyIcons.mic }
         };
 
         container.innerHTML = `
@@ -465,7 +468,7 @@ function renderPlacementTest(container) {
                         <h4 style="margin-bottom:var(--sp-4);">Навыки / Skill Breakdown</h4>
                         ${Object.entries(skillPcts).map(([skill, val]) => `
                             <div class="skill-row">
-                                <span class="skill-row__icon">${skillLabels[skill]?.icon || '📊'}</span>
+                                <span class="skill-row__icon">${skillLabels[skill]?.icon || LangyIcons.barChart}</span>
                                 <span class="skill-row__name">${skillLabels[skill]?.name || skill}</span>
                                 <span class="skill-row__value">${val}%</span>
                                 <div class="skill-row__bar">
@@ -476,14 +479,14 @@ function renderPlacementTest(container) {
                     </div>
 
                     <div class="placement-results__textbook card" style="margin-top:var(--sp-4);">
-                        <h4>📚 Подобранный учебник:</h4>
+                        <h4 style='display:flex; align-items:center; gap:8px;'>${LangyIcons.book} Подобранный учебник:</h4>
                         <p style="color:var(--primary); font-weight:var(--fw-bold); margin-top:var(--sp-2);">
                             ${typeof LangyCurriculum !== 'undefined' ? LangyCurriculum.getActive()?.title : 'Langy Course'}
                         </p>
                     </div>
 
                     <button class="btn btn--primary btn--xl btn--full" id="finish-placement" style="margin-top:var(--sp-6);">
-                        🚀 Начать обучение / Start Learning
+                         Начать обучение / Start Learning
                     </button>
                 </div>
             </div>

@@ -14,59 +14,59 @@ function renderAuth(container) {
 
             <div class="auth__logo">
                 <img src="assets/logo.png" alt="Langy" style="width: 80px; height: auto; margin: 0 auto 8px; display: block;">
-                <h1>Langy</h1>
-                <p>Your AI English Teacher</p>
+                <h1>${i18n('app.name')}</h1>
+                <p>${i18n('auth.subtitle')}</p>
             </div>
 
             <div class="tabs" id="auth-tabs">
-                <button class="tabs__tab ${isLogin ? 'tabs__tab--active' : ''}" data-tab="login">Log In</button>
-                <button class="tabs__tab ${!isLogin ? 'tabs__tab--active' : ''}" data-tab="signup">Sign Up</button>
+                <button class="tabs__tab ${isLogin ? 'tabs__tab--active' : ''}" data-tab="login">${i18n('auth.login')}</button>
+                <button class="tabs__tab ${!isLogin ? 'tabs__tab--active' : ''}" data-tab="signup">${i18n('auth.register')}</button>
             </div>
 
             <form class="auth__form" id="auth-form">
                 ${!isLogin ? `
                 <div class="input-group">
-                    <label for="auth-name">Full Name</label>
-                    <input class="input" type="text" id="auth-name" placeholder="Enter your name" autocomplete="name">
+                    <label for="auth-name">${i18n('auth.name')}</label>
+                    <input class="input" type="text" id="auth-name" placeholder="${i18n('auth.name')}" autocomplete="name">
                 </div>` : ''}
 
                 <div class="input-group">
-                    <label for="auth-email">Email</label>
+                    <label for="auth-email">${i18n('auth.email')}</label>
                     <input class="input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
                 </div>
 
                 <div class="input-group">
-                    <label for="auth-password">Password</label>
+                    <label for="auth-password">${i18n('auth.password')}</label>
                     <input class="input" type="password" id="auth-password" placeholder="••••••••" autocomplete="${isLogin ? 'current-password' : 'new-password'}">
                 </div>
 
                 <button type="submit" class="btn btn--primary btn--lg btn--full" id="auth-submit">
-                    ${isLogin ? 'Log In' : 'Create Account'}
+                    ${isLogin ? i18n('auth.login') : i18n('auth.register')}
                 </button>
                 <div class="auth__error" id="auth-error"></div>
             </form>
 
-            <div class="divider--text">or continue with</div>
+            <div class="divider--text">${{en:'or continue with',ru:'или войти через',es:'o continuar con'}[typeof LangyI18n!=='undefined'?LangyI18n.currentLang:'en']}</div>
 
             <div class="auth__social">
                 <button type="button" class="btn" id="auth-google">
                     <span>G</span> Google
                 </button>
                 <button type="button" class="btn" id="auth-apple">
-                    <span>🍎</span> Apple
+                    <span>${LangyIcons.apple || LangyIcons.globe}</span> Apple
                 </button>
             </div>
             
             <div style="margin-top:var(--sp-4);">
                 <button type="button" class="btn btn--outline" id="auth-dev-login" style="width:100%; border-color:var(--primary); color:var(--primary);">
-                    ⚡ DEV FAST LOGIN (Skip Tests)
+                    ${LangyIcons.zap} DEV FAST LOGIN (Skip Tests)
                 </button>
             </div>
 
             <p class="auth__footer">
                 ${isLogin
-                    ? 'Don\'t have an account? <a href="#" id="auth-switch">Sign Up</a>'
-                    : 'Already have an account? <a href="#" id="auth-switch">Log In</a>'
+                    ? i18n('auth.no_account') + ' <a href="#" id="auth-switch">' + i18n('auth.register') + '</a>'
+                    : i18n('auth.have_account') + ' <a href="#" id="auth-switch">' + i18n('auth.login') + '</a>'
                 }
             </p>
         </div>
@@ -126,12 +126,12 @@ function renderAuth(container) {
                 await LangyDB.login(email, password);
                 if (typeof toggleDarkMode === 'function') toggleDarkMode(LangyState.settings.darkMode);
                 LangyDB.startAutoSave();
-                Anim.showToast('Welcome back! 🎉');
+                Anim.showToast(`Welcome back! ${LangyIcons.check}`);
                 setTimeout(() => Router.navigate('home'), 500);
             } else {
                 await LangyDB.register(name, email, password);
                 LangyDB.startAutoSave();
-                Anim.showToast('Account created! 🎉');
+                Anim.showToast(`Account created! ${LangyIcons.check}`);
                 setTimeout(() => Router.navigate('onboarding'), 500);
             }
         } catch (err) {
@@ -144,10 +144,10 @@ function renderAuth(container) {
 
     // Social buttons (local mode — not available)
     container.querySelector('#auth-google')?.addEventListener('click', () => {
-        Anim.showToast('Google Sign-In — coming soon with cloud sync! ☁️');
+        Anim.showToast(`Google Sign-In — coming soon with cloud sync! ${LangyIcons.cloud}`);
     });
     container.querySelector('#auth-apple')?.addEventListener('click', () => {
-        Anim.showToast('Apple Sign-In — coming soon with cloud sync! ☁️');
+        Anim.showToast(`Apple Sign-In — coming soon with cloud sync! ${LangyIcons.cloud}`);
     });
 
     // DEV FAST LOGIN
@@ -161,7 +161,7 @@ function renderAuth(container) {
         LangyState.user.level = 'B2 Upper-Intermediate';
         LangyState.mascot.selected = 3; // Omar by default for testing
         LangyDB.startAutoSave();
-        Anim.showToast('Logged in as Test User ⚡');
+        Anim.showToast(`Logged in as Test User ${LangyIcons.zap}`);
         Router.navigate('home');
     });
 

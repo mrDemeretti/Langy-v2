@@ -14,7 +14,7 @@ function renderInventory(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="inventory-back">←</div>
+                <div class="nav-header__back" id="inventory-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Inventory</div>
                 <div style="width:36px;"></div>
             </div>
@@ -27,19 +27,19 @@ function renderInventory(container) {
                     <!-- Equipment slots around mascot -->
                     <div class="inventory__slots">
                         <div class="inventory__slot inventory__slot--hat" title="Hat" data-slot="hat">
-                            ${equipped.hat ? equipped.hat.emoji : '🎩'}
+                            <div class="equip-slot__default">${LangyIcons.user}</div>
                         </div>
                         <div class="inventory__slot inventory__slot--acc" title="Accessory" data-slot="accessory">
-                            ${equipped.accessory ? equipped.accessory.emoji : '💎'}
+                            <div class="equip-slot__default">${LangyIcons.diamond}</div>
                         </div>
                         <div class="inventory__slot inventory__slot--shirt" title="Top" data-slot="shirt">
-                            ${equipped.shirt ? equipped.shirt.emoji : '👕'}
+                            <div class="equip-slot__default">${LangyIcons.user}</div>
                         </div>
                         <div class="inventory__slot inventory__slot--pants" title="Bottom" data-slot="pants">
-                            ${equipped.pants ? equipped.pants.emoji : '👖'}
+                            ${equipped.pants ? equipped.pants.emoji : LangyIcons.user}
                         </div>
                         <div class="inventory__slot inventory__slot--shoes" title="Shoes" data-slot="shoes">
-                            ${equipped.shoes ? equipped.shoes.emoji : '👟'}
+                            ${equipped.shoes ? equipped.shoes.emoji : LangyIcons.user}
                         </div>
                     </div>
                 </div>
@@ -60,13 +60,13 @@ function renderInventory(container) {
                         <!-- Empty slots -->
                         ${Array(Math.max(0, 8 - inventory.items.length)).fill('').map(() => `
                             <div class="inventory-item" style="opacity:0.3; cursor:default; border-style:dashed;">
-                                ➕
+                                ${LangyIcons.plus}
                             </div>
                         `).join('')}
                     </div>
                 ` : `
                     <div class="empty-state">
-                        <div class="empty-state__icon">🎒</div>
+                        <div class="empty-state__icon">${LangyIcons.user}</div>
                         <div class="empty-state__title">No items yet</div>
                         <div class="empty-state__text">Visit the shop to get some items!</div>
                         <button class="btn btn--primary" id="inv-to-shop">Go to Shop</button>
@@ -92,7 +92,7 @@ function renderInventory(container) {
                     if (i.slot === item.slot) i.equipped = false;
                 });
                 item.equipped = true;
-                Anim.showToast(`${item.name} equipped! ✨`);
+                Anim.showToast(`${item.name} equipped! ${LangyIcons.sparkles}`);
             }
             renderInventory(container);
         });

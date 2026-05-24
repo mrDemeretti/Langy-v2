@@ -10,7 +10,7 @@ function renderTextbooks(container) {
     container.innerHTML = `
         <div class="screen screen--no-pad">
             <div class="nav-header">
-                <div class="nav-header__back" id="textbooks-back">←</div>
+                <div class="nav-header__back" id="textbooks-back">${LangyIcons.back}</div>
                 <div class="nav-header__title">Textbooks</div>
                 <div class="nav-header__action" id="textbook-add-btn"
                      style="width:36px; height:36px; border-radius:50%; background:var(--primary);
@@ -70,7 +70,7 @@ async function _loadTextbooksList(container, level) {
         if (!textbooks.length) {
             listEl.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-state__icon">📚</div>
+                    <div class="empty-state__icon">${LangyIcons.book}</div>
                     <div class="empty-state__title">No textbooks yet</div>
                     <div class="empty-state__text">Tap + to add your first textbook</div>
                 </div>
@@ -79,14 +79,14 @@ async function _loadTextbooksList(container, level) {
         }
 
         const fmtIcons = {
-            pdf: '📄', docx: '📝', txt: '📃', csv: '📊',
-            html: '🌐', htm: '🌐', epub: '📚', rtf: '📜',
-            png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', webp: '🖼️'
+            pdf: LangyIcons.fileText, docx: LangyIcons.fileText, txt: LangyIcons.fileText, csv: LangyIcons.barChart,
+            html: LangyIcons.globe, htm: LangyIcons.globe, epub: LangyIcons.book, rtf: LangyIcons.fileText,
+            png: LangyIcons.image, jpg: LangyIcons.image, jpeg: LangyIcons.image, gif: LangyIcons.image, webp: LangyIcons.image
         };
 
         listEl.innerHTML = textbooks.map(tb => `
             <div class="textbook-card" data-id="${tb.id}">
-                <div class="textbook-card__icon">${fmtIcons[tb.format] || '📄'}</div>
+                <div class="textbook-card__icon">${fmtIcons[tb.format] || LangyIcons.fileText}</div>
                 <div class="textbook-card__info">
                     <div class="textbook-card__title">${_esc(tb.title)}</div>
                     <div class="textbook-card__meta">
@@ -110,7 +110,7 @@ async function _loadTextbooksList(container, level) {
         console.error('Loading textbooks failed:', e);
         listEl.innerHTML = `
             <div class="empty-state">
-                <div class="empty-state__icon">⚠️</div>
+                <div class="empty-state__icon">${LangyIcons.alertTriangle}</div>
                 <div class="empty-state__title">Error loading textbooks</div>
                 <div class="empty-state__text">${e.message || ''}</div>
             </div>
@@ -126,7 +126,7 @@ function _showAddTextbookModal() {
     overlay.innerHTML = `
         <div class="overlay__sheet" style="max-height:85vh; overflow-y:auto;">
             <div class="overlay__handle"></div>
-            <h3 style="margin-bottom:var(--sp-4);">📖 Add Textbook</h3>
+            <h3 style="margin-bottom:var(--sp-4);">${LangyIcons.bookOpen} Add Textbook</h3>
 
             <form id="textbook-form" style="display:flex; flex-direction:column; gap:var(--sp-4);">
                 <div class="input-group">
@@ -159,7 +159,7 @@ function _showAddTextbookModal() {
                     <label>File</label>
                     <div class="upload-zone" id="upload-zone">
                         <div class="upload-zone__content">
-                            <span style="font-size:32px;">📁</span>
+                            <span style="font-size:32px;">${LangyIcons.folder}</span>
                             <span>Tap to select or drag a file</span>
                             <span class="upload-zone__formats">PDF · DOCX · TXT · CSV · HTML · EPUB · RTF · Images</span>
                             <span id="upload-filename" style="color:var(--primary); font-weight:var(--fw-bold);"></span>
@@ -243,7 +243,7 @@ function _showAddTextbookModal() {
             }, selectedFile);
 
             overlay.remove();
-            Anim.showToast('Textbook added! 📚');
+            Anim.showToast(`Textbook added! ${LangyIcons.book}`);
             renderTextbooks(document.getElementById('screen-container'));
         } catch (err) {
             errorEl.textContent = err.message;
@@ -261,9 +261,9 @@ async function _showTextbookDetail(id) {
     if (!tb) return;
 
     const fmtIcons = {
-        pdf: '📄', docx: '📝', txt: '📃', csv: '📊',
-        html: '🌐', htm: '🌐', epub: '📚', rtf: '📜',
-        png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', webp: '🖼️'
+        pdf: LangyIcons.fileText, docx: LangyIcons.fileText, txt: LangyIcons.fileText, csv: LangyIcons.barChart,
+        html: LangyIcons.globe, htm: LangyIcons.globe, epub: LangyIcons.book, rtf: LangyIcons.fileText,
+        png: LangyIcons.image, jpg: LangyIcons.image, jpeg: LangyIcons.image, gif: LangyIcons.image, webp: LangyIcons.image
     };
     const fmtNames = {
         pdf: 'PDF Document', docx: 'Word Document', txt: 'Text File',
@@ -284,7 +284,7 @@ async function _showTextbookDetail(id) {
             <div class="overlay__handle"></div>
 
             <div style="text-align:center; margin-bottom:var(--sp-4);">
-                <div style="font-size:48px; margin-bottom:var(--sp-2);">${fmtIcons[tb.format] || '📄'}</div>
+                <div style="font-size:48px; margin-bottom:var(--sp-2);">${fmtIcons[tb.format] || LangyIcons.fileText}</div>
                 <h3>${_esc(tb.title)}</h3>
                 <div style="color:var(--text-secondary); font-size:var(--fs-sm); margin-top:var(--sp-1);">
                     ${_esc(tb.author || 'Unknown author')}
@@ -297,14 +297,14 @@ async function _showTextbookDetail(id) {
 
             ${(tb.description || tb.methodology) ? `
                 <div class="card" style="margin-bottom:var(--sp-3); padding:var(--sp-4);">
-                    <h4 style="margin-bottom:var(--sp-2);">📋 Methodology</h4>
+                    <h4 style="margin-bottom:var(--sp-2);">${LangyIcons.clipboard} Methodology</h4>
                     <p style="color:var(--text-secondary); font-size:var(--fs-sm); line-height:1.6; white-space:pre-wrap;">${_esc(tb.description || tb.methodology)}</p>
                 </div>
             ` : ''}
 
             ${hasText ? `
                 <div class="card" style="margin-bottom:var(--sp-3); padding:var(--sp-4);">
-                    <h4 style="margin-bottom:var(--sp-2);">📖 Content Preview</h4>
+                    <h4 style="margin-bottom:var(--sp-2);">${LangyIcons.bookOpen} Content Preview</h4>
                     <p style="color:var(--text-secondary); font-size:var(--fs-xs); line-height:1.5;
                               max-height:200px; overflow-y:auto; white-space:pre-wrap;">${textPreview}</p>
                     <div style="font-size:var(--fs-xs); color:var(--text-tertiary); margin-top:var(--sp-2);">
@@ -314,14 +314,14 @@ async function _showTextbookDetail(id) {
             ` : `
                 <div class="card" style="margin-bottom:var(--sp-3); padding:var(--sp-4); text-align:center;">
                     <div style="color:var(--text-tertiary); font-size:var(--fs-sm);">
-                        📷 No text extracted (image or unsupported format)
+                        ${LangyIcons.image} No text extracted (image or unsupported format)
                     </div>
                 </div>
             `}
 
             ${tb.fileName ? `
                 <div style="font-size:var(--fs-xs); color:var(--text-tertiary); text-align:center; margin-bottom:var(--sp-3);">
-                    📎 ${_esc(tb.fileName)} · ${_fmtSize(tb.fileSize || 0)}
+                    ${LangyIcons.paperclip} ${_esc(tb.fileName)} · ${_fmtSize(tb.fileSize || 0)}
                 </div>
             ` : ''}
 
